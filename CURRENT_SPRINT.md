@@ -1,14 +1,14 @@
 Current Goal:
-Define platform features
-
-Active Task:
-Create FEATURES.md
-
-Next Task:
 Define MVP
 
+Active Task:
+Prioritize Core Platform Features
+
+Next Task:
+Define MVP Boundary
+
 Blocked By:
-Nothing
+None
 
 Definition of Done:
-All platform features categorized and documented
+Core features categorized and MVP identified
