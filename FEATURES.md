@@ -17,11 +17,10 @@ Long-term platform expansion.
 
 ---
 
+# MVP
 ## Core Platform
 
-These are considered essential for a usable first version.
-
-### Feature: User Accounts [MVP]
+### Feature: User Accounts
 Description
 Allow users to register, authenticate, and manage their accounts.
 
@@ -34,7 +33,194 @@ None
 Priority
 Critical
 
-### Feature: User Profiles [MVP]
+Purpose 
+User Accounts provide:
+Platform identity
+Authentication
+Authorization foundation
+Participation eligibility
+Moderation accountability
+Every content creator, commenter, voter, follower, Herd member, Shepherd, and moderator must have a User Account.
+
+MVP Requirements
+Account Creation
+Users must be able to:
+Register a new account
+Select a unique username
+Provide an email address
+Create credentials
+Must attest that user meets the minimum platform age requirement.
+Accept platform terms/policies before account creation
+
+Authentication
+Users must be able to:
+Sign in
+Sign out
+Maintain authenticated sessions
+Recover access to accounts
+Account Ownership
+
+Each account must have:
+One unique username
+One unique account identity
+One owner
+Shared accounts are not supported.
+
+Account Management
+Users must be able to:
+View account information
+Update basic account information
+Change credentials
+Request account deletion
+
+Account States
+Active
+Normal operational state.
+Capabilities:
+Full platform access
+
+Suspended
+Administrative enforcement action.
+Capabilities:
+Login may be restricted
+Participation prohibited
+Reason examples:
+Abuse
+Harassment
+Spam
+Repeated policy violations
+
+Deleted
+Soft-deleted account.
+Account access removed.
+Data retained according to platform retention policy.
+
+Pending Verification
+Account created but email not yet verified.
+Capabilities:
+Cannot access authenticated platform functionality.
+
+Account Lifecycle
+Stage 1
+Registration
+    ↓
+Stage 2
+Account Activation
+    ↓
+Stage 3
+Normal Participation
+    ↓
+Possible outcomes:
+Continued use
+Suspension
+Deletion
+
+Security Requirements
+Authentication Security
+Must provide:
+Secure credential handling
+Secure session handling
+Protection against unauthorized account access
+
+Credential Security
+Must support:
+Password strength requirements
+Password reset capability
+
+Abuse Protection
+Must include reasonable MVP protections against:
+Credential stuffing
+Automated account creation
+Session hijacking
+Exact mechanisms are implementation decisions.
+
+Privacy Requirements
+MVP accounts must:
+Avoid exposing private account data publicly
+Separate public profile information from account information
+
+Authorization Requirements
+Only account owners may:
+Modify their account
+Delete their account
+Administrative actions require elevated privileges.
+
+Moderation & Governance Requirements
+User Accounts must support platform governance hierarchy defined in PROJECT_CONTEXT.
+Administrative Actions
+Platform administrators must be able to:
+Suspend accounts
+Remove platform access
+Investigate reports
+Issue warnings
+
+Accountability
+Every action must be attributable to an account.
+Includes:
+Posts
+Comments
+Votes
+Reports
+Herd creation
+Anonymous posting is not part of MVP.
+
+Enforcement Compatibility
+Accounts must support future actions such as:
+Warnings
+Temporary suspensions
+Permanent bans
+Reputation-based restrictions
+Even if not fully implemented in MVP.
+
+Onboarding Requirements
+MVP Onboarding
+Required:
+Register account
+Authenticate
+Access platform
+
+Optional:
+Complete profile later
+Follow users later
+Join Herds later
+
+Reason:
+Faster user activation
+Reduced abandonment risk
+Simpler implementation
+
+Dependencies on Other MVP Features
+User Profiles
+Accounts own profiles.
+
+Dependency relationship:
+User Account → User Profile
+
+Follow System
+Requires authenticated users.
+
+Personal Posting
+Requires authenticated users.
+
+Herd Creation
+Requires authenticated users.
+
+Herd Membership
+Requires authenticated users.
+
+Comments & Replies
+Requires authenticated users.
+
+Voting
+Requires authenticated users.
+
+Reporting System
+Requires authenticated users.
+
+Moderation Systems
+Require user identity.
+
+### Feature: User Profiles
 Description
 Public user identity page containing profile information and contributions.
 
@@ -47,7 +233,7 @@ User Accounts
 Priority
 Critical
 
-### Feature: Personal Posting [MVP]
+### Feature: Personal Posting
 Description
 Users create posts outside of Herds.
 
@@ -60,7 +246,7 @@ User Accounts
 Priority
 Critical
 
-### Feature: Post Feed (Following Feed) [MVP]
+### Feature: Following Feed
 Description
 Display content from followed users.
 
@@ -73,7 +259,7 @@ Follow System
 Priority
 Critical
 
-### Feature: Follow System [MVP]
+### Feature: Follow System
 Description
 Users follow other users.
 
@@ -86,7 +272,7 @@ User Accounts
 Priority
 Critical
 
-### Feature: Comments & Replies [MVP]
+### Feature: Comments & Replies
 Description
 Users discuss posts through threaded conversations.
 
@@ -99,7 +285,7 @@ Posting System
 Priority
 Critical
 
-### Feature: HypeUp / HypeDown Voting [MVP]
+### Feature: HypeUp / HypeDown Voting
 Description
 Voting mechanism for posts and comments.
 
@@ -112,7 +298,7 @@ Posts, Comments
 Priority
 Critical
 
-### Feature: Herd Creation [MVP]
+### Feature: Herd Creation
 Description
 Users create topic-based communities.
 
@@ -125,7 +311,7 @@ User Accounts
 Priority
 Critical
 
-### Feature: Herd Membership [MVP]
+### Feature: Herd Membership
 Description
 Users join and leave Herds.
 
@@ -138,7 +324,7 @@ Herd System
 Priority
 Critical
 
-### Feature: Herd Posting [MVP]
+### Feature: Herd Posting
 Description
 Users create posts inside Herds.
 
@@ -151,7 +337,7 @@ Herd System
 Priority
 Critical
 
-### Feature: Herd Feed [MVP]
+### Feature: Herd Feed
 Description
 Feed showing content from joined Herds.
 
@@ -164,59 +350,7 @@ Herd Membership
 Priority
 Critical
 
-### Feature: Search & Discovery [V1]
-Description
-Search people, Herds, and posts.
-
-Why It Exists
-Supports exploration and growth.
-
-Dependencies
-Users, Herds, Posts
-
-Priority
-High
-
-### Feature: Save Content [V1]
-Description
-Users bookmark posts.
-
-Why It Exists
-Supports knowledge retention.
-
-Dependencies
-Posts
-
-Priority
-High
-
-### Feature: Content Sharing [V1]
-Description
-Share platform content elsewhere.
-
-Why It Exists
-Content sharing promots content propagation.
-
-Dependencies
-Profiles, Herds, Posts, Comments, URL Routing / Deep Linking, (canonical url)
-
-Priority
-High
-
-### Feature: Notifications [V1]
-Description
-Alerts for follows, replies, votes, mentions, and Herd activity.
-
-Why It Exists
-Encourages engagement.
-
-Dependencies
-Core social actions
-
-Priority
-High
-
-### Feature: Reporting System [MVP]
+### Feature: Reporting System
 Description
 Users report content and behavior.
 
@@ -229,7 +363,7 @@ Posts, Comments, Users
 Priority
 Critical
 
-### Feature: Platform Moderation [MVP]
+### Feature: Platform Moderation
 Description
 Administrative moderation tools.
 
@@ -242,7 +376,7 @@ Reporting System
 Priority
 Critical
 
-### Feature: Shepherd Moderation [MVP]
+### Feature: Shepherd Moderation
 Description
 Community moderation tools.
 
@@ -255,7 +389,80 @@ Herd System
 Priority
 Critical
 
-### Feature: Aura Reputation Foundation [V1]
+## Advanced Platform
+
+Post-MVP features that strengthen engagement and governance.
+
+### Feature: Image Uploads
+Description
+Images.
+
+Why It Exists
+Improves content quality.
+
+Dependencies
+Posting System
+
+Priority
+High
+
+# V1 
+## Core Platform
+
+### Feature: Search & Discovery
+Description
+Search people, Herds, and posts.
+
+Why It Exists
+Supports exploration and growth.
+
+Dependencies
+Users, Herds, Posts
+
+Priority
+High
+
+### Feature: Save Content
+Description
+Users bookmark posts.
+
+Why It Exists
+Supports knowledge retention.
+
+Dependencies
+Posts
+
+Priority
+High
+
+### Feature: Content Sharing
+Description
+Share platform content elsewhere.
+
+Why It Exists
+Content sharing promots content propagation.
+
+Dependencies
+Profiles, Herds, Posts, Comments, URL Routing / Deep Linking, (canonical url)
+
+Priority
+High
+
+### Feature: Notifications
+Description
+Alerts for follows, replies, votes, mentions, and Herd activity.
+
+Why It Exists
+Encourages engagement.
+
+Dependencies
+Core social actions
+
+Priority
+High
+
+
+### Feature: Aura Reputation Foundation
 Description
 Display user Aura and basic reputation indicators.
 
@@ -272,20 +479,7 @@ High
 
 Post-MVP features that strengthen engagement and governance.
 
-### Feature: Image Uploads [MVP]
-Description
-Images.
-
-Why It Exists
-Improves content quality.
-
-Dependencies
-Posting System
-
-Priority
-High
-
-### Feature: Short Video Uploads [V1]
+### Feature: Short Video Uploads
 Description
 Short videos.
 
@@ -298,85 +492,7 @@ Posting System
 Priority
 High
 
-### Feature: Mentions [V2]
-Description
-Reference users in posts and comments.
-
-Why It Exists
-Improves discussion connectivity.
-
-Dependencies
-Profiles
-
-Priority
-Medium
-
-### Feature: Direct Notifications Preferences [V2]
-Description
-Granular notification controls.
-
-Why It Exists
-User experience improvement.
-
-Dependencies
-Notifications
-
-Priority
-Medium
-
-### Feature: Aura-Based Herd Access [V2]
-Description
-Minimum Aura requirements for communities.
-
-Why It Exists
-Supports quality-focused communities.
-
-Dependencies
-Aura System
-
-Priority
-High
-
-### Feature: Request-to-Join Herds [V2]
-Description
-Approval-based communities.
-
-Why It Exists
-Supports controlled participation.
-
-Dependencies
-Herd Membership
-
-Priority
-Medium
-
-### Feature: Invite-Only Herds [V2]
-Description
-Private communities.
-
-Why It Exists
-Supports exclusive groups.
-
-Dependencies
-Herd Membership
-
-Priority
-Medium
-
-### Feature: Enhanced Aura System [V2]
-Description
-Advanced reputation calculations and contributor recognition.
-
-Why It Exists
-Strengthens contribution incentives.
-
-Dependencies
-Aura Foundation
-
-Priority
-High
-
-### Feature: User Blocking [V1]
+### Feature: User Blocking
 Description
 Prevent interactions from specific users.
 
@@ -389,7 +505,90 @@ Accounts
 Priority
 High
 
-### Feature: User Privacy Controls [V2]
+# V2
+## Advance Platform 
+Post-MVP features that strengthen engagement and governance. 
+
+### Feature: Mentions
+Description
+Reference users in posts and comments.
+
+Why It Exists
+Improves discussion connectivity.
+
+Dependencies
+Profiles
+
+Priority
+Medium
+
+### Feature: Direct Notifications Preferences
+Description
+Granular notification controls.
+
+Why It Exists
+User experience improvement.
+
+Dependencies
+Notifications
+
+Priority
+Medium
+
+### Feature: Aura-Based Herd Access
+Description
+Minimum Aura requirements for communities.
+
+Why It Exists
+Supports quality-focused communities.
+
+Dependencies
+Aura System
+
+Priority
+High
+
+### Feature: Request-to-Join Herds
+Description
+Approval-based communities.
+
+Why It Exists
+Supports controlled participation.
+
+Dependencies
+Herd Membership
+
+Priority
+Medium
+
+### Feature: Invite-Only Herds
+Description
+Private communities.
+
+Why It Exists
+Supports exclusive groups.
+
+Dependencies
+Herd Membership
+
+Priority
+Medium
+
+### Feature: Enhanced Aura System
+Description
+Advanced reputation calculations and contributor recognition.
+
+Why It Exists
+Strengthens contribution incentives.
+
+Dependencies
+Aura Foundation
+
+Priority
+High
+
+
+### Feature: User Privacy Controls
 Description
 Control visibility and interactions.
 
@@ -402,7 +601,7 @@ Accounts
 Priority
 High
 
-### Feature: Moderator Tooling Expansion [V2]
+### Feature: Moderator Tooling Expansion
 Description
 Queues, actions, moderation history.
 
@@ -415,7 +614,7 @@ Moderation System
 Priority
 High
 
-### Feature: Analytics Dashboard [V2]
+### Feature: Analytics Dashboard
 Description
 Basic creator and community metrics.
 
@@ -428,11 +627,12 @@ Posts, Herds
 Priority
 Medium
 
+# FUTURE
 ## Future Platform
 
 Long-term expansion features already mentioned or implied by project vision.
 
-### Feature: Discovery Feed [FUTURE]
+### Feature: Discovery Feed
 Description
 Content recommendation feed.
 
@@ -445,7 +645,7 @@ Ranking Systems
 Priority
 Future
 
-### Feature: Community Notes [FUTURE]
+### Feature: Community Notes
 Description
 Context and clarification contributions.
 
@@ -458,7 +658,7 @@ Reputation System
 Priority
 Future
 
-### Feature: Creator Subscriptions [FUTURE]
+### Feature: Creator Subscriptions
 Description
 Paid creator support.
 
@@ -471,7 +671,7 @@ Payments
 Priority
 Future
 
-### Feature: Herd Monetization [FUTURE]
+### Feature: Herd Monetization
 Description
 Community-level monetization.
 
@@ -484,7 +684,7 @@ Payments
 Priority
 Future
 
-### Feature: Private Messaging [FUTURE]
+### Feature: Private Messaging
 Description
 User-to-user communication.
 
@@ -497,7 +697,7 @@ Accounts
 Priority
 Future
 
-### Feature: End-to-End Encrypted Messaging [FUTURE]
+### Feature: End-to-End Encrypted Messaging
 Description
 Secure private conversations.
 
@@ -510,7 +710,7 @@ Messaging System
 Priority
 Future
 
-### Feature: Advanced Moderation Automation [FUTURE]
+### Feature: Advanced Moderation Automation
 Description
 Automated abuse and spam detection.
 
@@ -523,7 +723,7 @@ Moderation System
 Priority
 Future
 
-### Feature: Reputation-Based Governance [FUTURE]
+### Feature: Reputation-Based Governance
 Description
 Community participation in governance decisions.
 
@@ -536,7 +736,7 @@ Advanced Aura
 Priority
 Future
 
-### Feature: Expanded Youth Support (14+) [FUTURE]
+### Feature: Expanded Youth Support (14+)
 Description
 Additional safety systems and compliance features.
 

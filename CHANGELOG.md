@@ -50,6 +50,29 @@
 - Transitioned project focus from MVP definition to MVP feature specification.
 - Transitioned project phase from planning to MVP system design.
 
+- Completed MVP User Accounts specification.
+- Defined:
+  - Account purpose
+  - Account lifecycle
+  - Account states
+  - Authentication requirements
+  - Security requirements
+  - Governance requirements
+  - Onboarding requirements
+  - Feature dependencies
+
+- Resolved User Accounts decisions:
+  - Email verification required before activation
+  - Soft deletion policy
+  - Username changes allowed
+  - One account per email
+  - No age verification beyond self-attestation
+  - Account verification badges postponed beyond MVP
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+
 
 ## 2026-06-16
 

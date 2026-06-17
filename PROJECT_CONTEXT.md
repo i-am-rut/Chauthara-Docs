@@ -347,9 +347,9 @@ Usernames are used in:
 
 ## Anonymous Participation
 
-Future discussion required.
+Anonymous participation is excluded from MVP.
 
-No final decision has been made.
+Whether Chauhtara should support anonymous participation in a future release remains an open question.
 
 ---
 

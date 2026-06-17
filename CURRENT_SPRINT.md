@@ -3,10 +3,10 @@ Current Goal:
 Create MVP Specifications
 
 Active Task:
-Define User Accounts specification
+Define User Profiles specification
 
 Next Task:
-Define User Profiles specification
+Define Follow System specification
 
 Blocked By:
 Nothing
