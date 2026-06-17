@@ -12,7 +12,7 @@
   - Community Graph
   - Discussion System
 
-- Defined release boundaries for Chauhtara:
+- Defined release boundaries for Chauthara:
   - MVP
   - V1
   - V2
@@ -72,6 +72,42 @@
 - Updated:
   - FEATURES.md
   - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+  - PROJECT_CONTEXT.md
+
+## 2026-06-17
+
+### Documentation
+
+- Completed MVP User Profiles specification.
+
+- Defined 
+    - User Profile purpose
+    - MVP profile requirements
+    - profile visibility rules
+    - editable profile fields
+    - non-editable profile fields
+    - MVP profile customization scope
+    - User Profile relationships
+    - governance requirements
+
+- Resolved User Profile Decisions:
+    - Public profiles included in MVP.
+    - Aura visibility excluded from MVP.
+    - Follower lists should be publicly visible.
+    - Following lists should be publicly visible.
+    - Herd membership lists should be publicly visible.
+    - Comment history appears on profiles.
+    - Users may hide comment history.
+    - Follower and following counts should be publicly visible on profile.
+    - Profile completion is optional after account creation.
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
 
 
 ## 2026-06-16

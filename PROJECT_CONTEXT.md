@@ -2,23 +2,23 @@
 
 ## Name
 
-Chauhtara *(working title)*
+Chauthara *(working title)*
 
 ---
 
 ## Vision
 
-Chauhtara is a community-centric social discussion platform that combines the identity-driven nature of Twitter/X with the community-driven nature of Reddit.
+Chauthara is a community-centric social discussion platform that combines the identity-driven nature of Twitter/X with the community-driven nature of Reddit.
 
 The platform enables individuals to build reputation, share ideas, participate in meaningful discussions, and contribute to interest-based communities called Herds.
 
-Chauhtara aims to provide a space where personal identity, constructive discussion, and community participation coexist without one overshadowing the others.
+Chauthara aims to provide a space where personal identity, constructive discussion, and community participation coexist without one overshadowing the others.
 
 ---
 
 ## Product Positioning
 
-Chauhtara is not intended to be a Twitter clone or a Reddit clone.
+Chauthara is not intended to be a Twitter clone or a Reddit clone.
 
 The platform combines:
 
@@ -104,7 +104,7 @@ The platform should avoid rewarding engagement bait or low-quality interaction.
 
 ## Knowledge Sharing
 
-Chauhtara should encourage users to:
+Chauthara should encourage users to:
 
 * Share expertise
 * Ask questions
@@ -281,7 +281,7 @@ Voting contributes to:
 
 # Feed Philosophy
 
-Chauhtara intentionally separates social and community consumption.
+Chauthara intentionally separates social and community consumption.
 
 ## Following Feed
 
@@ -349,7 +349,7 @@ Usernames are used in:
 
 Anonymous participation is excluded from MVP.
 
-Whether Chauhtara should support anonymous participation in a future release remains an open question.
+Whether Chauthara should support anonymous participation in a future release remains an open question.
 
 ---
 

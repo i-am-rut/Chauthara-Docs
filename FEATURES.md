@@ -4,7 +4,7 @@
 ## Release Definitions
 
 ### MVP
-First publicly usable version of Chauhtara.
+First publicly usable version of Chauthara.
 
 ### V1
 Usability and engagement enhancements.
@@ -232,6 +232,165 @@ User Accounts
 
 Priority
 Critical
+
+Purpose
+User Profiles provide:
+Public identity
+Contribution history
+Audience building
+Community participation visibility
+Every User Account owns one User Profile.
+Dependency relationship:
+User Account
+    ↓
+User Profile
+
+Profile Requirements
+Profile Creation
+A profile must be created for every account.
+Separate profile creation is not required.
+
+Public Profile
+Every active user profile must have a public profile page.
+Profiles serve as the primary destination for viewing a user's public activity.
+Public profiles are viewable without authentication.
+
+Profile Information
+Public Information
+Profiles must display:
+Username
+Profile picture/avatar
+Bio
+Account join date
+Followers count
+Following count
+Visibility of additional participation information is defined below.
+Private Information
+Profiles must never display:
+Email address
+Credentials
+Security information
+Account recovery information
+Internal moderation information
+Reports submitted by the user
+
+Editable Profile Fields
+Users must be able to:
+Upload or change profile picture
+Create or modify bio
+Usernames remain editable according to User Accounts requirements.
+
+Non-Editable Profile Fields
+Users cannot directly modify:
+Account join date
+Followers count
+Following count
+Moderation status
+System-generated participation statistics
+
+Profile Customization
+MVP customization includes:
+Profile picture
+Bio
+Not included in MVP:
+Profile themes
+Profile layouts
+Featured content
+Pinned content
+Verification badges
+Profile achievements
+Profile analytics
+
+Relationship to Following System
+Profiles are follow targets.
+Follow System depends on User Profiles.
+Profiles must support:
+Being followed
+Displaying follower count
+Displaying following count
+Access to follower lists
+Access to following lists
+
+Relationship to Personal Posting
+Profiles must display personal posts created by the user.
+Purpose:
+Audience building
+Contribution visibility
+Identity building
+
+Relationship to Herd Participation
+Profiles should display:
+User-created Herd posts
+Herd membership count
+Profiles must provide access to the user's Herd membership list.
+
+Relationship to Comments & Replies
+Comments and replies are attributable to profiles.
+Comment history appears on profiles.
+Comment History Controls
+Users may choose whether comment history is displayed on their profile.
+
+Relationship to Aura
+Aura is not displayed in MVP.
+Profiles must remain compatible with future Aura integration.
+Examples:
+Aura score
+Reputation indicators
+Contribution recognition
+
+Moderation & Governance Requirements
+Accountability
+All profile activity must remain attributable to an account.
+Includes:
+Posts
+Comments
+Votes
+Reports
+Herd participation
+Anonymous profiles are not part of MVP.
+
+Administrative Actions
+Platform administrators must be able to:
+Review profile activity
+Investigate reports
+Enforce moderation actions
+Enforcement Compatibility
+Profiles must support future actions such as:
+Warnings
+Temporary suspensions
+Permanent bans
+Reputation restrictions
+Even if not fully implemented in MVP.
+
+Onboarding Requirements
+Required:
+Account creation
+Not Required:
+Profile picture
+Bio completion
+Reason:
+Lower onboarding friction.
+Users may complete profiles later.
+
+Dependencies on Other MVP Features
+User Accounts
+Profiles require User Accounts.
+Dependency relationship:
+User Account
+    ↓
+User Profile
+Follow System
+Profiles are follow targets.
+Personal Posting
+Profiles display user posts.
+Comments & Replies
+Profiles identify discussion participants.
+Herd Membership
+Profiles identify community participants.
+Reporting System
+Profiles can be reported.
+Moderation Systems
+Profiles support investigation and enforcement.
 
 ### Feature: Personal Posting
 Description
