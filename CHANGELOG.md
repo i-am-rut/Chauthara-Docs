@@ -135,6 +135,31 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Personal Posting specification.
+
+- Defined:
+  - Personal Posting purpose
+  - MVP posting requirements
+  - Supported content types
+  - Post ownership and authorship rules
+  - Post visibility rules
+  - Post lifecycle
+  - Editing and deletion behavior
+  - Moderation and governance requirements
+  - Profile integration requirements
+  - Following Feed integration requirements
+  - Reporting requirements
+  - Feature dependencies
+
+- Resolved Personal Posting decisions:
+  - Display an "edited" tag for Edited posts
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 
 ## 2026-06-16
 

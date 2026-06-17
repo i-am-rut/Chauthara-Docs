@@ -3,10 +3,10 @@ Current Goal:
 Create MVP Specifications
 
 Active Task:
-Define Personal Posting specification
+Define Comments & Replies specification
 
 Next Task:
-Define Comments & Replies specification
+Define HypeUp / HypeDown Voting Specification
 
 Blocked By:
 Nothing

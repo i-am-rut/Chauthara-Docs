@@ -405,6 +405,252 @@ User Accounts
 Priority
 Critical
 
+Purpose
+Personal Posting enables users to create and publish content in their own identity outside of Herds.
+The system exists to support:
+Personal expression.
+Audience building.
+Contribution history.
+Follower engagement.
+Discussion initiation.
+Identity-driven participation.
+Dependency relationship:
+User Account
+    ↓
+User Profile
+    ↓
+Personal Posting
+    ↓
+Following Feed
+
+MVP Posting Requirements
+Authenticated users must be able to:
+Create personal posts.
+Publish personal posts.
+View their personal posts.
+Edit eligible personal posts.
+Delete their personal posts.
+View personal posts created by other users.
+Share opinions, knowledge, questions, and discussion topics through personal posts.
+Only active accounts may create personal posts.
+Every post must have an identifiable author.
+Anonymous posting is excluded from MVP.
+
+Supported Content Types
+MVP
+Personal posts may contain:
+Text Post
+Required support:
+Title
+Content
+Image Post
+Required support:
+Title + Image
+Title + Content + Image
+Images are optional.
+Not Included in MVP
+Short-form videos
+Audio uploads
+Livestream content
+Polls
+Documents
+Rich embeds
+Stories
+Ephemeral content
+
+Post Ownership & Authorship Rules
+Every personal post has exactly one author.
+Requirements:
+Posts are attributable to a User Account.
+Posts are attributable to a User Profile.
+Ownership cannot be transferred.
+Multiple authors are not supported.
+Organization accounts are not supported.
+Anonymous authorship is not supported.
+Accountability requirements:
+Every post must remain traceable to its author for moderation and governance purposes.
+
+Post Visibility Rules
+Public Visibility
+All personal posts are public in MVP.
+Personal posts must be visible through:
+Author profile.
+Following Feed (when applicable).
+Direct post access.
+Platform discovery surfaces that exist in MVP.
+Viewing public posts does not require authentication.
+Visibility Restrictions
+Posts created by:
+Deleted accounts
+Suspended accounts
+Moderation actions
+follow platform governance decisions and enforcement rules.
+Exact enforcement behavior remains a future moderation specification concern.
+Not Included in MVP
+Private posts.
+Followers-only posts.
+Custom audience controls.
+Scheduled publication.
+Draft visibility controls.
+
+Post Lifecycle & State Transitions
+Draft
+User is creating or editing content.
+Published
+Visible according to platform visibility rules.
+Deleted
+Soft-deleted content.
+No longer publicly visible.
+Retained according to platform retention policies.
+Removed
+Administrative moderation action.
+Content removed due to policy enforcement.
+Lifecycle
+Draft
+    ↓
+Published
+    ↓
+Possible Outcomes:
+Remains Published
+Edited
+Deleted by Author
+Removed by Moderation
+This aligns with the platform-wide soft deletion decision already accepted.
+
+Editing & Deletion Behavior
+Editing
+Authors may edit their own posts.
+Requirements:
+Authorship does not change.
+Post identity does not change.
+Edited Post Visibility
+Edited posts must display an indication that the post has been edited.
+The exact presentation is an implementation decision.
+Deletion
+Authors may delete their own posts.
+Result:
+Post becomes deleted.
+Post is no longer publicly visible.
+Platform retention rules still apply.
+Administrative Removal
+Administrators may remove posts that violate platform policies.
+
+Moderation & Governance Requirements
+Accountability
+All posts must be attributable to authenticated users.
+Platform Governance
+Personal posts are governed by:
+Applicable Law
+Platform Administrators
+As defined in PROJECT_CONTEXT.
+Enforcement Compatibility
+Personal Posting must support future actions such as:
+Warnings
+Content removals
+Temporary restrictions
+Account suspensions
+Permanent bans
+Abuse Prevention
+The platform should support reasonable protections against:
+Spam
+Harassment
+Impersonation
+Malicious content
+Coordinated abuse
+Specific mechanisms remain implementation decisions.
+
+Profile Integration Requirements
+Profiles must display personal posts created by the user.
+Purpose:
+Identity building.
+Audience building.
+Contribution visibility.
+Relationship:
+User Profile
+    ↓
+Personal Posting
+Profile ownership determines post authorship visibility.
+
+Following Feed Integration Requirements
+Personal posts are the primary content source for the Following Feed.
+Requirements:
+Posts from followed users are eligible for appearance in the Following Feed.
+Follow relationships determine eligibility.
+Personal Posting does not define ranking or ordering behavior.
+Relationship:
+Personal Posting
+    ↓
+Following Feed
+    ↑
+Follow System
+
+Reporting Requirements
+Users must be able to report personal posts.
+Reports should support:
+Spam
+Harassment
+Abuse
+Hate content
+Illegal content
+Other policy violations
+Reports become inputs to moderation workflows.
+Specific reporting categories may evolve over time.
+
+Dependencies on Other MVP Features
+User Accounts
+Required.
+Only authenticated active users may create posts.
+Dependency:
+User Accounts
+    ↓
+Personal Posting
+User Profiles
+Required.
+Profiles display authored posts.
+Dependency:
+User Profiles
+    ↓
+Personal Posting
+Follow System
+Required for Following Feed visibility.
+Dependency:
+Follow System
+    ↓
+Following Feed
+    ↑
+Personal Posting
+Reporting System
+Required.
+Posts must be reportable.
+Platform Moderation
+Required.
+Posts must support enforcement actions.
+Comments & Replies
+Depends on Personal Posting.
+Posts are discussion roots.
+Dependency:
+Personal Posting
+    ↓
+Comments & Replies
+
+Intentionally Postponed Beyond MVP
+V1
+Short-form video posts.
+Content sharing enhancements.
+Saved content integration.
+V2
+Audience visibility controls.
+Post privacy controls.
+Advanced creator analytics.
+Mentions inside posts.
+Future
+Polls.
+Scheduled publishing.
+Collaborative posts.
+Rich embeds.
+Ephemeral content.
+Creator monetization integrations.
+
 ### Feature: Following Feed
 Description
 Display content from followed users.
@@ -710,10 +956,6 @@ Herd System
 
 Priority
 Critical
-
-## Advanced Platform
-
-Post-MVP features that strengthen engagement and governance.
 
 ### Feature: Image Uploads
 Description
