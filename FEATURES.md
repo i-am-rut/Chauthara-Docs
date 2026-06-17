@@ -1,10 +1,27 @@
 # Features
 
+---
+## Release Definitions
+
+### MVP
+First publicly usable version of Chauhtara.
+
+### V1
+Usability and engagement enhancements.
+
+### V2
+Governance, reputation, and community quality systems.
+
+### Future
+Long-term platform expansion.
+
+---
+
 ## Core Platform
 
 These are considered essential for a usable first version.
 
-### Feature: User Accounts
+### Feature: User Accounts [MVP]
 Description
 Allow users to register, authenticate, and manage their accounts.
 
@@ -17,7 +34,7 @@ None
 Priority
 Critical
 
-### Feature: User Profiles
+### Feature: User Profiles [MVP]
 Description
 Public user identity page containing profile information and contributions.
 
@@ -30,7 +47,7 @@ User Accounts
 Priority
 Critical
 
-### Feature: Personal Posting
+### Feature: Personal Posting [MVP]
 Description
 Users create posts outside of Herds.
 
@@ -43,7 +60,7 @@ User Accounts
 Priority
 Critical
 
-### Feature: Post Feed (Following Feed)
+### Feature: Post Feed (Following Feed) [MVP]
 Description
 Display content from followed users.
 
@@ -56,7 +73,7 @@ Follow System
 Priority
 Critical
 
-### Feature: Follow System
+### Feature: Follow System [MVP]
 Description
 Users follow other users.
 
@@ -69,7 +86,7 @@ User Accounts
 Priority
 Critical
 
-### Feature: Comments & Replies
+### Feature: Comments & Replies [MVP]
 Description
 Users discuss posts through threaded conversations.
 
@@ -82,7 +99,7 @@ Posting System
 Priority
 Critical
 
-### Feature: HypeUp / HypeDown Voting
+### Feature: HypeUp / HypeDown Voting [MVP]
 Description
 Voting mechanism for posts and comments.
 
@@ -95,7 +112,7 @@ Posts, Comments
 Priority
 Critical
 
-### Feature: Herd Creation
+### Feature: Herd Creation [MVP]
 Description
 Users create topic-based communities.
 
@@ -108,7 +125,7 @@ User Accounts
 Priority
 Critical
 
-### Feature: Herd Membership
+### Feature: Herd Membership [MVP]
 Description
 Users join and leave Herds.
 
@@ -121,7 +138,7 @@ Herd System
 Priority
 Critical
 
-### Feature: Herd Posting
+### Feature: Herd Posting [MVP]
 Description
 Users create posts inside Herds.
 
@@ -134,7 +151,7 @@ Herd System
 Priority
 Critical
 
-### Feature: Herd Feed
+### Feature: Herd Feed [MVP]
 Description
 Feed showing content from joined Herds.
 
@@ -147,7 +164,7 @@ Herd Membership
 Priority
 Critical
 
-### Feature: Search & Discovery
+### Feature: Search & Discovery [V1]
 Description
 Search people, Herds, and posts.
 
@@ -160,7 +177,7 @@ Users, Herds, Posts
 Priority
 High
 
-### Feature: Save Content
+### Feature: Save Content [V1]
 Description
 Users bookmark posts.
 
@@ -173,7 +190,7 @@ Posts
 Priority
 High
 
-### Feature: Content Sharing
+### Feature: Content Sharing [V1]
 Description
 Share platform content elsewhere.
 
@@ -186,7 +203,7 @@ Profiles, Herds, Posts, Comments, URL Routing / Deep Linking, (canonical url)
 Priority
 High
 
-### Feature: Notifications
+### Feature: Notifications [V1]
 Description
 Alerts for follows, replies, votes, mentions, and Herd activity.
 
@@ -199,7 +216,7 @@ Core social actions
 Priority
 High
 
-### Feature: Reporting System
+### Feature: Reporting System [MVP]
 Description
 Users report content and behavior.
 
@@ -212,7 +229,7 @@ Posts, Comments, Users
 Priority
 Critical
 
-### Feature: Platform Moderation
+### Feature: Platform Moderation [MVP]
 Description
 Administrative moderation tools.
 
@@ -225,7 +242,7 @@ Reporting System
 Priority
 Critical
 
-### Feature: Shepherd Moderation
+### Feature: Shepherd Moderation [MVP]
 Description
 Community moderation tools.
 
@@ -238,7 +255,7 @@ Herd System
 Priority
 Critical
 
-### Feature: Aura Reputation Foundation
+### Feature: Aura Reputation Foundation [V1]
 Description
 Display user Aura and basic reputation indicators.
 
@@ -255,9 +272,9 @@ High
 
 Post-MVP features that strengthen engagement and governance.
 
-### Feature: Rich Media Uploads
+### Feature: Image Uploads [MVP]
 Description
-Images and short videos.
+Images.
 
 Why It Exists
 Improves content quality.
@@ -268,7 +285,20 @@ Posting System
 Priority
 High
 
-### Feature: Mentions
+### Feature: Short Video Uploads [V1]
+Description
+Short videos.
+
+Why It Exists
+Improves content quality.
+
+Dependencies
+Posting System
+
+Priority
+High
+
+### Feature: Mentions [V2]
 Description
 Reference users in posts and comments.
 
@@ -281,7 +311,7 @@ Profiles
 Priority
 Medium
 
-### Feature: Direct Notifications Preferences
+### Feature: Direct Notifications Preferences [V2]
 Description
 Granular notification controls.
 
@@ -294,7 +324,7 @@ Notifications
 Priority
 Medium
 
-### Feature: Aura-Based Herd Access
+### Feature: Aura-Based Herd Access [V2]
 Description
 Minimum Aura requirements for communities.
 
@@ -307,7 +337,7 @@ Aura System
 Priority
 High
 
-### Feature: Request-to-Join Herds
+### Feature: Request-to-Join Herds [V2]
 Description
 Approval-based communities.
 
@@ -320,7 +350,7 @@ Herd Membership
 Priority
 Medium
 
-### Feature: Invite-Only Herds
+### Feature: Invite-Only Herds [V2]
 Description
 Private communities.
 
@@ -333,7 +363,7 @@ Herd Membership
 Priority
 Medium
 
-### Feature: Enhanced Aura System
+### Feature: Enhanced Aura System [V2]
 Description
 Advanced reputation calculations and contributor recognition.
 
@@ -346,7 +376,7 @@ Aura Foundation
 Priority
 High
 
-### Feature: User Blocking
+### Feature: User Blocking [V1]
 Description
 Prevent interactions from specific users.
 
@@ -359,7 +389,7 @@ Accounts
 Priority
 High
 
-### Feature: User Privacy Controls
+### Feature: User Privacy Controls [V2]
 Description
 Control visibility and interactions.
 
@@ -372,7 +402,7 @@ Accounts
 Priority
 High
 
-### Feature: Moderator Tooling Expansion
+### Feature: Moderator Tooling Expansion [V2]
 Description
 Queues, actions, moderation history.
 
@@ -385,7 +415,7 @@ Moderation System
 Priority
 High
 
-### Feature: Analytics Dashboard
+### Feature: Analytics Dashboard [V2]
 Description
 Basic creator and community metrics.
 
@@ -402,7 +432,7 @@ Medium
 
 Long-term expansion features already mentioned or implied by project vision.
 
-### Feature: Discovery Feed
+### Feature: Discovery Feed [FUTURE]
 Description
 Content recommendation feed.
 
@@ -415,7 +445,7 @@ Ranking Systems
 Priority
 Future
 
-### Feature: Community Notes
+### Feature: Community Notes [FUTURE]
 Description
 Context and clarification contributions.
 
@@ -428,7 +458,7 @@ Reputation System
 Priority
 Future
 
-### Feature: Creator Subscriptions
+### Feature: Creator Subscriptions [FUTURE]
 Description
 Paid creator support.
 
@@ -441,7 +471,7 @@ Payments
 Priority
 Future
 
-### Feature: Herd Monetization
+### Feature: Herd Monetization [FUTURE]
 Description
 Community-level monetization.
 
@@ -454,7 +484,7 @@ Payments
 Priority
 Future
 
-### Feature: Private Messaging
+### Feature: Private Messaging [FUTURE]
 Description
 User-to-user communication.
 
@@ -467,7 +497,7 @@ Accounts
 Priority
 Future
 
-### Feature: End-to-End Encrypted Messaging
+### Feature: End-to-End Encrypted Messaging [FUTURE]
 Description
 Secure private conversations.
 
@@ -480,7 +510,7 @@ Messaging System
 Priority
 Future
 
-### Feature: Advanced Moderation Automation
+### Feature: Advanced Moderation Automation [FUTURE]
 Description
 Automated abuse and spam detection.
 
@@ -493,7 +523,7 @@ Moderation System
 Priority
 Future
 
-### Feature: Reputation-Based Governance
+### Feature: Reputation-Based Governance [FUTURE]
 Description
 Community participation in governance decisions.
 
@@ -506,7 +536,7 @@ Advanced Aura
 Priority
 Future
 
-### Feature: Expanded Youth Support (14+)
+### Feature: Expanded Youth Support (14+) [FUTURE]
 Description
 Additional safety systems and compliance features.
 

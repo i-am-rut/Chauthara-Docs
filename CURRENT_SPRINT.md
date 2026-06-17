@@ -1,14 +1,15 @@
+# Current Sprint
 Current Goal:
-Define MVP
+Create MVP Specifications
 
 Active Task:
-Prioritize Core Platform Features
+Define User Accounts specification
 
 Next Task:
-Define MVP Boundary
+Define User Profiles specification
 
 Blocked By:
-None
+Nothing
 
 Definition of Done:
-Core features categorized and MVP identified
+All MVP features are specified and confirmed.

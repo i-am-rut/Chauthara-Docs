@@ -500,4 +500,4 @@ The project serves as a learning vehicle for:
 
 ## Current Status
 
-Planning Phase
+MVP System Design Phase
