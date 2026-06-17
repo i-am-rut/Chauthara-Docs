@@ -76,18 +76,14 @@
   - TASKS.md
   - PROJECT_CONTEXT.md
 
-## 2026-06-17
-
-### Documentation
-
 - Completed MVP User Profiles specification.
 
 - Defined 
     - User Profile purpose
     - MVP profile requirements
-    - profile visibility rules
-    - editable profile fields
-    - non-editable profile fields
+    - Profile visibility rules
+    - Editable profile fields
+    - Non-editable profile fields
     - MVP profile customization scope
     - User Profile relationships
     - governance requirements
@@ -102,6 +98,36 @@
     - Users may hide comment history.
     - Follower and following counts should be publicly visible on profile.
     - Profile completion is optional after account creation.
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed MVP Follow System specification.
+
+- Defined:
+  - Follow System purpose
+  - Follow relationship model
+  - Follow behavior
+  - Follower and following visibility
+  - Profile integration requirements
+  - Following Feed integration requirements
+  - Governance requirements
+  - Feature dependencies
+
+- Resolved Follow System decisions:
+  - Open follow model selected.
+  - Follow relationships are directional.
+  - Users cannot follow themselves.
+  - Follow approval workflow excluded from MVP.
+  - Private accounts excluded from MVP.
+  - Follower counts publicly visible.
+  - Following counts publicly visible.
+  - Follower lists publicly visible.
+  - Following lists publicly visible.
+  - Follow notifications excluded from MVP.
 
 - Updated:
   - FEATURES.md

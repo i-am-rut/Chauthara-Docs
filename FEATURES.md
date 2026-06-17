@@ -431,6 +431,169 @@ User Accounts
 Priority
 Critical
 
+Purpose
+The Follow System enables users to establish ongoing relationships with other users.
+The system provides:
+Audience building
+Contributor discovery
+Identity graph creation
+Following Feed personalization
+Reputation and influence foundations
+Dependency relationship:
+User Accounts
+    ↓
+User Profiles
+    ↓
+Follow System
+    ↓
+Following Feed
+
+Follow Relationship Requirements
+A follow relationship represents one user choosing to subscribe to another user's public activity.
+Requirements:
+Users may follow other users.
+Users may unfollow users.
+Follow relationships are directional.
+Following is not mutual by default.
+Following does not require approval in MVP.
+Users cannot follow themselves.
+Only active accounts may create follow relationships.
+Example:
+User A follows User B.
+Result:
+User A becomes a follower of User B.
+User B becomes followed by User A.
+User B is not automatically following User A.
+
+Follow Behavior
+Users must be able to:
+Follow a profile.
+Unfollow a profile.
+View whether they currently follow a profile.
+When a follow occurs:
+Relationship becomes active immediately.
+Follower count increases.
+Following count increases.
+Followed user's future content becomes eligible for Following Feed visibility.
+When an unfollow occurs:
+Relationship is removed immediately.
+Follower count decreases.
+Following count decreases.
+Future content from that user no longer appears in the Following Feed because of that relationship.
+Historical content remains publicly accessible through profiles and other platform surfaces where otherwise visible.
+
+Visibility Requirements
+Public Visibility
+The following information is publicly visible:
+Follower count
+Following count
+Follower list
+Following list
+Reason:
+These relationships support:
+Discovery
+Audience building
+Identity transparency
+Private Visibility
+The following are not exposed:
+Internal follow timestamps
+Internal relationship metadata
+Moderation-related relationship data
+Authentication Rules
+Viewing profiles does not require authentication.
+Following and unfollowing require authenticated accounts.
+
+Profile Integration Requirements
+Profiles are follow targets.
+Profiles must support:
+Being followed
+Displaying follower count
+Displaying following count
+Access to follower list
+Access to following list
+Follow information is part of profile identity and audience visibility.
+Relationship:
+User Profile
+    ↓
+Follow System
+
+Feed Integration Requirements
+The Follow System is a dependency of the Following Feed.
+Following Feed requirements:
+Feed displays content from followed users.
+Feed visibility is determined by active follow relationships.
+Personal posts from followed users appear in Following Feed.
+Future supported content types may also appear.
+The Follow System itself does not define ranking or ordering behavior.
+Those are feed concerns rather than follow-system concerns.
+
+Moderation & Governance Requirements
+Accountability
+Every follow relationship must be attributable to authenticated accounts.
+Anonymous participation is excluded from MVP.
+Enforcement Compatibility
+The system must support future moderation actions affecting follow relationships.
+Examples:
+Account suspension
+Account bans
+Abuse investigations
+Spam investigations
+Abuse Prevention
+The platform should support reasonable protections against:
+Follow spam
+Automated account abuse
+Artificial audience manipulation
+Specific mechanisms remain implementation decisions.
+Governance Consistency
+Follow relationships do not override platform governance hierarchy defined in PROJECT_CONTEXT.
+
+Dependencies on Other MVP Features
+User Accounts
+Required.
+Only authenticated users may create follow relationships.
+Dependency:
+User Accounts
+    ↓
+Follow System
+User Profiles
+Required.
+Profiles are follow targets.
+Dependency:
+User Profiles
+    ↓
+Follow System
+Following Feed
+Depends on Follow System.
+Dependency:
+Follow System
+    ↓
+Following Feed
+Personal Posting
+Follow relationships determine which personal posts appear in Following Feed.
+Dependency:
+Personal Posting
+    ↓
+Following Feed
+    ↑
+Follow System
+
+Intentionally Postponed Beyond MVP
+V1
+Follow notifications
+User blocking interactions with follow relationships
+V2
+Private accounts
+Follow approval requests
+Follow privacy controls
+Follower visibility controls
+Following visibility controls
+Future
+Suggested users
+Follow recommendations
+Mutual follower indicators
+Creator audience analytics
+Reputation-influenced discovery
+
 ### Feature: Comments & Replies
 Description
 Users discuss posts through threaded conversations.

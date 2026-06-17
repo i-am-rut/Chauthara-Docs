@@ -3,10 +3,10 @@ Current Goal:
 Create MVP Specifications
 
 Active Task:
-Define Follow System specification
+Define Personal Posting specification
 
 Next Task:
-Define Personal Posting specification
+Define Comments & Replies specification
 
 Blocked By:
 Nothing
