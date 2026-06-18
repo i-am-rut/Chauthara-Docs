@@ -227,6 +227,37 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Shepherd Moderation specification.
+
+- Defined:
+  - Shepherd Moderation purpose
+  - Shepherd authority and responsibilities
+  - Community moderation requirements
+  - Membership management requirements
+  - Content moderation requirements
+  - Escalation requirements
+  - Relationship with Platform Administrators
+  - Audit and accountability requirements
+  - Abuse prevention requirements
+  - Feature dependencies
+  - Future compatibility requirements
+
+- Resolved Shepherd Moderation decisions:
+  - Shared governance moderation model selected.
+  - Shepherd authority limited to their Herd.
+  - Shepherds may remove Herd posts, comments, replies, and members.
+  - Shepherds may review and dismiss Herd-related reports.
+  - Shepherds may escalate reports and moderation disputes to Herd Owners.
+  - Herd Owners may escalate platform-level matters to Platform Administrators.
+  - Platform Administrators retain final override authority.
+  - Platform-wide enforcement remains exclusive to Platform Administrators.
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 ## 2026-06-17
 
 ### Documentation

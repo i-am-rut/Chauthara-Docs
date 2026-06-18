@@ -1584,6 +1584,10 @@ Appoints Shepherds.
 Removes Shepherds.
 Transfers ownership.
 Initiates Herd deletion.
+Serves as the primary escalation authority for community moderation disputes.
+Reviews appeals of Shepherd moderation actions.
+Oversees Shepherd conduct within the Herd.
+May reverse Shepherd moderation decisions within Herd authority.
 Shepherds
 Herds support Shepherd moderation.
 MVP Requirements:
@@ -2984,7 +2988,9 @@ Exact moderation actions are defined in future moderation specifications.
 
 Escalation
 
-A report initially reviewed by a Shepherd may be escalated to Platform Administrators.
+A report initially reviewed by a Shepherd may be escalated to the Herd Owner.
+
+The Herd Owner may further escalate the matter to Platform Administrators when platform-level review is required.
 
 Abuse Prevention Requirements
 
@@ -3089,6 +3095,274 @@ Herd System
 
 Priority
 Critical
+
+Purpose
+
+Shepherd Moderation enables community-level governance within Herds.
+
+The system exists to support:
+
+Community autonomy.
+Community rule enforcement.
+Discussion quality.
+Community safety.
+Abuse prevention.
+Local dispute resolution.
+
+Dependency relationship:
+
+User Account
+↓
+Herd Creation
+↓
+Shepherd Moderation
+↓
+Community Governance
+
+MVP Moderation Requirements
+
+Every active Herd must support Shepherd moderation.
+
+Requirements:
+
+Herd Owners may appoint Shepherds.
+A Herd may have multiple Shepherds.
+Shepherd identities must remain publicly visible.
+Shepherd authority exists only within the Herd where the role is held.
+Shepherd actions must remain attributable to identifiable accounts.
+All Shepherd actions remain subject to administrator review.
+
+Anonymous moderation is excluded from MVP.
+
+Shepherd Authority & Responsibilities
+
+Within their Herd, Shepherds are responsible for:
+
+Enforcing Herd rules.
+Reviewing Herd-related reports.
+Reviewing community discussions.
+Addressing disruptive behavior.
+Maintaining community standards.
+Supporting constructive discussion.
+Assisting the Herd Owner with governance.
+
+Shepherds act as community moderators rather than community owners.
+
+Moderation Actions Available To Shepherds
+
+Within their Herd, Shepherds may:
+
+Content Actions
+Remove Herd posts.
+Remove comments on Herd posts.
+Remove replies on Herd posts.
+Membership Actions
+Remove members from the Herd.
+Report Actions
+Review eligible reports.
+Dismiss reports.
+Apply community-level enforcement.
+Escalate reports.
+Moderation Scope & Limitations
+Shepherds May Moderate
+
+Within their Herd only:
+
+Herd posts.
+Comments on Herd posts.
+Replies on Herd posts.
+Membership participation.
+Community rule violations.
+Shepherds May Not
+Suspend accounts.
+Ban accounts platform-wide.
+Remove personal posts.
+Remove content outside their Herd.
+Modify platform policies.
+Override administrator decisions.
+Override applicable law.
+Member Management Requirements
+
+Shepherds must be able to manage community participation.
+
+Requirements:
+
+Members may be removed from a Herd.
+Removed members lose Herd membership.
+Removed members lose future Herd posting eligibility.
+Existing authored content remains attributable to original authors.
+Community removal does not automatically create platform enforcement.
+
+Community removal is not equivalent to platform suspension.
+
+Content Moderation Requirements
+
+Shepherds may enforce:
+
+Herd rules.
+Community participation standards.
+
+Examples:
+
+Off-topic content.
+Spam.
+Community disruption.
+Repeated rule violations.
+Harassment occurring within the Herd.
+
+Available actions:
+
+Remove Herd posts.
+Remove comments.
+Remove replies.
+
+Removed content:
+
+Must no longer appear in Herd Feed.
+Must no longer appear through normal Herd visibility surfaces.
+
+This remains consistent with the Herd Feed specification already adopted.
+
+Escalation Requirements
+
+Certain matters exceed Shepherd authority.
+
+Examples:
+
+Illegal content.
+Serious threats.
+Platform-wide harassment.
+Impersonation.
+Coordinated abuse.
+Repeat severe violations.
+Cases potentially requiring account suspension.
+
+Requirements:
+
+Shepherds may escalate moderation disputes and reports to the Herd Owner.
+Matters requiring platform-level review may be escalated by the Herd Owner or directly reviewed by Platform Administrators when necessary.
+Escalation does not transfer authority to Shepherds.
+Platform Administrators retain final authority.
+Relationship With Platform Administrators
+
+Platform Administrators:
+
+May review any Shepherd action.
+May review any report.
+May reverse Shepherd actions.
+May apply stronger enforcement.
+May remove Shepherds from moderation authority when necessary.
+Retain ultimate governance authority.
+
+Authority hierarchy remains:
+
+Applicable Law
+↓
+Platform Administrators
+↓
+Herd Owner
+↓
+Shepherds
+
+Audit & Accountability Requirements
+
+All Shepherd moderation actions must remain attributable to a Shepherd account.
+
+Requirements:
+
+Moderation actions must be reviewable by Platform Administrators.
+Shepherd identity must remain associated with moderation actions.
+Anonymous moderation actions are prohibited.
+Moderation authority must remain traceable.
+
+Community governance requires accountability.
+
+Abuse Prevention Requirements
+
+The system must support protections against:
+
+Selective enforcement abuse.
+Retaliatory moderation.
+Harassment through moderation authority.
+Coordinated Shepherd abuse.
+Improper community removals.
+
+Requirements:
+
+Platform Administrators may review Shepherd actions.
+Platform Administrators may override Shepherd decisions.
+Shepherd authority remains limited in scope.
+Community moderation cannot create platform-wide enforcement.
+Dependencies On Other MVP Features
+User Accounts
+
+Required.
+
+All Shepherd actions must be attributable to accounts.
+
+User Profiles
+
+Required.
+
+Shepherd identities are publicly visible.
+
+Herd Creation
+
+Required.
+
+Defines Herd ownership and Shepherd appointment.
+
+Herd Membership
+
+Required.
+
+Provides membership management scope.
+
+Herd Posting
+
+Required.
+
+Provides content subject to community moderation.
+
+Comments & Replies
+
+Required.
+
+Provides discussion content subject to moderation.
+
+Herd Feed
+
+Required.
+
+Moderation actions affect content eligibility.
+
+Reporting System
+
+Required.
+
+Reports provide moderation inputs.
+
+Platform Moderation
+
+Required.
+
+Provides oversight and escalation authority.
+
+Intentionally Postponed Beyond MVP
+V2
+Community bans.
+Temporary community restrictions.
+Moderator action history visibility.
+Community moderation transparency statistics.
+Community appeals workflow.
+Moderator reputation systems.
+Future
+Community elections for Shepherds.
+Community voting on moderation actions.
+Reputation-based moderator eligibility.
+Trusted Shepherd programs.
+Advanced moderation analytics.
+Automated moderation assistance.
 
 ### Feature: Image Uploads
 Description

@@ -3,10 +3,10 @@ Current Goal:
 Create MVP Specifications
 
 Active Task:
-Define Shepherd Moderation Specification
+Define Platform Moderation Specification
 
 Next Task:
-Define Platform Moderation Specification
+Define Image Uploads Specification
 
 Blocked By:
 Nothing
