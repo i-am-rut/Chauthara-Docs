@@ -1959,10 +1959,448 @@ Why It Exists
 Community discussion.
 
 Dependencies
-Herd System
+User Accounts
+User Profiles
+Herd Creation
+Herd Membership
 
 Priority
 Critical
+
+Purpose
+
+Herd Posting enables users to contribute content within topic-focused communities.
+
+The system exists to support:
+
+Community discussion.
+Knowledge sharing.
+Community participation.
+Question asking.
+Question answering.
+Community engagement.
+Herd Feed content creation.
+
+Dependency relationship:
+
+User Account
+↓
+User Profile
+↓
+Herd Membership
+↓
+Herd Posting
+↓
+Herd Feed
+
+MVP Posting Requirements
+
+Authenticated active users must be able to:
+
+Create Herd posts.
+Publish Herd posts.
+View Herd posts.
+Edit eligible Herd posts.
+Delete their Herd posts.
+View Herd posts created by other users.
+
+Only active accounts may create Herd posts.
+
+Every Herd post must have an identifiable author.
+
+Anonymous posting is excluded from MVP.
+
+Posting Eligibility Requirements
+
+To create a Herd post:
+
+Requirements:
+
+User must have an active account.
+Herd must be active.
+User must be an active member of the Herd.
+
+Users who are not members may:
+
+View public Herd content.
+Join the Herd.
+
+Users who are not members may not:
+
+Create Herd posts.
+
+Suspended accounts cannot create Herd posts.
+
+Deleted accounts cannot create Herd posts.
+
+Supported Content Types
+MVP
+
+Herd posts may contain:
+
+Text Post
+
+Required support:
+
+Title
+Content
+
+Image Post
+
+Required support:
+
+Title + Image
+Title + Content + Image
+
+Images are optional.
+
+Not Included In MVP
+Short-form videos
+Audio uploads
+Livestream content
+Polls
+Documents
+Rich embeds
+Stories
+Ephemeral content
+
+This remains consistent with Personal Posting.
+
+Post Ownership & Authorship Rules
+
+Every Herd post has exactly one author.
+
+Requirements:
+
+Posts are attributable to a User Account.
+Posts are attributable to a User Profile.
+Posts belong to exactly one Herd.
+Ownership cannot be transferred.
+Multiple authors are not supported.
+Organization accounts are not supported.
+Anonymous authorship is not supported.
+
+Accountability requirements:
+
+Every Herd post must remain traceable to its author.
+
+Community identity does not replace personal identity.
+
+Herd-Specific Posting Permissions
+Members
+
+May:
+
+Create posts.
+Edit their own posts.
+Delete their own posts.
+Comment on posts.
+Vote on posts.
+Non-Members
+
+May:
+
+View public Herd posts.
+
+May Not:
+
+Create Herd posts.
+Shepherds
+
+Do not automatically gain ownership of member posts.
+
+Shepherd authority relates to moderation and governance only.
+
+Herd Owners
+
+Do not gain ownership of member-created content.
+
+Ownership remains with the author.
+
+Post Visibility Requirements
+Public Visibility
+
+All Herd posts are publicly visible in MVP.
+
+Herd posts must be visible through:
+
+Herd page.
+Herd Feed (when eligible).
+Author profile.
+Direct post access.
+MVP discovery mechanisms.
+
+Viewing public Herd posts does not require authentication.
+
+Visibility Restrictions
+
+Posts created by:
+
+Deleted accounts.
+Suspended accounts.
+Moderation actions.
+
+follow platform governance and enforcement rules.
+
+Exact enforcement behavior remains a future moderation specification concern.
+
+Not Included In MVP
+Private Herd posts.
+Members-only visibility.
+Scheduled publication.
+Draft sharing.
+Audience controls.
+Post Lifecycle & State Transitions
+
+Draft
+↓
+Published
+↓
+
+Possible Outcomes:
+
+Remains Published
+Edited
+Deleted by Author
+Removed by Moderation
+Deleted
+
+Soft-deleted content.
+
+No longer publicly visible.
+
+Retained according to platform retention policies.
+
+Removed
+
+Administrative or community moderation action.
+
+Content removed due to policy violations.
+
+Editing & Deletion Behavior
+Editing
+
+Authors may edit their own Herd posts.
+
+Requirements:
+
+Authorship does not change.
+Post identity does not change.
+
+Edited Herd posts must display an indication that the post was edited.
+
+This remains consistent with Personal Posting.
+
+Deletion
+
+Authors may delete their own Herd posts.
+
+Result:
+
+Post becomes deleted.
+Post is no longer publicly visible.
+Retention policies still apply.
+Administrative Removal
+
+Platform administrators may remove Herd posts.
+
+Community Removal
+
+Shepherds may remove Herd posts within their Herd according to Herd governance rules.
+
+This aligns with the community autonomy principles already defined in PROJECT_CONTEXT.
+
+Moderation & Governance Requirements
+Accountability
+
+All Herd posts must be attributable to authenticated users.
+
+Anonymous participation is excluded from MVP.
+
+Governance Hierarchy
+
+Herd posts are governed by:
+
+Applicable Law
+↓
+Platform Administrators
+↓
+Herd Owner
+↓
+Shepherds
+
+Abuse Prevention
+
+Platform must support reasonable protections against:
+
+Spam
+Harassment
+Abuse
+Impersonation
+Coordinated abuse
+Community disruption
+
+Specific mechanisms remain implementation decisions.
+
+Enforcement Compatibility
+
+Herd Posting must support future:
+
+Community restrictions
+Community bans
+Reputation restrictions
+Aura-based participation requirements
+Community moderation expansion
+Integration With Herd Membership
+
+Herd Membership determines posting eligibility.
+
+Relationship:
+
+Herd Membership
+↓
+Herd Posting
+
+Requirements:
+
+Joining a Herd enables posting eligibility.
+Leaving a Herd removes future posting eligibility.
+Existing authored posts remain attributable to the original author.
+Membership does not transfer ownership of content.
+Integration With Comments & Replies
+
+Herd posts are discussion roots.
+
+Relationship:
+
+Herd Posting
+↓
+Comments
+↓
+Replies
+
+Requirements:
+
+Users may comment on Herd posts.
+Users may reply within Herd post discussions.
+Comments and replies remain governed by the Comments & Replies specification.
+Integration With HypeUp / HypeDown Voting
+
+Herd posts are valid voting targets.
+
+Relationship:
+
+Herd Posting
+↓
+HypeUp / HypeDown
+
+Requirements:
+
+Users may HypeUp Herd posts.
+Users may HypeDown Herd posts.
+Self-voting remains prohibited.
+Voting behavior follows the Voting specification.
+Reporting Requirements
+
+Users must be able to report Herd posts.
+
+Reports should support:
+
+Spam
+Harassment
+Abuse
+Hate content
+Illegal content
+Community rule violations
+Other policy violations
+
+Reports become inputs to moderation workflows.
+
+Both Platform Administrators and Herd moderation teams may review reports according to governance authority.
+
+Dependencies On Other MVP Features
+User Accounts
+
+Required.
+
+Only authenticated active users may create Herd posts.
+
+Dependency:
+
+User Accounts
+↓
+Herd Posting
+
+User Profiles
+
+Required.
+
+Profiles identify authors.
+
+Dependency:
+
+User Profiles
+↓
+Herd Posting
+
+Herd Creation
+
+Required.
+
+Posts cannot exist without Herds.
+
+Dependency:
+
+Herd Creation
+↓
+Herd Posting
+
+Herd Membership
+Required.
+Membership determines posting eligibility.
+Dependency:
+Herd Membership
+    ↓
+Herd Posting
+Comments & Replies
+Depends on Herd Posting.
+Dependency:
+Herd Posting
+    ↓
+Comments & Replies
+HypeUp / HypeDown Voting
+Depends on Herd Posting.
+Dependency:
+Herd Posting
+    ↓
+HypeUp / HypeDown
+Reporting System
+Required.
+Herd posts must be reportable.
+Shepherd Moderation
+Required.
+Herd posts must support community moderation.
+Platform Moderation
+Required.
+Herd posts must support platform enforcement.
+
+Intentionally Postponed Beyond MVP
+V1
+Saved Herd posts integration.
+Content sharing enhancements.
+Herd notifications.
+V2
+Aura-gated posting.
+Community-specific posting restrictions.
+Community bans.
+Community-specific participation requirements.
+Future
+Poll posts.
+Scheduled publication.
+Rich embeds.
+Collaborative posts.
+Anonymous community posting.
+Reputation-based posting permissions.
 
 ### Feature: Herd Feed
 Description

@@ -143,9 +143,11 @@ Authority Hierarchy:
 
 1. Applicable Law and Regulatory Requirements
 2. Platform Administrators
-3. Shepherds (Community Moderators)
+3. Herd Owners
+4. Shepherds (Community Moderators)
 
 Community governance may influence local community decisions but cannot override platform governance or legal requirements.
+Shepherd actions remain subject to administrator review and override.
 
 ---
 

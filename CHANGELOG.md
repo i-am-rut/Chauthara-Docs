@@ -126,7 +126,38 @@
   - Membership lists publicly visible.
   - Joined Herds publicly visible on profiles.
   - Membership does not grant governance authority.
-  
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed MVP Herd Posting specification.
+
+- Defined:
+  - Herd Posting purpose
+  - MVP posting requirements
+  - Posting eligibility requirements
+  - Supported content types
+  - Post ownership and authorship rules
+  - Herd-specific posting permissions
+  - Post visibility requirements
+  - Editing and deletion behavior
+  - Moderation and governance requirements
+  - Herd Membership integration
+  - Comments and voting integration
+  - Reporting requirements
+  - Feature dependencies
+
+- Resolved Herd Posting decisions:
+  - Herd membership required for posting.
+  - Herd posts are publicly visible.
+  - Herd posts use the same content model as Personal Posts.
+  - Herd post ownership remains with the author.
+  - Edited Herd posts display an edited indicator.
+  - Shepherds may moderate Herd posts but do not own member-created content.
+
 - Updated:
   - FEATURES.md
   - QUESTIONS.md
