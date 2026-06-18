@@ -1,12 +1,11 @@
 # Ongoing
 Create detailed specifications for MVP features.
-Comments & Replies Specification
+HypeUp / HypeDown Voting Specification
 
 
 
 
 # Pending
-HypeUp / HypeDown Voting Specification
 Following Feed Specification
 
 Herd Creation Specification
@@ -17,6 +16,7 @@ Herd Feed Specification
 Reporting System Specification
 Shepherd Moderation Specification
 Platform Moderation Specification
+Resolve comment lifecycle moderation questions in future moderation specifications
 
 Define MVP user flows.
 Define MVP data model boundaries.
@@ -34,3 +34,4 @@ User Accounts Feature Specification
 User Profiles Feature Specification
 Follow System Feature Specification
 Personal Posting System Feature Specification
+Comments & Replies Specification

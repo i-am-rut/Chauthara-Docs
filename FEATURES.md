@@ -853,6 +853,270 @@ Posting System
 Priority
 Critical
 
+Purpose
+Comments & Replies enable users to participate in discussions around posts.
+The system exists to support:
+Discussion.
+Knowledge sharing.
+Question answering.
+Clarification.
+Community participation.
+Contribution visibility.
+Dependency relationship:
+User Account
+    ↓
+User Profile
+    ↓
+Personal Post / Herd Post
+    ↓
+Comments & Replies
+
+MVP Discussion Requirements
+Authenticated users must be able to:
+Create comments.
+Create replies.
+View comments.
+View replies.
+Edit eligible comments.
+Edit eligible replies.
+Delete their comments.
+Delete their replies.
+Only active accounts may participate.
+Every comment and reply must have an identifiable author.
+Anonymous participation is excluded from MVP.
+
+Comment Creation Requirements
+Comments are direct responses to posts.
+Requirements:
+Users may comment on eligible posts.
+Every comment must have exactly one author.
+Comments must be attributable to a User Account.
+Comments must be attributable to a User Profile.
+Users may create multiple comments on a post.
+Empty comments are not permitted.
+Comment authorship cannot be transferred.
+
+Reply Creation Requirements
+Replies are responses to comments or other replies.
+Requirements:
+Users may reply to comments.
+Users may reply to replies.
+Every reply must have exactly one author.
+Replies remain attributable to their author.
+Empty replies are not permitted.
+Reply ownership cannot be transferred.
+Nesting & Thread Structure Requirements
+Discussion Structure
+Post
+    ↓
+Comment
+    ↓
+Reply
+    ↓
+Reply
+    ↓
+Additional Replies
+Requirements:
+Comments belong to a single post.
+Replies belong to a single discussion thread.
+Discussion relationships must be preserved.
+Parent-child relationships must remain intact.
+Exact visual presentation is an implementation decision.
+
+Visibility & Ordering Requirements
+Public Visibility
+All comments and replies are public in MVP.
+Comments and replies must be visible through:
+Associated post.
+Author profile (subject to profile comment-history preference).
+Direct access mechanisms that exist in MVP.
+Viewing public discussions does not require authentication.
+
+Ordering Requirements
+Comments and replies must have a deterministic ordering mechanism.
+The exact ordering strategy is an implementation decision for MVP.
+Examples:
+Chronological.
+Reverse chronological.
+Future ranking systems.
+Comments & Replies do not define ranking behavior.
+Future voting systems may influence ordering.
+
+Comment & Reply Lifecycle
+Draft
+    ↓
+Published
+    ↓
+Possible Outcomes:
+Remains Published
+Edited
+Deleted by Author
+Removed by Moderation
+Deleted
+Soft-deleted content.
+Removed from public visibility.
+Retained according to platform retention policies.
+Removed
+Administrative moderation action.
+Content removed due to policy violations.
+
+Editing & Deletion Behavior
+Editing
+Authors may edit their own comments and replies.
+Requirements:
+Authorship does not change.
+Comment identity does not change.
+Reply identity does not change.
+Edited Visibility
+Edited comments and replies must display an indication that they were edited.
+The exact presentation is an implementation decision.
+Deletion
+Authors may delete their own comments and replies.
+Result:
+Content becomes deleted.
+Content is no longer publicly visible.
+Platform retention policies still apply.
+Administrative Removal
+Administrators may remove comments and replies that violate platform policies.
+Deleted Account Behavior
+When an account is deleted:
+- Comments and replies created by that account remain visible.
+- Discussion continuity should be preserved.
+- The original username is no longer displayed.
+- The author must be indicated as a deleted account.
+- Exact presentation is an implementation decision.
+Example:
+[deleted]
+
+Moderation & Governance Requirements
+Accountability
+All comments and replies must be attributable to authenticated users.
+Anonymous participation is excluded from MVP.
+Platform Governance
+Comments and replies are governed by:
+Applicable Law
+Platform Administrators
+As defined in PROJECT_CONTEXT.
+Abuse Prevention
+The platform should support reasonable protections against:
+Spam
+Harassment
+Abuse
+Impersonation
+Coordinated abuse
+Specific mechanisms remain implementation decisions.
+Enforcement Compatibility
+Discussion systems must support future actions such as:
+Warnings
+Content removals
+Temporary restrictions
+Account suspensions
+Permanent bans
+
+Profile Integration Requirements
+Comments and replies are attributable to profiles.
+Profiles must support displaying user comment history.
+Users may choose whether comment history appears on their profile.
+This follows the previously resolved profile decision.
+Purpose:
+Contribution visibility.
+Reputation building.
+Accountability.
+Relationship:
+User Profile
+    ↓
+Comments & Replies
+
+Post Integration Requirements
+Comments and replies are discussion extensions of posts.
+Requirements:
+Posts act as discussion roots.
+Comments belong to posts.
+Replies exist within post discussion threads.
+Deleting a post does not automatically define comment handling behavior.
+Moderation behavior affecting discussion trees is a future decision.
+Relationship:
+Post
+    ↓
+Comments
+    ↓
+Replies
+
+Reporting Requirements
+Users must be able to report:
+Comments
+Replies
+Reports should support:
+Spam
+Harassment
+Abuse
+Hate content
+Illegal content
+Other policy violations
+Reports become inputs to moderation workflows.
+Specific reporting categories may evolve over time.
+
+Dependencies on Other MVP Features
+User Accounts
+Required.
+Only authenticated active users may participate.
+Dependency:
+User Accounts
+    ↓
+Comments & Replies
+User Profiles
+Required.
+Profiles identify discussion participants.
+Dependency:
+User Profiles
+    ↓
+Comments & Replies
+Personal Posting
+Required.
+Posts are discussion roots.
+Dependency:
+Personal Posting
+    ↓
+Comments & Replies
+Herd Posting
+Required.
+Herd posts also act as discussion roots.
+Dependency:
+Herd Posting
+    ↓
+Comments & Replies
+Reporting System
+Required.
+Comments and replies must be reportable.
+Platform Moderation
+Required.
+Comments and replies must support enforcement actions.
+HypeUp / HypeDown Voting
+Depends on Comments & Replies.
+Comments are valid voting targets.
+Dependency:
+Comments & Replies
+    ↓
+HypeUp / HypeDown
+
+Intentionally Postponed Beyond MVP
+V1
+Comment sharing.
+Saved comments.
+Comment permalinks enhancements.
+V2
+User mentions in comments.
+Advanced discussion sorting.
+Comment search.
+Comment collapse preferences.
+Moderation history visibility.
+Future
+Community notes integration.
+Reputation-aware discussion ranking.
+AI-assisted moderation.
+Rich media comments.
+Anonymous discussion modes (if ever adopted).
+
 ### Feature: HypeUp / HypeDown Voting
 Description
 Voting mechanism for posts and comments.

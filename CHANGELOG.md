@@ -1,3 +1,32 @@
+## 2026-06-18
+
+### Documentation
+
+- Completed MVP Comments & Replies specification.
+
+- Defined:
+  - Comments & Replies purpose
+  - MVP discussion requirements
+  - Comment creation requirements
+  - Reply creation requirements
+  - Nesting and thread structure requirements
+  - Visibility and ordering requirements
+  - Editing and deletion behavior
+  - Moderation and governance requirements
+  - Profile integration requirements
+  - Post integration requirements
+  - Reporting requirements
+  - Feature dependencies
+
+- Resolved Comments and Replies Decision:
+  - Comments and replies must remain visible with [deleted] as author.
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 ## 2026-06-17
 
 ### Documentation
