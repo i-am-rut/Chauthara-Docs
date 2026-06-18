@@ -79,6 +79,33 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Herd Creation specification.
+
+- Defined:
+  - Herd purpose
+  - Herd creation requirements
+  - Herd ownership model
+  - Shepherd leadership requirements
+  - Herd metadata requirements
+  - Herd visibility requirements
+  - Herd membership model
+  - Herd lifecycle requirements
+  - Moderation and governance requirements
+  - Feature dependencies
+
+- Resolved Herd Creation decision:
+  - Herd creation does not require Aura in MVP.
+  - Shepherd identities must always be publicly visible.
+  - Herd rules are mandatory in MVP.
+  - New Herds receive default placeholder rules at creation.
+  - Herd Owners and Shepherds may replace or modify default rules.
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 ## 2026-06-17
 
 ### Documentation

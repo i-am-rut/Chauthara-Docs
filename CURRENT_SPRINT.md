@@ -3,10 +3,10 @@ Current Goal:
 Create MVP Specifications
 
 Active Task:
-Define Herd Creation Specification
+Define Herd Membership Specification
 
 Next Task:
-Define Herd Membership Specification
+Define Herd Posting Specification
 
 Blocked By:
 Nothing

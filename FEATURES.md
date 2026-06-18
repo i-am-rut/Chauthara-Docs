@@ -1524,9 +1524,229 @@ Community-centric participation.
 
 Dependencies
 User Accounts
+User Profile
 
 Priority
 Critical
+
+Purpose
+Herd Creation enables users to establish topic-focused communities that support discussion, knowledge sharing, collaboration, and long-term community participation.
+The system exists to support:
+Community formation.
+Topic-focused discussion.
+Community identity.
+Community governance.
+Future community growth.
+Dependency relationship:
+User Account
+    ↓
+User Profile
+    ↓
+Herd Creation
+    ↓
+Herd Membership
+    ↓
+Herd Posting
+    ↓
+Herd Feed
+
+MVP Herd Creation Requirements
+Authenticated active users must be able to:
+Create Herds.
+View Herds.
+Edit eligible Herd information.
+Leave leadership roles.
+Delete Herds under defined lifecycle rules.
+Discover publicly visible Herds through MVP discovery mechanisms.
+Every Herd must:
+Have a unique identity.
+Have at least one identifiable owner.
+Have an identifiable topic or purpose.
+Remain attributable to a creator account.
+Anonymous community creation is excluded from MVP.
+
+Who Can Create Herds
+Requirements:
+Only authenticated active accounts may create Herds.
+Suspended accounts cannot create Herds.
+Deleted accounts cannot create Herds.
+Herd creation does not require Aura.
+Herd creation does not require administrator approval.
+
+Herd Ownership & Leadership Requirements
+Every Herd must have:
+Herd Owner
+The creator becomes the initial owner.
+Responsibilities:
+Represents community leadership.
+Manages Herd settings.
+Appoints Shepherds.
+Removes Shepherds.
+Transfers ownership.
+Initiates Herd deletion.
+Shepherds
+Herds support Shepherd moderation.
+MVP Requirements:
+A Herd may have multiple Shepherds.
+Shepherds assist with community governance.
+Shepherd authority exists only within the Herd.
+Shepherd authority cannot override platform administrators.
+Authority hierarchy remains:
+Applicable Law
+    ↓
+Platform Administrators
+    ↓
+Herd Owner
+    ↓
+Shepherds
+This remains consistent with PROJECT_CONTEXT governance rules.
+
+Herd Metadata Requirements
+Every Herd must contain:
+Required
+Herd name.
+Herd description.
+Creator/owner identity.
+Community rules.
+Optional
+Herd avatar/image.
+At Herd creation, default placeholder rules must be provided.
+The Herd Owner and Shepherds may modify, replace, or expand those rules later.
+System Managed
+Creation date.
+Membership count.
+Shepherd count.
+Ownership information.
+Herd names must be unique.
+
+Herd Visibility Requirements
+Public Visibility
+All Herds are publicly visible in MVP.
+Publicly visible information:
+Herd name.
+Description.
+Membership count.
+Owner information.
+Shepherd information.
+Community rules.
+Shepherd identities must always be publicly visible in MVP.
+Viewing public Herd information does not require authentication.
+Not Included in MVP
+Private Herds.
+Hidden Herds.
+Invite-only Herds.
+Request-to-Join Herds.
+These already exist as V2 roadmap items.
+
+Herd Membership Model
+MVP Model
+Open Join
+Users may freely join or leave Herds.
+Membership approval is not required.
+Future Herd models remain compatible:
+Aura Required (V2)
+Request to Join (V2)
+Invite Only (V2)
+These models are intentionally excluded from MVP.
+
+Herd Lifecycle Requirements
+States
+Active
+Normal operating state.
+Capabilities:
+Accept members.
+Accept Herd posts.
+Support moderation.
+Deleted
+Soft-deleted community.
+Capabilities:
+No longer publicly visible.
+Retained according to platform retention policies.
+Removed
+Administrative enforcement action.
+Used when:
+Policy violations.
+Spam communities.
+Illegal content communities.
+Abuse-focused communities.
+Lifecycle:
+Created
+    ↓
+Active
+    ↓
+Possible Outcomes
+    ├─ Remains Active
+    ├─ Ownership Transfer
+    ├─ Deleted
+    └─ Removed
+
+Moderation & Governance Requirements
+Accountability
+Every Herd must remain attributable to:
+Creator account.
+Current owner.
+Shepherd team.
+Anonymous communities are excluded from MVP.
+Community Rules
+Herds must define community-specific rules.
+Requirements:
+Community rules cannot override platform policies.
+Community rules cannot override law.
+Community rules cannot override administrator actions.
+Enforcement Compatibility
+Herds must support future:
+Ownership transfers.
+Community restrictions.
+Community warnings.
+Community quarantines.
+Reputation requirements.
+Even if not fully implemented in MVP.
+
+Dependencies on Other MVP Features
+User Accounts
+Required.
+Only authenticated users may create Herds.
+User Profiles
+Required.
+Profiles identify Herd owners and Shepherds.
+Herd Membership
+Depends on Herd Creation.
+Herd Creation
+    ↓
+Herd Membership
+Herd Posting
+Depends on Herd Creation.
+Herd Creation
+    ↓
+Herd Posting
+Herd Feed
+Depends on Herd Creation.
+Herd Creation
+    ↓
+Herd Feed
+Reporting System
+Required.
+Herds must be reportable.
+Shepherd Moderation
+Depends on Herd Creation.
+
+Intentionally Postponed Beyond MVP
+V1
+Herd discovery enhancements.
+Herd notifications.
+Herd recommendations.
+V2
+Aura-gated Herd creation.
+Aura-gated membership.
+Request-to-Join Herds.
+Invite-only Herds.
+Advanced Shepherd tooling.
+Future
+Herd analytics.
+Herd monetization.
+Reputation-based governance.
+Community elections.
+Community reputation systems.
 
 ### Feature: Herd Membership
 Description
