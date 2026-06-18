@@ -1,13 +1,11 @@
 # Ongoing
 Create detailed specifications for MVP features.
-HypeUp / HypeDown Voting Specification
+Following Feed Specification
 
 
 
 
 # Pending
-Following Feed Specification
-
 Herd Creation Specification
 Herd Membership Specification
 Herd Posting Specification
@@ -35,3 +33,4 @@ User Profiles Feature Specification
 Follow System Feature Specification
 Personal Posting System Feature Specification
 Comments & Replies Specification
+HypeUp / HypeDown Voting Specification

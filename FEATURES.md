@@ -1125,10 +1125,208 @@ Why It Exists
 Supports ranking and reputation signals.
 
 Dependencies
-Posts, Comments
+User Accounts
+User Profiles
+Personal Posting
+Herd Posting
+Comments & Replies
 
 Priority
 Critical
+
+Purpose
+HypeUp / HypeDown Voting enables users to express approval or disapproval of content.
+The system exists to support:
+Contribution evaluation.
+Content quality signaling.
+Future content ranking systems.
+Future reputation systems.
+Community participation.
+Dependency relationship:
+User Account
+    ↓
+Posts / Comments
+    ↓
+HypeUp / HypeDown Voting
+    ↓
+Future Ranking Systems
+    ↓
+Future Aura Systems
+
+MVP Voting Requirements
+Authenticated users must be able to:
+HypeUp eligible content.
+HypeDown eligible content.
+Remove their vote.
+View vote totals.
+Only active accounts may vote.
+Every vote must be attributable to a User Account.
+Anonymous voting is excluded from MVP.
+
+Valid Voting Targets
+MVP voting supports:
+Posts
+Users may vote on:
+Personal Posts
+Herd Posts
+Comments & Replies
+Users may vote on:
+Comments
+Replies
+Voting is not supported for:
+User Profiles
+Herds
+Follow Relationships
+Reports
+Accounts
+
+Vote Behavior Requirements
+Single Vote Rule
+A user may have at most one active vote on a voting target.
+Possible states:
+No Vote
+HypeUp
+HypeDown
+A user cannot simultaneously HypeUp and HypeDown the same content.
+Vote Switching
+Users may change:
+HypeUp
+    ↓
+HypeDown
+or
+HypeDown
+    ↓
+HypeUp
+The previous vote is replaced.
+Self-Voting
+Users cannot vote on their own content.
+Applies to:
+Posts
+Comments
+Replies
+Reason:
+Prevents artificial inflation of contribution signals.
+Authentication Requirements
+Viewing vote totals does not require authentication.
+Casting, changing, or removing votes requires authentication.
+
+Vote Visibility Requirements
+Public Visibility
+The following must be publicly visible:
+HypeUp count
+HypeDown count
+Reason:
+Supports transparency of community feedback.
+Private Visibility
+The following are not publicly visible:
+Identity of HypeUp voters
+Identity of HypeDown voters
+Internal vote metadata
+Moderation-related vote information
+
+Vote Modification & Removal Requirements
+Users must be able to:
+Add a vote.
+Change a vote.
+Remove a vote.
+Vote removal returns content to the user's "No Vote" state.
+Removing a vote does not affect authorship, ownership, or visibility of the content itself.
+
+Moderation & Governance Requirements
+Accountability
+All votes must be attributable to authenticated accounts.
+Anonymous participation is excluded from MVP.
+Platform Governance
+Voting is governed by:
+Applicable Law
+Platform Administrators
+As defined in PROJECT_CONTEXT.md.
+Abuse Prevention
+The platform should support reasonable protections against:
+Vote manipulation.
+Automated voting.
+Coordinated voting abuse.
+Artificial reputation inflation.
+Specific mechanisms remain implementation decisions.
+Enforcement Compatibility
+Voting must support future moderation actions such as:
+Vote abuse investigations.
+Reputation abuse investigations.
+Account suspensions.
+Platform bans.
+
+Influence on Platform Systems
+MVP
+Voting provides signals to:
+Content evaluation.
+Community feedback.
+No Aura behavior is defined in MVP.
+No ranking behavior is defined in MVP.
+Future Compatibility
+Voting must remain compatible with future:
+Content ranking systems.
+Aura calculations.
+Reputation systems.
+Governance systems.
+Discovery systems.
+This aligns with PROJECT_CONTEXT.md and existing feature planning.
+
+Dependencies on Other MVP Features
+User Accounts
+Required.
+Only authenticated active users may vote.
+Dependency:
+User Accounts
+    ↓
+HypeUp / HypeDown
+User Profiles
+Required.
+Votes are attributable to user identity.
+Dependency:
+User Profiles
+    ↓
+HypeUp / HypeDown
+Personal Posting
+Required.
+Personal posts are valid voting targets.
+Dependency:
+Personal Posting
+    ↓
+HypeUp / HypeDown
+Herd Posting
+Required.
+Herd posts are valid voting targets.
+Dependency:
+Herd Posting
+    ↓
+HypeUp / HypeDown
+Comments & Replies
+Required.
+Comments and replies are valid voting targets.
+Dependency:
+Comments & Replies
+    ↓
+HypeUp / HypeDown
+Platform Moderation
+Required.
+Voting activity must support moderation and enforcement actions.
+
+Intentionally Postponed Beyond MVP
+V1
+Vote notifications.
+Saved list of voted content.
+Vote activity visibility.
+V2
+Aura integration.
+Reputation-weighted voting.
+Community-specific voting policies.
+Vote analytics.
+Future
+Public voter visibility.
+Reputation-based governance voting.
+Specialized reaction systems.
+Advanced vote abuse detection systems.
+Community notes integration with voting.
 
 ### Feature: Herd Creation
 Description

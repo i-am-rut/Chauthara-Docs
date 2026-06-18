@@ -3,10 +3,10 @@ Current Goal:
 Create MVP Specifications
 
 Active Task:
-Define HypeUp / HypeDown Voting Specification
+Define Following Feed Specification
 
 Next Task:
-Define Following Feed Specification
+Define Herd Creation Specification
 
 Blocked By:
 Nothing

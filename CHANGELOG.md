@@ -27,6 +27,32 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP HypeUp / HypeDown Voting specification.
+
+- Defined:
+  - Voting purpose
+  - MVP voting requirements
+  - Valid voting targets
+  - Vote behavior restrictions
+  - Vote visibility requirements
+  - Vote modification and removal behavior
+  - Moderation and governance requirements
+  - Voting system dependencies
+  - Future compatibility requirements
+
+- Resolved Voting decisions:
+  - HypeUp and HypeDown selected as MVP voting model.
+  - Self-voting prohibited.
+  - One active vote per user per target.
+  - Vote identities remain private.
+  - Public vote counts visible.
+  
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 ## 2026-06-17
 
 ### Documentation
