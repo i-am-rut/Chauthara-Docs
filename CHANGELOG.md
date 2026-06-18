@@ -46,10 +46,36 @@
   - One active vote per user per target.
   - Vote identities remain private.
   - Public vote counts visible.
-  
+
 - Updated:
   - FEATURES.md
   - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+  
+- Completed MVP Following Feed specification.
+
+- Defined:
+  - Following Feed purpose
+  - MVP feed requirements
+  - Content eligibility rules
+  - Feed visibility requirements
+  - Content ordering requirements
+  - Feed refresh behavior
+  - Pagination and loading requirements
+  - Follow System integration requirements
+  - Moderation and governance requirements
+  - Feed dependencies
+
+- Resolved Following Feed decisions:
+  - Following Feed is the default platform feed.
+  - Following Feed uses chronological ordering in MVP.
+  - Only personal posts from followed users are eligible.
+  - Real-time feed updates excluded from MVP.
+  - Recommendation systems excluded from MVP.
+
+- Updated:
+  - FEATURES.md
   - CHANGELOG.md
   - TASKS.md
 

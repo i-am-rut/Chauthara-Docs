@@ -659,10 +659,197 @@ Why It Exists
 Primary social consumption mechanism.
 
 Dependencies
+User Accounts
+User Profiles
 Follow System
 
 Priority
 Critical
+
+Purpose
+The Following Feed displays eligible content created by users that the viewer currently follows.
+The feed exists to support:
+Audience building.
+Identity-driven discovery.
+Ongoing participation.
+Consumption of followed-user content.
+Dependency relationship:
+User Accounts
+    ↓
+User Profiles
+    ↓
+Follow System
+    ↓
+Following Feed
+
+MVP Feed Requirements
+Users must be able to:
+View a Following Feed.
+View content from followed users.
+Refresh the feed.
+Load additional feed content.
+Open content from the feed.
+Only content eligible under feed rules may appear.
+The Following Feed is the default platform feed experience. This aligns with the Feed Philosophy defined in PROJECT_CONTEXT.md.
+
+Content Eligibility Rules
+Eligible Content
+The Following Feed may display:
+Personal posts created by followed users.
+Requirements:
+The author must currently be followed by the viewer.
+The content must remain publicly visible.
+The content must not be deleted.
+The content must not be removed by moderation actions.
+Not Eligible
+The Following Feed must not display:
+Content from unfollowed users.
+Deleted content.
+Moderation-removed content.
+Draft content.
+Discovery content.
+Recommended content.
+Advertisements.
+Community-only feed content not created by followed users.
+Future content types may become eligible when introduced.
+
+Feed Visibility Requirements
+Authenticated Users
+Authenticated users may access their Following Feed.
+Feed content is personalized based on active follow relationships.
+Unauthenticated Users
+Following Feed access requires authentication because follow relationships are account-specific.
+Public Visibility
+Feed membership itself is not publicly visible.
+The existence of content in a user's Following Feed is not exposed to other users.
+
+Content Ordering Requirements
+MVP Ordering Model
+The Following Feed must use chronological ordering.
+Requirements:
+Newer eligible content appears before older eligible content.
+Ordering must be deterministic.
+All users viewing the same followed author's content should observe consistent ordering behavior.
+The Following Feed does not perform engagement ranking in MVP.
+Examples of excluded MVP behavior:
+Popularity ranking.
+Recommendation ranking.
+Aura-based ranking.
+Personalized ranking.
+
+Feed Refresh Behavior
+Users must be able to refresh the Following Feed.
+Refresh Requirements
+When refreshed:
+Newly eligible content should become visible.
+Content no longer eligible should no longer appear.
+Active follow relationship changes should be reflected.
+Example:
+User follows Author A.
+Author A publishes a post.
+Feed refresh occurs.
+New post becomes eligible.
+Real-time feed updates are not required for MVP.
+
+Pagination & Loading Requirements
+The Following Feed must support incremental loading of content.
+Requirements:
+Initial feed view displays a subset of eligible content.
+Additional content can be loaded.
+Loading additional content must preserve ordering consistency.
+Users should be able to continue viewing older feed content.
+Exact loading mechanisms are implementation decisions.
+
+Integration With Following Relationships
+The Following Feed depends on active follow relationships.
+Follow Relationship Effects
+When a follow occurs:
+Future eligible content from that user may appear in the feed.
+When an unfollow occurs:
+Future content from that user becomes ineligible.
+Requirements:
+Feed eligibility must reflect current follow relationships.
+Follow relationships determine content inclusion.
+The Following Feed does not create or modify follow relationships.
+Relationship:
+Follow System
+    ↓
+Following Feed
+    ↑
+Personal Posting
+
+Moderation & Governance Requirements
+Platform Governance
+The Following Feed is governed by:
+Applicable Law
+Platform Administrators
+As defined in PROJECT_CONTEXT.md.
+Content Enforcement
+Content that becomes:
+Deleted
+Removed
+Restricted by moderation
+must no longer appear in the Following Feed.
+Abuse Prevention
+The platform should support reasonable protections against:
+Spam amplification.
+Feed abuse.
+Automated content flooding.
+Manipulative engagement behavior.
+Specific mechanisms remain implementation decisions.
+Enforcement Compatibility
+The Following Feed must remain compatible with future:
+Content restrictions.
+Account suspensions.
+Reputation systems.
+Feed governance systems.
+
+Dependencies on Other MVP Features
+User Accounts
+Required.
+Feed ownership is account-specific.
+User Profiles
+Required.
+Feed content is attributable to profiles.
+Follow System
+Required.
+Determines content eligibility.
+Dependency:
+Follow System
+    ↓
+Following Feed
+Personal Posting
+Required.
+Primary content source.
+Dependency:
+Personal Posting
+    ↓
+Following Feed
+Reporting System
+Required.
+Feed content must remain reportable.
+Platform Moderation
+Required.
+Moderation actions affect feed visibility.
+
+Intentionally Postponed Beyond MVP
+V1
+Feed filtering.
+Feed search.
+Content sharing integration.
+Read/unread indicators.
+V2
+Feed customization.
+User-controlled sorting options.
+Aura-aware feed experiences.
+Advanced feed preferences.
+Future
+Discovery feed.
+Recommendation systems.
+Algorithmic ranking.
+Cross-feed blending.
+Personalized feed intelligence.
+Reputation-aware feed ranking.
 
 ### Feature: Follow System
 Description
