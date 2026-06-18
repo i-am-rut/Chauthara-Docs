@@ -106,6 +106,33 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Herd Membership specification.
+
+- Defined:
+  - Herd Membership purpose
+  - MVP membership requirements
+  - Joining behavior
+  - Leaving behavior
+  - Membership visibility requirements
+  - Participation requirements
+  - Membership restrictions and eligibility requirements
+  - Moderation and governance requirements
+  - Feature dependencies
+  - Future compatibility requirements
+
+- Resolved Herd Membership decisions:
+  - Open Join membership model selected.
+  - Membership approval workflow excluded from MVP.
+  - Membership lists publicly visible.
+  - Joined Herds publicly visible on profiles.
+  - Membership does not grant governance authority.
+  
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 ## 2026-06-17
 
 ### Documentation

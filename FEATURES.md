@@ -1761,6 +1761,196 @@ Herd System
 Priority
 Critical
 
+Purpose
+Herd Membership enables users to become participants in Herds.
+The system exists to support:
+Community participation.
+Community identity.
+Topic-based discovery.
+Herd Feed eligibility.
+Community governance.
+Long-term community engagement.
+Dependency relationship:
+User Account
+    ↓
+User Profile
+    ↓
+Herd Membership
+    ↓
+Herd Feed
+
+MVP Membership Requirements
+Authenticated active users must be able to:
+Join Herds.
+Leave Herds.
+View Herd membership information.
+View Herd member counts.
+View their own joined Herds.
+View other users' joined Herds.
+Participate in Herd functionality that requires membership.
+Only active accounts may become members.
+Every membership must be attributable to a User Account.
+Anonymous membership is excluded from MVP.
+
+Joining Behavior
+Requirements:
+Users may join any active Herd.
+Joining does not require approval.
+Joining becomes effective immediately.
+A user may join a Herd only once.
+Joining creates an active membership relationship.
+Joining increases the Herd membership count.
+Membership is voluntary.
+Users are not automatically joined to Herds.
+
+Leaving Behavior
+Requirements:
+Members may leave Herds at any time.
+Leaving becomes effective immediately.
+Leaving removes the active membership relationship.
+Leaving decreases the Herd membership count.
+Owner Restrictions:
+Herd Owners cannot leave their Herd while they remain the owner.
+Ownership must first be transferred or the Herd deleted according to Herd lifecycle rules.
+Shepherd Restrictions:
+Shepherds may leave a Herd.
+Leaving a Herd removes Shepherd status.
+
+Membership Visibility Requirements
+Public Visibility
+The following information must be publicly visible:
+Herd membership count.
+Membership status of a user within a Herd.
+Membership lists.
+Herds joined by a user.
+Reason:
+Supports:
+Discovery.
+Community transparency.
+Community participation visibility.
+This remains consistent with the previously resolved profile visibility decision.
+Private Visibility
+The following are not publicly visible:
+Membership join timestamps.
+Internal moderation metadata.
+Internal governance metadata.
+
+Participation Requirements
+Membership establishes community affiliation.
+Membership enables:
+Inclusion in Herd member counts.
+Appearance in Herd membership lists.
+Eligibility for Herd Feed content.
+Eligibility for Herd participation features that require membership.
+Membership alone does not grant governance authority.
+Leadership authority remains limited to:
+Herd Owner.
+Shepherds.
+
+Membership Restrictions & Eligibility Requirements
+Requirements:
+User must have an active account.
+Herd must be active.
+User cannot join the same Herd multiple times simultaneously.
+Suspended accounts cannot create new memberships.
+Deleted accounts cannot create new memberships.
+MVP Herd Type Restrictions:
+All Herds use:
+Open Join.
+Not Included in MVP:
+Aura requirements.
+Membership applications.
+Membership approvals.
+Invite-only membership.
+Membership invitations.
+
+Moderation & Governance Requirements
+Accountability
+Every membership relationship must remain attributable to a User Account.
+Anonymous community participation is excluded from MVP.
+Governance Hierarchy
+Membership does not override governance hierarchy:
+Applicable Law
+    ↓
+Platform Administrators
+    ↓
+Herd Owner
+    ↓
+Shepherds
+    ↓
+Members
+Enforcement Compatibility
+Herd Membership must remain compatible with future:
+Membership restrictions.
+Aura-gated membership.
+Membership approval workflows.
+Community bans.
+Temporary community restrictions.
+Invite-only communities.
+Community Rules
+By joining a Herd:
+Members become subject to Herd rules.
+Herd rules cannot override platform policies.
+Herd rules cannot override applicable law.
+
+Dependencies on Other MVP Features
+User Accounts
+Required.
+Only authenticated active users may join Herds.
+Dependency:
+User Accounts
+    ↓
+Herd Membership
+User Profiles
+Required.
+Profiles identify community members.
+Dependency:
+User Profiles
+    ↓
+Herd Membership
+Herd Creation
+Required.
+Membership cannot exist without Herds.
+Dependency:
+Herd Creation
+    ↓
+Herd Membership
+Herd Feed
+Depends on Herd Membership.
+Joined Herds determine Herd Feed eligibility.
+Dependency:
+Herd Membership
+    ↓
+Herd Feed
+Herd Posting
+Membership determines community participation eligibility.
+Dependency:
+Herd Membership
+    ↓
+Herd Posting
+Reporting System
+Required.
+Members and Herds must support moderation workflows.
+Shepherd Moderation
+Required.
+Membership exists within Herd governance structures.
+
+Intentionally Postponed Beyond MVP
+V2
+Aura-gated membership.
+Request-to-Join Herds.
+Membership approval workflows.
+Invite-only Herds.
+Membership invitations.
+Community bans.
+Community-specific membership restrictions.
+Future
+Reputation-based membership.
+Community elections affecting membership.
+Membership tiers.
+Membership badges.
+Membership analytics.
+
 ### Feature: Herd Posting
 Description
 Users create posts inside Herds.
