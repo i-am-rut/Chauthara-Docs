@@ -264,6 +264,7 @@ Bio
 Account join date
 Followers count
 Following count
+Cover image (if configured)
 Visibility of additional participation information is defined below.
 Private Information
 Profiles must never display:
@@ -277,6 +278,7 @@ Reports submitted by the user
 Editable Profile Fields
 Users must be able to:
 Upload or change profile picture
+Upload or change cover image
 Create or modify bio
 Usernames remain editable according to User Accounts requirements.
 
@@ -291,6 +293,7 @@ System-generated participation statistics
 Profile Customization
 MVP customization includes:
 Profile picture
+Cover image
 Bio
 Not included in MVP:
 Profile themes
@@ -1614,6 +1617,7 @@ Creator/owner identity.
 Community rules.
 Optional
 Herd avatar/image.
+Herd Cover image
 At Herd creation, default placeholder rules must be provided.
 The Herd Owner and Shepherds may modify, replace, or expand those rules later.
 System Managed
@@ -1633,6 +1637,7 @@ Membership count.
 Owner information.
 Shepherd information.
 Community rules.
+Herd cover image (if configured).
 Shepherd identities must always be publicly visible in MVP.
 Viewing public Herd information does not require authentication.
 Not Included in MVP
@@ -3735,6 +3740,361 @@ Posting System
 
 Priority
 High
+
+Purpose
+
+Image Uploads enable users to enrich platform participation with visual content.
+
+The system exists to support:
+
+Personal expression.
+Visual communication.
+Knowledge sharing.
+Community participation.
+Profile customization.
+Richer discussion content.
+
+Dependency relationship:
+
+User Account
+↓
+User Profile / Personal Post / Herd Post
+↓
+Image Uploads
+
+MVP Image Upload Requirements
+
+Authenticated active users must be able to:
+
+Upload images where image uploads are supported.
+View uploaded images.
+Remove images they own from eligible content before publication.
+Replace profile images.
+View images uploaded by other users when associated content is publicly visible.
+
+Only active accounts may upload images.
+
+Every uploaded image must have an identifiable owner.
+
+Anonymous image uploads are excluded from MVP.
+
+Where Images Can Be Uploaded
+User Profiles
+
+Users may upload:
+
+Profile picture/avatar.
+Profile cover image.
+
+Profile pictures are part of User Profile customization.
+
+Personal Posts
+
+Personal posts may contain:
+
+Title + Image.
+Title + Content + Image.
+
+This remains consistent with the Personal Posting specification.
+
+Herd Posts
+
+Herd posts may contain:
+
+Title + Image.
+Title + Content + Image.
+
+This remains consistent with the Herd Posting specification.
+
+Not Supported In MVP
+
+Images may not be uploaded directly to:
+
+Comments.
+Replies.
+Reports.
+Herd metadata beyond optional Herd avatar.
+Direct messages.
+User bios.
+Herd Images
+
+Herds may optionally have:
+
+Herd avatar/image.
+Herd cover image.
+
+The Herd avatar represents the community identity rather than an individual contribution.
+
+Image Ownership Requirements
+Personal Ownership
+
+Every uploaded image must have exactly one owner.
+
+Ownership belongs to:
+
+The account that uploaded the image.
+
+Ownership remains attributable to:
+
+User Account.
+User Profile.
+Ownership Persistence
+
+Ownership does not transfer when:
+
+A post is shared.
+A Herd post is viewed by other users.
+Moderation actions occur.
+
+Ownership remains associated with the original uploader.
+
+Community Governance
+
+Shepherds and Herd Owners do not gain ownership of member-uploaded images.
+
+Moderation authority does not imply ownership.
+
+This remains consistent with existing Herd Post ownership decisions.
+
+Image Visibility Requirements
+Public Visibility
+
+Images attached to publicly visible content inherit the visibility of that content.
+
+Examples:
+
+Personal Post visible
+→ Image visible
+
+Herd Post visible
+→ Image visible
+
+Public Profile visible
+→ Profile image visible
+
+Public Herd visible
+→ Herd avatar visible
+
+Visibility Changes
+
+Images become unavailable through normal platform visibility when:
+
+The associated post is deleted.
+The associated post is removed by moderation.
+The associated profile becomes unavailable according to moderation actions.
+The associated Herd becomes unavailable according to moderation actions.
+Authentication Requirements
+
+Viewing publicly visible images does not require authentication.
+
+Uploading, replacing, or removing images requires authentication.
+
+Image Moderation Requirements
+Platform Governance
+
+Images are governed by:
+
+Applicable Law
+↓
+Platform Administrators
+↓
+Herd Owner
+↓
+Shepherds
+
+Consistent with existing governance rules.
+
+Reportability
+
+Users must be able to report images.
+
+Image reports occur through the content that contains the image.
+
+Examples:
+
+Personal Post report.
+Herd Post report.
+Profile report.
+Herd report.
+
+Images are not separate report targets in MVP.
+
+Shepherd Authority
+
+Within their Herds, Shepherds may moderate:
+
+Herd posts containing images.
+
+Shepherds may remove the containing Herd post when it violates:
+
+Herd rules.
+Platform policies within their moderation scope.
+Platform Administrator Authority
+
+Platform Administrators may:
+
+Remove content containing violating images.
+Remove profile images.
+Remove profile cover images.
+Remove Herd avatars.
+Remove Herd cover images.
+Apply account-level enforcement.
+Apply community-level enforcement.
+Enforcement Compatibility
+
+Images must remain compatible with future:
+
+Content warnings.
+Sensitive media labeling.
+Media review queues.
+Advanced moderation tooling.
+Upload Restrictions & Limits
+Content Restrictions
+
+Images must comply with:
+
+Applicable law.
+Platform policies.
+Herd rules where applicable.
+
+Examples of prohibited content may include:
+
+Illegal content.
+Harassment.
+Hate content.
+Violent abuse content.
+Impersonation-related content.
+Spam content.
+
+Exact policy definitions belong to platform policy documentation.
+
+Participation Restrictions
+
+Suspended accounts may not upload images.
+
+Deleted accounts may not upload images.
+
+Only authenticated active accounts may upload images.
+
+Abuse Prevention Requirements
+
+The platform should support reasonable protections against:
+
+Spam image uploads.
+Repetitive image abuse.
+Malicious content uploads.
+Platform disruption through image uploads.
+
+Specific mechanisms remain implementation decisions.
+
+Image Lifecycle Requirements
+Lifecycle
+
+Created
+↓
+Attached To Profile / Post / Herd
+↓
+Visible
+↓
+
+Possible Outcomes
+
+Remains Visible
+Replaced
+Removed By Owner
+Removed By Moderation
+Deleted Through Parent Content Deletion
+Profile Image Replacement
+
+Users may replace their profile image.
+
+The newest profile image becomes the active profile image.
+
+Historical profile image behavior is outside MVP scope.
+
+Post Deletion
+
+When a Personal Post or Herd Post is deleted:
+
+Associated images are no longer publicly visible through that post.
+Platform retention policies continue to apply.
+Moderation Removal
+
+When content is removed:
+
+Associated images become unavailable through normal platform visibility surfaces.
+Account Deletion
+
+When an account is deleted:
+
+Image behavior follows the content ownership and account lifecycle rules already defined elsewhere.
+Exact retention and visibility behavior remains dependent on unresolved account-deletion decisions.
+Dependencies On Other MVP Features
+User Accounts
+
+Required.
+
+Only authenticated active users may upload images.
+
+User Profiles
+
+Required.
+
+Profile pictures use Image Uploads.
+
+Personal Posting
+
+Required.
+
+Personal posts support images.
+
+Herd Creation
+
+Required.
+
+Herd avatars use Image Uploads.
+
+Herd Posting
+
+Required.
+
+Herd posts support images.
+
+Reporting System
+
+Required.
+
+Content containing images must remain reportable.
+
+Shepherd Moderation
+
+Required.
+
+Herd image content must support community moderation.
+
+Platform Moderation
+
+Required.
+
+All image content must support platform-wide enforcement.
+
+Intentionally Postponed Beyond MVP
+V1
+Multiple images per post.
+Image sharing features.
+Image-specific notifications.
+V2
+Image galleries.
+Media-specific moderation workflows.
+Sensitive media labels.
+Image search.
+Future
+Standalone image posts.
+Albums.
+Image collections.
+AI-assisted image moderation.
+Advanced media management.
+Rich media analytics.
 
 # V1 
 ## Core Platform

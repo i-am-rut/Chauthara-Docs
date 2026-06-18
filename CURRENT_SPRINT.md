@@ -1,12 +1,12 @@
 # Current Sprint
 Current Goal:
-Create MVP Specifications
+Consolidate MVP Design
 
 Active Task:
-Define Image Uploads Specification
+Define user journey inventory.
 
 Next Task:
-To be determined.
+Define MVP User Flows
 
 Blocked By:
 Nothing

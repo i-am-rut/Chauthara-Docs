@@ -293,6 +293,47 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Image Uploads specification.
+
+- Defined:
+  - Image Upload purpose.
+  - MVP image upload requirements.
+  - Supported upload locations.
+  - Image ownership requirements.
+  - Image visibility requirements.
+  - Image moderation requirements.
+  - Upload restrictions and limits.
+  - Image lifecycle requirements.
+  - Feature dependencies.
+  - Future compatibility requirements.
+
+- Resolved Image Upload decisions:
+  - Images included in MVP.
+  - Images supported in Personal Posts.
+  - Images supported in Herd Posts.
+  - Profile pictures supported.
+  - Herd avatars supported.
+  - Images inherit visibility from parent content.
+  - Images are moderated through existing moderation systems.
+  - Images are not standalone reportable entities.
+  - Anonymous image uploads excluded.
+
+- Expanded Image Uploads scope:
+  - Profile cover images added to MVP.
+  - Herd cover images added to MVP.
+
+- Updated User Profile specification:
+  - Profile customization now includes optional cover images.
+
+- Updated Herd Creation specification:
+  - Herd metadata now supports optional cover images.
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 ## 2026-06-17
 
 ### Documentation

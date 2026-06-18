@@ -1,13 +1,12 @@
 # Ongoing
-Create detailed specifications for MVP features.
-Image Uploads Specification
+MVP Product Design Consolidation
+Define user journey inventory.
 
 
 
 
 # Pending
-
-Define MVP user flows.
+Define MVP User Flows
 Define MVP data model boundaries.
 Define MVP API surface.
 Architecture Refinement
@@ -35,3 +34,4 @@ Herd Feed Specification
 Reporting System Specification
 Shepherd Moderation Specification
 Platform Moderation Specification
+Image Uploads Specification

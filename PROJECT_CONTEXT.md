@@ -502,4 +502,4 @@ The project serves as a learning vehicle for:
 
 ## Current Status
 
-MVP System Design Phase
+MVP Product Design Consolidation Phase
