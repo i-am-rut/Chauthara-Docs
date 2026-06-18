@@ -2736,10 +2736,333 @@ Why It Exists
 Safety and abuse prevention.
 
 Dependencies
-Posts, Comments, Users
+Reportable Entity
 
 Priority
 Critical
+
+Purpose
+
+The Reporting System enables users to notify moderators about suspected violations.
+
+The system exists to support:
+
+Community rule enforcement.
+Platform policy enforcement.
+Harm reduction.
+Abuse prevention.
+Governance accountability.
+
+Dependency relationship:
+
+User Account
+↓
+Reportable Entity
+↓
+Reporting System
+↓
+Shepherd Moderation / Platform Moderation
+
+MVP Reporting Requirements
+
+Authenticated active users must be able to:
+
+Submit reports.
+Report eligible entities.
+Select a report reason.
+Provide optional additional context.
+View confirmation that a report was submitted.
+
+Only active authenticated users may submit reports.
+
+Every report must be attributable to a User Account.
+
+Anonymous reporting is excluded from MVP.
+
+Reportable Entities
+
+Users must be able to report:
+
+User Profiles
+
+Examples:
+
+Harassment
+Impersonation
+Spam accounts
+Abuse
+Personal Posts
+Herd Posts
+Comments
+Replies
+Herds
+
+Examples:
+
+Community-wide rule violations
+Spam communities
+Abuse-focused communities
+
+Not Reportable In MVP
+
+Votes
+Follow relationships
+Reports
+Membership relationships
+Reporting Eligibility Requirements
+
+A user may submit a report when:
+
+The reporting account is active.
+The target entity exists.
+The target entity remains visible or accessible.
+
+Requirements:
+
+Users may submit multiple reports against different entities.
+Users may report their own content if desired.
+Users may not submit anonymous reports.
+Report Categories & Reasons
+Platform Policy Categories
+
+Supported MVP reasons:
+
+Spam
+Harassment
+Hate Content
+Threats or Abuse
+Impersonation
+Illegal Content
+Sexual Content
+Violence or Harmful Content
+Misinformation or Deceptive Content
+Other Platform Policy Violation
+Community Category
+
+Available when reporting Herd content or Herds:
+
+Community Rule Violation
+
+Reason:
+
+Allows Shepherd review for Herd-specific governance issues.
+
+Report Submission Requirements
+
+Every report must contain:
+
+Required:
+
+Reported entity.
+Report category/reason.
+
+Optional:
+
+Additional context supplied by reporter.
+
+Requirements:
+
+Reports should be submitted individually.
+One report targets one entity.
+Report submission does not automatically remove content.
+Report submission does not automatically notify other users.
+Report Visibility Requirements
+Reporter Visibility
+
+Reporters may:
+
+Submit reports.
+Receive submission confirmation.
+
+Not Included In MVP:
+Report status tracking.
+Report history view.
+Appeal tracking.
+Future Compatibility
+When the Notifications system is introduced, reporters should be notified when a moderation action is taken on a report they submitted.
+This notification capability is not part of MVP and depends on the future Notifications feature.
+
+Public Visibility
+
+Reports are never publicly visible.
+
+Users cannot view reports submitted by others.
+
+Reported User Visibility
+
+Reported users are not automatically informed that a report has been submitted.
+
+Moderation Workflow Requirements
+Report Creation
+
+User submits report.
+
+↓
+
+Report enters moderation review process.
+
+↓
+
+Moderation review occurs.
+
+↓
+
+Decision reached.
+
+↓
+
+Outcome applied if required.
+
+Review Requirements
+
+Reports must support review by appropriate moderators.
+
+Community-related reports may be reviewed by Shepherds.
+
+Platform-related reports may be reviewed by Platform Administrators.
+
+Platform Administrators may review any report.
+
+Shepherd Responsibilities
+
+Within Herds, Shepherds may:
+
+Review reports involving Herd posts.
+Review reports involving comments within Herd discussions.
+Review reports involving community rule violations.
+Enforce Herd rules.
+Remove content that violates Herd rules.
+
+Shepherd authority:
+
+Exists only within their Herd.
+Cannot override Platform Administrators.
+Cannot override applicable law.
+Platform Administrator Responsibilities
+
+Platform Administrators may:
+
+Review any report.
+Review reports involving user profiles.
+Review reports involving personal posts.
+Review reports involving Herds.
+Review reports involving platform policy violations.
+Override Shepherd decisions.
+Enforce platform-wide policies.
+
+Platform authority remains superior to community authority.
+
+Report Outcome Requirements
+
+Possible outcomes:
+
+No Action
+
+Report reviewed.
+
+No violation found.
+
+Community Enforcement
+
+Examples:
+
+Herd content removal.
+Community-level warning.
+
+Applies only within Shepherd authority.
+
+Platform Enforcement
+
+Examples:
+
+Content removal.
+Account warning.
+Account suspension.
+Platform ban.
+
+Exact moderation actions are defined in future moderation specifications.
+
+Escalation
+
+A report initially reviewed by a Shepherd may be escalated to Platform Administrators.
+
+Abuse Prevention Requirements
+
+The Reporting System must support reasonable protections against:
+
+Report spam.
+Malicious reporting.
+Coordinated reporting abuse.
+Automated reporting abuse.
+
+Specific mechanisms remain implementation decisions.
+
+Requirements:
+
+Reports must remain attributable to authenticated users.
+Report submission must not guarantee enforcement.
+Moderators must independently evaluate reports.
+Dependencies On Other MVP Features
+User Accounts
+
+Required.
+
+Reports are attributable to authenticated users.
+
+Dependency:
+
+User Accounts
+↓
+Reporting System
+
+User Profiles
+
+Profiles are reportable entities.
+
+Personal Posting
+
+Personal posts are reportable.
+
+Herd Creation
+
+Herds are reportable.
+
+Herd Posting
+
+Herd posts are reportable.
+
+Comments & Replies
+
+Comments and replies are reportable.
+
+Shepherd Moderation
+
+Reports provide moderation inputs.
+
+Platform Moderation
+
+Reports provide enforcement inputs.
+
+Intentionally Postponed Beyond MVP
+V1
+Report history for reporters.
+Report status visibility.
+User-facing moderation notifications.
+Additional report categorization.
+V2
+Report appeals.
+Community moderation transparency.
+Moderator action history.
+Community ban integration.
+Reputation-aware reporting systems.
+Future
+Anonymous whistleblower reporting.
+Trusted reporter systems.
+Moderator reputation systems.
+Automated report prioritization.
+Machine-learning-assisted moderation.
+Community notes integration.
+Transparency reports.
 
 ### Feature: Platform Moderation
 Description

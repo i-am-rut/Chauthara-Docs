@@ -193,6 +193,40 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Reporting System specification.
+
+- Defined:
+  - Reporting System purpose
+  - MVP reporting requirements
+  - Reportable entities
+  - Reporting eligibility requirements
+  - Report categories and reasons
+  - Report submission requirements
+  - Report visibility requirements
+  - Moderation workflow requirements
+  - Shepherd responsibilities
+  - Platform Administrator responsibilities
+  - Report outcome requirements
+  - Abuse prevention requirements
+  - Feature dependencies
+  - Future compatibility requirements
+
+- Resolved Reporting System decision:
+  - Shared governance reporting model selected.
+  - User Profiles, Personal Posts, Herd Posts, Comments, Replies, and Herds are reportable entities.
+  - Reports are private and not publicly visible.
+  - Anonymous reporting is excluded from MVP.
+  - Shepherds may review Herd-related reports.
+  - Platform Administrators retain review and override authority for all reports.
+  - Reporters should receive notifications when moderation action is taken on their reports once the Notifications system exists.
+  - Report outcome notifications are excluded from MVP and deferred until Notifications are implemented.
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 ## 2026-06-17
 
 ### Documentation

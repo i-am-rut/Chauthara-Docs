@@ -3,10 +3,10 @@ Current Goal:
 Create MVP Specifications
 
 Active Task:
-Define Reporting System Specification
+Define Shepherd Moderation Specification
 
 Next Task:
-Define Shepherd Moderation Specification
+Define Platform Moderation Specification
 
 Blocked By:
 Nothing

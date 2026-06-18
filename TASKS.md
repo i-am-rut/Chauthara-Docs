@@ -1,14 +1,13 @@
 # Ongoing
 Create detailed specifications for MVP features.
-Reporting System Specification
+Shepherd Moderation Specification
 
 
 
 
 # Pending
-Shepherd Moderation Specification
 Platform Moderation Specification
-Resolve comment lifecycle moderation questions in future moderation specifications
+
 
 Define MVP user flows.
 Define MVP data model boundaries.
@@ -33,3 +32,4 @@ Herd Creation Specification
 Herd Membership Specification
 Herd Posting Specification
 Herd Feed Specification
+Reporting System Specification
