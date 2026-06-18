@@ -164,6 +164,35 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Herd Feed specification.
+
+- Defined:
+  - Herd Feed purpose
+  - MVP feed requirements
+  - Content eligibility rules
+  - Visibility and access requirements
+  - Feed ordering requirements
+  - Feed refresh behavior
+  - Pagination and loading requirements
+  - Herd Membership integration requirements
+  - Herd Posting integration requirements
+  - Moderation and governance requirements
+  - Feed dependencies
+
+- Resolved Herd Feed decisions:
+  - Herd Feed uses chronological ordering in MVP.
+  - Only Herd posts from joined Herds are eligible.
+  - Herd Membership determines Herd Feed eligibility.
+  - Real-time feed updates excluded from MVP.
+  - Recommendation systems excluded from MVP.
+  - Herd moderation removals remove content from Herd Feed visibility.
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 ## 2026-06-17
 
 ### Documentation

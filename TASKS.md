@@ -1,12 +1,11 @@
 # Ongoing
 Create detailed specifications for MVP features.
-Herd Feed Specification
+Reporting System Specification
 
 
 
 
 # Pending
-Reporting System Specification
 Shepherd Moderation Specification
 Platform Moderation Specification
 Resolve comment lifecycle moderation questions in future moderation specifications
@@ -33,3 +32,4 @@ Following Feed Specification
 Herd Creation Specification
 Herd Membership Specification
 Herd Posting Specification
+Herd Feed Specification

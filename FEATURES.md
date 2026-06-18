@@ -2404,16 +2404,329 @@ Reputation-based posting permissions.
 
 ### Feature: Herd Feed
 Description
-Feed showing content from joined Herds.
+Display content from Herds that a user has joined.
 
 Why It Exists
-Community-focused consumption.
+Community-focused content consumption.
 
 Dependencies
+User Accounts
+User Profiles
+Herd Creation
 Herd Membership
+Herd Posting
 
 Priority
 Critical
+
+Purpose
+
+The Herd Feed displays eligible content created within Herds that the viewer currently belongs to.
+
+The system exists to support:
+
+Community participation.
+Topic-focused content consumption.
+Community engagement.
+Ongoing involvement in joined Herds.
+Community-driven discovery within subscribed interests.
+
+Dependency relationship:
+
+User Account
+    ↓
+User Profile
+    ↓
+Herd Membership
+    ↓
+Herd Feed
+MVP Feed Requirements
+
+Authenticated users must be able to:
+
+View a Herd Feed.
+View content from joined Herds.
+Refresh the Herd Feed.
+Load additional Herd Feed content.
+Open content from the Herd Feed.
+
+Only content eligible under Herd Feed rules may appear.
+
+The Herd Feed is a dedicated community feed experience separate from the Following Feed.
+
+Content Eligibility Rules
+Eligible Content
+
+The Herd Feed may display:
+
+Herd posts created within Herds the user currently belongs to.
+
+Requirements:
+
+Viewer must currently be a member of the Herd.
+Herd must remain active.
+Post must remain publicly visible.
+Post must not be deleted.
+Post must not be removed by moderation actions.
+Not Eligible
+
+The Herd Feed must not display:
+
+Personal posts.
+Posts from Herds the user has not joined.
+Deleted content.
+Moderation-removed content.
+Draft content.
+Advertisements.
+Recommended content.
+Discovery content.
+
+Future content types may become eligible when introduced.
+
+Visibility & Access Requirements
+Authenticated Users
+
+Authenticated users may access their Herd Feed.
+
+Feed content is personalized according to active Herd memberships.
+
+Unauthenticated Users
+
+Herd Feed access requires authentication because membership relationships are account-specific.
+
+Public Visibility
+
+The existence and composition of a user's Herd Feed are not publicly visible.
+
+Other users cannot view another user's Herd Feed.
+
+Feed Ordering Requirements
+MVP Ordering Model
+
+The Herd Feed must use chronological ordering.
+
+Requirements:
+
+Newer eligible content appears before older eligible content.
+Ordering must be deterministic.
+Users with identical membership sets should observe consistent ordering behavior.
+
+The Herd Feed must not use:
+
+Engagement ranking.
+Recommendation ranking.
+Aura-based ranking.
+Personalized ranking.
+Shepherd prioritization.
+Feed Refresh Behavior
+
+Users must be able to refresh the Herd Feed.
+
+Refresh Requirements
+
+When refreshed:
+
+Newly eligible Herd posts become visible.
+Content that is no longer eligible disappears.
+Membership changes are reflected.
+Moderation actions are reflected.
+
+Example:
+
+User joins Herd A
+        ↓
+Member publishes Herd post
+        ↓
+Feed refresh
+        ↓
+Post becomes eligible
+
+Real-time feed updates are not required for MVP.
+
+Pagination & Loading Requirements
+
+The Herd Feed must support incremental loading.
+
+Requirements:
+
+Initial view displays a subset of eligible content.
+Additional content can be loaded.
+Ordering consistency must be preserved.
+Users should be able to continue browsing older Herd content.
+
+Exact loading mechanisms remain implementation decisions.
+
+Integration With Herd Membership
+
+The Herd Feed depends on active Herd memberships.
+
+Membership Effects
+
+When a user joins a Herd:
+
+Future eligible content from that Herd may appear in the Herd Feed.
+
+When a user leaves a Herd:
+
+Future content from that Herd becomes ineligible.
+
+Requirements:
+
+Feed eligibility must reflect current memberships.
+Membership determines inclusion.
+Herd Feed does not create or modify memberships.
+
+Relationship:
+
+Herd Membership
+        ↓
+Herd Feed
+        ↑
+Herd Posting
+Integration With Herd Posting
+
+Herd posts are the primary content source for the Herd Feed.
+
+Requirements:
+
+Eligible Herd posts may appear in the Herd Feed.
+Herd Feed visibility is determined by membership.
+Herd Feed does not modify Herd posts.
+Herd Feed does not alter ownership or authorship.
+
+Relationship:
+
+Herd Posting
+        ↓
+Herd Feed
+Moderation & Governance Requirements
+Platform Governance
+
+The Herd Feed is governed by:
+
+Applicable Law
+        ↓
+Platform Administrators
+        ↓
+Herd Owner
+        ↓
+Shepherds
+
+Consistent with PROJECT_CONTEXT governance hierarchy.
+
+Content Enforcement
+
+Content that becomes:
+
+Deleted.
+Removed by Platform Administrators.
+Removed by Herd moderation.
+Restricted by moderation actions.
+
+must no longer appear in the Herd Feed.
+
+Abuse Prevention
+
+The platform should support reasonable protections against:
+
+Spam amplification.
+Feed abuse.
+Community flooding.
+Coordinated abuse.
+
+Specific mechanisms remain implementation decisions.
+
+Enforcement Compatibility
+
+The Herd Feed must remain compatible with future:
+
+Community bans.
+Community restrictions.
+Reputation systems.
+Aura systems.
+Community governance enhancements.
+Dependencies On Other MVP Features
+User Accounts
+
+Required.
+
+Feed ownership is account-specific.
+
+User Profiles
+
+Required.
+
+Feed content remains attributable to profiles.
+
+Herd Creation
+
+Required.
+
+Herd Feed cannot exist without Herds.
+
+Dependency:
+
+Herd Creation
+    ↓
+Herd Feed
+Herd Membership
+
+Required.
+
+Determines content eligibility.
+
+Dependency:
+
+Herd Membership
+    ↓
+Herd Feed
+Herd Posting
+
+Required.
+
+Primary content source.
+
+Dependency:
+
+Herd Posting
+    ↓
+Herd Feed
+Reporting System
+
+Required.
+
+Feed content must remain reportable.
+
+Shepherd Moderation
+
+Required.
+
+Community moderation actions affect visibility.
+
+Platform Moderation
+
+Required.
+
+Platform moderation actions affect visibility.
+
+Intentionally Postponed Beyond MVP
+V1
+Herd Feed filtering.
+Herd Feed search.
+Herd activity notifications.
+Read/unread indicators.
+V2
+User-controlled Herd Feed sorting.
+Aura-aware Herd Feed experiences.
+Community-specific feed preferences.
+Community participation prioritization.
+Future
+Discovery feed integration.
+Recommendation systems.
+Algorithmic ranking.
+Personalized community ranking.
+Reputation-aware feed ranking.
+Cross-feed blending.
 
 ### Feature: Reporting System
 Description
