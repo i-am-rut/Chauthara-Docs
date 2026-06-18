@@ -1,17 +1,18 @@
 # Ongoing
 Create detailed specifications for MVP features.
-Platform Moderation Specification
+Image Uploads Specification
 
 
 
 
 # Pending
-Image Uploads Specification
 
 Define MVP user flows.
 Define MVP data model boundaries.
 Define MVP API surface.
+Architecture Refinement
 
+ADR Creation
 
 
 
@@ -33,3 +34,4 @@ Herd Posting Specification
 Herd Feed Specification
 Reporting System Specification
 Shepherd Moderation Specification
+Platform Moderation Specification

@@ -3083,6 +3083,365 @@ Reporting System
 Priority
 Critical
 
+Purpose
+
+Platform Moderation enables platform-wide governance and policy enforcement across Chauthara.
+
+The system exists to support:
+
+User safety.
+Platform policy enforcement.
+Legal compliance.
+Community oversight.
+Escalation resolution.
+Abuse prevention.
+Governance accountability.
+
+Dependency relationship:
+
+Reporting System
+        ↓
+Platform Moderation
+        ↓
+Platform Governance
+MVP Platform Moderation Requirements
+
+The platform must support Platform Administrators.
+
+Requirements:
+
+Platform Administrators must have platform-wide authority.
+Platform Administrators may review any report.
+Platform Administrators may review any moderation action.
+Platform Administrators may review any account.
+Platform Administrators may review any Herd.
+Platform Administrators may override Herd Owner decisions.
+Platform Administrators may override Shepherd decisions.
+Platform Administrators remain subject only to applicable law and platform governance.
+
+Platform moderation authority applies across the entire platform.
+
+Anonymous platform moderation is excluded from MVP.
+
+Platform Administrator Authority & Responsibilities
+
+Platform Administrators are responsible for:
+
+Platform Policy Enforcement
+Enforcing platform policies.
+Enforcing platform safety standards.
+Enforcing legal requirements.
+Reviewing severe violations.
+Applying platform-wide enforcement actions.
+Governance Oversight
+Reviewing escalated moderation disputes.
+Reviewing Herd Owner decisions.
+Reviewing Shepherd decisions.
+Resolving governance conflicts.
+Maintaining moderation consistency.
+User Safety
+Addressing harassment.
+Addressing impersonation.
+Addressing abuse.
+Addressing spam.
+Addressing illegal content.
+Addressing coordinated platform abuse.
+
+Platform Administrators are the final authority for moderation decisions in MVP.
+
+Platform-Wide Moderation Scope
+
+Platform Administrators may moderate:
+
+User Accounts
+User profiles.
+Account behavior.
+Platform participation.
+Personal Content
+Personal posts.
+Personal discussions.
+Personal comments.
+Personal replies.
+Herd Content
+Herd posts.
+Herd comments.
+Herd replies.
+Communities
+Herds.
+Herd leadership conduct.
+Shepherd conduct.
+Community governance.
+
+Platform Administrators are not limited by Herd boundaries.
+
+Relationship With Herd Owners And Shepherds
+Shepherd Role
+
+Shepherds provide:
+
+Community moderation.
+Rule enforcement.
+Community dispute management.
+
+Authority remains limited to their Herd.
+
+Herd Owner Role
+
+Herd Owners provide:
+
+Community governance oversight.
+Shepherd oversight.
+Appeal review of Shepherd decisions.
+Escalation authority.
+Platform Administrator Role
+
+Platform Administrators provide:
+
+Final moderation review.
+Platform policy enforcement.
+Community oversight.
+Final dispute resolution.
+
+Authority hierarchy:
+
+Applicable Law
+    ↓
+Platform Administrators
+    ↓
+Herd Owners
+    ↓
+Shepherds
+Escalation Requirements
+
+Escalation path:
+
+Report
+    ↓
+Shepherd
+    ↓
+Herd Owner
+    ↓
+Platform Administrator
+
+Platform escalation should occur when:
+
+Platform policy violations are suspected.
+Illegal content is suspected.
+Account-level enforcement may be required.
+Platform-wide abuse is suspected.
+Governance disputes cannot be resolved at Herd level.
+Shepherd conduct is challenged.
+Herd Owner conduct is challenged.
+
+Platform Administrators retain authority to directly review any matter without waiting for escalation.
+
+User Account Moderation Requirements
+
+Platform Administrators may apply account-level enforcement.
+
+Supported MVP actions:
+
+Account Warning
+
+Purpose:
+
+Notify users of policy violations.
+
+Account Suspension
+
+Purpose:
+
+Temporarily or indefinitely remove participation privileges.
+
+Effects:
+
+User cannot participate.
+User cannot create content.
+User cannot vote.
+User cannot report.
+User cannot join Herds.
+Platform Ban
+
+Purpose:
+
+Remove platform access due to severe or repeated violations.
+
+Platform bans represent the highest enforcement level available in MVP.
+
+Content Moderation Requirements
+
+Platform Administrators may moderate:
+
+Personal posts.
+Herd posts.
+Comments.
+Replies.
+Profiles.
+Herds.
+
+Available actions:
+
+Content Removal
+
+Remove content violating:
+
+Platform policies.
+Legal requirements.
+Content Restoration
+
+Restore content when:
+
+Prior moderation review determines no violation occurred.
+Incorrect moderation action occurred.
+Visibility Enforcement
+
+Ensure removed content no longer appears through normal visibility surfaces.
+
+Community Moderation Requirements
+
+Platform Administrators may:
+
+Review Herd governance.
+Review Shepherd actions.
+Review Herd Owner actions.
+Review moderation disputes.
+Remove moderation authority when necessary.
+Enforce platform policy within Herds.
+
+Platform policy always supersedes Herd rules.
+
+Community autonomy exists within platform governance boundaries.
+
+Enforcement Actions Available To Platform Administrators
+User Enforcement
+Account warning.
+Account suspension.
+Platform ban.
+Content Enforcement
+Content removal.
+Content restoration.
+Community Enforcement
+Remove Herd content.
+Remove Herds.
+Remove Shepherd authority.
+Remove Herd Owner authority.
+Transfer temporary governance control when required by platform safety concerns.
+
+Exact ownership-transition procedures remain outside MVP scope.
+
+Audit & Accountability Requirements
+
+All Platform Administrator actions must remain attributable to administrator accounts.
+
+Requirements:
+
+Moderation actions must be reviewable internally.
+Administrative authority must remain traceable.
+Anonymous moderation actions are prohibited.
+Enforcement decisions must retain associated moderation rationale.
+
+Governance accountability is required at every moderation level.
+
+Abuse Prevention Requirements
+
+Platform Moderation must support protections against:
+
+Moderator abuse.
+Selective enforcement.
+Retaliatory enforcement.
+Harassment through authority.
+Coordinated platform abuse.
+Spam campaigns.
+Impersonation campaigns.
+Governance manipulation.
+
+Requirements:
+
+Administrative actions remain attributable.
+Administrator decisions may not override applicable law.
+Platform governance remains consistent across communities.
+Enforcement actions must be based on platform policies rather than community preference.
+Dependencies On Other MVP Features
+User Accounts
+
+Required.
+
+Platform enforcement acts upon accounts.
+
+User Profiles
+
+Required.
+
+Profiles may be investigated and moderated.
+
+Personal Posting
+
+Required.
+
+Personal posts may be moderated.
+
+Herd Creation
+
+Required.
+
+Communities may be reviewed and moderated.
+
+Herd Membership
+
+Required.
+
+Membership participation may be affected by enforcement actions.
+
+Herd Posting
+
+Required.
+
+Herd content may be moderated.
+
+Comments & Replies
+
+Required.
+
+Discussion content may be moderated.
+
+Reporting System
+
+Required.
+
+Reports provide moderation inputs.
+
+Shepherd Moderation
+
+Required.
+
+Provides first-layer community moderation.
+
+Dependency relationship:
+
+Reporting System
+        ↓
+Shepherd Moderation
+        ↓
+Herd Owner Review
+        ↓
+Platform Moderation
+Intentionally Postponed Beyond MVP
+V2
+Formal appeals system.
+Community moderation transparency statistics.
+Moderator action history visibility.
+Community ban systems.
+Moderator reputation systems.
+Escalation prioritization systems.
+Future
+Transparency reports.
+Community governance participation.
+Automated moderation assistance.
+Trusted moderator programs.
+Reputation-based moderation authority.
+Advanced moderation analytics.
+AI-assisted moderation systems.
+
 ### Feature: Shepherd Moderation
 Description
 Community moderation tools.

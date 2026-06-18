@@ -258,6 +258,41 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Platform Moderation specification.
+
+- Defined:
+  - Platform Moderation purpose
+  - Platform-wide moderation requirements
+  - Platform Administrator authority
+  - Platform moderation scope
+  - Relationship with Herd Owners and Shepherds
+  - Escalation requirements
+  - User account moderation requirements
+  - Content moderation requirements
+  - Community moderation requirements
+  - Enforcement actions
+  - Audit and accountability requirements
+  - Abuse prevention requirements
+  - Feature dependencies
+  - Future compatibility requirements
+
+- Resolved Platform Moderation decisions:
+  - Layered governance model selected.
+  - Platform Administrators retain final moderation authority.
+  - Platform Administrators may review any report and moderation action.
+  - Platform Administrators may issue account warnings.
+  - Platform Administrators may suspend accounts.
+  - Platform Administrators may issue platform bans.
+  - Platform Administrators may override Herd Owner and Shepherd decisions.
+  - Escalation hierarchy defined as:
+        Report → Shepherd → Herd Owner → Platform Administrator
+
+- Updated:
+  - FEATURES.md
+  - QUESTIONS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 ## 2026-06-17
 
 ### Documentation

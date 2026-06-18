@@ -3,10 +3,10 @@ Current Goal:
 Create MVP Specifications
 
 Active Task:
-Define Platform Moderation Specification
+Define Image Uploads Specification
 
 Next Task:
-Define Image Uploads Specification
+To be determined.
 
 Blocked By:
 Nothing
