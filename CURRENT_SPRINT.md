@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Visitor User Flows
+Define Member User Flows
 
 Next Task:
-Define Member User Flows
+Define Herd Owner User Flows
 
 Blocked By:
 Nothing

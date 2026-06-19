@@ -260,6 +260,45 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed Visitor User Flow Mapping.
+
+- Converted Visitor journeys into implementation-neutral MVP user flows:
+  - VF-01 Discover Public Content
+  - VF-02 Explore Contributors
+  - VF-03 Explore Communities
+  - VF-04 Evaluate Community Quality
+  - VF-05 Evaluate Platform Relevance
+
+- Defined for each flow:
+  - Flow ID
+  - Flow Name
+  - Related Journey
+  - Primary Actor
+  - Preconditions
+  - Trigger
+  - Main Flow
+  - Alternative Flows
+  - Success State
+  - Failure State
+  - Features Involved
+
+- Performed Visitor journey-to-flow traceability validation.
+
+- Defined Visitor flow progression from:
+  - Content Discovery
+  - Contributor Exploration
+  - Community Exploration
+  - Community Evaluation
+  - Platform Evaluation
+
+- Identified Visitor-to-Member transition point:
+  - Successful completion of VF-05 may result in account creation and transition into Member user flows.
+
+- Updated:
+  - USER_FLOWS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 
 ## 2026-06-18
 
