@@ -53,7 +53,7 @@ Create Account (becomes Member)
 
 ## Visitor Journeys
 
-### Journey VJ-01: Discover Public Content
+### VJ-01: Discover Public Content
 User Goal Supported
 Discover Valuable Content
 Browse Public Discussions
@@ -86,7 +86,7 @@ Notes
 
 This is the foundational discovery journey for all visitors.
 
-### Journey VJ-02: Explore Contributors
+### VJ-02: Explore Contributors
 User Goal Supported
 Discover Valuable Content
 Explore Individual Contributors
@@ -115,7 +115,7 @@ Notes
 
 Visitor cannot follow users but can evaluate potential future follow targets.
 
-### Journey VJ-03: Explore Communities
+### VJ-03: Explore Communities
 User Goal Supported
 Explore Communities
 Identify Potential Communities To Join
@@ -144,7 +144,7 @@ Notes
 
 This journey focuses on community discovery rather than discussion quality.
 
-### Journey VJ-04: Evaluate Community Quality
+### VJ-04: Evaluate Community Quality
 User Goal Supported
 Understand Community Culture
 Explore Communities
@@ -173,7 +173,7 @@ Notes
 
 Focuses on quality assessment rather than discovery.
 
-### Journey VJ-05: Evaluate Platform Relevance
+### VJ-05: Evaluate Platform Relevance
 User Goal Supported
 Evaluate Platform Relevance
 Journey Description
@@ -671,7 +671,7 @@ Long-Term Community Success
 
 ## Herd Owner Journeys
 
-### Journey HOJ-01: Create A Herd
+### HOJ-01: Create A Herd
 User Goal Supported
 Build Community
 Journey Description
@@ -696,7 +696,7 @@ Notes
 
 This is the entry-point journey that transforms a Member into a Herd Owner.
 
-### Journey HOJ-02: Define Community Identity
+### HOJ-02: Define Community Identity
 User Goal Supported
 Build Community
 Establish Community Identity
@@ -722,7 +722,7 @@ Notes
 
 Includes maintaining descriptions, rules, avatar, and cover image.
 
-### Journey HOJ-03: Grow Community Participation
+### HOJ-03: Grow Community Participation
 User Goal Supported
 Build Community
 Recruit Contributors
@@ -750,7 +750,7 @@ Notes
 
 Focuses on community growth rather than moderation.
 
-### Journey HOJ-04: Delegate Community Governance
+### HOJ-04: Delegate Community Governance
 User Goal Supported
 Maintain Community Health
 Delegate Moderation
@@ -776,7 +776,7 @@ Notes
 
 Represents delegation of governance responsibilities rather than direct moderation activity.
 
-### Journey HOJ-05: Oversee Community Health
+### HOJ-05: Oversee Community Health
 User Goal Supported
 Maintain Community Health
 Develop A High-Quality Knowledge Community
@@ -804,7 +804,7 @@ Notes
 
 Focuses on stewardship and governance oversight rather than direct dispute handling.
 
-### Journey HOJ-06: Resolve Community Moderation Disputes
+### HOJ-06: Resolve Community Moderation Disputes
 User Goal Supported
 Resolve Community Disputes
 Maintain Community Health
@@ -934,7 +934,7 @@ Apply Community Moderation
 Maintain Community Health
 
 ## Shepherd Journeys
-### Journey SHJ-01: Moderate Herd Content
+### SHJ-01: Moderate Herd Content
 User Goal Supported
 Enforce Community Rules
 Maintain Discussion Quality
@@ -969,7 +969,7 @@ Replies
 
 Does not include platform-wide enforcement.
 
-### Journey SHJ-02: Review Community Reports
+### SHJ-02: Review Community Reports
 User Goal Supported
 Review Reports
 Enforce Community Rules
@@ -999,7 +999,7 @@ Notes
 
 Represents the primary report-handling workflow for community moderation.
 
-### Journey SHJ-03: Moderate Community Membership
+### SHJ-03: Moderate Community Membership
 User Goal Supported
 Enforce Community Rules
 Protect Community Members
@@ -1028,7 +1028,7 @@ Community removal is not platform enforcement.
 
 Existing authored content remains attributable to the original author.
 
-### Journey SHJ-04: Guide Constructive Participation
+### SHJ-04: Guide Constructive Participation
 User Goal Supported
 Maintain Discussion Quality
 Guide Community Participation
@@ -1057,7 +1057,7 @@ Represents proactive moderation rather than enforcement.
 
 Focuses on maintaining discussion quality before formal moderation becomes necessary.
 
-### Journey SHJ-05: Escalate Serious Community Issues
+### SHJ-05: Escalate Serious Community Issues
 User Goal Supported
 Escalate Serious Issues
 Protect Community Members
@@ -1204,6 +1204,206 @@ Maintain Platform Safety
 ↓
 Protect Platform Integrity
 
+## Platform Admin Journeys 
+### PAJ-01: Review Platform Reports
+User Goal Supported
+
+Protect Platform Safety
+Review Reports
+Prevent Platform Abuse
+
+Journey Description
+
+Platform Administrator reviews reports involving platform policy violations, personal content, profiles, Herds, community leadership, or severe misconduct requiring platform-level review.
+
+Trigger
+
+A report reaches administrator review through escalation or direct platform review.
+
+Success State
+
+Report is reviewed and reaches a moderation determination.
+
+Features Involved
+
+Reporting System
+Platform Moderation
+
+Dependencies
+
+Existing report
+Administrator authority
+
+Notes
+
+Represents investigation and assessment activities prior to enforcement decisions.
+
+### PAJ-02: Enforce Platform Policies
+User Goal Supported
+
+Protect Platform Safety
+Enforce Platform Policies
+Prevent Platform Abuse
+Ensure Legal And Governance Compliance
+
+Journey Description
+
+Platform Administrator applies platform-wide enforcement against content, accounts, profiles, or communities that violate platform policies or legal requirements.
+
+Trigger
+
+Administrator review confirms a violation requiring enforcement.
+
+Success State
+
+Appropriate platform enforcement is successfully applied.
+
+Features Involved
+
+Platform Moderation
+User Accounts
+User Profiles
+Personal Posting
+Herd Posting
+Comments & Replies
+Herd Creation
+
+Dependencies
+
+Confirmed violation
+Administrator authority
+
+Notes
+
+Includes account enforcement, content enforcement, and community enforcement.
+
+### PAJ-03: Resolve Moderation Escalations
+User Goal Supported
+
+Resolve Escalated Disputes
+Maintain Moderation Consistency
+Enforce Platform Policies
+
+Journey Description
+
+Platform Administrator reviews escalated moderation disputes, governance conflicts, and contested moderation outcomes and issues the final platform decision.
+
+Trigger
+
+A moderation matter is escalated beyond Herd Owner authority or requires administrator intervention.
+
+Success State
+
+Matter is resolved through:
+
+Upholding prior action
+Reversing prior action
+Restoring content
+Applying additional enforcement
+Closing the dispute
+Features Involved
+
+Reporting System
+Shepherd Moderation
+Platform Moderation
+
+Dependencies
+
+Existing escalation or dispute
+
+Notes
+
+Represents the final authority layer within MVP governance.
+
+### PAJ-04: Oversee Community Governance
+User Goal Supported
+
+Oversee Community Governance
+Maintain Moderation Consistency
+Protect Platform Safety
+
+Journey Description
+
+Platform Administrator reviews community governance activity and leadership conduct to ensure Herd Owners and Shepherds operate within platform governance standards.
+
+Trigger
+
+Governance concerns, leadership misconduct reports, moderation-pattern concerns, or platform safety concerns.
+
+Success State
+
+Community governance remains aligned with platform policies and governance expectations.
+
+Features Involved
+
+Platform Moderation
+Shepherd Moderation
+Reporting System
+Herd Creation
+
+Dependencies
+
+Existing Herd
+Governance concern
+
+Notes
+
+Focuses on governance oversight rather than individual moderation cases.
+
+## Platform Admin Jounrey Validation
+
+### Goal Coverage
+| Platform Administrator Goal            | Covered By                                |
+| -------------------------------------- | ----------------------------------------- |
+| Protect Platform Safety                | PAJ-01, PAJ-02, PAJ-04                    |
+| Enforce Platform Policies              | PAJ-02, PAJ-03                            |
+| Resolve Escalated Disputes             | PAJ-03                                    |
+| Ensure Legal And Governance Compliance | PAJ-02                                    |
+| Review Reports                         | PAJ-01                                    |
+| Oversee Community Governance           | PAJ-04                                    |
+| Prevent Platform Abuse                 | PAJ-01, PAJ-02                            |
+| Maintain Moderation Consistency        | PAJ-03, PAJ-04                            |
+| Improve Platform Quality               | Emergent outcome of PAJ-01 through PAJ-04 |
+| Improve Governance Processes           | Emergent outcome of PAJ-04                |
+
+### MVP Features Coverage
+| MVP Feature         | Platform Administrator Usage   |
+| ------------------- | ------------------------------ |
+| Reporting System    | PAJ-01, PAJ-03, PAJ-04         |
+| Platform Moderation | PAJ-01, PAJ-02, PAJ-03, PAJ-04 |
+| User Accounts       | PAJ-02                         |
+| User Profiles       | PAJ-02                         |
+| Personal Posting    | PAJ-02                         |
+| Herd Posting        | PAJ-02                         |
+| Comments & Replies  | PAJ-02                         |
+| Herd Creation       | PAJ-02, PAJ-04                 |
+| Shepherd Moderation | PAJ-03, PAJ-04                 |
+
+### Goveranace Coverage
+| Governance Responsibility      | Covered By             |
+| ------------------------------ | ---------------------- |
+| Platform Report Review         | PAJ-01                 |
+| Platform Policy Enforcement    | PAJ-02                 |
+| Content Enforcement            | PAJ-02                 |
+| Account Enforcement            | PAJ-02                 |
+| Community Enforcement          | PAJ-02                 |
+| Escalation Resolution          | PAJ-03                 |
+| Content Restoration            | PAJ-03                 |
+| Moderation Consistency         | PAJ-03, PAJ-04         |
+| Community Governance Oversight | PAJ-04                 |
+| Shepherd Oversight             | PAJ-04                 |
+| Herd Owner Oversight           | PAJ-04                 |
+| Platform Safety Protection     | PAJ-01, PAJ-02, PAJ-04 |
+
+### Inherited Journeys
+Platform Administrators are authenticated platform users and may still perform Member journeys when participating normally.
+MJ-01 through MJ-10
+
+### Platform Administrator Specific Journeys
+PAJ-01 Review Platform Reports
+PAJ-02 Enforce Platform Policies
+PAJ-03 Resolve Moderation Escalations
+PAJ-04 Oversee Community Governance
 
 # User Type Hierarchy
 

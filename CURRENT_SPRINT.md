@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Convert Goals Into User Journeys for Platform Administrator
+Define Visitor User Flows
 
 Next Task:
-Define MVP User Flows
+Define Member User Flows
 
 Blocked By:
 Nothing
