@@ -669,6 +669,218 @@ Maintain Community Health
 ↓
 Long-Term Community Success
 
+## Herd Owner Journeys
+
+### Journey HOJ-01: Create A Herd
+User Goal Supported
+Build Community
+Journey Description
+
+Herd Owner creates a new Herd to establish a topic-focused community.
+
+Trigger
+
+User decides a desired community does not already exist or wants to lead a new community.
+
+Success State
+
+A new active Herd exists with an identifiable owner and is available for members to join.
+
+Features Involved
+Herd Creation
+Image Uploads
+Dependencies
+Authenticated Member
+Active account
+Notes
+
+This is the entry-point journey that transforms a Member into a Herd Owner.
+
+### Journey HOJ-02: Define Community Identity
+User Goal Supported
+Build Community
+Establish Community Identity
+Journey Description
+
+Herd Owner establishes the purpose, presentation, expectations, and culture of the Herd.
+
+Trigger
+
+New Herd creation or need to refine community direction.
+
+Success State
+
+Community members can clearly understand the Herd's purpose, rules, and identity.
+
+Features Involved
+Herd Creation
+Image Uploads
+Dependencies
+Existing Herd
+Herd ownership
+Notes
+
+Includes maintaining descriptions, rules, avatar, and cover image.
+
+### Journey HOJ-03: Grow Community Participation
+User Goal Supported
+Build Community
+Recruit Contributors
+Journey Description
+
+Herd Owner attracts members and encourages ongoing participation within the Herd.
+
+Trigger
+
+Owner wants to increase activity, membership, or community engagement.
+
+Success State
+
+Community gains active members, contributors, and ongoing discussion.
+
+Features Involved
+Herd Membership
+Herd Posting
+Herd Feed
+Comments & Replies
+Dependencies
+Existing Herd
+Existing community activity
+Notes
+
+Focuses on community growth rather than moderation.
+
+### Journey HOJ-04: Delegate Community Governance
+User Goal Supported
+Maintain Community Health
+Delegate Moderation
+Journey Description
+
+Herd Owner appoints Shepherds to assist with moderation and community governance responsibilities.
+
+Trigger
+
+Community growth creates a need for additional governance support.
+
+Success State
+
+One or more Shepherds are actively supporting community moderation.
+
+Features Involved
+Herd Creation
+Shepherd Moderation
+Dependencies
+Existing Herd
+Eligible community members
+Notes
+
+Represents delegation of governance responsibilities rather than direct moderation activity.
+
+### Journey HOJ-05: Oversee Community Health
+User Goal Supported
+Maintain Community Health
+Develop A High-Quality Knowledge Community
+Journey Description
+
+Herd Owner reviews community activity, moderation outcomes, and participation quality to ensure the Herd remains constructive and aligned with its goals.
+
+Trigger
+
+Routine leadership oversight or concerns regarding community quality.
+
+Success State
+
+Community remains aligned with its rules, purpose, and expected standards.
+
+Features Involved
+Herd Posting
+Comments & Replies
+Reporting System
+Shepherd Moderation
+Dependencies
+Existing Herd
+Active community participation
+Notes
+
+Focuses on stewardship and governance oversight rather than direct dispute handling.
+
+### Journey HOJ-06: Resolve Community Moderation Disputes
+User Goal Supported
+Resolve Community Disputes
+Maintain Community Health
+Journey Description
+
+Herd Owner reviews escalated moderation matters, evaluates Shepherd decisions, resolves community disputes, and escalates platform-level concerns when necessary.
+
+Trigger
+
+A moderation decision, report outcome, or governance disagreement is escalated to the Herd Owner.
+
+Success State
+
+The dispute is resolved, reversed, upheld, or escalated to Platform Administrators when appropriate.
+
+Features Involved
+Reporting System
+Shepherd Moderation
+Platform Moderation
+Dependencies
+Existing moderation dispute or escalation
+Notes
+
+Includes review of Shepherd actions and escalation to Platform Administrators when required.
+
+## Herd Owner Journey Validations
+
+### Goal Coverage
+| Herd Owner Goal                            | Covered By                                |
+| ------------------------------------------ | ----------------------------------------- |
+| Build Community                            | HOJ-01, HOJ-02, HOJ-03                    |
+| Establish Community Identity               | HOJ-02                                    |
+| Maintain Community Health                  | HOJ-04, HOJ-05, HOJ-06                    |
+| Recruit Contributors                       | HOJ-03                                    |
+| Delegate Moderation                        | HOJ-04                                    |
+| Resolve Community Disputes                 | HOJ-06                                    |
+| Become A Recognized Community Leader       | Emergent outcome of HOJ-01 through HOJ-06 |
+| Develop A High-Quality Knowledge Community | HOJ-05                                    |
+
+### MVP Feature Coverage
+| MVP Feature         | Herd Owner Usage       |
+| ------------------- | ---------------------- |
+| Herd Creation       | HOJ-01, HOJ-02, HOJ-04 |
+| Herd Membership     | HOJ-03                 |
+| Herd Posting        | HOJ-03, HOJ-05         |
+| Herd Feed           | HOJ-03                 |
+| Comments & Replies  | HOJ-03, HOJ-05         |
+| Reporting System    | HOJ-05, HOJ-06         |
+| Shepherd Moderation | HOJ-04, HOJ-05, HOJ-06 |
+| Platform Moderation | HOJ-06                 |
+| Image Uploads       | HOJ-01, HOJ-02         |
+
+
+### Governance Coverage
+| Governance Responsibility         | Covered By |
+| --------------------------------- | ---------- |
+| Community Creation                | HOJ-01     |
+| Community Identity & Rules        | HOJ-02     |
+| Community Growth                  | HOJ-03     |
+| Moderation Delegation             | HOJ-04     |
+| Moderation Oversight              | HOJ-05     |
+| Dispute Resolution                | HOJ-06     |
+| Escalation To Platform Governance | HOJ-06     |
+
+### Inherited Member Journeys
+Herd Owners continue to perform all Member journeys:
+MJ-01 through MJ-10
+
+### Herd Owner Specific Journeys
+HOJ-01 Create A Herd
+HOJ-02 Define Community Identity
+HOJ-03 Grow Community Participation
+HOJ-04 Delegate Community Governance
+HOJ-05 Oversee Community Health
+HOJ-06 Resolve Community Moderation Disputes
+
 ## Shepherd
 
 **Description**
