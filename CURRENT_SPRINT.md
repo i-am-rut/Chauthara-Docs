@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Convert Goals Into User Journeys for Visitor
+Convert Goals Into User Journeys for Member
 
 Next Task:
-Convert Goals Into User Journeys for Member
+Convert Goals Into User Journeys for Herd Owner
 
 Blocked By:
 Nothing

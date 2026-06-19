@@ -51,6 +51,187 @@ Evaluate Platform Relevance
 ↓
 Create Account (becomes Member)
 
+## Visitor Journeys
+
+### Journey VJ-01: Discover Public Content
+User Goal Supported
+Discover Valuable Content
+Browse Public Discussions
+Journey Description
+
+Visitor explores publicly available posts and discussion threads to determine whether valuable content exists on the platform.
+
+Trigger
+
+Visitor arrives on Chauthara through:
+
+Direct visit
+Shared link
+Search result
+Referral
+Success State
+
+Visitor successfully finds content that demonstrates the type and quality of discussions available on the platform.
+
+Features Involved
+Personal Posting
+Herd Posting
+Comments & Replies
+Image Uploads
+Dependencies
+Public profiles
+Public posts
+Public discussions
+Notes
+
+This is the foundational discovery journey for all visitors.
+
+### Journey VJ-02: Explore Contributors
+User Goal Supported
+Discover Valuable Content
+Explore Individual Contributors
+Identify People Worth Following
+Journey Description
+
+Visitor explores user profiles and contribution history to evaluate the quality and credibility of individual contributors.
+
+Trigger
+
+Visitor encounters an interesting post, comment, or discussion participant.
+
+Success State
+
+Visitor identifies contributors whose content would justify future participation on the platform.
+
+Features Involved
+User Profiles
+Personal Posting
+Comments & Replies
+Follow System (visibility only)
+Dependencies
+Public user profiles
+Public contribution history
+Notes
+
+Visitor cannot follow users but can evaluate potential future follow targets.
+
+### Journey VJ-03: Explore Communities
+User Goal Supported
+Explore Communities
+Identify Potential Communities To Join
+Journey Description
+
+Visitor discovers Herds, reviews their purpose, content, rules, membership visibility, and activity to determine whether relevant communities exist.
+
+Trigger
+
+Visitor wants to investigate topic-focused participation opportunities.
+
+Success State
+
+Visitor identifies one or more Herds aligned with their interests.
+
+Features Involved
+Herd Creation
+Herd Membership
+Herd Posting
+Image Uploads
+Dependencies
+Public Herd visibility
+Public Herd content
+Public Herd metadata
+Notes
+
+This journey focuses on community discovery rather than discussion quality.
+
+### Journey VJ-04: Evaluate Community Quality
+User Goal Supported
+Understand Community Culture
+Explore Communities
+Journey Description
+
+Visitor evaluates the quality of discussions occurring within Herds by reading posts, comments, rules, and observing moderation presence.
+
+Trigger
+
+Visitor enters a Herd that appears relevant.
+
+Success State
+
+Visitor determines whether the community demonstrates constructive discussion and healthy participation.
+
+Features Involved
+Herd Posting
+Comments & Replies
+Shepherd Moderation
+Herd Creation
+Dependencies
+Public Herd discussions
+Public rules
+Visible Shepherd identities
+Notes
+
+Focuses on quality assessment rather than discovery.
+
+### Journey VJ-05: Evaluate Platform Relevance
+User Goal Supported
+Evaluate Platform Relevance
+Journey Description
+
+Visitor synthesizes information gathered from content, contributors, and communities to determine whether Chauthara is worth joining.
+
+Trigger
+
+Visitor has completed one or more discovery journeys.
+
+Success State
+
+Visitor reaches one of two conclusions:
+
+Join the platform
+Leave the platform
+Features Involved
+User Profiles
+Personal Posting
+Herd Posting
+Comments & Replies
+Herd Creation
+Herd Membership
+Dependencies
+
+Depends on successful completion of discovery-oriented journeys.
+
+Notes
+
+This is the terminal Visitor journey and the final outcome before becoming a Member.
+
+## Visitor Journey Validation
+
+### Goal Coverage
+| Visitor Goal                           | Covered By   |
+| -------------------------------------- | ------------ |
+| Discover Valuable Content              | VJ-01, VJ-02 |
+| Evaluate Platform Relevance            | VJ-05        |
+| Explore Communities                    | VJ-03, VJ-04 |
+| Explore Individual Contributors        | VJ-02        |
+| Understand Community Culture           | VJ-04        |
+| Browse Public Discussions              | VJ-01        |
+| Identify Potential Communities To Join | VJ-03        |
+| Identify People Worth Following        | VJ-02        |
+
+### MVP Feature Coverage
+| MVP Feature                               | Visitor Journey Usage      |
+| ----------------------------------------- | -------------------------- |
+| User Profiles                             | VJ-02, VJ-05               |
+| Personal Posting                          | VJ-01, VJ-02, VJ-05        |
+| Comments & Replies                        | VJ-01, VJ-02, VJ-04, VJ-05 |
+| Herd Creation                             | VJ-03, VJ-04, VJ-05        |
+| Herd Membership                           | VJ-03, VJ-05               |
+| Herd Posting                              | VJ-01, VJ-03, VJ-04, VJ-05 |
+| Shepherd Moderation                       | VJ-04                      |
+| Image Uploads                             | VJ-01, VJ-03               |
+| Follow System (public visibility aspects) | VJ-02                      |
+
 ## Member
 
 **Description**

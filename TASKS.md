@@ -2,11 +2,10 @@
 - MVP Product Design Consolidation
     - Define user journey inventory.
         - Convert Goals Into User Journeys
-            - Visitor
+            - Member
 
 
 # Pending
-Member
 Herd Owner
 Shepherd
 Platform Administrator
@@ -41,3 +40,4 @@ Platform Moderation Specification
 Image Uploads Specification
 Identify User Types
 Identify User Goals for Each Type.
+Convert Goals Into User Journeys - Visitor
