@@ -1,3 +1,51 @@
+## 2026-06-19
+
+### Documentation
+
+- Completed User Type Identification for MVP User Journey Inventory.
+
+- Identified and documented the primary platform actors:
+  - Visitor
+  - Member
+  - Herd Owner
+  - Shepherd
+  - Platform Administrator
+
+- Evaluated additional candidate actors:
+  - Herd Member
+  - Herd Creator
+  - Content Creator
+  - Reporter
+  - Follower
+  - Reported User
+  - Suspended User
+  - Deleted User
+  - Banned User
+
+- Determined that the above candidates should not be treated as separate user types for journey mapping because they represent:
+  - Feature behaviors
+  - Participation states
+  - Governance states
+  - Account states
+
+- Established the official MVP User Journey actor hierarchy:
+  - Visitor
+  - Member
+    - Herd Owner
+    - Shepherd
+  - Platform Administrator
+
+- Created 
+  - USER_JOURNEYS.md 
+  as the authoritative source for user journey analysis.
+
+- Confirmed that future User Goals, User Journeys, and User Flows will be built using the identified user types.
+
+- Updated
+  - CHANGELOG.md
+  - TASKS.md 
+
+
 ## 2026-06-18
 
 ### Documentation
