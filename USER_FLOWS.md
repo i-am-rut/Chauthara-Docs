@@ -276,7 +276,7 @@ Herd Membership
 
 ---
 
-## Flow Relationship
+## Visitor Flow Relationship
 VF-01 Discover Public Content
             ↓
      VF-02 Explore Contributors
@@ -804,7 +804,7 @@ Reporting System
 
 ---
 
-## Flow Relationship
+## Member Flow Relationship
 MF-01 Consume Followed User Content
             ↓
 MF-02 Discover And Follow Interesting People
@@ -828,6 +828,340 @@ Supports Identity Across All Member Flows
 MF-10 Help Maintain Community Quality
             ↓
 Supports Platform Governance Across All Member Flows
+
+---
+
+## HOF-01: Create A Herd
+## Related Journey: HOJ-01 Create A Herd
+## Primary Actor: Herd Owner
+## Preconditions
+
+Authenticated active Member account exists.
+
+## Trigger
+
+Member decides to create a new community.
+
+## Main Flow
+
+Member initiates Herd creation.
+Member provides Herd identity information.
+Member reviews default community rules.
+Member optionally adds community imagery.
+Member submits the Herd.
+The Herd is created.
+Member becomes the Herd Owner.
+The Herd becomes publicly visible and available for membership.
+
+## Alternative Flows
+### AF-01: Herd Created Without Images
+
+Member creates the Herd without optional images.
+
+### AF-02: Creation Abandoned
+
+Member begins Herd creation.
+Member exits before submission.
+No Herd is created.
+
+## Success State
+
+A new active Herd exists with the creator assigned as Herd Owner.
+
+## Failure State
+
+No Herd is created.
+
+## Features Involved
+
+Herd Creation
+Image Uploads
+
+---
+
+## HOF-02: Define Community Identity
+## Related Journey: HOJ-02 Define Community Identity
+## Primary Actor: Herd Owner
+## Preconditions
+
+Active Herd exists.
+Actor is the Herd Owner.
+
+## Trigger
+
+Owner wants to establish or refine community identity.
+
+## Main Flow
+
+Owner accesses Herd management capabilities.
+Owner reviews current Herd information.
+Owner updates community description.
+Owner updates community rules.
+Owner optionally updates Herd avatar.
+Owner optionally updates Herd cover image.
+Owner saves changes.
+Updated Herd identity becomes visible.
+
+## Alternative Flows
+### AF-01: Rules Update Only
+
+Owner modifies community rules only.
+
+### AF-02: Visual Identity Update Only
+
+Owner updates Herd imagery only.
+
+### AF-03: No Changes Saved
+
+Owner reviews configuration.
+Owner exits without saving.
+
+## Success State
+
+Community identity accurately reflects the Herd purpose and expectations.
+
+## Failure State
+
+Community identity remains unchanged.
+
+## Features Involved
+
+Herd Creation
+Image Uploads
+
+---
+
+## HOF-03: Grow Community Participation
+## Related Journey: HOJ-03 Grow Community Participation
+## Primary Actor: Herd Owner
+## Preconditions
+
+Active Herd exists.
+Community membership exists.
+
+## Trigger
+
+Owner wants to increase community activity and participation.
+
+## Main Flow
+
+Owner reviews current community activity.
+Owner contributes community content.
+Owner participates in discussions.
+Members engage with Herd content.
+Additional participation occurs.
+Community activity increases.
+The Herd attracts ongoing contributions.
+
+## Alternative Flows
+### AF-01: Content-Led Growth
+
+Owner publishes Herd content that encourages participation.
+
+### AF-02: Discussion-Led Growth
+
+Owner actively participates in existing discussions.
+
+### AF-03: Limited Community Response
+
+Owner contributes content.
+Participation growth does not occur immediately.
+
+## Success State
+
+Community participation and engagement increase.
+
+## Failure State
+
+Community activity remains stagnant.
+
+## Features Involved
+
+Herd Membership
+Herd Posting
+Herd Feed
+Comments & Replies
+
+---
+
+## HOF-04: Delegate Community Governance
+## Related Journey: HOJ-04 Delegate Community Governance
+## Primary Actor: Herd Owner
+## Preconditions
+
+Active Herd exists.
+Owner authority exists.
+Eligible community members exist.
+
+## Trigger
+
+Owner determines additional moderation support is required.
+
+## Main Flow
+
+Owner reviews community participation.
+Owner identifies a suitable member.
+Owner appoints the member as a Shepherd.
+The member receives Shepherd authority within the Herd.
+Moderation responsibilities become shared.
+Community governance capacity increases.
+
+## Alternative Flows
+### AF-01: Multiple Shepherd Appointments
+
+Owner appoints more than one Shepherd.
+
+### AF-02: No Suitable Candidate
+
+Owner reviews members.
+No appointment is made.
+
+### AF-03: Existing Shepherd Team Sufficient
+
+Owner reviews governance needs.
+No governance changes occur.
+
+## Success State
+
+One or more Shepherds actively support community moderation.
+
+## Failure State
+
+No governance delegation occurs.
+
+## Features Involved
+
+Herd Creation
+Shepherd Moderation
+
+---
+
+## HOF-05: Oversee Community Health
+## Related Journey: HOJ-05 Oversee Community Health
+## Primary Actor: Herd Owner
+## Preconditions
+
+Active Herd exists.
+Community activity exists.
+
+## Trigger
+
+Owner performs routine governance oversight or identifies community concerns.
+
+## Main Flow
+
+Owner reviews Herd activity.
+Owner reviews discussions and participation trends.
+Owner reviews moderation outcomes.
+Owner reviews reports affecting the community.
+Owner evaluates whether activity aligns with community rules and purpose.
+Owner identifies governance concerns when necessary.
+Owner determines whether corrective action or guidance is needed.
+
+## Alternative Flows
+### AF-01: Community Operating Normally
+
+Owner reviews activity.
+No intervention is required.
+
+### AF-02: Governance Concern Identified
+
+Owner identifies moderation or participation concerns.
+Owner initiates further review.
+
+### AF-03: Community Rule Adjustments Needed
+
+Owner determines existing rules are insufficient.
+Owner updates community guidance.
+
+## Success State
+
+Community remains aligned with its purpose, rules, and governance expectations.
+
+## Failure State
+
+Community health concerns remain unresolved.
+
+## Features Involved
+
+Herd Posting
+Comments & Replies
+Reporting System
+Shepherd Moderation
+
+---
+
+## HOF-06: Resolve Community Moderation Disputes
+## Related Journey: HOJ-06 Resolve Community Moderation Disputes
+## Primary Actor: Herd Owner
+## Preconditions
+
+Active Herd exists.
+Moderation dispute, escalation, or contested decision exists.
+
+## Trigger
+
+A matter is escalated to the Herd Owner.
+
+## Main Flow
+
+Owner receives an escalation.
+Owner reviews the dispute or moderation decision.
+Owner reviews relevant reports and context.
+Owner evaluates whether the original decision was appropriate.
+Owner reaches a governance decision.
+Owner either upholds or reverses the prior decision.
+If platform-level review is required, the matter is escalated.
+The dispute reaches resolution.
+
+## Alternative Flows
+### AF-01: Decision Upheld
+
+Owner determines original moderation action was appropriate.
+
+### AF-02: Decision Reversed
+
+Owner determines original moderation action should be reversed.
+
+### AF-03: Escalation To Platform Administrators
+
+Owner determines platform-level review is required.
+Matter is escalated.
+
+## Success State
+
+Dispute is resolved or successfully escalated to Platform Administrators.
+
+## Failure State
+
+Dispute remains unresolved.
+
+## Features Involved
+
+Reporting System
+Shepherd Moderation
+Platform Moderation
+
+---
+
+## Herd Owner Flow Relationship
+Inherited Member Flows
+MJ-01 through MJ-10
+            ↓
+
+HOF-01 Create A Herd
+            ↓
+HOF-02 Define Community Identity
+            ↓
+HOF-03 Grow Community Participation
+            ↓
+HOF-04 Delegate Community Governance
+            ↓
+HOF-05 Oversee Community Health
+            ↓
+HOF-06 Resolve Community Moderation Disputes
+            ↓
+Platform Governance Escalation
 
 ---
 

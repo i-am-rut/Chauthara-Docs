@@ -1,12 +1,11 @@
 # Ongoing
 - MVP Product Design Consolidation
     - Define MVP User Flows
-        - Define Herd Owner User Flows
+        - Define Shepherd User Flows
             
 
 
 # Pending
-Define Shepherd User Flows
 Define Platform Administrator User Flows
 
 Define MVP data model boundaries.
@@ -46,3 +45,4 @@ Convert Goals Into User Journeys - Shepherd
 Convert Goals Into User Journeys - Platform Administrator
 Define Visitor User Flows
 Define Member User Flows
+Define Herd Owner User Flows

@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Herd Owner User Flows
+Define Shepherd User Flows
 
 Next Task:
-Define Shepherd User Flows
+Define Platform Administrator User Flows
 
 Blocked By:
 Nothing
