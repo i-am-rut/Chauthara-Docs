@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define user journey inventory.
+Identify User Types
 
 Next Task:
-Define MVP User Flows
+Identify User Goals for Each Type.
 
 Blocked By:
 Nothing

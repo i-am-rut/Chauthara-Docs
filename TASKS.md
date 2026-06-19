@@ -1,11 +1,13 @@
 # Ongoing
-MVP Product Design Consolidation
-Define user journey inventory.
-
+- MVP Product Design Consolidation
+    - Define user journey inventory.
+        - Identify User Types
 
 
 
 # Pending
+Identify User Goals for Each Type.
+Convert Goals Into User Journeys
 Define MVP User Flows
 Define MVP data model boundaries.
 Define MVP API surface.
