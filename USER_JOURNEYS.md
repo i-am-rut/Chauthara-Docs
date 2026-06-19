@@ -316,6 +316,304 @@ Participate In Communities
 ↓
 Potential Herd Ownership
 
+## Member Journeys
+### MJ-01: Consume Followed User Content
+User Goal Supported
+Consume Relevant Content
+Journey Description
+
+Member consumes content from people they have chosen to follow.
+
+Trigger
+
+User wants to see activity from followed users.
+
+Success State
+
+User discovers and consumes relevant personal content.
+
+Features Involved
+User Accounts
+Follow System
+Following Feed
+Personal Posting
+Dependencies
+Account exists
+At least one followed user
+Notes
+
+Natural continuation of Visitor content discovery.
+
+### MJ-02: Discover And Follow Interesting People
+User Goal Supported
+Consume Relevant Content
+Build Audience
+Journey Description
+
+Member identifies a creator or contributor and follows them for future content.
+
+Trigger
+
+User finds a valuable profile.
+
+Success State
+
+Follow relationship established.
+
+Features Involved
+User Profiles
+Follow System
+Dependencies
+Existing profile to follow
+Notes
+
+Begins as Visitor profile exploration and transitions into Member participation.
+
+### MJ-03: Publish A Personal Post
+User Goal Supported
+Express Ideas And Opinions
+Build Personal Identity
+Build Audience
+Journey Description
+
+Member publishes content under their own identity.
+
+Trigger
+
+User wants to share an idea, opinion, experience, question, or knowledge.
+
+Success State
+
+Personal post becomes publicly visible.
+
+Features Involved
+Personal Posting
+User Profiles
+Image Uploads
+Dependencies
+Authenticated Member
+Notes
+
+Primary identity-building journey.
+
+### MJ-04: Participate In A Discussion
+User Goal Supported
+Participate In Discussions
+Build Personal Identity
+Journey Description
+
+Member contributes comments or replies within a discussion.
+
+Trigger
+
+User wants to respond to existing content.
+
+Success State
+
+Contribution becomes part of the discussion thread.
+
+Features Involved
+Comments & Replies
+Dependencies
+Existing post or discussion
+Notes
+
+Core discussion outcome.
+
+### MJ-05: Evaluate Content Through Voting
+User Goal Supported
+Participate In Discussions
+Consume Relevant Content
+Journey Description
+
+Member expresses approval or disapproval of content.
+
+Trigger
+
+User encounters content worth evaluating.
+
+Success State
+
+Vote recorded on content.
+
+Features Involved
+HypeUp / HypeDown Voting
+Dependencies
+Existing post, comment, or reply
+Notes
+
+Lightweight participation journey.
+
+### MJ-06: Build A Personal Profile
+User Goal Supported
+Build Personal Identity
+Journey Description
+
+Member customizes and maintains their public identity.
+
+Trigger
+
+User wants to improve profile presentation.
+
+Success State
+
+Profile accurately represents the user.
+
+Features Involved
+User Profiles
+Image Uploads
+Dependencies
+Existing account
+Notes
+
+Identity-focused journey separate from content creation.
+
+### MJ-07: Join A Herd Community
+User Goal Supported
+Participate In Communities
+Consume Relevant Content
+Journey Description
+
+Member becomes part of a topic-focused community.
+
+Trigger
+
+User discovers a Herd relevant to their interests.
+
+Success State
+
+Active Herd membership established.
+
+Features Involved
+Herd Creation
+Herd Membership
+Dependencies
+Existing Herd
+Notes
+
+Community participation entry point.
+
+### MJ-08: Consume Community Content
+User Goal Supported
+Consume Relevant Content
+Participate In Communities
+Journey Description
+
+Member consumes content from joined Herds.
+
+Trigger
+
+User wants to stay informed about community activity.
+
+Success State
+
+Relevant Herd content is consumed.
+
+Features Involved
+Herd Membership
+Herd Feed
+Herd Posting
+Dependencies
+Joined Herd
+Notes
+
+Community equivalent of Following Feed consumption.
+
+### MJ-09: Contribute To A Herd
+User Goal Supported
+Participate In Communities
+Express Ideas And Opinions
+Build Personal Identity
+Journey Description
+
+Member contributes original content inside a Herd.
+
+Trigger
+
+User wants to participate in a community conversation.
+
+Success State
+
+Herd post becomes visible within the community.
+
+Features Involved
+Herd Membership
+Herd Posting
+Image Uploads
+Dependencies
+Membership in target Herd
+Notes
+
+Primary community contribution journey.
+
+### MJ-10: Help Maintain Community Quality
+User Goal Supported
+Participate In Communities
+Journey Description
+
+Member reports content, profiles, or communities that violate rules or policies.
+
+Trigger
+
+User encounters problematic content.
+
+Success State
+
+Report submitted for review.
+
+Features Involved
+Reporting System
+Dependencies
+Reportable entity exists
+Notes
+
+Participation in platform governance without moderation authority.
+
+## Member Journey Validation
+
+### Goal Coverage
+| Member Goal                | Covered By                 |
+| -------------------------- | -------------------------- |
+| Consume Relevant Content   | MJ-01, MJ-07, MJ-08        |
+| Express Ideas And Opinions | MJ-03, MJ-09               |
+| Participate In Discussions | MJ-04, MJ-05               |
+| Participate In Communities | MJ-07, MJ-08, MJ-09, MJ-10 |
+| Build Personal Identity    | MJ-03, MJ-04, MJ-06, MJ-09 |
+| Build Audience             | MJ-02, MJ-03               |
+
+### MVP Feature Coverage
+| MVP Feature        | Exercised |
+| ------------------ | --------- |
+| User Accounts      | Yes       |
+| User Profiles      | Yes       |
+| Personal Posting   | Yes       |
+| Following Feed     | Yes       |
+| Follow System      | Yes       |
+| Comments & Replies | Yes       |
+| HypeUp / HypeDown  | Yes       |
+| Herd Membership    | Yes       |
+| Herd Posting       | Yes       |
+| Herd Feed          | Yes       |
+| Reporting System   | Yes       |
+| Image Uploads      | Yes       |
+
+### Common Journeys with Visitor
+| Visitor Outcome             | Member Continuation |
+| --------------------------- | ------------------- |
+| Discover Valuable Content   | MJ-01, MJ-08        |
+| Explore Communities         | MJ-07, MJ-08        |
+| Evaluate Platform Relevance | MJ-02, MJ-03, MJ-07 |
+
+### Member Specific Journeys
+MJ-02 Discover And Follow Interesting People
+MJ-03 Publish A Personal Post
+MJ-04 Participate In A Discussion
+MJ-05 Evaluate Content Through Voting
+MJ-06 Build A Personal Profile
+MJ-07 Join A Herd Community
+MJ-09 Contribute To A Herd
+MJ-10 Help Maintain Community Quality
+
 ## Herd Owner
 
 **Description**
