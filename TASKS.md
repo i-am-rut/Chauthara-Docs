@@ -2,11 +2,11 @@
 - MVP Product Design Consolidation
     - Define user journey inventory.
         - Convert Goals Into User Journeys
-            - Shepherd
+            - Platform Administrator
 
 
 # Pending
-Platform Administrator
+
 Define MVP User Flows
 Define MVP data model boundaries.
 Define MVP API surface.
@@ -41,3 +41,4 @@ Identify User Goals for Each Type.
 Convert Goals Into User Journeys - Visitor
 Convert Goals Into User Journeys - Member
 Convert Goals Into User Journeys - Herd Owner
+Convert Goals Into User Journeys - Shepherd

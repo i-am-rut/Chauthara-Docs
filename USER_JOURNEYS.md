@@ -933,6 +933,215 @@ Apply Community Moderation
 ↓
 Maintain Community Health
 
+## Shepherd Journeys
+### Journey SHJ-01: Moderate Herd Content
+User Goal Supported
+Enforce Community Rules
+Maintain Discussion Quality
+Protect Community Members
+Journey Description
+
+Shepherd reviews Herd posts, comments, and replies and removes content that violates Herd rules or disrupts constructive discussion.
+
+Trigger
+
+Shepherd observes problematic content through normal community participation or moderation review.
+
+Success State
+
+Violating content is removed and no longer appears through normal Herd visibility surfaces.
+
+Features Involved
+Herd Posting
+Comments & Replies
+Shepherd Moderation
+Dependencies
+Existing Herd
+Existing content
+Shepherd authority within Herd
+Notes
+
+Includes moderation of:
+
+Herd posts
+Comments
+Replies
+
+Does not include platform-wide enforcement.
+
+### Journey SHJ-02: Review Community Reports
+User Goal Supported
+Review Reports
+Enforce Community Rules
+Protect Community Members
+Journey Description
+
+Shepherd reviews reports involving Herd content, discussions, and community-rule violations and determines whether enforcement is required.
+
+Trigger
+
+A report enters the moderation queue for the Herd.
+
+Success State
+
+Report is reviewed and either:
+
+Dismissed
+Actioned through community moderation
+Escalated
+Features Involved
+Reporting System
+Shepherd Moderation
+Dependencies
+Existing report
+Shepherd authority within Herd
+Notes
+
+Represents the primary report-handling workflow for community moderation.
+
+### Journey SHJ-03: Moderate Community Membership
+User Goal Supported
+Enforce Community Rules
+Protect Community Members
+Maintain Discussion Quality
+Journey Description
+
+Shepherd removes disruptive or rule-violating members from the Herd when continued participation would harm the community.
+
+Trigger
+
+A member repeatedly violates community expectations or community participation standards.
+
+Success State
+
+Member is removed from the Herd and loses future participation eligibility within that Herd.
+
+Features Involved
+Herd Membership
+Shepherd Moderation
+Dependencies
+Existing Herd member
+Shepherd authority within Herd
+Notes
+
+Community removal is not platform enforcement.
+
+Existing authored content remains attributable to the original author.
+
+### Journey SHJ-04: Guide Constructive Participation
+User Goal Supported
+Maintain Discussion Quality
+Guide Community Participation
+Help Community Growth
+Journey Description
+
+Shepherd actively encourages constructive discussion and healthy community participation through visible moderation presence and community guidance.
+
+Trigger
+
+Routine community stewardship or emerging discussion-quality concerns.
+
+Success State
+
+Discussions remain aligned with community expectations and participation quality remains healthy.
+
+Features Involved
+Herd Posting
+Comments & Replies
+Shepherd Moderation
+Dependencies
+Active Herd discussions
+Notes
+
+Represents proactive moderation rather than enforcement.
+
+Focuses on maintaining discussion quality before formal moderation becomes necessary.
+
+### Journey SHJ-05: Escalate Serious Community Issues
+User Goal Supported
+Escalate Serious Issues
+Protect Community Members
+Support Herd Owner Governance
+Journey Description
+
+Shepherd escalates reports, moderation disputes, severe violations, or governance concerns that exceed community moderation authority.
+
+Trigger
+
+A matter requires review beyond Shepherd authority.
+
+Examples:
+
+Potential platform policy violations
+Illegal content concerns
+Severe harassment
+Governance disputes
+Cases potentially requiring account-level enforcement
+Success State
+
+Matter is successfully escalated to the appropriate authority for further review.
+
+Features Involved
+Reporting System
+Shepherd Moderation
+Platform Moderation
+Dependencies
+Existing report, violation, or moderation dispute
+Notes
+
+Escalation path:
+
+Shepherd → Herd Owner → Platform Administrator
+
+Platform Administrators may directly review matters when required.
+
+## Shepherd Journey Validations
+
+### Goal Coverage
+| Shepherd Goal                 | Covered By                     |
+| ----------------------------- | ------------------------------ |
+| Enforce Community Rules       | SHJ-01, SHJ-02, SHJ-03         |
+| Maintain Discussion Quality   | SHJ-01, SHJ-03, SHJ-04         |
+| Protect Community Members     | SHJ-01, SHJ-02, SHJ-03, SHJ-05 |
+| Review Reports                | SHJ-02                         |
+| Guide Community Participation | SHJ-04                         |
+| Escalate Serious Issues       | SHJ-05                         |
+| Help Community Growth         | SHJ-04                         |
+| Support Herd Owner Governance | SHJ-05                         |
+
+### MVP Features Coverage
+| MVP Feature         | Shepherd Journey Usage                 |
+| ------------------- | -------------------------------------- |
+| Herd Membership     | SHJ-03                                 |
+| Herd Posting        | SHJ-01, SHJ-04                         |
+| Comments & Replies  | SHJ-01, SHJ-04                         |
+| Reporting System    | SHJ-02, SHJ-05                         |
+| Shepherd Moderation | SHJ-01, SHJ-02, SHJ-03, SHJ-04, SHJ-05 |
+| Platform Moderation | SHJ-05                                 |
+
+### Moderation Coverage
+| Moderation Responsibility | Covered By             |
+| ------------------------- | ---------------------- |
+| Report Handling           | SHJ-02                 |
+| Content Moderation        | SHJ-01                 |
+| Comment Moderation        | SHJ-01                 |
+| Reply Moderation          | SHJ-01                 |
+| Member Moderation         | SHJ-03                 |
+| Discussion Quality        | SHJ-04                 |
+| Escalation Handling       | SHJ-05                 |
+| Community Protection      | SHJ-01, SHJ-03, SHJ-05 |
+
+### Inherited Member Journeys
+Shepherds continue to perform all Member journeys:
+MJ-01 through MJ-10
+
+### Shepherd Specific Journeys
+SHJ-01 Moderate Herd Content
+SHJ-02 Review Community Reports
+SHJ-03 Moderate Community Membership
+SHJ-04 Guide Constructive Participation
+SHJ-05 Escalate Serious Community Issues
+
 ## Platform Administrator
 
 **Description**

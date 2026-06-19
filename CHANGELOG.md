@@ -169,6 +169,51 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed Shepherd User Journey Mapping.
+
+- Converted Shepherd goals into outcome-based MVP user journeys:
+  - SHJ-01 Moderate Herd Content
+  - SHJ-02 Review Community Reports
+  - SHJ-03 Moderate Community Membership
+  - SHJ-04 Guide Constructive Participation
+  - SHJ-05 Escalate Serious Community Issues
+
+- Defined for each journey:
+  - Supported goals
+  - Journey description
+  - Trigger
+  - Success state
+  - Features involved
+  - Dependencies
+  - Notes
+
+- Performed goal coverage validation.
+
+- Confirmed all Shepherd goals are covered by at least one journey.
+
+- Performed journey overlap analysis and removed duplicate moderation outcomes.
+
+- Performed MVP feature coverage analysis for Shepherd journeys.
+
+- Performed moderation coverage validation.
+
+- Confirmed Shepherd journeys cover:
+  - Content moderation
+  - Discussion moderation
+  - Membership moderation
+  - Report review
+  - Community guidance
+  - Governance escalation
+
+- Added Member-to-Shepherd relationship analysis.
+
+- Identified Shepherd-exclusive moderation and governance journeys.
+
+- Updated:
+  - USER_JOURNEYS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 
 ## 2026-06-18
 
