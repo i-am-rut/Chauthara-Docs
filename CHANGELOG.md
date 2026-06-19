@@ -299,6 +299,43 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed Member User Flow Mapping.
+
+- Converted Member journeys into implementation-neutral MVP user flows:
+  - MF-01 Consume Followed User Content
+  - MF-02 Discover And Follow Interesting People
+  - MF-03 Publish A Personal Post
+  - MF-04 Participate In A Discussion
+  - MF-05 Evaluate Content Through Voting
+  - MF-06 Build A Personal Profile
+  - MF-07 Join A Herd Community
+  - MF-08 Consume Community Content
+  - MF-09 Contribute To A Herd
+  - MF-10 Help Maintain Community Quality
+
+- Performed Member journey-to-flow traceability validation.
+
+- Defined Member participation flow progression across:
+  - Following Feed consumption
+  - User discovery and following
+  - Personal content creation
+  - Discussion participation
+  - Voting participation
+  - Profile development
+  - Herd membership
+  - Herd content consumption
+  - Herd contribution
+  - Community reporting
+
+- Confirmed all approved Member journeys are represented by at least one Member user flow.
+
+- Updated:
+  - USER_FLOWS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+
+
 
 ## 2026-06-18
 
