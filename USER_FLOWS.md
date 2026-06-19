@@ -1165,3 +1165,347 @@ Platform Governance Escalation
 
 ---
 
+## SF-01: Moderate Herd Content
+## Related Journey: SHJ-01 Moderate Herd Content
+## Primary Actor: Shepherd
+## Preconditions
+
+Active Herd exists.
+
+Actor has Shepherd authority within the Herd.
+
+Eligible Herd content exists.
+
+## Trigger
+
+Shepherd identifies content that may violate Herd rules or disrupt constructive participation.
+
+## Main Flow
+
+Shepherd reviews a Herd post, comment, or reply.
+
+Shepherd evaluates the content against Herd rules.
+
+Shepherd determines that moderation action is required.
+
+Shepherd removes the violating content.
+
+Removed content is no longer visible through normal Herd participation surfaces.
+
+Community discussion continues without the violating content.
+
+## Alternative Flows
+### AF-01: Herd Post Removal
+
+Shepherd removes a Herd post that violates community rules.
+
+### AF-02: Comment Or Reply Removal
+
+Shepherd removes a comment or reply that violates community rules.
+
+### AF-03: No Violation Found
+
+Shepherd reviews the content.
+
+Shepherd determines no action is required.
+
+Content remains visible.
+
+## Success State
+
+Violating content is removed from normal Herd visibility surfaces.
+
+## Failure State
+
+Problematic content remains visible despite requiring moderation.
+
+## Features Involved
+
+Herd Posting
+
+Comments & Replies
+
+Shepherd Moderation
+
+---
+
+## SF-02: Review Community Reports
+## Related Journey: SHJ-02 Review Community Reports
+## Primary Actor: Shepherd
+## Preconditions
+
+Actor has Shepherd authority within the Herd.
+
+At least one eligible report exists.
+
+## Trigger
+
+A report enters the Herd moderation review process.
+
+## Main Flow
+
+Shepherd opens a report.
+
+Shepherd reviews the reported content or behavior.
+
+Shepherd reviews available report context.
+
+Shepherd evaluates whether a violation occurred.
+
+Shepherd reaches a moderation determination.
+
+Shepherd dismisses the report, applies community moderation, or escalates the matter.
+
+The report review process concludes.
+
+## Alternative Flows
+### AF-01: Report Dismissed
+
+Shepherd determines no violation occurred.
+
+Report is dismissed.
+
+### AF-02: Community Enforcement Applied
+
+Shepherd determines a community rule violation occurred.
+
+Appropriate community moderation action is applied.
+
+### AF-03: Escalation Required
+
+Shepherd determines the matter exceeds community authority.
+
+Matter is escalated.
+
+## Success State
+
+Report is reviewed and reaches an appropriate outcome.
+
+## Failure State
+
+Report remains unresolved.
+
+## Features Involved
+
+Reporting System
+
+Shepherd Moderation
+
+---
+
+## SF-03: Moderate Community Membership
+## Related Journey: SHJ-03 Moderate Community Membership
+## Primary Actor: Shepherd
+## Preconditions
+
+Active Herd exists.
+
+Actor has Shepherd authority within the Herd.
+
+Target member belongs to the Herd.
+
+## Trigger
+
+A member repeatedly violates community rules or participation standards.
+
+## Main Flow
+
+Shepherd reviews member behavior.
+
+Shepherd determines continued participation is harmful to the community.
+
+Shepherd removes the member from the Herd.
+
+Member loses Herd membership.
+
+Member loses future participation eligibility within the Herd.
+
+Previously authored content remains attributable to the original author.
+
+## Alternative Flows
+### AF-01: Community Warning Through Guidance
+
+Shepherd reviews member behavior.
+
+Shepherd determines removal is not yet necessary.
+
+Member remains in the Herd.
+
+### AF-02: Immediate Removal
+
+Severe community disruption is identified.
+
+Shepherd removes the member without further participation.
+
+### AF-03: No Violation Found
+
+Shepherd reviews the situation.
+
+No membership action is taken.
+
+## Success State
+
+Community participation standards are protected through appropriate membership moderation.
+
+## Failure State
+
+A disruptive member remains in the Herd despite requiring moderation.
+
+## Features Involved
+
+Herd Membership
+
+Shepherd Moderation
+
+---
+
+## SF-04: Guide Constructive Participation
+## Related Journey: SHJ-04 Guide Constructive Participation
+## Primary Actor: Shepherd
+## Preconditions
+
+Active Herd discussions exist.
+
+Actor has Shepherd authority within the Herd.
+
+## Trigger
+
+Routine community stewardship or emerging discussion-quality concerns.
+
+## Main Flow
+
+Shepherd reviews ongoing discussions.
+
+Shepherd identifies participation patterns affecting discussion quality.
+
+Shepherd provides community guidance through visible moderation presence.
+
+Community members continue participating.
+
+Discussion quality remains aligned with Herd expectations.
+
+Community participation remains constructive.
+
+## Alternative Flows
+### AF-01: Healthy Discussion Environment
+
+Shepherd observes discussions.
+
+No additional intervention is required.
+
+### AF-02: Early Guidance Prevents Escalation
+
+Shepherd identifies emerging concerns.
+
+Guidance is provided.
+
+Formal moderation becomes unnecessary.
+
+### AF-03: Guidance Insufficient
+
+Discussion quality continues to decline.
+
+Formal moderation activity becomes necessary.
+
+## Success State
+
+Discussions remain constructive and aligned with community expectations.
+
+## Failure State
+
+Discussion quality deteriorates despite moderation guidance.
+
+## Features Involved
+
+Herd Posting
+
+Comments & Replies
+
+Shepherd Moderation
+
+---
+
+## SF-05: Escalate Serious Community Issues
+## Related Journey: SHJ-05 Escalate Serious Community Issues
+## Primary Actor: Shepherd
+## Preconditions
+
+Actor has Shepherd authority within the Herd.
+
+A report, violation, moderation dispute, or governance concern exists.
+
+The matter exceeds Shepherd authority.
+
+## Trigger
+
+Shepherd identifies a matter requiring higher-level review.
+
+## Main Flow
+
+Shepherd reviews the issue.
+
+Shepherd determines the matter exceeds community moderation authority.
+
+Shepherd prepares escalation context.
+
+Matter is escalated to the Herd Owner.
+
+The Herd Owner reviews the matter.
+
+If platform-level review is required, the matter is escalated further.
+
+Appropriate authority assumes responsibility for resolution.
+
+## Alternative Flows
+### AF-01: Herd Owner Resolution
+
+Matter is escalated.
+
+Herd Owner resolves the issue.
+
+### AF-02: Platform-Level Escalation
+
+Matter requires platform review.
+
+Herd Owner escalates the matter to Platform Administrators.
+
+### AF-03: Direct Administrative Review
+
+Platform Administrators directly assume review responsibility when necessary.
+
+## Success State
+
+Matter is successfully transferred to the appropriate authority for resolution.
+
+## Failure State
+
+Serious issue remains unresolved or unreviewed.
+
+## Features Involved
+
+Reporting System
+Shepherd Moderation
+Platform Moderation
+
+---
+
+## Shepherd Flow Relationship 
+Inherited Member Flows
+MF-01 through MF-10
+      ↓
+SF-04 Guide Constructive Participation
+      ↓
+SF-01 Moderate Herd Content
+      ↓
+SF-02 Review Community Reports
+      ↓
+SF-03 Moderate Community Membership
+      ↓
+SF-05 Escalate Serious Community Issues
+      ↓
+Herd Owner Governance Review
+      ↓
+Platform Governance Review
+
+---
+

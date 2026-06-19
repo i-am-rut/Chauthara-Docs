@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Shepherd User Flows
+Define Platform Administrator User Flows
 
 Next Task:
-Define Platform Administrator User Flows
+Define MVP data model boundaries
 
 Blocked By:
 Nothing
