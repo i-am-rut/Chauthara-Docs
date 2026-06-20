@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Platform Administrator User Flows
+Define MVP data model boundaries
 
 Next Task:
-Define MVP data model boundaries
+To be determined.
 
 Blocked By:
 Nothing

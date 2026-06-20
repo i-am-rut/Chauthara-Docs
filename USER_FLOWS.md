@@ -1509,3 +1509,311 @@ Platform Governance Review
 
 ---
 
+## PAF-01: Review Platform Reports
+## Related Journey: PAJ-01 Review Platform Reports
+## Primary Actor: Platform Administrator
+## Preconditions
+
+Administrator authority exists.
+
+At least one report requires platform review.
+
+Reported entity exists.
+
+## Trigger
+
+A report reaches platform-level review through escalation or direct administrative review.
+
+## Main Flow
+
+Platform Administrator opens a report.
+
+Platform Administrator reviews the reported entity.
+
+Platform Administrator reviews report details and available context.
+
+Platform Administrator evaluates whether platform policies or legal requirements may have been violated.
+
+Platform Administrator determines whether additional investigation is required.
+
+Platform Administrator reaches a moderation determination.
+
+The report proceeds to closure, enforcement, or escalation resolution.
+
+## Alternative Flows
+### AF-01: No Violation Found
+
+Platform Administrator reviews the report.
+
+No violation is identified.
+
+Report is closed without enforcement.
+
+### AF-02: Violation Confirmed
+
+Platform Administrator determines a violation occurred.
+
+Matter proceeds to platform enforcement.
+
+### AF-03: Additional Review Required
+
+Available information is insufficient.
+
+Platform Administrator performs further investigation before reaching a determination.
+
+## Success State
+
+Report reaches a documented moderation determination.
+
+## Failure State
+
+Report remains unresolved or unreviewed.
+
+## Features Involved
+
+Reporting System
+
+Platform Moderation
+
+---
+
+## PAF-02: Enforce Platform Policies
+## Related Journey: PAJ-02 Enforce Platform Policies
+## Primary Actor: Platform Administrator
+## Preconditions
+
+Administrator authority exists.
+
+A confirmed violation exists.
+
+Enforcement authority applies to the target entity.
+
+## Trigger
+
+Administrator review confirms a platform-policy or legal violation.
+
+## Main Flow
+
+Platform Administrator reviews the violation.
+
+Platform Administrator determines the appropriate enforcement action.
+
+Platform Administrator applies enforcement.
+
+Affected content, account, profile, or community enters the appropriate enforcement state.
+
+Platform visibility and governance outcomes are updated accordingly.
+
+Enforcement activity is completed.
+
+## Alternative Flows
+### AF-01: Content Enforcement
+
+Platform Administrator removes violating content.
+
+Content is no longer visible through normal platform surfaces.
+
+### AF-02: Account Enforcement
+
+Platform Administrator applies account-level enforcement.
+
+Participation privileges are restricted according to the enforcement action.
+
+### AF-03: Community Enforcement
+
+Platform Administrator applies enforcement affecting a Herd or community leadership authority.
+
+### AF-04: Enforcement Not Required
+
+Platform Administrator determines enforcement is unnecessary.
+
+No action is applied.
+
+## Success State
+
+Appropriate platform enforcement is successfully applied.
+
+## Failure State
+
+Confirmed violations remain without required enforcement.
+
+## Features Involved
+
+Platform Moderation
+
+User Accounts
+
+User Profiles
+
+Personal Posting
+
+Herd Posting
+
+Comments & Replies
+
+Herd Creation
+
+---
+
+## PAF-03: Resolve Moderation Escalations
+## Related Journey: PAJ-03 Resolve Moderation Escalations
+## Primary Actor: Platform Administrator
+## Preconditions
+
+An escalation, dispute, or contested moderation outcome exists.
+
+Administrator authority exists.
+
+## Trigger
+
+A moderation matter requires final platform review.
+
+## Main Flow
+
+Platform Administrator receives the escalation.
+
+Platform Administrator reviews the disputed moderation outcome.
+
+Platform Administrator reviews relevant reports, decisions, and context.
+
+Platform Administrator evaluates whether prior actions were appropriate.
+
+Platform Administrator reaches a final governance determination.
+
+Platform Administrator upholds, reverses, restores, or expands prior actions as required.
+
+The dispute is formally resolved.
+
+## Alternative Flows
+### AF-01: Prior Decision Upheld
+
+Platform Administrator determines previous actions were appropriate.
+
+Original outcome remains unchanged.
+
+### AF-02: Prior Decision Reversed
+
+Platform Administrator determines previous actions were incorrect.
+
+Original outcome is reversed.
+
+### AF-03: Content Restoration
+
+Platform Administrator determines removed content should be restored.
+
+Content visibility is restored.
+
+### AF-04: Additional Enforcement Applied
+
+Platform Administrator determines stronger action is necessary.
+
+Additional enforcement is applied.
+
+## Success State
+
+Escalated matter receives a final platform decision.
+
+## Failure State
+
+Escalation remains unresolved.
+
+## Features Involved
+
+Reporting System
+
+Shepherd Moderation
+
+Platform Moderation
+
+---
+
+## PAF-04: Oversee Community Governance
+## Related Journey: PAJ-04 Oversee Community Governance
+## Primary Actor: Platform Administrator
+## Preconditions
+
+Active Herd exists.
+
+Governance activity exists.
+
+Administrator authority exists.
+
+## Trigger
+
+Governance concerns, moderation-pattern concerns, leadership conduct concerns, or platform safety concerns require review.
+
+## Main Flow
+
+Platform Administrator reviews community governance activity.
+
+Platform Administrator reviews Herd Owner conduct.
+
+Platform Administrator reviews Shepherd conduct.
+
+Platform Administrator evaluates governance actions against platform policies.
+
+Platform Administrator determines whether governance standards are being maintained.
+
+Platform Administrator identifies corrective action when necessary.
+
+Community governance remains aligned with platform expectations.
+
+## Alternative Flows
+### AF-01: Governance Operating Appropriately
+
+Platform Administrator completes the review.
+
+No intervention is required.
+
+### AF-02: Governance Correction Required
+
+Platform Administrator identifies governance concerns.
+
+Corrective action is applied.
+
+### AF-03: Leadership Authority Review
+
+Platform Administrator reviews actions taken by Herd Owners or Shepherds.
+
+Governance authority is maintained, modified, or removed as necessary.
+
+### AF-04: Platform Safety Concern Identified
+
+Platform Administrator determines community governance presents broader platform risk.
+
+Additional platform review or enforcement is initiated.
+
+## Success State
+
+Community governance remains aligned with platform governance standards.
+
+## Failure State
+
+Governance concerns remain unresolved.
+
+## Features Involved
+
+Platform Moderation
+
+Shepherd Moderation
+
+Reporting System
+
+Herd Creation
+
+---
+
+## Platform Administrator Flow Relationship
+Inherited Member Flows
+MF-01 through MF-10
+      ↓
+PAF-01 Review Platform Reports
+      ↓
+PAF-02 Enforce Platform Policies
+      ↓
+PAF-03 Resolve Moderation Escalations
+      ↓
+PAF-04 Oversee Community Governance
+      ↓
+Final Platform Governance Authority
+
