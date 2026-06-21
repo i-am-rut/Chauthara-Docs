@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Classify Entity Types
+Define Ownership Boundaries
 
 Next Task:
-Define Ownership Boundaries
+Define Relationships
 
 Blocked By:
 Nothing
