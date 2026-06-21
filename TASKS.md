@@ -1,19 +1,22 @@
 # Ongoing
 - MVP Product Design Consolidation
     - Define MVP data model boundaries
-        - Define User-Owned vs System-Owned Data
+        - Define Moderation Boundaries
             
 
 
 # Pending
-Define Moderation Boundaries
 MVP Data Model Validation
 Define MVP API surface.
 Architecture Refinement
 
 ADR Creation
 
-
+<!-- At the time of definition of:
+Account Deletion Behavior
+Privacy Boundaries
+Retention Policies
+The principle - 'Mixed Responsibility data may survive creator departure if community continuity requires it' may be needed to be stated explicitly. -->
 
 # Completed
 Prioritize Core Platform features
@@ -53,3 +56,4 @@ Define Ownership Boundaries
 Define Relationships
 Define Aggregate Boundaries
 Define Entity Lifecycles
+Define User-Owned vs System-Owned Data

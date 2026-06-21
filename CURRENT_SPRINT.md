@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define User-Owned vs System-Owned Data
+Define Moderation Boundaries
 
 Next Task:
-Define Moderation Boundaries
+MVP Data Model Validation
 
 Blocked By:
 Nothing

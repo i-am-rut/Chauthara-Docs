@@ -241,6 +241,51 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP User-Owned vs System-Owned Data Model.
+
+- Defined platform-wide data stewardship principles.
+
+- Distinguished:
+  - Business ownership
+  - Data stewardship
+  - Moderation authority
+
+- Evaluated stewardship responsibilities for all approved MVP entities.
+
+- Established final stewardship classifications:
+
+  User-Owned:
+  - User Account
+  - User Profile
+  - Follow Relationship
+  - Post
+  - Comment
+  - Vote
+  - Image
+  - Herd Membership
+
+  Mixed Responsibility:
+  - Herd
+  - Shepherd Assignment
+
+  System-Owned:
+  - Report
+  - Moderation Action
+
+- Validated stewardship model against:
+  - Ownership boundaries
+  - Relationship model
+  - Aggregate boundary model
+  - Lifecycle model
+  - Governance hierarchy
+
+- Updated:
+  - DATA_MODEL.md
+  - CHANGELOG.md
+  - TASKS.md
+
+
+
 
 ## 2026-06-19
 

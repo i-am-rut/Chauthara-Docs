@@ -979,3 +979,44 @@ Advanced governance workflows
 
 ---
 
+# MVP Data Stewardship Model
+
+## Data Stewardship Categories
+
+### User-Owned Data
+
+Data primarily created, controlled, and maintained by users to express identity, relationships, participation, or content.
+
+### System-Owned Data
+
+Data primarily maintained by the platform to support governance, safety, accountability, enforcement, and platform operation.
+
+### Mixed Responsibility Data
+
+Data that originates from user activity but serves ongoing community governance or platform stewardship responsibilities.
+
+## Data Stewardship Matrix
+| Entity              | Stewardship Classification |
+| ------------------- | -------------------------- |
+| User Account        | User-Owned                 |
+| User Profile        | User-Owned                 |
+| Follow Relationship | User-Owned                 |
+| Post                | User-Owned                 |
+| Comment             | User-Owned                 |
+| Vote                | User-Owned                 |
+| Image               | User-Owned                 |
+| Herd                | Mixed Responsibility       |
+| Herd Membership     | User-Owned                 |
+| Shepherd Assignment | Mixed Responsibility       |
+| Report              | System-Owned               |
+| Moderation Action   | System-Owned               |
+
+
+## Stewardship Principles
+
+- Data stewardship is distinct from ownership.
+- Data stewardship is distinct from moderation authority.
+- User-created content remains User-Owned even when moderated.
+- Governance records remain System-Owned regardless of who submitted them.
+- Community governance entities may require Mixed Responsibility classification.
+- Stewardship classifications support future privacy, moderation, retention, and deletion discussions.
