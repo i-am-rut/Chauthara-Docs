@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Ownership Boundaries
+Define Relationships
 
 Next Task:
-Define Relationships
+Define Aggregate Boundaries
 
 Blocked By:
 Nothing

@@ -127,3 +127,47 @@ Supports platform capabilities but is not a primary business object.
 
 ---
 
+# MVP Ownership Boundary Model
+
+| Entity              | Creator        | Steward        | Primary Owner  |
+| ------------------- | -------------- | -------------- | -------------- |
+| User Account        | User           | User           | User           |
+| User Profile        | User           | User           | User           |
+| Follow Relationship | Following User | Following User | Following User |
+| Post                | Author         | Author         | Author         |
+| Comment             | Author         | Author         | Author         |
+| Vote                | Voting User    | Voting User    | Voting User    |
+| Image               | Uploading User | Uploading User | Uploading User |
+| Herd                | Creator        | Herd Owner     | Herd Owner     |
+| Herd Membership     | Member         | Member         | Member         |
+| Shepherd Assignment | Herd Owner     | Herd Owner     | Herd Owner     |
+| Report              | Reporter       | Platform       | Platform       |
+| Moderation Action   | Moderator      | Platform       | Platform       |
+
+
+## Ownership Principles
+
+- Ownership is a business responsibility concept.
+- Ownership is distinct from moderation authority.
+- Ownership is distinct from creation.
+- Ownership is distinct from stewardship.
+- Herd governance does not transfer ownership of member-created content.
+- Platform moderation does not transfer ownership of user-created content.
+- Governance entities are platform-owned because they exist to support platform safety, accountability, and enforcement.
+
+---
+
+# MVP Relationship Model
+(TBD)
+
+---
+
+# MVP Aggregate Boundary Model
+(TBD)
+
+---
+
+# MVP Lifecycle Boundary Model
+(TBD)
+
+---

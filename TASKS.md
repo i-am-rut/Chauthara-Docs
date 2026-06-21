@@ -1,12 +1,11 @@
 # Ongoing
 - MVP Product Design Consolidation
     - Define MVP data model boundaries
-        - Define Ownership Boundaries
+        - Define Relationships
             
 
 
 # Pending
-Define Relationships
 Define Aggregate Boundaries
 Define Entity Lifecycles
 Define User-Owned vs System-Owned Data
@@ -53,3 +52,4 @@ Define Shepherd User Flows
 Define Platform Administrator User Flows
 Identify MVP Domain Entities
 Classify Entity Types
+Define Ownership Boundaries
