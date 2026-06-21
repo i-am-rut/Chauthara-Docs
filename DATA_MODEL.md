@@ -317,6 +317,14 @@ are derived concepts and do not participate in the relationship model.
 | Comment           | Report → Comment           | Many-to-Many |
 | Herd              | Report → Herd              | Many-to-Many |
 | Moderation Action | Report → Moderation Action | One-to-Many  |
+#### Refinement 
+| Relationship          | Cardinality |
+| --------------------- | ----------- |
+| Report → User Profile | Many-to-One |
+| Report → Post         | Many-to-One |
+| Report → Comment      | Many-to-One |
+| Report → Herd         | Many-to-One |
+
 
 ### Moderation Action
 | Related Entity      | Direction                               | Cardinality  |
@@ -462,6 +470,512 @@ Multi-stage governance workflows
 ---
 
 # MVP Lifecycle Boundary Model
-(TBD)
+
+## Lifecycle Modeling Principles
+### Principle 1 — States Must Be Business Observable
+
+A lifecycle state must represent something visible and meaningful from a business perspective.
+
+Valid:
+
+Active
+Suspended
+Submitted
+Reviewed
+
+Invalid:
+
+Persisted
+Cached
+Synced
+### Principle 2 — States Must Represent Lifecycle, Not Relationships
+
+Relationship changes are not lifecycle states.
+
+Example:
+
+A Herd is not in a "HasMembers" state.
+
+Membership count changes are relationship changes.
+
+### Principle 3 — Moderation Is Not Automatically A Lifecycle
+
+A moderation action may affect an entity's state.
+
+It is not automatically a state itself.
+
+Example:
+
+"Reported" is not a Post lifecycle state because reports are separate governance entities.
+
+### Principle 4 — States Should Be Stable
+
+A state should persist long enough to be meaningful.
+
+Avoid transient technical states.
+
+### Principle 5 — Terminal States End Normal Participation
+
+Terminal states represent completion of the business lifecycle.
+
+Some terminal states may be recoverable.
+
+Some may be permanent.
+
+## Lifecycle Analysis Per Entity
+### User Account
+#### Creation Event
+
+User completes account registration.
+
+#### Candidate States
+Pending Verification
+Active
+Suspended
+Closed
+#### State Transition Analysis
+
+Pending Verification → Active
+
+Email verification completed.
+
+Active → Suspended
+
+Platform enforcement.
+
+Suspended → Active
+
+Enforcement removed.
+
+Active → Closed
+
+User closes account.
+
+Suspended → Closed
+
+Account closed after suspension.
+
+#### Terminal States
+Closed
+#### Restoration
+
+No restoration assumed in MVP lifecycle model.
+
+#### Lifecycle Rationale
+
+Consistent with approved User Account lifecycle decisions in FEATURES.md and governance specifications.
+
+### User Profile
+#### Creation Event
+
+User Account becomes active.
+
+#### Candidate States
+Active
+Removed
+#### State Transition Analysis
+
+Active → Removed
+
+Profile ceases to participate because associated account lifecycle ends.
+
+#### Terminal States
+Removed
+#### Restoration
+
+No restoration defined.
+
+#### Lifecycle Rationale
+
+Profile is an identity projection of an account.
+
+### Follow Relationship
+#### Creation Event
+
+User follows another user.
+
+#### Candidate States
+Active
+Ended
+#### State Transition Analysis
+
+Active → Ended
+
+Follow relationship removed.
+
+#### Terminal States
+Ended
+#### Restoration
+
+New follow relationship required.
+
+#### Lifecycle Rationale
+
+Relationship exists only while follow intent exists.
+
+### Post
+#### Creation Event
+
+User publishes a post.
+
+#### Candidate States
+Published
+Removed
+#### State Transition Analysis
+
+Published → Removed
+
+Author deletion or moderation removal.
+
+#### Terminal States
+Removed
+#### Restoration
+
+Possible through governance reversal.
+
+#### Lifecycle Rationale
+
+Post lifecycle intentionally remains simple.
+
+Reporting is handled through Report entities, not Post states.
+
+### Comment
+#### Creation Event
+
+User submits a comment or reply.
+
+#### Candidate States
+Published
+Removed
+#### State Transition Analysis
+
+Published → Removed
+
+Author deletion or moderation removal.
+
+#### Terminal States
+Removed
+#### Restoration
+
+Possible through governance reversal.
+
+#### Lifecycle Rationale
+
+Matches approved discussion model and moderation model.
+
+### Vote
+#### Creation Event
+
+User submits HypeUp or HypeDown.
+
+#### Candidate States
+Active
+Withdrawn
+#### State Transition Analysis
+
+Active → Withdrawn
+
+User removes vote.
+
+#### Terminal States
+Withdrawn
+#### Restoration
+
+New vote action required.
+
+#### Lifecycle Rationale
+
+Vote exists only while user expresses evaluation.
+
+### Image
+#### Creation Event
+
+User uploads image for supported usage.
+
+#### Candidate States
+Active
+Removed
+#### State Transition Analysis
+
+Active → Removed
+
+User removal or moderation removal.
+
+#### Terminal States
+Removed
+#### Restoration
+
+Possible through governance reversal.
+
+#### Lifecycle Rationale
+
+Images inherit business meaning from parent usage while remaining independent entities.
+
+### Herd
+#### Creation Event
+
+Member creates Herd.
+
+#### Candidate States
+Active
+Restricted
+Closed
+#### State Transition Analysis
+
+Active → Restricted
+
+Platform governance limits community participation.
+
+Restricted → Active
+
+Restrictions removed.
+
+Active → Closed
+
+Community permanently ceases operation.
+
+Restricted → Closed
+
+Community permanently closed.
+
+#### Terminal States
+Closed
+#### Restoration
+
+Not assumed.
+
+#### Lifecycle Rationale
+
+Community governance introduces lifecycle complexity beyond ordinary content.
+
+### Herd Membership
+#### Creation Event
+
+Member joins Herd.
+
+#### Candidate States
+Active
+Removed
+Left
+#### State Transition Analysis
+
+Active → Left
+
+Member voluntarily leaves.
+
+Active → Removed
+
+Community moderation removes member.
+
+#### Terminal States
+Left
+Removed
+#### Restoration
+
+New membership required.
+
+#### Lifecycle Rationale
+
+Membership participation and moderation outcomes must remain distinguishable.
+
+### Shepherd Assignment
+#### Creation Event
+
+Herd Owner appoints Shepherd.
+
+#### Candidate States
+Active
+Revoked
+#### State Transition Analysis
+
+Active → Revoked
+
+Authority removed.
+
+#### Terminal States
+Revoked
+#### Restoration
+
+New assignment required.
+
+#### Lifecycle Rationale
+
+Authority delegation is temporary and community-controlled.
+
+### Report
+#### Creation Event
+
+User submits report.
+
+#### Candidate States
+Submitted
+Under Review
+Resolved
+Dismissed
+Escalated
+#### State Transition Analysis
+
+Submitted → Under Review
+
+Review begins.
+
+Under Review → Resolved
+
+Violation confirmed.
+
+Under Review → Dismissed
+
+No violation found.
+
+Under Review → Escalated
+
+Higher authority required.
+
+Escalated → Under Review
+
+Receiving authority begins review.
+
+Escalated → Resolved
+
+Final determination reached.
+
+Escalated → Dismissed
+
+Final determination reached.
+
+#### Terminal States
+Resolved
+Dismissed
+#### Restoration
+
+Not applicable.
+
+#### Lifecycle Rationale
+
+Matches approved governance hierarchy:
+
+Report → Shepherd → Herd Owner → Platform Administrator.
+
+### Moderation Action
+#### Creation Event
+
+Moderator determines enforcement is required.
+
+#### Candidate States
+Proposed
+Applied
+Reversed
+#### State Transition Analysis
+
+Proposed → Applied
+
+Enforcement executed.
+
+Applied → Reversed
+
+Governance review overturns action.
+
+#### Terminal States
+Applied
+Reversed
+#### Restoration
+
+Not applicable.
+
+#### Lifecycle Rationale
+
+Represents governance decisions rather than content participation.
+
+## Lifecycle State Definitions
+| State                | Definition                           |
+| -------------------- | ------------------------------------ |
+| Pending Verification | Awaiting activation requirements     |
+| Active               | Participating normally               |
+| Published            | Visible contribution exists          |
+| Submitted            | Governance request created           |
+| Under Review         | Governance evaluation occurring      |
+| Escalated            | Sent to higher authority             |
+| Resolved             | Governance action completed          |
+| Dismissed            | No action required                   |
+| Suspended            | Participation temporarily restricted |
+| Restricted           | Community operation limited          |
+| Removed              | Participation or visibility ended    |
+| Left                 | Voluntary membership termination     |
+| Revoked              | Delegated authority removed          |
+| Closed               | Lifecycle permanently ended          |
+| Withdrawn            | User evaluation removed              |
+| Applied              | Enforcement active                   |
+| Reversed             | Enforcement overturned               |
+
+
+## Lifecycle Transition Matrix
+| Entity              | First State          | Normal Active State | Exceptional States | Terminal States     |
+| ------------------- | -------------------- | ------------------- | ------------------ | ------------------- |
+| User Account        | Pending Verification | Active              | Suspended          | Closed              |
+| User Profile        | Active               | Active              | None               | Removed             |
+| Follow Relationship | Active               | Active              | None               | Ended               |
+| Post                | Published            | Published           | None               | Removed             |
+| Comment             | Published            | Published           | None               | Removed             |
+| Vote                | Active               | Active              | None               | Withdrawn           |
+| Image               | Active               | Active              | None               | Removed             |
+| Herd                | Active               | Active              | Restricted         | Closed              |
+| Herd Membership     | Active               | Active              | Removed            | Left, Removed       |
+| Shepherd Assignment | Active               | Active              | None               | Revoked             |
+| Report              | Submitted            | Under Review        | Escalated          | Resolved, Dismissed |
+| Moderation Action   | Proposed             | Applied             | Reversed           | Applied, Reversed   |
+
+
+## Lifecycle Validation
+### Entity Coverage
+
+All approved MVP entities have lifecycle definitions.
+
+User Account
+User Profile
+Follow Relationship
+Post
+Comment
+Vote
+Image
+Herd
+Herd Membership
+Shepherd Assignment
+Report
+Moderation Action
+
+### Aggregate Consistency
+
+Lifecycle ownership aligns with approved aggregate roots and aggregate boundaries.
+
+### Governance Consistency
+
+Lifecycle states align with:
+
+Reporting System
+Shepherd Moderation
+Platform Moderation
+Governance escalation hierarchy
+
+defined in approved MVP specifications.
+
+### Relationship Consistency
+
+No lifecycle state duplicates:
+
+Ownership changes
+Relationship changes
+Governance relationships
+
+Lifecycle concerns remain independent from relationship modeling.
+
+## Future Considerations
+Future releases may require lifecycle expansion for:
+
+Appeals
+Multi-stage moderation review
+Community ownership transfer
+Temporary community restrictions
+Advanced governance workflows
 
 ---
+
