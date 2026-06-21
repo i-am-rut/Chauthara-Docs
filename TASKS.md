@@ -1,12 +1,11 @@
 # Ongoing
 - MVP Product Design Consolidation
     - Define MVP data model boundaries
-        - Define Aggregate Boundaries
+        - Define Entity Lifecycles
             
 
 
 # Pending
-Define Entity Lifecycles
 Define User-Owned vs System-Owned Data
 Define Moderation Boundaries
 MVP Data Model Validation
@@ -53,3 +52,4 @@ Identify MVP Domain Entities
 Classify Entity Types
 Define Ownership Boundaries
 Define Relationships
+Define Aggregate Boundaries

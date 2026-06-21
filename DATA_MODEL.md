@@ -397,7 +397,67 @@ Moderation Action
 ---
 
 # MVP Aggregate Boundary Model
-(TBD)
+
+## Aggregate Modeling Principles
+
+### Principle 1 — Aggregate ≠ Relationship Group
+
+Relationships may cross aggregate boundaries.
+
+### Principle 2 — Aggregate Root Is The Control Point
+
+Every aggregate has exactly one aggregate root.
+
+### Principle 3 — User-Created Content Remains Independently Owned
+
+Community participation does not transfer content ownership.
+
+### Principle 4 — Governance Is Separate From Content
+
+Reports and Moderation Actions govern entities but do not belong to their aggregates.
+
+### Principle 5 — Membership Is Participation
+
+Membership does not create community ownership.
+
+### Principle 6 — Aggregate Boundaries Follow Business Authority
+
+Aggregate roots align with primary lifecycle control.
+
+## Aggregate Boundary Matrix
+| Aggregate                  | Aggregate Root      | Member Entities            |
+| -------------------------- | ------------------- | -------------------------- |
+| User Identity Aggregate    | User Account        | User Account, User Profile |
+| Follow Aggregate           | Follow Relationship | Follow Relationship        |
+| Personal Content Aggregate | Post                | Post                       |
+| Discussion Aggregate       | Comment             | Comment                    |
+| Voting Aggregate           | Vote                | Vote                       |
+| Media Aggregate            | Image               | Image                      |
+| Community Aggregate        | Herd                | Herd, Shepherd Assignment  |
+| Membership Aggregate       | Herd Membership     | Herd Membership            |
+| Reporting Aggregate        | Report              | Report                     |
+| Moderation Aggregate       | Moderation Action   | Moderation Action          |
+
+
+## Aggregate Validation
+
+All approved MVP entities belong to exactly one aggregate.
+
+All aggregates have exactly one aggregate root.
+
+Aggregate boundaries are consistent with:
+- Ownership boundaries
+- Relationship model
+- Governance model
+
+## Future consideration
+Re-evaluate aggregate boundaries if future releases introduce:
+
+Community ownership transfer
+Community-scoped permissions beyond Shepherd assignment
+Rich media asset management
+Appeals and moderation case management
+Multi-stage governance workflows
 
 ---
 
