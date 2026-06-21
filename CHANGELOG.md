@@ -321,8 +321,6 @@
   - CHANGELOG.md
   - TASKS.md
 
-### Documentation
-
 - Completed MVP Data Model Validation.
 
 - Performed:
@@ -642,6 +640,45 @@
   - Response Contracts
   - Feed APIs
   - Moderation APIs
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed MVP API Surface Validation for Account Lifecycle and Authentication coverage.
+
+- Evaluated approved:
+  - User Journeys
+  - User Flows
+  - API Domain Model
+  - Resource Model
+  - CRUD Model
+  - Endpoint Inventory
+  - Authorization Boundaries
+
+- Identified missing Identity workflow capabilities:
+  - Register Account
+  - Login
+  - Logout
+  - Retrieve Current Identity
+  - Verify Email
+  - Recover Password
+  - Reset Password
+
+- Confirmed User Account should remain a non-exposed API resource.
+
+- Established Identity Workflow Operations as the approved modeling pattern for account lifecycle capabilities.
+
+- Added Identity workflow capability inventory.
+
+- Added Identity workflow endpoint inventory.
+
+- Validated Identity workflow model against:
+  - Visitor to Member transition
+  - User Account lifecycle model
+  - Identity domain boundaries
+  - Resource model principles
 
 - Updated:
   - API_CONTRACTS.md

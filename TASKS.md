@@ -69,3 +69,4 @@ Define Resource Boundaries
 Define CRUD Operations
 Define Endpoint Inventory
 Define Authorization Boundaries
+Validate Account Lifecycle API Coverage

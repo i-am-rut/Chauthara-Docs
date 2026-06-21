@@ -17,6 +17,15 @@
 
 Purpose:
 Manage account identity and profile capabilities.
+Identity Domain also owns account lifecycle and identity-access workflows required for platform participation.
+
+Examples:
+- Account Registration
+- Login
+- Logout
+- Email Verification
+- Password Recovery
+- Password Reset
 
 Related Data Model Areas:
 - User Account
@@ -80,6 +89,17 @@ Related Data Model Areas:
 
 # Map User Flows to API Capabilities
 ## User Flow → API Capability Mapping
+### Identity Lifecycle Capabilities
+| Required API Capability     | Domain   |
+| --------------------------- | -------- |
+| Register Account            | Identity |
+| Login                       | Identity |
+| Logout                      | Identity |
+| Retrieve Current Identity   | Identity |
+| Verify Email                | Identity |
+| Recover Password            | Identity |
+| Reset Password              | Identity |
+
 ### Visitor Flows
 #### VF-01 — Discover Public Content
 | Required API Capabilities  | Domain  |
@@ -295,6 +315,14 @@ Related Data Model Areas:
 
 ## Domain → Capability Matrix
 ### Identity
+Register Account
+Login
+Logout
+Retrieve Current Identity
+Verify Email
+Recover Password
+Reset Password
+
 View Public User Profiles
 Maintain User Profile
 ### Social Graph
@@ -460,6 +488,24 @@ Authentication and account credentials are implementation concerns.
 Users do not directly manage accounts as business resources.
 
 Account lifecycle remains inside Identity domain operations.
+
+### Identity Workflow Operations
+
+The Identity domain contains workflow operations that support account lifecycle management.
+
+These operations do not expose User Account as an independent API resource.
+
+Examples:
+
+- Account Registration
+- Login
+- Logout
+- Email Verification
+- Password Recovery
+- Password Reset
+- Current Identity Retrieval
+
+These capabilities are modeled as workflow endpoints rather than resource endpoints.
 
 ## Social Graph
 - Follow Relationship
@@ -917,6 +963,17 @@ Notes:
 - ***Moderation Action is created through governance workflows, not normal user CRUD.
 
 ## Non-CRUD Action Inventory
+### Identity Workflow Operations
+| Operation                 | Purpose                      |
+| ------------------------- | ---------------------------- |
+| Register Account          | Create account lifecycle     |
+| Login                     | Establish authenticated use  |
+| Logout                    | End authenticated use        |
+| Retrieve Current Identity | Retrieve active identity     |
+| Verify Email              | Activate account lifecycle   |
+| Recover Password          | Begin recovery workflow      |
+| Reset Password            | Complete recovery workflow   |
+
 ### Relationship Management Operations
 | Resource            | Action             |
 | ------------------- | ------------------ |
@@ -1017,6 +1074,18 @@ Avoid duplicate retrieval surfaces.
 
 ## MVP Endpoint Inventory
 ### Identity Domain
+#### Identity Workflow Endpoints
+
+| Endpoint                     | Purpose                   | Operation | Classification |
+| ---------------------------- | ------------------------- | --------- | -------------- |
+| POST /auth/register          | Register account          | Workflow  | Identity       |
+| POST /auth/login             | Login                     | Workflow  | Identity       |
+| POST /auth/logout            | Logout                    | Workflow  | Identity       |
+| GET /auth/me                 | Retrieve current identity | Workflow  | Identity       |
+| POST /auth/verify-email      | Verify email              | Workflow  | Identity       |
+| POST /auth/forgot-password   | Recover password          | Workflow  | Identity       |
+| POST /auth/reset-password    | Reset password            | Workflow  | Identity       |
+
 #### User Profile
 | Endpoint                           | Purpose                        | Operation | Classification |
 | ---------------------------------- | ------------------------------ | --------- | -------------- |
@@ -1188,6 +1257,20 @@ Platform Administrator inherits all lower-role capabilities.
 Herd Owner inherits Member capabilities.
 
 Shepherd inherits Member capabilities.
+
+## Identity Workflow Authorization
+
+| Workflow Operation         | Visitor | Member | Shepherd | Herd Owner | Platform Admin |
+| -------------------------- | ------- | ------ | -------- | ---------- | -------------- |
+| Register Account           | Yes     | No     | No       | No         | No             |
+| Login                      | Yes     | Yes*   | Yes*     | Yes*       | Yes*           |
+| Logout                     | No      | Yes    | Yes      | Yes        | Yes            |
+| Retrieve Current Identity  | No      | Yes    | Yes      | Yes        | Yes            |
+| Verify Email               | Yes     | No      | No      | No         | No             |
+| Recover Password           | Yes     | Yes    | Yes      | Yes        | Yes            |
+| Reset Password             | Yes     | Yes    | Yes      | Yes        | Yes            |
+
+*Login is only applicable when not currently authenticated.
 
 ## Authorization Actor Matrix
 | Capability Category  | Visitor | Member | Shepherd    | Herd Owner           | Platform Admin |
