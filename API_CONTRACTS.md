@@ -848,4 +848,142 @@ Internal or derived concepts that do not require independent API interaction.
 
 ---
 
-#
+# MVP CRUD Operations
+## CRUD Decision Principles
+### Principle 1 — CRUD Must Be Flow Driven
+
+A CRUD operation exists only if required by an approved MVP user flow.
+
+### Principle 2 — Relationship Resources Rarely Require Full CRUD
+
+Relationship resources typically support:
+
+Create relationship
+Read relationship
+Remove relationship
+
+Not arbitrary updates.
+
+Examples:
+
+Follow Relationship
+Membership
+Shepherd Assignment
+### Principle 3 — Governance Resources Are Workflow Driven
+
+Governance resources support governance actions rather than traditional CRUD.
+
+Examples:
+
+Report
+Moderation Action
+### Principle 4 — Derived Resources Are Read-Only
+
+Derived resources do not own data.
+
+Examples:
+
+Following Feed
+Herd Feed
+### Principle 5 — Delete Means Business Removal
+
+Delete represents a meaningful business operation.
+
+It does not imply physical deletion.
+
+### Principle 6 — Lifecycle Constraints Override Generic CRUD
+
+Entity lifecycle definitions determine whether update/delete operations make business sense.
+
+## MVP CRUD Matrix
+| Resource            | Create | Read | Update | Delete |
+| ------------------- | ------ | ---- | ------ | ------ |
+| User Profile        | No*    | Yes  | Yes    | No     |
+| Follow Relationship | Yes    | Yes  | No     | Yes    |
+| Post                | Yes    | Yes  | Yes    | Yes    |
+| Comment             | Yes    | Yes  | Yes    | Yes    |
+| Vote                | Yes    | Yes  | Yes**  | Yes    |
+| Herd                | Yes    | Yes  | Yes    | No     |
+| Membership          | Yes    | Yes  | No     | Yes    |
+| Shepherd Assignment | Yes    | Yes  | No     | Yes    |
+| Feed                | No     | Yes  | No     | No     |
+| Image               | Yes    | Yes  | No     | Yes    |
+| Report              | Yes    | Yes  | No     | No     |
+| Moderation Action   | Yes*** | Yes  | No     | No     |
+Notes:
+
+- *User Profile is automatically created through account lifecycle and is not independently created.
+- **Vote update represents changing HypeUp ↔ HypeDown.
+- ***Moderation Action is created through governance workflows, not normal user CRUD.
+
+## Non-CRUD Action Inventory
+### Relationship Management Operations
+| Resource            | Action             |
+| ------------------- | ------------------ |
+| Follow Relationship | Follow User        |
+| Follow Relationship | Unfollow User      |
+| Membership          | Join Herd          |
+| Membership          | Leave Herd         |
+| Membership          | Remove Herd Member |
+| Shepherd Assignment | Assign Shepherd    |
+| Shepherd Assignment | Revoke Shepherd    |
+
+### Governance Actions
+| Resource          | Action                       |
+| ----------------- | ---------------------------- |
+| Report            | Dismiss Report               |
+| Report            | Escalate Report              |
+| Report            | Review Report                |
+| Moderation Action | Apply Moderation Action      |
+| Moderation Action | Reverse Moderation Action    |
+| Moderation Action | Uphold Moderation Outcome    |
+| Moderation Action | Expand Enforcement Action    |
+| Moderation Action | Restore Governed Content     |
+| Herd              | Restrict Herd                |
+| Herd              | Close Herd                   |
+| User Profile*     | Enforce Profile Restrictions |
+- *Governance affects the resource but is not CRUD.
+
+### Derived Resource Retrieval Operations
+| Resource | Action                  |
+| -------- | ----------------------- |
+| Feed     | Retrieve Following Feed |
+| Feed     | Retrieve Herd Feed      |
+
+## Resources That Should NOT Support Full CRUD
+| Resource            | Reason                       |
+| ------------------- | ---------------------------- |
+| User Profile        | No independent Create/Delete |
+| Follow Relationship | No Update                    |
+| Membership          | No Update                    |
+| Shepherd Assignment | No Update                    |
+| Feed                | Read-only derived resource   |
+| Image               | No Update                    |
+| Report              | No Update/Delete             |
+| Moderation Action   | No Update/Delete             |
+| Herd                | No Delete                    |
+
+
+## CRUD Validation
+### Validated against:
+Visitor Flows
+Member Flows
+Herd Owner Flows
+Shepherd Flows
+Platform Administrator Flows
+API Capability Model
+Resource Model
+Lifecycle Model
+Moderation Boundary Model
+
+### Validation Result:
+All approved MVP user flows supported.
+All approved MVP capabilities supported.
+No resource requires additional CRUD operations.
+No unsupported CRUD operations remain.
+Governance workflows remain separated from business CRUD.
+Derived resources remain read-only.
+
+---
+
+# 

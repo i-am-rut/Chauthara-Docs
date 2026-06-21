@@ -517,6 +517,42 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP CRUD Operations Model.
+
+- Defined CRUD decision principles.
+
+- Evaluated Create, Read, Update, and Delete requirements for all approved MVP resources.
+
+- Distinguished:
+  - CRUD operations
+  - Relationship management operations
+  - Governance actions
+  - Derived-resource retrieval operations
+
+- Identified resources that intentionally do not support full CRUD.
+
+- Confirmed Feed remains a read-only derived resource.
+
+- Validated CRUD requirements against:
+  - Approved user flows
+  - API capability model
+  - Resource model
+  - Lifecycle boundaries
+  - Governance boundaries
+
+- Approved MVP CRUD Model as the foundation for:
+  - Endpoint Inventory
+  - Authorization Boundary Analysis
+  - Request Contracts
+  - Response Contracts
+  - Feed APIs
+  - Moderation APIs
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 
 ## 2026-06-19
 
