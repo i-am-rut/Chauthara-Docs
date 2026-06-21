@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Relationships
+Define Aggregate Boundaries
 
 Next Task:
-Define Aggregate Boundaries
+Define Entity Lifecycles
 
 Blocked By:
 Nothing
