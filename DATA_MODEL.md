@@ -312,18 +312,11 @@ are derived concepts and do not participate in the relationship model.
 | Related Entity    | Direction                  | Cardinality  |
 | ----------------- | -------------------------- | ------------ |
 | User Account      | User Account → Report      | One-to-Many  |
-| User Profile      | Report → User Profile      | Many-to-Many |
-| Post              | Report → Post              | Many-to-Many |
-| Comment           | Report → Comment           | Many-to-Many |
-| Herd              | Report → Herd              | Many-to-Many |
+| User Profile      | Report → User Profile      | Many-to-One  |
+| Post              | Report → Post              | Many-to-One  |
+| Comment           | Report → Comment           | Many-to-One  |
+| Herd              | Report → Herd              | Many-to-One  |
 | Moderation Action | Report → Moderation Action | One-to-Many  |
-#### Refinement 
-| Relationship          | Cardinality |
-| --------------------- | ----------- |
-| Report → User Profile | Many-to-One |
-| Report → Post         | Many-to-One |
-| Report → Comment      | Many-to-One |
-| Report → Herd         | Many-to-One |
 
 
 ### Moderation Action
@@ -1462,5 +1455,23 @@ Governance escalation hierarchy
 
 ---
 
-# MVP Data Model Validation
-TBD.
+## Validation Verdict
+
+Status: APPROVED
+
+Validation Results
+
+- Completeness Validation: PASS
+- Consistency Validation: PASS
+- Coverage Validation: PASS
+- Modeling Quality Validation: PASS
+- Readiness Validation: PASS
+
+Validation Conclusion
+
+The MVP Data Model is approved as the authoritative MVP business data model.
+
+The project may proceed to MVP API Surface Definition.
+
+--- 
+

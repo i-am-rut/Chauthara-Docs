@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-MVP Data Model Validation
+Identify API Domains
 
 Next Task:
-TBD.
+Map User Flows To API Capabilities
 
 Blocked By:
 Nothing

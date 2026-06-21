@@ -1,12 +1,23 @@
 # Ongoing
 - MVP Product Design Consolidation
-    - Define MVP data model boundaries
-        - MVP Data Model Validation
+    - Define MVP API surface.
+        - Identify API Domains
             
 
 
 # Pending
-Define MVP API surface.
+Map User Flows To API Capabilities
+Define Resource Boundaries
+Define CRUD Operations
+Define Endpoint Inventory
+Define Authorization Boundaries
+Define Request Contracts
+Define Response Contracts
+Define Query & Pagination Standards
+Define Error Contract
+Define Feed APIs
+Define Moderation APIs
+API Surface Validation
 Architecture Refinement
 
 ADR Creation
@@ -57,3 +68,4 @@ Define Aggregate Boundaries
 Define Entity Lifecycles
 Define User-Owned vs System-Owned Data
 Define Moderation Boundaries
+MVP Data Model Validation
