@@ -3,13 +3,13 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define MVP data model boundaries
+Classify Entity Types
 
 Next Task:
-To be determined.
+Define Ownership Boundaries
 
 Blocked By:
 Nothing
 
 Definition of Done:
-All MVP features are specified and confirmed.
+All MVP design is consolidated.

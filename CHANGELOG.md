@@ -1,3 +1,66 @@
+## 2026-06-21
+
+### Documentation
+
+- Completed MVP Domain Entity Identification.
+
+- Reviewed approved MVP scope across:
+  - PROJECT_CONTEXT.md
+  - FEATURES.md
+  - USER_JOURNEYS.md
+  - USER_FLOWS.md
+
+- Identified candidate MVP business domains.
+
+- Evaluated candidate business objects and classified each as:
+  - Core Entity
+  - Supporting Entity
+  - Derived / Computed Concept
+  - Not Entity
+
+- Consolidated duplicate entity candidates:
+  - Personal Post + Herd Post → Post
+  - Comment + Reply → Comment
+
+- Determined role concepts are not entities:
+  - Member
+  - Herd Owner
+  - Shepherd
+  - Platform Administrator
+
+- Established final MVP entity inventory:
+
+  Core Entities:
+  - User Account
+  - User Profile
+  - Follow Relationship
+  - Post
+  - Comment
+  - Herd
+  - Herd Membership
+  - Vote
+  - Image
+  - Report
+
+  Supporting Entities:
+  - Shepherd Assignment
+  - Moderation Action
+
+- Established official MVP business domain structure:
+  - Identity
+  - Social Graph
+  - Content
+  - Community
+  - Governance
+
+- Created foundational entity inventory for subsequent data model boundary analysis.
+
+- Updated
+  - DATA_MODEL.md
+  - CHANGELOG.md
+  - TASKS.md
+
+
 ## 2026-06-19
 
 ### Documentation
