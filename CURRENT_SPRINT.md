@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Map User Flows To API Capabilities
+Define Resource Boundaries
 
 Next Task:
-Define Resource Boundaries
+Define CRUD Operations
 
 Blocked By:
 Nothing

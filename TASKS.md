@@ -1,12 +1,11 @@
 # Ongoing
 - MVP Product Design Consolidation
     - Define MVP API surface.
-        - Map User Flows To API Capabilities
+        - Define Resource Boundaries
             
 
 
 # Pending
-Define Resource Boundaries
 Define CRUD Operations
 Define Endpoint Inventory
 Define Authorization Boundaries
@@ -69,3 +68,4 @@ Define User-Owned vs System-Owned Data
 Define Moderation Boundaries
 MVP Data Model Validation
 Identify API Domains
+Map User Flows To API Capabilities
