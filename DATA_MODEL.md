@@ -1020,3 +1020,447 @@ Data that originates from user activity but serves ongoing community governance 
 - Governance records remain System-Owned regardless of who submitted them.
 - Community governance entities may require Mixed Responsibility classification.
 - Stewardship classifications support future privacy, moderation, retention, and deletion discussions.
+
+---
+
+# MVP Moderation Boundary Model
+
+## Governance Principles
+### Principle 1 — Ownership Does Not Create Moderation Authority
+
+Ownership answers:
+
+"Whose entity is this?"
+
+Moderation answers:
+
+"Who may govern this entity?"
+
+These are independent concepts.
+
+Example:
+
+A Member owns a Post.
+A Shepherd may moderate that Post inside a Herd.
+A Platform Administrator may override the moderation outcome.
+
+Ownership remains unchanged.
+
+Consistent with approved ownership model.
+
+### Principle 2 — Governance Is Layered
+
+Moderation authority exists at multiple levels:
+
+Community Governance
+
+Herd Owner
+Shepherd
+
+Platform Governance
+
+Platform Administrator
+
+Legal Governance
+
+Law
+
+Higher authority may override lower authority.
+
+Lower authority may not override higher authority.
+
+### Principle 3 — Community Authority Is Herd-Scoped
+
+Herd Owners and Shepherds govern:
+
+Herd participation
+Herd discussions
+Herd membership
+Herd community identity
+
+They do not perform platform-wide enforcement.
+
+Consistent with approved moderation specifications.
+
+### Principle 4 — Platform Authority Is Universal
+
+Platform Administrators may intervene in any governed MVP entity.
+
+Platform authority is never delegated below the platform layer.
+
+Consistent with approved Platform Moderation specification.
+
+### Principle 5 — Governance Authority May Be Delegated Downward But Not Upward
+
+Example:
+
+Herd Owner may delegate community moderation through Shepherd Assignment.
+Shepherd cannot create authority beyond what was delegated.
+Platform authority is never delegated.
+
+Consistent with approved Shepherd Assignment lifecycle and governance model.
+
+### Principle 6 — Reports Initiate Governance
+
+Governance begins when:
+
+Governance actors observe violations
+Reports enter governance workflows
+
+Reports are governance-entry entities.
+
+Moderation Actions are governance-outcome entities.
+
+Consistent with approved governance domain model.
+
+## Governance Actor Analysis
+| Governance Actor       | Governance Scope | Override Authority                |
+| ---------------------- | ---------------- | --------------------------------- |
+| Law                    | Entire platform  | Absolute                          |
+| Platform Administrator | Entire platform  | Overrides all platform actors     |
+| Herd Owner             | Herd governance  | Overrides Shepherd decisions      |
+| Shepherd               | Herd moderation  | No override authority above owner |
+| Member                 | Reporting only   | None                              |
+
+
+## Moderation Analysis Per Entity
+### User Account
+#### Governance Relevance Analysis
+
+Represents platform participation identity.
+
+#### Candidate Moderation Scope
+
+Direct governance.
+
+#### Candidate Governance Actors
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Platform Governance Boundary
+
+#### Moderation Rationale
+
+Account participation may be restricted, suspended, or closed through platform governance.
+
+Community actors do not govern accounts directly.
+
+### User Profile
+#### Governance Relevance Analysis
+
+Public identity representation.
+
+#### Candidate Moderation Scope
+
+Direct governance.
+
+#### Candidate Governance Actors
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Platform Governance Boundary
+
+#### Moderation Rationale
+
+Profiles are reportable entities and participate directly in governance workflows.
+
+### Follow Relationship
+#### Governance Relevance Analysis
+
+Private participation relationship.
+
+#### Candidate Moderation Scope
+
+Indirect governance only.
+
+#### Candidate Governance Actors
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Indirect Platform Governance
+
+#### Moderation Rationale
+
+Governance occurs through account governance rather than relationship governance.
+
+The relationship itself is not a moderation target.
+
+### Post
+#### Governance Relevance Analysis
+
+Primary user-generated content.
+
+#### Candidate Moderation Scope
+
+Direct governance.
+
+#### Candidate Governance Actors
+Shepherd (Herd context)
+Herd Owner
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Shared Community + Platform Governance
+
+#### Moderation Rationale
+
+Posts are directly reportable and directly moderated. Community moderation may affect visibility. Platform moderation may affect the entity itself.
+
+### Comment
+#### Governance Relevance Analysis
+
+Discussion participation content.
+
+#### Candidate Moderation Scope
+
+Direct governance.
+
+#### Candidate Governance Actors
+Shepherd
+Herd Owner
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Shared Community + Platform Governance
+
+#### Moderation Rationale
+
+Comments participate directly in reporting and moderation workflows.
+
+### Vote
+#### Governance Relevance Analysis
+
+Participation signal.
+
+#### Candidate Moderation Scope
+
+Indirect governance.
+
+#### Candidate Governance Actors
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Indirect Platform Governance
+
+#### Moderation Rationale
+
+Votes are not reportable entities.
+
+Governance occurs indirectly through governance of accounts, content, or abuse behavior.
+
+### Image
+#### Governance Relevance Analysis
+
+User-created content asset.
+
+#### Candidate Moderation Scope
+
+Indirect and Direct.
+
+#### Candidate Governance Actors
+Shepherd (when attached to Herd content)
+Herd Owner
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Inherited Content Governance Boundary
+
+#### Moderation Rationale
+
+Images inherit moderation scope from the governed entity using them. Approved specifications already state images are moderated through existing moderation systems.
+
+### Herd
+#### Governance Relevance Analysis
+
+Community entity.
+
+#### Candidate Moderation Scope
+
+Direct governance.
+
+#### Candidate Governance Actors
+Herd Owner
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Community Governance + Platform Governance
+
+#### Moderation Rationale
+
+Herds are reportable entities and may be governed both by community leadership and platform authority.
+
+### Herd Membership
+#### Governance Relevance Analysis
+
+Community participation relationship.
+
+#### Candidate Moderation Scope
+
+Direct governance.
+
+#### Candidate Governance Actors
+Shepherd
+Herd Owner
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Community Participation Governance
+
+#### Moderation Rationale
+
+Membership removal is an approved moderation outcome.
+
+### Shepherd Assignment
+#### Governance Relevance Analysis
+
+Delegated governance authority.
+
+#### Candidate Moderation Scope
+
+Direct governance.
+
+#### Candidate Governance Actors
+Herd Owner
+Platform Administrator
+Law
+#### Recommended Moderation Boundary
+
+Governance Authority Boundary
+
+#### Moderation Rationale
+
+The assignment itself may be revoked or reviewed.
+
+Platform Administrators may review governance conduct.
+
+### Report
+#### Governance Relevance Analysis
+
+Governance workflow entity.
+
+#### Candidate Moderation Scope
+
+Governed rather than moderated.
+
+#### Candidate Governance Actors
+Shepherd
+Herd Owner
+Platform Administrator
+#### Recommended Moderation Boundary
+
+Governance Process Boundary
+
+#### Moderation Rationale
+
+Reports are reviewed, dismissed, escalated, or resolved.
+
+Reports participate in governance workflows but are not themselves moderation targets.
+
+###### # Moderation Action
+#### Governance Relevance Analysis
+
+Governance outcome entity.
+
+#### Candidate Moderation Scope
+
+Governed rather than moderated.
+
+#### Candidate Governance Actors
+Herd Owner
+Platform Administrator
+#### Recommended Moderation Boundary
+
+Governance Decision Boundary
+
+#### Moderation Rationale
+
+Moderation Actions may be upheld, reversed, reviewed, or overridden through escalation.
+
+## Moderation Boundary Matrix
+| Entity              | Can Be Moderated | Direct / Indirect   | Governance Actors                    | Highest Authority |
+| ------------------- | ---------------- | ------------------- | ------------------------------------ | ----------------- |
+| User Account        | Yes              | Direct              | Platform Admin                       | Law               |
+| User Profile        | Yes              | Direct              | Platform Admin                       | Law               |
+| Follow Relationship | No               | Indirect            | Platform Admin                       | Law               |
+| Post                | Yes              | Direct              | Shepherd, Herd Owner, Platform Admin | Law               |
+| Comment             | Yes              | Direct              | Shepherd, Herd Owner, Platform Admin | Law               |
+| Vote                | No               | Indirect            | Platform Admin                       | Law               |
+| Image               | Yes              | Inherited           | Shepherd, Herd Owner, Platform Admin | Law               |
+| Herd                | Yes              | Direct              | Herd Owner, Platform Admin           | Law               |
+| Herd Membership     | Yes              | Direct              | Shepherd, Herd Owner, Platform Admin | Law               |
+| Shepherd Assignment | Yes              | Direct              | Herd Owner, Platform Admin           | Law               |
+| Report              | No               | Governance Workflow | Shepherd, Herd Owner, Platform Admin | Law               |
+| Moderation Action   | No               | Governance Workflow | Herd Owner, Platform Admin           | Law               |
+
+
+## Governance Escalation Model
+### Standard Escalation Path
+Report
+    ↓
+Shepherd
+    ↓
+Herd Owner
+    ↓
+Platform Administrator
+    ↓
+Law
+
+Consistent with approved moderation specifications and governance journeys.
+
+### Override Model
+| Authority              | Can Override         |
+| ---------------------- | -------------------- |
+| Shepherd               | None                 |
+| Herd Owner             | Shepherd             |
+| Platform Administrator | Shepherd, Herd Owner |
+| Law                    | Entire platform      |
+
+
+## Moderation Validation
+### Ownership Consistency
+
+Moderation authority never transfers ownership.
+
+Validated against approved Ownership Boundary Model.
+
+### Stewardship Consistency
+
+Moderation authority and stewardship remain independent concepts.
+
+Validated against approved Data Stewardship Model.
+
+### Lifecycle Consistency
+
+Moderation outcomes align with approved lifecycle states:
+
+Suspended
+Restricted
+Removed
+Revoked
+Applied
+Reversed
+
+Validated against Lifecycle Boundary Model.
+
+### Governance Consistency
+
+Fully aligned with:
+
+Reporting System
+Shepherd Moderation
+Platform Moderation
+Governance escalation hierarchy
+
+---
+
+# MVP Data Model Validation
+TBD.

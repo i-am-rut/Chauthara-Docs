@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Moderation Boundaries
+MVP Data Model Validation
 
 Next Task:
-MVP Data Model Validation
+TBD.
 
 Blocked By:
 Nothing
