@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Endpoint Inventory
+Define Authorization Boundaries
 
 Next Task:
-Define Authorization Boundaries
+Define Request Contracts
 
 Blocked By:
 Nothing

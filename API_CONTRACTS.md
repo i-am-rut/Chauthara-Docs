@@ -986,4 +986,172 @@ Derived resources remain read-only.
 
 ---
 
+# MVP Endpoint Inventory
+## Endpoint Design Principles
+### Principle 1 — Every Endpoint Must Map To A Resource
+No capability-only endpoints.
+
+### Principle 2 — Relationship Resources Get Dedicated Endpoints
+Applies to:
+
+Follow Relationship
+Membership
+Shepherd Assignment
+Vote
+### Principle 3 — Derived Resources Are Read Only
+Applies to:
+
+Following Feed
+Herd Feed
+### Principle 4 — Governance Uses Workflow Endpoints
+Governance actions are not forced into CRUD.
+
+### Principle 5 — Parent/Child Relationships Must Be Explicit
+Examples:
+
+Comments belong to Posts
+Memberships belong to Herds
+Shepherd Assignments belong to Herds
+### Principle 6 — One Business Operation = One Endpoint
+Avoid duplicate retrieval surfaces.
+
+## MVP Endpoint Inventory
+### Identity Domain
+#### User Profile
+| Endpoint                           | Purpose                        | Operation | Classification |
+| ---------------------------------- | ------------------------------ | --------- | -------------- |
+| GET /profiles                      | Discover profiles              | Read      | Resource       |
+| GET /profiles/{profileId}          | View profile                   | Read      | Resource       |
+| PATCH /profiles/{profileId}        | Update profile                 | Update    | Resource       |
+| GET /profiles/{profileId}/posts    | Contributor content history    | Read      | Derived        |
+| GET /profiles/{profileId}/comments | Contributor discussion history | Read      | Derived        |
+
+### Social Graph Domain
+#### Follow Relationship
+| Endpoint                               | Purpose        | Operation | Classification |
+| -------------------------------------- | -------------- | --------- | -------------- |
+| GET /profiles/{profileId}/followers    | View followers | Read      | Relationship   |
+| GET /profiles/{profileId}/following    | View following | Read      | Relationship   |
+| POST /profiles/{profileId}/followers   | Follow user    | Create    | Relationship   |
+| DELETE /profiles/{profileId}/followers | Unfollow user  | Delete    | Relationship   |
+
+### Content Domain
+#### Post
+| Endpoint               | Purpose              | Operation | Classification |
+| ---------------------- | -------------------- | --------- | -------------- |
+| GET /posts             | Discover posts       | Read      | Resource       |
+| POST /posts            | Create personal post | Create    | Resource       |
+| GET /posts/{postId}    | View post            | Read      | Resource       |
+| PATCH /posts/{postId}  | Edit post            | Update    | Resource       |
+| DELETE /posts/{postId} | Remove post          | Delete    | Resource       |
+
+#### Comment
+| Endpoint                           | Purpose                    | Operation | Classification |
+| ---------------------------------- | -------------------------- | --------- | -------------- |
+| GET /posts/{postId}/comments       | Retrieve discussion thread | Read      | Resource       |
+| POST /posts/{postId}/comments      | Create comment             | Create    | Resource       |
+| GET /comments/{commentId}          | View comment/reply         | Read      | Resource       |
+| PATCH /comments/{commentId}        | Edit comment/reply         | Update    | Resource       |
+| DELETE /comments/{commentId}       | Remove comment/reply       | Delete    | Resource       |
+| POST /comments/{commentId}/replies | Create reply               | Create    | Resource       |
+
+#### Vote
+| Endpoint                          | Purpose               | Operation | Classification |
+| --------------------------------- | --------------------- | --------- | -------------- |
+| GET /posts/{postId}/votes         | View vote totals      | Read      | Relationship   |
+| PUT /posts/{postId}/vote          | Create or change vote | Update    | Relationship   |
+| DELETE /posts/{postId}/vote       | Withdraw vote         | Delete    | Relationship   |
+| GET /comments/{commentId}/votes   | View vote totals      | Read      | Relationship   |
+| PUT /comments/{commentId}/vote    | Create or change vote | Update    | Relationship   |
+| DELETE /comments/{commentId}/vote | Withdraw vote         | Delete    | Relationship   |
+
+
+### Community Domain
+#### Herd
+| Endpoint                  | Purpose                    | Operation | Classification |
+| ------------------------- | -------------------------- | --------- | -------------- |
+| GET /herds                | Discover Herds             | Read      | Resource       |
+| POST /herds               | Create Herd                | Create    | Resource       |
+| GET /herds/{herdId}       | View Herd                  | Read      | Resource       |
+| PATCH /herds/{herdId}     | Update Herd identity/rules | Update    | Resource       |
+| GET /herds/{herdId}/posts | View Herd content          | Read      | Derived        |
+
+#### Herd Membership
+| Endpoint                                  | Purpose                    | Operation | Classification |
+| ----------------------------------------- | -------------------------- | --------- | -------------- |
+| GET /herds/{herdId}/members               | View membership            | Read      | Relationship   |
+| POST /herds/{herdId}/members              | Join Herd                  | Create    | Relationship   |
+| DELETE /herds/{herdId}/members/{memberId} | Leave or remove membership | Delete    | Relationship   |
+
+#### Shepherd Assignment
+| Endpoint                                        | Purpose         | Operation | Classification |
+| ----------------------------------------------- | --------------- | --------- | -------------- |
+| GET /herds/{herdId}/shepherds                   | View shepherds  | Read      | Relationship   |
+| POST /herds/{herdId}/shepherds                  | Assign shepherd | Create    | Relationship   |
+| DELETE /herds/{herdId}/shepherds/{assignmentId} | Revoke shepherd | Delete    | Relationship   |
+
+### Feed Domain
+#### Following Feed
+| Endpoint             | Purpose                 | Operation | Classification |
+| -------------------- | ----------------------- | --------- | -------------- |
+| GET /feeds/following | Retrieve following feed | Read      | Derived        |
+
+#### Herd Feed
+| Endpoint         | Purpose            | Operation | Classification |
+| ---------------- | ------------------ | --------- | -------------- |
+| GET /feeds/herds | Retrieve herd feed | Read      | Derived        |
+
+### Media Domain
+#### Image
+| Endpoint                 | Purpose        | Operation | Classification |
+| ------------------------ | -------------- | --------- | -------------- |
+| POST /images             | Upload image   | Create    | Resource       |
+| GET /images/{imageId}    | Retrieve image | Read      | Resource       |
+| DELETE /images/{imageId} | Remove image   | Delete    | Resource       |
+
+### Governance Domain
+#### Report
+| Endpoint                | Purpose             | Operation | Classification |
+| ----------------------- | ------------------- | --------- | -------------- |
+| POST /reports           | Submit report       | Create    | Governance     |
+| GET /reports/{reportId} | View report         | Read      | Governance     |
+| GET /reports            | Review report queue | Read      | Governance     |
+
+#### Moderation Actions
+| Endpoint                           | Purpose                 | Operation | Classification |
+| ---------------------------------- | ----------------------- | --------- | -------------- |
+| GET /moderation-actions/{actionId} | View moderation outcome | Read      | Governance     |
+
+#### Community Governance Workflow
+| Endpoint                          | Purpose                    | Operation         | Classification |
+| --------------------------------- | -------------------------- | ----------------- | -------------- |
+| POST /reports/{reportId}/dismiss  | Dismiss report             | Governance Action | Governance     |
+| POST /reports/{reportId}/moderate | Apply community moderation | Governance Action | Governance     |
+| POST /reports/{reportId}/escalate | Escalate report            | Governance Action | Governance     |
+| GET /reports/escalated            | Review escalated matters   | Governance        | Governance     |
+
+#### Herd Content Moderation
+| Endpoint                          | Purpose              | Operation         | Classification |
+| --------------------------------- | -------------------- | ----------------- | -------------- |
+| POST /posts/{postId}/remove       | Remove herd post     | Governance Action | Governance     |
+| POST /comments/{commentId}/remove | Remove comment/reply | Governance Action | Governance     |
+
+#### Platform Governance Workflow
+| Endpoint                                    | Purpose                    | Operation         | Classification |
+| ------------------------------------------- | -------------------------- | ----------------- | -------------- |
+| POST /moderation-actions/{actionId}/uphold  | Uphold moderation outcome  | Governance Action | Governance     |
+| POST /moderation-actions/{actionId}/reverse | Reverse moderation outcome | Governance Action | Governance     |
+| POST /moderation-actions/{actionId}/restore | Restore governed content   | Governance Action | Governance     |
+| POST /moderation-actions/{actionId}/expand  | Expand enforcement action  | Governance Action | Governance     |
+
+#### Governance Oversight
+| Endpoint                    | Purpose                    | Operation  | Classification |
+| --------------------------- | -------------------------- | ---------- | -------------- |
+| GET /governance/activity    | Review governance activity | Governance | Governance     |
+| GET /governance/shepherds   | Review shepherd conduct    | Governance | Governance     |
+| GET /governance/herd-owners | Review herd owner conduct  | Governance | Governance     |
+
+
+---
+
 # 

@@ -1,12 +1,11 @@
 # Ongoing
 - MVP Product Design Consolidation
     - Define MVP API surface.
-        - Define Endpoint Inventory
+        - Define Authorization Boundaries
             
 
 
 # Pending
-Define Authorization Boundaries
 Define Request Contracts
 Define Response Contracts
 Define Query & Pagination Standards
@@ -69,3 +68,4 @@ Identify API Domains
 Map User Flows To API Capabilities
 Define Resource Boundaries
 Define CRUD Operations
+Define Endpoint Inventory
