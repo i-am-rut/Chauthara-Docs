@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Resource Boundaries
+Define CRUD Operations
 
 Next Task:
-Define CRUD Operations
+Define Endpoint Inventory
 
 Blocked By:
 Nothing

@@ -451,6 +451,72 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP API Resource Model.
+
+- Defined API resource modeling principles.
+
+- Evaluated resource boundaries using:
+  - Approved MVP API domains
+  - API capability model
+  - User flows
+  - MVP data model boundaries
+  - Aggregate boundaries
+
+- Identified candidate API resources across:
+  - Identity
+  - Social Graph
+  - Content
+  - Community
+  - Feed
+  - Media
+  - Governance
+
+- Classified resources as:
+  - Primary Resources
+  - Child Resources
+  - Relationship Resources
+  - Governance Resources
+  - Derived Resources
+
+- Established the authoritative MVP Resource Inventory.
+
+- Defined resource ownership responsibilities.
+
+- Defined parent-child resource relationships.
+
+- Defined resource-to-domain assignments.
+
+- Evaluated aggregate-root alignment for exposed resources.
+
+- Identified entities that should not be exposed as independent API resources.
+
+- Distinguished:
+  - Business resources
+  - Relationship resources
+  - Derived resources
+  - Internal implementation concepts
+
+- Validated resource boundaries against:
+  - Approved MVP user flows
+  - Approved API capabilities
+  - MVP feature inventory
+  - Domain boundaries
+  - Data model boundaries
+
+- Confirmed all approved MVP capabilities are represented by appropriate API resources.
+
+- Approved MVP Resource Model as the foundation for:
+  - CRUD Analysis
+  - Endpoint Inventory
+  - Authorization Boundary Analysis
+  - Request Contracts
+  - Response Contracts
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 
 ## 2026-06-19
 

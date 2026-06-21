@@ -418,4 +418,434 @@ PAF-03
 
 ---
 
-# 
+# MVP Resource Model
+
+## Identity
+- User Profile
+### Resource: User Profile
+Type
+
+Primary Resource
+
+Why It Exists
+
+Represents the public-facing identity of a user.
+
+User Flows
+View profile
+Edit profile
+Discover creators
+Navigate from content to profile
+API Capabilities
+Profile retrieval
+Profile updates
+Domain Justification
+
+Identity owns user identity representation.
+
+Ownership
+
+User-owned
+
+Aggregate Alignment
+
+Aggregate Root
+
+### Resource That Should NOT Exist
+User Account
+Reason
+
+Authentication and account credentials are implementation concerns.
+
+Users do not directly manage accounts as business resources.
+
+Account lifecycle remains inside Identity domain operations.
+
+## Social Graph
+- Follow Relationship
+### Resource: Follow Relationship
+Type
+
+Relationship Resource
+
+Why It Exists
+
+Users actively create and remove follow relationships.
+
+User Flows
+Follow user
+Unfollow user
+View followers
+View following
+API Capabilities
+Create follow
+Remove follow
+Retrieve relationship lists
+Domain Justification
+
+Represents user-to-user graph relationships.
+
+Ownership
+
+User-owned
+
+Aggregate Alignment
+
+Relationship between User Profile aggregates.
+
+## Content
+- Post
+- Comment
+- Vote
+
+### Resource: Post
+Type
+
+Primary Resource
+
+Why It Exists
+
+Core content unit of the platform.
+
+User Flows
+Create post
+View post
+Edit post
+Delete post
+API Capabilities
+Post creation
+Post retrieval
+Post management
+Domain Justification
+
+Primary content object.
+
+Ownership
+
+User-owned
+
+Aggregate Alignment
+
+Aggregate Root
+
+### Resource: Comment
+Type
+
+Child Resource
+
+Parent
+
+Post
+
+Why It Exists
+
+Requires independent user interaction.
+
+User Flows
+Add comment
+View comments
+Remove comment
+API Capabilities
+Comment creation
+Comment retrieval
+Comment management
+Domain Justification
+
+Content interaction attached to posts.
+
+Ownership
+
+User-owned
+
+Aggregate Alignment
+
+Child within Post aggregate boundary.
+
+### Resource: Vote
+Type
+
+Relationship Resource
+
+Parent
+
+Post
+
+Why It Exists
+
+Represents user-content voting interaction.
+
+User Flows
+Upvote
+Remove vote
+API Capabilities
+Cast vote
+Remove vote
+Domain Justification
+
+Content engagement behavior.
+
+Ownership
+
+User-owned
+
+Aggregate Alignment
+
+Relationship between User Profile and Post.
+
+## Community
+- Herd
+- Membership
+- Shepherd
+### Resource: Herd
+Type
+
+Primary Resource
+
+Why It Exists
+
+Represents community boundary.
+
+User Flows
+Create herd
+Discover herd
+Join herd
+Leave herd
+View herd
+API Capabilities
+Herd management
+Herd discovery
+Membership management
+Domain Justification
+
+Primary community object.
+
+Ownership
+
+User-owned with community governance controls.
+
+Aggregate Alignment
+
+Aggregate Root
+
+### Resource: Membership
+Type
+
+Relationship Resource
+
+Parent
+
+Herd
+
+Backing Entity
+
+Herd Membership
+
+Why It Exists
+
+Users actively join and leave herds.
+
+User Flows
+Join herd
+Leave herd
+View members
+API Capabilities
+Membership management
+Domain Justification
+
+Community participation relationship.
+
+### Resource: Shepherd
+Type
+
+Relationship Resource
+
+Parent
+
+Herd
+
+Backing Entity
+
+Shepherd Assignment
+
+Why It Exists
+
+Community leadership assignments require independent management.
+
+User Flows
+Assign shepherd
+Remove shepherd
+View shepherds
+API Capabilities
+Shepherd management
+Domain Justification
+
+Community governance relationship.
+
+## Feed
+- Feed
+
+### Resource: Feed
+Type
+
+Derived Resource
+
+Why It Exists
+
+Users directly interact with feeds.
+
+User Flows
+View home feed
+Refresh feed
+API Capabilities
+Feed retrieval
+Domain Justification
+
+Feed is not a stored entity but requires independent API interaction.
+
+Ownership
+
+System-generated
+
+Aggregate Alignment
+
+None
+
+### Resources That Should NOT Exist
+Feed Item
+Ranking
+Recommendation
+Reason
+
+Derived system concepts.
+
+No independent lifecycle.
+
+## Media
+- Image
+
+### Resource: Image
+Type
+
+Primary Resource
+
+Why It Exists
+
+Requires independent upload and retrieval workflows.
+
+User Flows
+Upload image
+Attach image to post
+Display image
+API Capabilities
+Upload media
+Retrieve media
+Domain Justification
+
+Media lifecycle differs from content lifecycle.
+
+Ownership
+
+User-owned
+
+Aggregate Alignment
+
+Independent aggregate.
+
+## Governance
+- Report
+- Moderation Action
+
+### Resource: Report
+Type
+
+Governance Resource
+
+Why It Exists
+
+Users actively submit reports.
+
+User Flows
+Report post
+Report comment
+API Capabilities
+Report submission
+Report review
+Domain Justification
+
+Governance intake object.
+
+Ownership
+
+Mixed (user-created, system-governed)
+
+Aggregate Alignment
+
+Aggregate Root
+
+### Resource: Moderation Action
+Type
+
+Governance Resource
+
+Why It Exists
+
+Represents moderation decisions.
+
+User Flows
+
+Indirectly involved in moderation workflow.
+
+API Capabilities
+Review report
+Execute moderation action
+Domain Justification
+
+Governance enforcement object.
+
+Ownership
+
+System-owned
+
+Aggregate Alignment
+
+Aggregate Root
+
+## Resources Not Exposed As Independent Resources
+
+- User Account
+- Feed Item
+- Ranking
+- Recommendation
+
+Rationale:
+Internal or derived concepts that do not require independent API interaction.
+
+## Final Resource Inventory
+| Resource            | Type         | Domain       |
+| ------------------- | ------------ | ------------ |
+| User Profile        | Primary      | Identity     |
+| Follow Relationship | Relationship | Social Graph |
+| Post                | Primary      | Content      |
+| Comment             | Child        | Content      |
+| Vote                | Relationship | Content      |
+| Herd                | Primary      | Community    |
+| Membership          | Relationship | Community    |
+| Shepherd            | Relationship | Community    |
+| Feed                | Derived      | Feed         |
+| Image               | Primary      | Media        |
+| Report              | Governance   | Governance   |
+| Moderation Action   | Governance   | Governance   |
+
+## Resource Relationship Matrix
+| Parent Resource | Child / Relationship Resource |
+| --------------- | ----------------------------- |
+| User Profile    | Follow Relationship           |
+| Post            | Comment                       |
+| Post            | Vote                          |
+| Herd            | Membership                    |
+| Herd            | Shepherd                      |
+| Report          | Moderation Action             |
+
+---
+
+#

@@ -1,12 +1,11 @@
 # Ongoing
 - MVP Product Design Consolidation
     - Define MVP API surface.
-        - Define Resource Boundaries
+        - Define CRUD Operations
             
 
 
 # Pending
-Define CRUD Operations
 Define Endpoint Inventory
 Define Authorization Boundaries
 Define Request Contracts
@@ -69,3 +68,4 @@ Define Moderation Boundaries
 MVP Data Model Validation
 Identify API Domains
 Map User Flows To API Capabilities
+Define Resource Boundaries
