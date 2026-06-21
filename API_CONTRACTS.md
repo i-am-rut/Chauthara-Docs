@@ -1154,4 +1154,301 @@ Avoid duplicate retrieval surfaces.
 
 ---
 
-# 
+# MVP Authorization Boundaries
+## Authorization Principles
+### Principle 1 — Authentication And Authorization Are Separate
+Identity verification does not automatically grant resource authority.
+
+### Principle 2 — Ownership Does Not Imply Unlimited Authority
+Owners manage their resources.
+
+Governance actors may moderate those resources.
+
+### Principle 3 — Governance Overrides Ownership
+Approved governance actors may override ownership actions when moderation requires it.
+
+### Principle 4 — Public Discovery Is Fundamental
+Public content required by Visitor journeys remains publicly readable.
+
+### Principle 5 — Community Authority Is Herd Scoped
+Shepherd authority exists only inside assigned Herds.
+
+### Principle 6 — Herd Owners Govern Communities
+Herd Owners govern:
+Herd identity
+Herd membership
+Shepherd assignments
+Community moderation disputes
+### Principle 7 — Platform Authority Is Universal
+Platform Administrators may govern any moderated MVP resource.
+
+### Principle 8 — Higher Governance Roles Inherit Lower Capabilities
+Platform Administrator inherits all lower-role capabilities.
+
+Herd Owner inherits Member capabilities.
+
+Shepherd inherits Member capabilities.
+
+## Authorization Actor Matrix
+| Capability Category  | Visitor | Member | Shepherd    | Herd Owner           | Platform Admin |
+| -------------------- | ------- | ------ | ----------- | -------------------- | -------------- |
+| Public Content Read  | Yes     | Yes    | Yes         | Yes                  | Yes            |
+| Public Profile Read  | Yes     | Yes    | Yes         | Yes                  | Yes            |
+| Follow Users         | No      | Yes    | Yes         | Yes                  | Yes            |
+| Create Posts         | No      | Yes    | Yes         | Yes                  | Yes            |
+| Create Comments      | No      | Yes    | Yes         | Yes                  | Yes            |
+| Vote                 | No      | Yes    | Yes         | Yes                  | Yes            |
+| Join Herd            | No      | Yes    | Yes         | Yes                  | Yes            |
+| Create Herd          | No      | Yes    | Yes         | Yes                  | Yes            |
+| Submit Report        | No      | Yes    | Yes         | Yes                  | Yes            |
+| Review Reports       | No      | No     | Herd Scoped | Herd Scoped          | Platform Wide  |
+| Moderate Content     | No      | No     | Herd Scoped | Herd Scoped Override | Platform Wide  |
+| Moderate Membership  | No      | No     | Herd Scoped | Herd Scoped Override | Platform Wide  |
+| Assign Shepherds     | No      | No     | No          | Own Herd Only        | Platform Wide  |
+| Platform Enforcement | No      | No     | No          | No                   | Yes            |
+
+## Resource Authorization Matrix
+### User Profile
+| Authority           | Actors                 |
+| ------------------- | ---------------------- |
+| Public Read         | Visitor+               |
+| Authenticated Read  | Member+                |
+| Create              | System Lifecycle       |
+| Update              | Profile Owner          |
+| Delete              | None                   |
+| Governance Override | Platform Administrator |
+
+
+### Follow Relationship
+| Authority           | Actors                 |
+| ------------------- | ---------------------- |
+| Public Read         | Visitor+               |
+| Create              | Following User         |
+| Update              | None                   |
+| Delete              | Following User         |
+| Governance Override | Platform Administrator |
+
+
+### Post
+| Authority           | Actors                                                      |
+| ------------------- | ----------------------------------------------------------- |
+| Public Read         | Visitor+                                                    |
+| Create              | Member+                                                     |
+| Update              | Author                                                      |
+| Delete              | Author                                                      |
+| Governance Override | Shepherd (Herd Context), Herd Owner, Platform Administrator |
+
+
+### Comment
+| Authority           | Actors                                                      |
+| ------------------- | ----------------------------------------------------------- |
+| Public Read         | Visitor+                                                    |
+| Create              | Member+                                                     |
+| Update              | Author                                                      |
+| Delete              | Author                                                      |
+| Governance Override | Shepherd (Herd Context), Herd Owner, Platform Administrator |
+
+### Vote
+| Authority           | Actors                 |
+| ------------------- | ---------------------- |
+| Read Totals         | Visitor+               |
+| Create              | Voting User            |
+| Update              | Voting User            |
+| Delete              | Voting User            |
+| Governance Override | Platform Administrator |
+
+### Herd
+| Authority           | Actors                 |
+| ------------------- | ---------------------- |
+| Public Read         | Visitor+               |
+| Create              | Member+                |
+| Update              | Herd Owner             |
+| Delete              | None                   |
+| Governance Override | Platform Administrator |
+
+### Membership
+| Authority           | Actors                                       |
+| ------------------- | -------------------------------------------- |
+| Public Read         | Visitor+                                     |
+| Create              | Member (Join)                                |
+| Delete              | Member (Leave)                               |
+| Governance Override | Shepherd, Herd Owner, Platform Administrator |
+
+### Shepherd Assignment
+| Authority           | Actors                 |
+| ------------------- | ---------------------- |
+| Public Read         | Visitor+               |
+| Create              | Herd Owner             |
+| Delete              | Herd Owner             |
+| Governance Override | Platform Administrator |
+
+### Feed
+| Authority           | Actors         |
+| ------------------- | -------------- |
+| Following Feed Read | Member+        |
+| Herd Feed Read      | Member+        |
+| Create              | None           |
+| Update              | None           |
+| Delete              | None           |
+| Governance Override | Not Applicable |
+
+### Image 
+| Authority           | Actors                                                      |
+| ------------------- | ----------------------------------------------------------- |
+| Public Read         | Visitor+                                                    |
+| Create              | Member+                                                     |
+| Delete              | Uploading User                                              |
+| Governance Override | Shepherd (Herd Context), Herd Owner, Platform Administrator |
+
+### Report
+| Authority           | Actors                               |
+| ------------------- | ------------------------------------ |
+| Read                | Reporter, Relevant Governance Actors |
+| Create              | Member+                              |
+| Update              | None                                 |
+| Delete              | None                                 |
+| Governance Override | Applicable Governance Authority      |
+
+### Moderation Action
+| Authority           | Actors                                       |
+| ------------------- | -------------------------------------------- |
+| Read                | Relevant Governance Actors                   |
+| Create              | Shepherd, Herd Owner, Platform Administrator |
+| Update              | None                                         |
+| Delete              | None                                         |
+| Governance Override | Higher Governance Authority                  |
+
+## Endpoint Authorization Matrix
+### Visitor Accessible
+#### Identity
+GET /profiles
+GET /profiles/{profileId}
+GET /profiles/{profileId}/posts
+GET /profiles/{profileId}/comments
+#### Social Graph
+GET /profiles/{profileId}/followers
+GET /profiles/{profileId}/following
+#### Content
+GET /posts
+GET /posts/{postId}
+GET /posts/{postId}/comments
+GET /comments/{commentId}
+GET vote-total endpoints
+#### Community
+GET /herds
+GET /herds/{herdId}
+GET membership visibility endpoints
+GET shepherd visibility endpoints
+#### Media
+Public image retrieval endpoints
+
+### Member Only
+PATCH own profile
+Follow / unfollow
+Create post
+Edit own post
+Delete own post
+Create comment
+Edit own comment
+Delete own comment
+Vote operations
+Join herd
+Leave herd
+Create herd
+Upload image
+Submit report
+Read following feed
+Read herd feed
+
+### Herd Owner
+Additional authority:
+Update owned herd
+Maintain herd rules
+Assign shepherd
+Revoke shepherd
+Review community reports
+Resolve escalations
+Reverse shepherd moderation decisions
+
+### Shepherd
+Additional authority:
+Review herd reports
+Dismiss herd reports
+Remove herd content
+Remove herd members
+Escalate reports
+
+### Platform Administrator
+Additional authority:
+Review all reports
+Review all moderation actions
+Restrict content
+Restrict communities
+Restrict profiles
+Reverse moderation actions
+Expand enforcement actions
+Restore governed content
+Oversee governance actors
+
+## Governance Override Matrix
+| Resource            | Shepherd          | Herd Owner                | Platform Admin |
+| ------------------- | ----------------- | ------------------------- | -------------- |
+| User Profile        | No                | No                        | Yes            |
+| Follow Relationship | No                | No                        | Yes            |
+| Personal Post       | No                | No                        | Yes            |
+| Herd Post           | Yes               | Yes                       | Yes            |
+| Herd Comment        | Yes               | Yes                       | Yes            |
+| Herd Image          | Yes               | Yes                       | Yes            |
+| Herd Membership     | Yes               | Yes                       | Yes            |
+| Herd                | No                | Yes (Own Herd Governance) | Yes            |
+| Shepherd Assignment | No                | Owner Authority           | Yes            |
+| Report              | Review Scope Only | Review Scope Only         | Yes            |
+| Moderation Action   | Create            | Override Shepherd         | Final Override |
+
+
+## Authorization Validation
+### User Flow Validation
+Visitor flows require public discovery access.
+
+Satisfied.
+
+Member flows require participation capabilities.
+
+Satisfied.
+
+Herd Owner governance flows require shepherd assignment and dispute resolution authority.
+
+Satisfied.
+
+Shepherd moderation flows require content moderation, membership moderation, and report review authority.
+
+Satisfied.
+
+Platform Administrator flows require platform-wide override authority.
+
+Satisfied.
+
+### Ownership Boundary Validation
+Ownership remains distinct from governance authority.
+
+Consistent with approved ownership model.
+
+### Moderation Boundary Validation
+Consistent with approved moderation hierarchy:
+
+Platform Administrator
+        ↓
+Herd Owner
+        ↓
+Shepherd
+
+### Endpoint Inventory Validation
+All approved endpoints have an identified authorization boundary.
+
+No endpoint requires creation, removal, or restructuring.
+
+Consistent with approved endpoint inventory.
+
+---
+
+#

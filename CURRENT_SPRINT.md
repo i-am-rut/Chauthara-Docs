@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Authorization Boundaries
+Define Request Contracts
 
 Next Task:
-Define Request Contracts
+Define Response Contracts
 
 Blocked By:
 Nothing
