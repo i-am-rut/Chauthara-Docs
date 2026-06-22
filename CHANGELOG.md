@@ -185,6 +185,51 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Error Contract Model.
+
+- Defined platform-wide error contract principles.
+
+- Defined authoritative error response structure.
+
+- Established error classification model:
+  - Validation
+  - Authentication
+  - Authorization
+  - Resource
+  - Conflict
+  - Governance
+  - Rate Limiting
+  - Internal
+
+- Defined approved HTTP status code standards.
+
+- Defined validation error reporting model.
+
+- Defined authentication and authorization error standards.
+
+- Defined resource visibility and governance error behavior.
+
+- Approved 429 Too Many Requests for MVP.
+
+- Defined error code naming convention.
+
+- Validated error contracts against:
+  - User Flows
+  - API Capability Model
+  - Resource Model
+  - Endpoint Inventory
+  - Authorization Boundaries
+  - Request Contracts
+  - Response Contracts
+  - Query & Pagination Standards
+  - Lifecycle Model
+  - Moderation Boundary Model
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 
 ## 2026-06-21
 

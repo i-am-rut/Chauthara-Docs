@@ -2718,4 +2718,867 @@ No lifecycle conflicts identified.
 
 ---
 
+# MVP Error Contract Model
+
+## Error Contract Principles
+### Principle 1 — Consistency
+All API failures must use the same response structure regardless of endpoint, resource, or domain.
+
+The client should never need endpoint-specific error parsing logic.
+
+### Principle 2 — Predictability
+Identical error conditions must always produce:
+
+Same HTTP status
+Same error code
+Same response structure
+
+Example:
+
+Unauthorized access must always return:
+
+401 Unauthorized
+AUTHENTICATION_REQUIRED
+
+Never:
+
+401
+AUTH_REQUIRED
+
+on one endpoint and:
+
+401
+LOGIN_REQUIRED
+
+on another.
+
+### Principle 3 — Simplicity
+Error responses should expose only information required for client behavior.
+
+Avoid:
+
+stack traces
+exception names
+database details
+infrastructure details
+
+### Principle 4 — Security
+Error responses must never reveal:
+
+account existence
+internal moderation data
+report existence
+authorization rules
+database structure
+implementation details
+
+Consistent with approved governance visibility boundaries and authorization model.
+
+### Principle 5 — Client Usability
+Errors must provide enough information for clients to:
+
+display messages
+highlight invalid fields
+retry requests
+redirect users
+handle governance restrictions
+
+without custom endpoint logic.
+
+### Principle 6 — Future Extensibility
+New error codes may be added.
+
+Existing error codes must remain stable.
+
+Clients must be able to safely ignore unknown future error codes.
+
+## Standard Error Response Structure
+### Standard Error
+{
+  "error": {
+    "code": "RESOURCE_NOT_FOUND",
+    "message": "Post not found"
+  }
+}
+
+### Required Fields
+#### error.code
+Machine-readable stable identifier.
+
+Example:
+
+"RESOURCE_NOT_FOUND"
+
+#### error.message
+Human-readable explanation.
+
+Example:
+
+"Post not found"
+
+### Optional Fields
+#### error.fields
+
+Used only for validation failures.
+
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed",
+    "fields": {
+      "displayName": [
+        "Display name is required"
+      ]
+    }
+  }
+}
+
+#### error.retryAfter
+
+Used only for rate limiting.
+
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Too many requests",
+    "retryAfter": 60
+  }
+}
+
+Seconds until retry.
+
+### Forbidden Fields
+
+Never expose:
+
+stack
+trace
+exception
+databaseError
+internalCode
+service
+hostname
+query
+sql
+
+Never expose implementation details.
+
+## Error Classification Model
+### Bad Request Errors
+Status Code:
+400 Bad Request
+
+Purpose:
+Returned when the platform cannot interpret the request.
+
+Examples:
+- Malformed JSON
+- Invalid Content-Type
+- Unsupported request encoding
+- Corrupted request body
+
+Principle:
+400 Bad Request is reserved for request parsing failures.
+
+Business validation failures use:
+422 Validation Error
+
+### Validation Errors
+Input violates request contract.
+
+Examples:
+
+missing fields
+invalid values
+invalid pagination
+invalid query parameters
+
+### Authentication Errors
+Identity cannot be verified.
+
+Examples:
+
+not logged in
+invalid credentials
+expired session
+invalid reset token
+
+### Authorization Errors
+Identity verified.
+
+Action not permitted.
+
+Examples:
+
+ownership violation
+governance scope violation
+herd authority violation
+
+### Resource Errors
+Requested resource unavailable.
+
+Examples:
+
+missing post
+missing comment
+missing herd
+removed resource
+
+### Conflict Errors
+Request conflicts with current state.
+
+Examples:
+
+already following
+already member
+duplicate shepherd assignment
+duplicate vote state
+
+### Governance Errors
+Governance workflow constraints violated.
+
+Examples:
+
+report already resolved
+invalid moderation action
+invalid escalation
+
+### Rate Limiting Errors
+Request exceeds allowed rate.
+
+Examples:
+
+excessive login attempts
+excessive API usage
+
+### Internal Errors
+Unexpected platform failures.
+Examples:
+
+database unavailable
+unexpected exception
+infrastructure failure
+
+## HTTP Status Code Standards
+### Success Status Codes
+#### 200 OK
+Successful read/update/workflow retrieval.
+
+#### 201 Created
+Successful creation.
+
+Examples:
+- post created
+- herd created
+- report submitted
+
+#### 204 No Content
+Successful delete-like operations.
+
+Examples:
+- unfollow
+- leave herd
+- delete post
+- delete comment
+
+### Client Error Status Codes
+#### 400 Bad Request
+Malformed request.
+
+Examples:
+
+invalid JSON
+malformed request body
+
+#### 401 Unauthorized
+Authentication failure.
+
+Examples:
+
+not logged in
+expired session
+invalid credentials
+
+#### 403 Forbidden
+Authenticated but not authorized.
+
+Examples:
+
+ownership violation
+governance scope violation
+
+#### 404 Not Found
+Requested resource unavailable.
+
+Examples:
+
+post not found
+comment not found
+herd not found
+
+Also used to prevent information disclosure where appropriate.
+
+#### 409 Conflict
+State conflict.
+
+Examples:
+
+already following
+already member
+duplicate shepherd assignment
+
+#### 422 Unprocessable Entity
+Validation failure.
+
+Examples:
+
+invalid field value
+invalid pagination
+invalid lifecycle transition
+
+#### 429 Too Many Requests
+Approved for MVP.
+
+Rationale:
+
+protects authentication workflows
+protects public APIs
+future-safe
+industry standard
+
+### Server Error Status Codes
+#### 500 Internal Server Error
+Unexpected platform failure.
+
+#### 503 Service Unavailable
+Temporary service outage.
+
+Examples:
+
+database unavailable
+maintenance state
+
+## Approved HTTP Status Code Standards
+
+### HTTP Status Code Matrix
+| Status | Category | Usage |
+|----------|----------|----------|
+| 400 | Bad Request | Malformed request syntax or unreadable payload |
+| 401 | Authentication | Authentication required or invalid authentication |
+| 403 | Authorization | Authenticated but not authorized |
+| 404 | Resource | Resource unavailable or not visible |
+| 409 | Conflict | Lifecycle or state conflict |
+| 422 | Validation | Request validation failure |
+| 429 | Rate Limiting | Rate limit exceeded |
+| 500 | Internal | Unexpected platform error |
+| 503 | Service Unavailable | Temporary platform unavailability |
+
+### Status Codes Not Approved For MVP
+Avoid:
+402
+405
+406
+408
+410
+412
+415
+451
+No approved MVP requirement currently needs them.
+
+## Validation Error Standards
+### Status Code
+422 Unprocessable Entity
+
+Used for all request contract violations.
+
+Consistent with approved Request Contract Model and Query & Pagination Standards.
+
+### Error Code
+VALIDATION_ERROR
+
+### Standard Format
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed",
+    "fields": {
+      "displayName": [
+        "Display name is required"
+      ],
+      "bio": [
+        "Bio exceeds maximum length"
+      ]
+    }
+  }
+}
+
+### Field-Level Error Reporting
+Allowed only for validation failures.
+
+Structure:
+
+{
+  "fieldName": [
+    "message"
+  ]
+}
+
+Supports future multiple validations per field.
+
+### Multiple Validation Errors
+All validation failures should be returned together.
+
+Preferred:
+
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed",
+    "fields": {
+      "title": [
+        "Title is required"
+      ],
+      "content": [
+        "Content is required"
+      ]
+    }
+  }
+}
+Avoid fail-fast validation.
+
+Improves client usability.
+
+### Validation Coverage
+Applies to:
+missing required fields
+invalid field values
+invalid enum values
+invalid query parameters
+invalid sort values
+invalid filter values
+invalid pagination values
+invalid lifecycle transitions
+
+## Authentication Error Standards
+### Status Code
+401 Unauthorized
+
+### Error Codes
+#### Authentication Required
+AUTHENTICATION_REQUIRED
+
+Example:
+Unauthenticated access to:
+
+POST /posts
+POST /comments
+GET /feeds/*
+
+#### Invalid Credentials
+INVALID_CREDENTIALS
+
+Used for login failures.
+
+#### Session Expired
+SESSION_EXPIRED
+
+Used when authentication previously existed but is no longer valid.
+
+#### Invalid Verification Token
+INVALID_VERIFICATION_TOKEN
+
+#### Invalid Password Reset Token
+INVALID_PASSWORD_RESET_TOKEN
+
+### Information Disclosure Restrictions
+
+Never reveal:
+
+email exists
+email does not exist
+account suspended
+account deleted
+password incorrect
+
+Example:
+
+Avoid:
+
+{
+  "error": {
+    "code": "PASSWORD_INCORRECT"
+  }
+}
+
+Use:
+
+{
+  "error": {
+    "code": "INVALID_CREDENTIALS"
+  }
+}
+
+## Authorization Error Standards
+### Status Code
+403 Forbidden
+
+### Error Codes
+#### Insufficient Permissions
+INSUFFICIENT_PERMISSIONS
+
+General authorization denial.
+
+#### Ownership Violation
+RESOURCE_OWNERSHIP_REQUIRED
+
+Examples:
+
+edit another user's post
+delete another user's comment
+edit another profile
+
+Consistent with Ownership Boundaries and Authorization Matrix.
+
+#### Herd Governance Scope Violation
+HERD_GOVERNANCE_SCOPE_VIOLATION
+
+Examples:
+
+shepherd moderating outside assigned herd
+
+#### Platform Governance Required
+PLATFORM_GOVERNANCE_REQUIRED
+
+Examples:
+
+platform-only governance operation
+
+### Visibility Rules
+Never reveal:
+
+existence of hidden moderation records
+governance rationale
+internal moderation scope
+
+## Resource Error Standards
+### Status Code
+404 Not Found
+
+### Error Codes
+#### Resource Not Found
+RESOURCE_NOT_FOUND
+
+Examples:
+
+post not found
+comment not found
+herd not found
+profile not found
+
+#### Relationship Not Found
+RELATIONSHIP_NOT_FOUND
+
+Examples:
+
+follow relationship absent
+membership absent
+
+### Removed Content Behavior
+
+Lifecycle Model defines:
+
+Published → Removed
+Active → Removed
+
+for content entities.
+
+Clients should not be able to distinguish:
+
+does not exist
+removed
+moderated
+
+through error responses.
+
+Return:
+
+404
+RESOURCE_NOT_FOUND
+
+This avoids governance information leakage.
+
+### Governed Content Visibility
+
+Removed content should not expose:
+
+removed by shepherd
+removed by owner
+removed by platform
+
+All return:
+
+404 RESOURCE_NOT_FOUND
+
+## Governance Error Standards
+### Status Code
+409 Conflict
+
+Used when governance workflow state prevents action.
+
+### Error Codes
+#### Report Already Resolved
+REPORT_ALREADY_RESOLVED
+
+Consistent with Report lifecycle.
+
+#### Report Already Dismissed
+REPORT_ALREADY_DISMISSED
+#### Invalid Moderation Action
+INVALID_MODERATION_ACTION
+#### Invalid Escalation
+INVALID_ESCALATION
+
+Examples:
+
+escalation from terminal state
+escalation outside governance path
+#### Governance Scope Violation
+GOVERNANCE_SCOPE_VIOLATION
+
+### Visibility Requirements
+Never expose:
+
+report creator
+report count
+report details
+moderator notes
+internal review history
+
+Consistent with governance visibility decisions already approved.
+
+## Conflict Error Standards
+### Status Code
+409 Conflict
+### Error Codes
+#### Already Following
+ALREADY_FOLLOWING
+
+#### Already Member
+ALREADY_MEMBER
+
+#### Duplicate Vote State
+DUPLICATE_VOTE_STATE
+
+#### Duplicate Shepherd Assignment
+DUPLICATE_SHEPHERD_ASSIGNMENT
+
+### Conflict Principle
+Conflict errors represent:
+Valid Request
++
+Valid Resource
++
+Invalid Current State
+
+## Rate Limiting Error Standards
+### MVP Decision
+Include 429
+
+Approved.
+
+Reasoning:
+
+protects authentication workflows
+protects public APIs
+prevents abuse
+standard HTTP behavior
+future compatible
+
+### Status Code
+429 Too Many Requests
+
+### Error Code
+RATE_LIMIT_EXCEEDED
+Format
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Too many requests",
+    "retryAfter": 60
+  }
+}
+
+### Retry Information
+Expose:
+
+retryAfter
+
+Only.
+
+Do not expose:
+
+internal thresholds
+algorithm
+security rules
+
+## Internal Error Standards
+### Status Code
+#### Unexpected Failure
+500 Internal Server Error
+
+Error Code:
+INTERNAL_SERVER_ERROR
+
+#### Temporary Platform Failure
+503 Service Unavailable
+
+Error Code:
+
+SERVICE_UNAVAILABLE
+
+### Response Example
+{
+  "error": {
+    "code": "INTERNAL_SERVER_ERROR",
+    "message": "An unexpected error occurred"
+  }
+}
+
+### Security Requirements
+Never expose:
+
+stack trace
+exception class
+database name
+query details
+server details
+internal identifiers
+
+## Error Code Naming Convention
+### Convention
+UPPER_SNAKE_CASE
+
+Examples:
+
+VALIDATION_ERROR
+AUTHENTICATION_REQUIRED
+RESOURCE_NOT_FOUND
+REPORT_ALREADY_RESOLVED
+RATE_LIMIT_EXCEEDED
+
+### Naming Rules
+#### Rule 1
+Use business terminology.
+
+Good:
+
+ALREADY_MEMBER
+
+Bad:
+
+MEMBERSHIP_CREATE_FAILED
+
+#### Rule 2
+Codes describe the problem.
+
+Not implementation.
+
+Good:
+
+INVALID_CREDENTIALS
+
+Bad:
+
+JWT_VERIFICATION_FAILED
+
+#### Rule 3
+Codes Must Be Stable
+
+Clients may rely on codes.
+
+Never rename approved codes.
+
+New codes may be added later.
+
+
+## Error Contract Validation
+### User Flows
+Validated.
+
+All flow failure scenarios supported.
+
+### API Capability Model
+Validated.
+
+All capability categories covered:
+
+Identity
+Social Graph
+Content
+Community
+Feed
+Media
+Governance
+
+### Resource Model
+Validated.
+
+All exposed resources covered.
+
+### Endpoint Inventory
+
+Validated.
+
+All endpoint types covered.
+
+### Authorization Boundaries
+Validated.
+
+Authorization failures consistently map to:
+
+403 Forbidden
+
+and approved authorization codes.
+
+### Request Contracts
+Validated.
+
+Input failures consistently map to:
+
+422 VALIDATION_ERROR
+
+### Response Contracts
+
+Validated.
+
+Error envelope remains separate from success response model.
+
+### Query & Pagination Standards
+Validated.
+
+Invalid:
+
+page
+limit
+sort
+filter
+
+all handled by validation contract.
+
+### Lifecycle Model
+Validated.
+
+Lifecycle violations handled through:
+
+409 Conflict
+
+or governance-specific errors.
+
+### Moderation Boundary Model
+Validated.
+
+Governed content does not leak moderation state.
+
+---
+
 #
