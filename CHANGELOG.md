@@ -54,6 +54,75 @@
   - CHANGELOG.md
   - TASKS.md
 
+### Documentation
+
+- Completed MVP Response Contract Model.
+
+- Defined platform-wide response contract principles.
+
+- Evaluated response requirements for all approved MVP endpoints.
+
+- Classified endpoints as:
+  - No Resource Returned
+  - Single Resource
+  - Resource Collection
+  - Relationship Collection
+  - Derived Collection
+  - Governance Resource
+  - Workflow Outcome
+
+- Defined resource visibility requirements across:
+  - Identity
+  - Social Graph
+  - Content
+  - Community
+  - Feed
+  - Media
+  - Governance
+
+- Defined ownership visibility rules.
+
+- Defined lifecycle visibility requirements.
+
+- Defined moderation visibility requirements.
+
+- Defined feed response requirements for:
+  - Following Feed
+  - Herd Feed
+
+- Defined supporting resource inclusion requirements.
+
+- Defined derived metric exposure requirements:
+  - Vote Totals
+  - Follower Count
+  - Following Count
+  - Membership Count
+  - Shepherd Count
+  - Aura
+
+- Defined forbidden response data rules covering:
+  - Identity
+  - Governance
+  - System
+  - Voting
+
+- Validated response contracts against:
+  - User Flows
+  - API Capability Model
+  - Resource Model
+  - CRUD Model
+  - Endpoint Inventory
+  - Authorization Boundaries
+  - Ownership Boundaries
+  - Aggregate Boundaries
+  - Lifecycle Boundaries
+  - Moderation Boundaries
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 
 ## 2026-06-21
 

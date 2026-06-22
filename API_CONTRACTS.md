@@ -1888,4 +1888,439 @@ Result:
 
 ---
 
+# MVP Response Contract Model
+
+## Response Contract Principles
+### Principle 1 — Responses Expose Business Resources
+Responses expose business concepts.
+
+Responses do not expose:
+
+database structures
+implementation details
+internal workflow state
+infrastructure metadata
+
+### Principle 2 — Public Discovery Is Preserved
+Visitor flows require public visibility for:
+
+User Profiles
+Posts
+Comments
+Herds
+Membership information
+Shepherd information
+
+Required by Visitor discovery flows.
+
+
+### Principle 3 — Ownership Must Be Visible Where Participation Matters
+Resources that represent user participation expose:
+
+Author identity
+Herd owner identity
+Shepherd identity
+
+unless governance rules explicitly restrict visibility.
+
+
+### Principle 4 — Governance Data Is Need-To-Know
+Governance resources expose different information depending on actor authority.
+
+Public users never receive:
+
+internal review details
+enforcement rationale
+escalation history
+moderation notes
+
+### Principle 5 — Derived Metrics Are First-Class Response Data
+The following derived concepts are visible where relevant:
+
+Vote Totals
+Follower Count
+Following Count
+Membership Count
+Shepherd Count
+Aura
+
+Derived concepts are approved MVP computed concepts.
+
+
+### Principle 6 — Lifecycle State Visibility Is Explicit
+Business-visible lifecycle state may be exposed when required for user decisions.
+
+Examples:
+
+Herd Restricted
+Report Under Review
+Membership Removed
+
+### Principle 7 — Workflow Endpoints Return Outcomes, Not Resources
+Workflow endpoints are not resource retrieval endpoints.
+
+Examples:
+
+Register
+Login
+Logout
+Verify Email
+Reset Password
+Dismiss Report
+Escalate Report
+
+These return workflow outcomes rather than authoritative resource representations.
+
+## Endpoint Response Classification Matrix
+### Identity Workflow
+| Endpoint                   | Classification   |
+| -------------------------- | ---------------- |
+| POST /auth/register        | Workflow Outcome |
+| POST /auth/login           | Workflow Outcome |
+| POST /auth/logout          | Workflow Outcome |
+| GET /auth/me               | Single Resource  |
+| POST /auth/verify-email    | Workflow Outcome |
+| POST /auth/forgot-password | Workflow Outcome |
+| POST /auth/reset-password  | Workflow Outcome |
+
+Primary Resource:
+- User Profile (GET /auth/me)
+
+### User Profiles
+| Endpoint                    | Classification      |
+| --------------------------- | ------------------- |
+| GET /profiles               | Resource Collection |
+| GET /profiles/{id}          | Single Resource     |
+| PATCH /profiles/{id}        | Single Resource     |
+| GET /profiles/{id}/posts    | Resource Collection |
+| GET /profiles/{id}/comments | Resource Collection |
+
+Supporting Resources:
+- Author Profile
+- Profile Images
+- Public Herd Memberships
+
+Derived Information:
+- Follower Count
+- Following Count
+- Aura
+- Membership Count
+
+### Follow Relationships
+| Endpoint      | Classification          |
+| ------------- | ----------------------- |
+| GET followers | Relationship Collection |
+| GET following | Relationship Collection |
+| POST follow   | Workflow Outcome        |
+| DELETE follow | Workflow Outcome        |
+
+Primary Resource:
+- Follow Relationship
+
+Supporting Resources:
+- User Profile
+
+Derived:
+- follower totals
+- following totals
+
+### Posts
+| Endpoint           | Classification      |
+| ------------------ | ------------------- |
+| GET /posts         | Resource Collection |
+| POST /posts        | Single Resource     |
+| GET /posts/{id}    | Single Resource     |
+| PATCH /posts/{id}  | Single Resource     |
+| DELETE /posts/{id} | Workflow Outcome    |
+
+Supporting Resources:
+- Author Profile
+- Herd Identity (if herd post)
+- Image References
+
+Derived:
+- Vote Totals
+- Comment Count
+
+Lifecycle:
+- Published
+- Removed
+
+### Comments
+| Endpoint       | Classification      |
+| -------------- | ------------------- |
+| GET thread     | Resource Collection |
+| POST comment   | Single Resource     |
+| GET comment    | Single Resource     |
+| PATCH comment  | Single Resource     |
+| DELETE comment | Workflow Outcome    |
+| POST reply     | Single Resource     |
+
+Supporting Resources:
+- Author Profile
+- Parent Post
+- Parent Comment
+
+Derived:
+- Vote Totals
+- Reply Count
+
+Relationship Visibility:
+- Full comment hierarchy
+
+Required by discussion flows.
+
+### Votes
+| Endpoint    | Classification     |
+| ----------- | ------------------ |
+| GET votes   | Derived Collection |
+| PUT vote    | Workflow Outcome   |
+| DELETE vote | Workflow Outcome   |
+
+Visible:
+- Vote Totals
+
+Not Visible:
+- Individual voter identities
+
+Consistent with approved voting rules.
+
+### Herds
+| Endpoint              | Classification      |
+| --------------------- | ------------------- |
+| GET /herds            | Resource Collection |
+| POST /herds           | Single Resource     |
+| GET /herds/{id}       | Single Resource     |
+| PATCH /herds/{id}     | Single Resource     |
+| GET /herds/{id}/posts | Resource Collection |
+
+Supporting Resources:
+- Owner Profile
+- Shepherd Profiles
+- Image References
+
+Derived:
+- Membership Count
+- Shepherd Count
+
+Lifecycle:
+- Active
+- Restricted
+- Closed
+
+### Membership
+| Endpoint          | Classification          |
+| ----------------- | ----------------------- |
+| GET members       | Relationship Collection |
+| POST join         | Workflow Outcome        |
+| DELETE membership | Workflow Outcome        |
+
+Supporting Resources:
+- User Profiles
+
+Derived:
+- Membership Count
+
+### Shepherd Assignments
+| Endpoint      | Classification          |
+| ------------- | ----------------------- |
+| GET shepherds | Relationship Collection |
+| POST assign   | Workflow Outcome        |
+| DELETE revoke | Workflow Outcome        |
+
+Supporting Resources:
+- Shepherd Profile
+- Herd Identity
+
+### Following Feed
+| Endpoint             | Classification     |
+| -------------------- | ------------------ |
+| GET /feeds/following | Derived Collection |
+
+Feed Entry Shape:
+- Post
+- Author Profile
+- Image References
+- Vote Totals
+- Comment Count
+- Publication Timestamp
+
+### Herd Feed
+| Endpoint         | Classification     |
+| ---------------- | ------------------ |
+| GET /feeds/herds | Derived Collection |
+
+Feed Entry Shape:
+- Post
+- Author Profile
+- Herd Identity
+- Image References
+- Vote Totals
+- Comment Count
+
+### Images
+| Endpoint     | Classification   |
+| ------------ | ---------------- |
+| POST image   | Single Resource  |
+| GET image    | Single Resource  |
+| DELETE image | Workflow Outcome |
+
+Visible:
+- Image reference
+- Ownership identity
+
+Not Visible:
+- storage internals
+
+### Reports
+| Endpoint    | Classification                 |
+| ----------- | ------------------------------ |
+| POST report | Workflow Outcome               |
+| GET report  | Governance Resource            |
+| GET reports | Governance Resource Collection |
+
+Supporting Resources:
+- Report Target
+- Reporter (governance only)
+
+Lifecycle:
+- Submitted
+- Under Review
+- Escalated
+- Resolved
+- Dismissed
+
+### Moderation Actions 
+| Endpoint                        | Classification      |
+| ------------------------------- | ------------------- |
+| GET moderation-action           | Governance Resource |
+| All governance action endpoints | Workflow Outcome    |
+
+Supporting Resources:
+- Related Report
+- Governed Resource
+
+Lifecycle:
+- Applied
+- Reversed
+
+## Resource Visibility Matrix
+| Resource                  | Public | Authenticated         | Governance    |
+| ------------------------- | ------ | --------------------- | ------------- |
+| User Profile              | Yes    | Yes                   | Yes           |
+| Follow Relationship Lists | Yes    | Yes                   | Yes           |
+| Post                      | Yes    | Yes                   | Yes           |
+| Comment                   | Yes    | Yes                   | Yes           |
+| Vote Totals               | Yes    | Yes                   | Yes           |
+| Vote Identities           | No     | No                    | Platform Only |
+| Herd                      | Yes    | Yes                   | Yes           |
+| Membership Lists          | Yes    | Yes                   | Yes           |
+| Shepherd Assignments      | Yes    | Yes                   | Yes           |
+| Following Feed            | No     | Yes                   | Yes           |
+| Herd Feed                 | No     | Yes                   | Yes           |
+| Image References          | Yes    | Yes                   | Yes           |
+| Reports                   | No     | Reporter + Governance | Governance    |
+| Moderation Actions        | No     | Limited               | Governance    |
+
+
+## Ownership Visibility Matrix
+| Ownership Information | Public | Authenticated | Governance |
+| --------------------- | ------ | ------------- | ---------- |
+| Post Author           | Yes    | Yes           | Yes        |
+| Comment Author        | Yes    | Yes           | Yes        |
+| Herd Owner            | Yes    | Yes           | Yes        |
+| Shepherd Identity     | Yes    | Yes           | Yes        |
+| Membership Identity   | Yes    | Yes           | Yes        |
+| Reporter Identity     | No     | No            | Yes        |
+| Moderator Identity    | No     | No            | Yes        |
+
+
+## Lifecycle Visibility Matrix
+| Entity              | Visible Lifecycle States                                |
+| ------------------- | ------------------------------------------------------- |
+| User Profile        | Active                                                  |
+| Post                | Published, Removed                                      |
+| Comment             | Published, Removed                                      |
+| Herd                | Active, Restricted, Closed                              |
+| Membership          | Active, Removed, Left                                   |
+| Shepherd Assignment | Active, Revoked                                         |
+| Report              | Submitted, Under Review, Escalated, Resolved, Dismissed |
+| Moderation Action   | Applied, Reversed                                       |
+
+## Moderation Visibility Matrix
+| Information            | Public  | Reporter             | Shepherd/Herd Owner (Relevant Herd) | Platform Admin |
+| ---------------------- | ------- | -------------------- | ----------------------------------- | -------------- |
+| Content Removed        | Yes     | Yes                  | Yes                                 | Yes            |
+| Herd Restricted        | Yes     | Yes                  | Yes                                 | Yes            |
+| Membership Removed     | Limited | Limited              | Yes                                 | Yes            |
+| Report Existence       | No      | Own Reports Only     | Relevant Reports Only               | Yes            |
+| Report Details         | No      | Own Reports Only     | Relevant Reports Only               | Yes            |
+| Reporter Identity      | No      | Self Only            | Usually No                          | Yes            |
+| Escalation History     | No      | No                   | Limited                             | Yes            |
+| Enforcement Rationale  | No      | Outcome Summary Only | Limited                             | Yes            |
+| Internal Notes         | No      | No                   | No                                  | Yes            |
+| Moderator Notes        | No      | No                   | No                                  | Yes            |
+| Governance Audit Trail | No      | No                   | No                                  | Yes            |
+
+
+Governance Actors:
+Shepherd
+Herd Owner
+Platform Administrator
+
+per approved moderation hierarchy.
+
+## Forbidden Response Data Matrix
+### Identity Domain
+Never Expose:
+
+Password
+Password Hash
+Verification Token
+Password Reset Token
+Authentication Secrets
+Intrnal Account Status Metadata
+
+### Governance Domain
+Never Expose:
+
+Internal Moderation Notes
+Internal Enforcement Rationale
+Escalation Commentary
+Investigation Metadata
+Intrnal Governance Discussions
+
+### System Domain
+Never Expose:
+
+Internal Audit Metadata
+Internal Persistence Identifiers
+Internal Storage Paths
+Queue State
+Cache State
+Serice-Level Metadata
+
+### Voting Domain
+Never Expose:
+
+Individual Vote Identities
+
+Approved voting specification requires private vote identities.
+
+## Response Contract Validation
+| Area                     | Status |
+| ------------------------ | ------ |
+| User Flows               | Pass   |
+| API Capability Model     | Pass   |
+| Resource Model           | Pass   |
+| CRUD Model               | Pass   |
+| Endpoint Inventory       | Pass   |
+| Authorization Boundaries | Pass   |
+| Ownership Boundaries     | Pass   |
+| Aggregate Boundaries     | Pass   |
+| Lifecycle Boundaries     | Pass   |
+| Moderation Boundaries    | Pass   |
+
+---
+
 #

@@ -1,12 +1,11 @@
 # Ongoing
 - MVP Product Design Consolidation
     - Define MVP API surface.
-        - Define Response Contracts
+        - Define Query & Pagination Standards
             
 
 
 # Pending
-Define Query & Pagination Standards
 Define Error Contract
 Define Feed APIs
 Define Moderation APIs
@@ -70,3 +69,4 @@ Define Endpoint Inventory
 Define Authorization Boundaries
 Validate Account Lifecycle API Coverage
 Define Request Contracts
+Define Response Contracts
