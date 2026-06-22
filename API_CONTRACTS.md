@@ -1534,4 +1534,358 @@ Consistent with approved endpoint inventory.
 
 ---
 
+# MVP Request Contract Model
+
+## Request Contract Principles
+### Principle 1 — Ownership Is Never Client Supplied
+### Principle 2 — Lifecycle State Is Never Client Supplied
+### Principle 3 — Governance State Is Never Client Supplied
+### Principle 4 — Derived Metrics Are Never Client Supplied
+### Principle 5 — Relationship Ownership Is Identity Derived
+### Principle 6 — Governance Actions Operate On Existing Resources
+
+## Endpoint Request Classification Matrix
+### Identity Workflow
+| Endpoint                   | Classification    |
+| -------------------------- | ----------------- |
+| POST /auth/register        | Request Body Only |
+| POST /auth/login           | Request Body Only |
+| POST /auth/logout          | No Input          |
+| GET /auth/me               | No Input          |
+| POST /auth/verify-email    | Request Body Only |
+| POST /auth/forgot-password | Request Body Only |
+| POST /auth/reset-password  | Request Body Only |
+
+### User Profiles
+| Endpoint                           | Classification       |
+| ---------------------------------- | -------------------- |
+| GET /profiles                      | Query Parameter Only |
+| GET /profiles/{profileId}          | Path Parameter Only  |
+| PATCH /profiles/{profileId}        | Path + Request Body  |
+| GET /profiles/{profileId}/posts    | Path + Query         |
+| GET /profiles/{profileId}/comments | Path + Query         |
+
+### Follow Relationships
+| Endpoint                               | Classification      |
+| -------------------------------------- | ------------------- |
+| GET /profiles/{profileId}/followers    | Path + Query        |
+| GET /profiles/{profileId}/following    | Path + Query        |
+| POST /profiles/{profileId}/followers   | Path Parameter Only |
+| DELETE /profiles/{profileId}/followers | Path Parameter Only |
+
+### Posts
+| Endpoint               | Classification       |
+| ---------------------- | -------------------- |
+| GET /posts             | Query Parameter Only |
+| POST /posts            | Request Body Only    |
+| GET /posts/{postId}    | Path Parameter Only  |
+| PATCH /posts/{postId}  | Path + Request Body  |
+| DELETE /posts/{postId} | Path Parameter Only  |
+
+### Comments
+| Endpoint                           | Classification      |
+| ---------------------------------- | ------------------- |
+| GET /posts/{postId}/comments       | Path + Query        |
+| POST /posts/{postId}/comments      | Path + Request Body |
+| GET /comments/{commentId}          | Path Parameter Only |
+| PATCH /comments/{commentId}        | Path + Request Body |
+| DELETE /comments/{commentId}       | Path Parameter Only |
+| POST /comments/{commentId}/replies | Path + Request Body |
+
+### Votes
+| Endpoint                          | Classification      |
+| --------------------------------- | ------------------- |
+| GET /posts/{postId}/votes         | Path Parameter Only |
+| PUT /posts/{postId}/vote          | Path + Request Body |
+| DELETE /posts/{postId}/vote       | Path Parameter Only |
+| GET /comments/{commentId}/votes   | Path Parameter Only |
+| PUT /comments/{commentId}/vote    | Path + Request Body |
+| DELETE /comments/{commentId}/vote | Path Parameter Only |
+
+### Herds
+| Endpoint                  | Classification       |
+| ------------------------- | -------------------- |
+| GET /herds                | Query Parameter Only |
+| POST /herds               | Request Body Only    |
+| GET /herds/{herdId}       | Path Parameter Only  |
+| PATCH /herds/{herdId}     | Path + Request Body  |
+| GET /herds/{herdId}/posts | Path + Query         |
+
+### Memberships
+| Endpoint                                  | Classification      |
+| ----------------------------------------- | ------------------- |
+| GET /herds/{herdId}/members               | Path + Query        |
+| POST /herds/{herdId}/members              | Path Parameter Only |
+| DELETE /herds/{herdId}/members/{memberId} | Path Parameter Only |
+
+### Shepherd Assignments
+| Endpoint                                        | Classification      |
+| ----------------------------------------------- | ------------------- |
+| GET /herds/{herdId}/shepherds                   | Path + Query        |
+| POST /herds/{herdId}/shepherds                  | Path + Request Body |
+| DELETE /herds/{herdId}/shepherds/{assignmentId} | Path Parameter Only |
+
+### Feeds
+| Endpoint             | Classification       |
+| -------------------- | -------------------- |
+| GET /feeds/following | Query Parameter Only |
+| GET /feeds/herds     | Query Parameter Only |
+
+### Images
+| Endpoint                 | Classification      |
+| ------------------------ | ------------------- |
+| POST /images             | Request Body Only   |
+| GET /images/{imageId}    | Path Parameter Only |
+| DELETE /images/{imageId} | Path Parameter Only |
+
+### Reports
+| Endpoint                | Classification       |
+| ----------------------- | -------------------- |
+| POST /reports           | Request Body Only    |
+| GET /reports/{reportId} | Path Parameter Only  |
+| GET /reports            | Query Parameter Only |
+
+### Governance Workflows
+| Endpoint                                    | Classification       |
+| ------------------------------------------- | -------------------- |
+| POST /reports/{reportId}/dismiss            | Path Parameter Only  |
+| POST /reports/{reportId}/moderate           | Path + Request Body  |
+| POST /reports/{reportId}/escalate           | Path Parameter Only  |
+| GET /reports/escalated                      | Query Parameter Only |
+| POST /posts/{postId}/remove                 | Path Parameter Only  |
+| POST /comments/{commentId}/remove           | Path Parameter Only  |
+| POST /moderation-actions/{actionId}/uphold  | Path Parameter Only  |
+| POST /moderation-actions/{actionId}/reverse | Path Parameter Only  |
+| POST /moderation-actions/{actionId}/restore | Path Parameter Only  |
+| POST /moderation-actions/{actionId}/expand  | Path + Request Body  |
+| GET /governance/activity                    | Query Parameter Only |
+| GET /governance/shepherds                   | Query Parameter Only |
+| GET /governance/herd-owners                 | Query Parameter Only |
+
+## Input Source Matrix
+### Client Supplied
+Examples:
+
+#### Identity
+registration credentials
+login credentials
+verification token
+password reset token
+new password
+#### Profile
+display name
+bio
+profile image reference
+cover image reference
+#### Post
+post content
+attached image references
+#### Comment
+comment content
+reply content
+#### Vote
+vote direction
+#### Herd
+name
+description
+rules
+image references
+#### Shepherd Assignment
+target member identifier
+#### Report
+report target
+report reason
+optional report context
+#### Governance
+moderation rationale
+enforcement scope expansion details
+
+### URL Derived
+Examples:
+
+profileId
+postId
+commentId
+herdId
+memberId
+reportId
+actionId
+assignmentId
+
+### Authenticated Identity Derived
+Examples:
+
+accountId
+profile owner
+author
+commenter
+voter
+follower
+membership creator
+shepherd assigner
+reporter
+moderator
+
+### System Derived
+Examples:
+
+createdAt
+updatedAt
+reportStatus
+moderationOutcome
+lifecycleState
+ownership fields
+vote totals
+follower counts
+membership counts
+shepherd counts
+feed composition
+governance history
+
+Validated against ownership, lifecycle, moderation, and stewardship models.
+
+## Required / Optional / Forbidden Input Matrix
+### Identity
+#### Required
+registration credentials
+login credentials
+verification token
+reset token
+new password
+#### Optional
+none
+#### Forbidden
+account status
+verification state
+suspension state
+### User Profile
+#### Required
+profileId (update)
+#### Optional
+bio
+display information
+image references
+#### Forbidden
+accountId
+followerCount
+followingCount
+aura
+createdAt
+updatedAt
+
+### Post
+#### Required
+content (create)
+#### Optional
+image references
+#### Forbidden
+authorId
+voteTotals
+lifecycleState
+moderationState
+
+### Comment
+#### Required
+content
+#### Optional
+none
+#### Forbidden
+authorId
+parent ownership fields
+lifecycle state
+
+### Vote
+#### Required
+vote direction
+#### Optional
+none
+#### Forbidden
+voterId
+voteTotals
+
+### Herd
+#### Required
+herd identity information
+#### Optional
+image references
+custom rules updates
+#### Forbidden
+ownerId
+memberCount
+shepherdCount
+lifecycleState
+governanceState
+
+### Membership
+#### Required
+herdId
+#### Optional
+none
+#### Forbidden
+memberId
+membershipState
+
+### Shepherd Assignment
+#### Required
+target member
+#### Optional
+none
+#### Forbidden
+ownerId
+assignmentState
+
+### Image
+#### Required
+image upload
+#### Optional
+none
+#### Forbidden
+ownerId
+moderationState
+
+### Report
+#### Required
+target entity
+report reason
+#### Optional
+report context
+#### Forbidden
+reporterId
+reportStatus
+moderationOutcome
+escalationState
+
+### Moderation
+#### Required
+target identifier
+#### Optional
+moderation rationale
+expansion rationale
+#### Forbidden
+moderatorId
+moderationActionId creation
+governance status fields
+
+## Request Contract Validation
+
+Validated Against:
+- User Flows
+- API Capability Model
+- Resource Model
+- CRUD Model
+- Endpoint Inventory
+- Authorization Boundaries
+- Ownership Boundaries
+- Aggregate Boundaries
+- Lifecycle Boundaries
+- Moderation Boundaries
+
+Result:
+- Complete
+- No ownership violations
+- No governance violations
+- Ready for Response Contract Definition
+
+---
+
 #

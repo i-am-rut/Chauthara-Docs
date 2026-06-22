@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Request Contracts
+Define Response Contracts
 
 Next Task:
-Define Response Contracts
+Define Query & Pagination Standards
 
 Blocked By:
 Nothing
