@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Moderation APIs
+API Surface Validation
 
 Next Task:
-API Surface Validation
+Architecture Refinement
 
 Blocked By:
 Nothing

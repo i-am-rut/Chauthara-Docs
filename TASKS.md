@@ -1,12 +1,11 @@
 # Ongoing
 - MVP Product Design Consolidation
     - Define MVP API surface.
-        - Define Moderation APIs
+        - API Surface Validation
             
 
 
 # Pending
-API Surface Validation
 Architecture Refinement
 
 ADR Creation
@@ -70,3 +69,11 @@ Define Response Contracts
 Define Query & Pagination Standards
 Define Error Contract
 Define Feed APIs
+Define Moderation APIs part 1
+Define Moderation APIs part 2A
+Define Moderation APIs part 2B
+Define Moderation APIs part 2C
+Define Moderation APIs part 2D
+Define Moderation APIs part 2E
+Define Moderation APIs part 3
+Define Moderation APIs part 4

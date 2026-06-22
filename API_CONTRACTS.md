@@ -4079,4 +4079,2309 @@ Recommendation systems remain out of MVP scope.
 
 --- 
 
+# Moderation API Model (Part 1)
+## Moderation API Design Principles
+#### Principle 1 — Governance Is Workflow Driven
+Moderation APIs exist to support governance workflows rather than generic resource management.
+
+Governance decisions progress through:
+Report Submission → Review → Moderation Action → Resolution
+
+Moderation behavior must remain aligned with the approved governance lifecycle.
+
+#### Principle 2 — Moderation Does Not Transfer Ownership
+Moderation authority may affect visibility, participation, or access.
+
+Moderation actions never transfer ownership of:
+User Profiles
+Posts
+Comments
+Images
+Herds
+Memberships
+
+Ownership remains governed by the approved ownership boundary model.
+
+#### Principle 3 — Governance Authority Follows Approved Hierarchy
+Moderation authority follows the approved governance hierarchy:
+
+Applicable Law
+↓
+Platform Administrator
+↓
+Herd Owner
+↓
+Shepherd
+
+No moderation action may bypass the approved governance chain.
+
+#### Principle 4 — Governance Scope Is Explicit
+Governance actors may act only within their approved authority scope.
+
+Examples:
+Shepherd authority is limited to assigned Herds.
+Herd Owner authority is limited to owned Herds.
+Platform Administrator authority is platform-wide.
+
+Authority scope must be enforced by all moderation endpoints.
+
+#### Principle 5 — Visibility Is Need-To-Know
+Governance information is visible only to actors who require access to perform governance responsibilities.
+
+Moderation APIs must not expose:
+Internal review notes
+Governance deliberations
+Escalation history
+Enforcement rationale
+
+unless explicitly authorized.
+
+#### Principle 6 — Moderation Actions Must Be Auditable
+All moderation actions must produce auditable governance records.
+
+Governance records must preserve:
+Action origin
+Action target
+Acting authority
+Governance rationale
+Lifecycle progression
+
+Moderation Action is the authoritative enforcement record.
+
+#### Principle 7 — Escalation Preserves Governance Chain
+Escalation transfers review responsibility to a higher governance authority.
+
+Escalation does not:
+Resolve a report
+Reverse a moderation action
+Terminate governance review
+
+Escalation exists solely to move review responsibility upward through the governance hierarchy.
+
+#### Principle 8 — Reports And Enforcement Are Separate Concerns
+Reports represent governance intake.
+
+Moderation Actions represent governance enforcement.
+A Report may:
+
+Be dismissed
+Produce one or more Moderation Actions
+Be escalated
+
+Governance intake and governance enforcement remain separate resources.
+
+#### Principle 9 — Governance Actions Follow Lifecycle Rules
+Moderation APIs must respect approved lifecycle states.
+
+Examples:
+Resolved Reports cannot re-enter normal review.
+Dismissed Reports cannot receive new enforcement.
+Reversed Moderation Actions remain part of governance history.
+
+Lifecycle rules are authoritative.
+
+#### Principle 10 — Higher Governance Authority May Override Lower Governance Authority
+Higher governance authorities may review and override decisions made by lower governance authorities.
+
+Examples:
+Herd Owner may reverse Shepherd moderation outcomes.
+Platform Administrator may reverse Herd Owner moderation outcomes.
+Platform Administrator serves as final governance authority within the platform.
+
+Governance overrides must create auditable Moderation Actions.
+
+## Governance Resource Roles
+### Report
+#### Purpose
+Report is the governance intake resource for suspected rule violations, policy violations, or governance concerns.
+
+#### Responsibilities
+Capture governance concerns.
+Identify a governance target.
+Record reporter-provided context.
+Initiate moderation review.
+Support governance escalation.
+
+#### Lifecycle Role
+Report progresses through:
+
+Submitted → Under Review → Escalated → Resolved / Dismissed
+
+Report is the authoritative lifecycle resource for governance review.
+
+#### Relationship To Moderation
+Report does not perform enforcement.
+
+Report may result in:
+
+No action
+One Moderation Action
+Multiple Moderation Actions
+
+Report remains the governance review record.
+
+### Moderation Action
+#### Purpose
+Moderation Action is the authoritative governance enforcement resource.
+
+#### Responsibilities
+Record governance decisions.
+Record enforcement execution.
+Preserve moderation audit history.
+Support governance reversal workflows.
+Support governance oversight.
+
+#### Lifecycle Role
+Moderation Action progresses through:
+
+Proposed → Applied → Reversed
+
+Moderation Action is the authoritative lifecycle resource for governance enforcement.
+
+#### Relationship To Reports
+Moderation Actions originate from governance review.
+
+A Moderation Action may:
+
+Be linked to a Report.
+Affect one or more governed resources.
+Be reviewed by higher governance authority.
+Be reversed through approved governance workflows.
+
+Moderation Action remains distinct from Report lifecycle management.
+
+## Governance Authority Model
+### Shepherd
+#### Permitted Moderation Scope
+Shepherd authority is limited to assigned Herds.
+
+Permitted moderation targets:
+Herd Posts
+Herd Comments
+Herd Images
+Herd Memberships
+
+#### Permitted Governance Actions
+Review Reports
+Dismiss Reports
+Apply Community Moderation
+Remove Herd Content
+Remove Herd Members
+Escalate Reports
+
+#### Escalation Responsibilities
+Shepherd must escalate matters that:
+Exceed Herd-scoped authority
+Require ownership-level review
+Require platform-level review
+Present governance conflicts
+
+Escalation transfers review responsibility to the Herd Owner or Platform Administrator as appropriate.
+
+### Herd Owner
+#### Permitted Moderation Scope
+Herd Owner authority applies to owned Herds.
+
+Authority includes all Shepherd-scoped moderation responsibilities.
+
+#### Override Responsibilities
+Herd Owner may:
+Review Shepherd decisions
+Uphold Shepherd decisions
+Reverse Shepherd decisions
+Review escalated reports
+Direct community governance outcomes
+
+#### Dispute Resolution Responsibilities
+Herd Owner serves as the primary community dispute resolution authority.
+
+Responsibilities include:
+Reviewing contested moderation outcomes
+Resolving community governance disputes
+Determining whether escalation is required
+Escalating unresolved matters to Platform Administrators
+
+### Platform Administrator
+#### Platform-Wide Authority
+Platform Administrator authority is platform-wide.
+
+Authority applies to:
+User Profiles
+Posts
+Comments
+Images
+Herds
+Memberships
+Reports
+Moderation Actions
+
+#### Final Enforcement Authority
+Platform Administrator may:
+Restrict Profiles
+Restrict Herds
+Expand Enforcement
+Reverse Moderation Actions
+Restore Governed Content
+Resolve Escalations
+
+Platform Administrator serves as the final governance authority within the platform.
+
+#### Governance Oversight Responsibilities
+Platform Administrators oversee:
+Governance consistency
+Shepherd conduct
+Herd Owner conduct
+Escalation handling
+Platform policy enforcement
+
+## Governance Visibility Model
+### Report Visibility
+| Actor                  | Visibility            |
+| ---------------------- | --------------------- |
+| Reporter               | Own Reports           |
+| Shepherd               | Relevant Herd Reports |
+| Herd Owner             | Relevant Herd Reports |
+| Platform Administrator | All Reports           |
+| General Members        | No Access             |
+| Visitors               | No Access             |
+
+Governance Rationale Visibility
+Governance rationale is visible only to governance actors participating in the review process.
+
+Internal Moderation Notes Visibility
+Internal moderation notes are restricted to applicable governance authorities.
+
+They are never visible to:
+Reporter
+Affected User
+General Members
+Visitors
+
+### Moderation Action Visibility
+| Actor                  | Visibility                           |
+| ---------------------- | ------------------------------------ |
+| Reporter               | Related Outcome Visibility Only      |
+| Affected User          | Actions Affecting User Participation |
+| Shepherd               | Relevant Herd Actions                |
+| Herd Owner             | Relevant Herd Actions                |
+| Platform Administrator | All Actions                          |
+| General Members        | No Access                            |
+| Visitors               | No Access                            |
+
+Governance Rationale Visibility
+Governance rationale is visible only to governance authorities responsible for review, enforcement, escalation, or oversight.
+
+Internal Moderation Notes Visibility
+Internal moderation notes are governance-only information.
+
+They are never publicly exposed.
+
+### Escalation Information Visibility
+#### Visible To
+Shepherd (participating review scope)
+Herd Owner
+Platform Administrator
+
+#### Not Visible To
+Visitors
+General Members
+Reporters
+Affected Users
+unless governance policy explicitly requires disclosure.
+
+#### Governance Significance
+Escalation information exists to preserve governance chain integrity and governance accountability.
+
+## Governance State Model
+### Report States
+#### Submitted
+Governance concern has been received.
+No review activity has started.
+
+#### Under Review
+An authorized governance actor is actively evaluating the report.
+
+#### Escalated
+Review responsibility has been transferred to a higher governance authority.
+The report remains unresolved.
+
+#### Resolved
+Governance review completed.
+Required governance outcome has been determined.
+Associated enforcement, if required, has been applied.
+Terminal State.
+
+#### Dismissed
+Governance review completed.
+No enforcement action is required.
+Terminal State.
+
+### Moderation Action States
+#### Proposed
+Governance review has determined enforcement should occur.
+Enforcement has not yet been executed.
+
+#### Applied
+Enforcement has been executed and is active.
+Terminal enforcement state unless governance review reverses the action.
+
+#### Reversed
+A higher governance authority has overturned a previously applied enforcement action.
+Terminal State.
+Governance history remains preserved.
+
+## Moderation API Validation
+### User Flow Validation
+All approved moderation flows are supported.
+
+### Governance Hierarchy Validation
+No contradictions identified.
+
+### Authorization Boundary Validation
+No additional authority grants are required.
+No endpoint authorization changes are required.
+
+### Lifecycle Validation
+No lifecycle changes are required.
+
+### Endpoint Inventory Validation
+No additional moderation endpoints are required.
+
+### Missing Governance Concepts
+None identified.
+
+### Contradictions
+None identified.
+
+# Moderation API Model (Part 2A)
+## Governance Query Principles
+### Principle 1 — Governance Queries Are Visibility Constrained
+Governance endpoints return only records visible to the requesting actor.
+Authorization boundaries remain authoritative.
+
+### Principle 2 — Governance Queries Use Platform Query Standards
+Governance endpoints use the approved platform query model:
+page
+limit
+sort
+No governance-specific query conventions exist.
+
+### Principle 3 — Lifecycle Filtering Uses Approved Lifecycle States
+Governance queries may filter only using approved lifecycle states.
+No endpoint may introduce new governance states.
+
+### Principle 4 — Governance Queries Never Expand Authority
+Query parameters may narrow results.
+Query parameters may not expand governance authority.
+
+## Report Queue Query Standards
+### Endpoint
+
+GET /reports
+
+### Supported Query Parameters
+| Parameter  | Purpose                     |
+| ---------- | --------------------------- |
+| page       | Pagination                  |
+| limit      | Pagination                  |
+| sort       | Collection ordering         |
+| status     | Report lifecycle filtering  |
+| targetType | Governance target filtering |
+
+### Supported Status Values
+Submitted
+Under Review
+Escalated
+Resolved
+Dismissed
+
+### Supported Target Types
+Post
+Comment
+User Profile
+Herd
+
+### Supported Sorting
+| Value  | Meaning                     |
+| ------ | --------------------------- |
+| newest | Most recently created first |
+| oldest | Oldest first                |
+
+### Default Sorting
+newest
+
+## Escalated Report Queue Query Standards
+### Endpoint
+GET /reports/escalated
+
+### Supported Query Parameters
+| Parameter | Purpose             |
+| --------- | ------------------- |
+| page      | Pagination          |
+| limit     | Pagination          |
+| sort      | Collection ordering |
+
+### Supported Sorting
+| Value  | Meaning                       |
+| ------ | ----------------------------- |
+| newest | Most recently escalated first |
+| oldest | Oldest escalated first        |
+
+### Default Sorting
+newest
+
+### Filtering Behavior
+Only reports currently in the Escalated lifecycle state are eligible.
+
+## Governance Activity Query Standards
+### Endpoint
+GET /governance/activity
+
+### Supported Query Parameters
+| Parameter  | Purpose                     |
+| ---------- | --------------------------- |
+| page       | Pagination                  |
+| limit      | Pagination                  |
+| sort       | Collection ordering         |
+| actionType | Moderation action filtering |
+
+### Supported Action Types
+Content Removal
+Membership Removal
+Profile Restriction
+Herd Restriction
+Enforcement Expansion
+Content Restoration
+Moderation Reversal
+
+### Supported Sorting
+| Value  | Meaning                    |
+| ------ | -------------------------- |
+| newest | Most recent activity first |
+| oldest | Oldest activity first      |
+
+### Default Sorting
+newest
+
+## Shepherd Oversight Query Standards
+### Endpoint
+GET /governance/shepherds
+
+### Supported Query Parameters
+| Parameter | Purpose             |
+| --------- | ------------------- |
+| page      | Pagination          |
+| limit     | Pagination          |
+| sort      | Collection ordering |
+
+### Supported Sorting
+| Value  | Meaning                               |
+| ------ | ------------------------------------- |
+| newest | Most recent governance activity first |
+| oldest | Oldest governance activity first      |
+
+### Default Sorting
+newest
+
+## Herd Owner Oversight Query Standards
+### Endpoint
+GET /governance/herd-owners
+
+### Supported Query Parameters
+| Parameter | Purpose             |
+| --------- | ------------------- |
+| page      | Pagination          |
+| limit     | Pagination          |
+| sort      | Collection ordering |
+
+### Supported Sorting
+| Value  | Meaning                               |
+| ------ | ------------------------------------- |
+| newest | Most recent governance activity first |
+| oldest | Oldest governance activity first      |
+
+### Default Sorting
+newest
+
+## Pagination Specifications
+### Applicable Collections
+Pagination applies to:
+Report collections
+Escalated report collections
+Governance activity collections
+Shepherd oversight collections
+Herd Owner oversight collections
+### Pagination Parameters
+| Parameter | Purpose                  |
+| --------- | ------------------------ |
+| page      | Collection page number   |
+| limit     | Maximum records returned |
+
+Pagination behavior must follow approved platform-wide standards.
+
+### Collection Metadata
+
+All paginated governance collections return:
+| Field      | Purpose                |
+| ---------- | ---------------------- |
+| page       | Current page           |
+| limit      | Applied page size      |
+| totalItems | Total matching records |
+| totalPages | Total available pages  |
+
+### Ordering Guarantees
+
+Governance collections must provide deterministic ordering.
+
+Identical queries must return identical ordering when underlying data has not changed.
+
+### Deterministic Pagination Rules
+Rule 1 — Sorting Occurs Before Pagination
+Ordering is applied before page boundaries are calculated.
+
+Rule 2 — Stable Ordering Is Required
+Governance collections must always produce stable ordering for identical query inputs.
+
+Rule 3 — Pagination Never Alters Visibility
+Pagination limits visible records.
+Pagination does not alter authorization scope.
+
+Rule 4 — Pagination Never Alters Lifecycle State
+Pagination affects retrieval only.
+Lifecycle behavior remains unchanged.
+
+Rule 5 — Pagination Never Alters Governance Authority
+Pagination is a retrieval concern only.
+Governance authority remains governed by authorization boundaries.
+
+## Governance Collection Response Shape
+### Report Collections
+Return:
+Report resources
+Pagination metadata
+
+### Escalated Report Collections
+Return:
+Escalated Report resources
+Pagination metadata
+
+### Governance Activity Collections
+Return:
+Moderation Action resources
+Pagination metadata
+
+### Governance Actor Collections
+Return:
+Governance actor resources
+Pagination metadata
+
+# Moderation API Model (Part 2B)
+## Reporting API Specifications
+### Reporting API Design Principles
+#### Principle 1 — Reports Are Governance Intake Objects
+Reports represent requests for governance review.
+Reports do not directly perform moderation.
+Moderation outcomes are represented by Moderation Actions.
+
+#### Principle 2 — Reports Are Immutable After Submission
+Report content cannot be edited after creation.
+Report lifecycle changes occur through governance workflows only.
+
+#### Principle 3 — Reports Never Grant Governance Authority
+Submitting a report creates governance visibility.
+Submitting a report does not create governance authority.
+
+#### Principle 4 — Reports Are Visibility Constrained
+Report visibility is governed by approved moderation visibility rules.
+Authorization remains authoritative.
+
+#### Principle 5 — Report State Is System Controlled
+Clients may not create or modify:
+report status
+escalation status
+moderation outcome
+Governance workflows control lifecycle progression.
+
+### Report Resource Representation
+Report Fields
+| Field      | Description                        |
+| ---------- | ---------------------------------- |
+| reportId   | Unique report identifier           |
+| targetType | Type of governed target            |
+| targetId   | Identifier of governed target      |
+| reason     | Report reason                      |
+| context    | Optional reporter explanation      |
+| status     | Current report lifecycle state     |
+| createdAt  | Report creation timestamp          |
+| updatedAt  | Last governance activity timestamp |
+
+#### Supported Target Types
+Reports may target:
+Post
+Comment
+User Profile
+Herd
+Consistent with approved governance coverage validation.
+
+#### Report Lifecycle States
+Supported states:
+Submitted
+Under Review
+Escalated
+Resolved
+Dismissed
+Lifecycle definitions remain governed by the approved lifecycle model.
+
+## POST /reports
+### Purpose
+Submit a governance report.
+
+### Authorization
+Allowed:
+Member
+Shepherd
+Herd Owner
+Platform Administrator
+
+Not Allowed:
+Visitor
+
+### Request Requirements
+#### Required Fields
+| Field      | Description                |
+| ---------- | -------------------------- |
+| targetType | Governed target type       |
+| targetId   | Governed target identifier |
+| reason     | Report reason              |
+
+#### Optional Fields
+| Field   | Description               |
+| ------- | ------------------------- |
+| context | Additional report context |
+
+#### Forbidden Fields
+reporterId
+reportStatus
+escalationStatus
+moderationOutcome
+createdAt
+updatedAt
+
+### Processing Rules
+#### Rule 1 — Reporter Identity Is Derived
+Reporter identity is derived from authenticated identity.
+
+#### Rule 2 — Target Must Exist
+Report creation requires an existing governed target.
+
+#### Rule 3 — Lifecycle State Is Assigned By System
+New reports are created in:
+Submitted
+state.
+
+#### Rule 4 — Ownership Is Not Evaluated
+Any authenticated participant may report an eligible target.
+
+### Success Outcome
+Creates a new Report resource.
+Initial lifecycle state:
+Submitted
+
+### Error Conditions
+| Condition           | Error |
+| ------------------- | ----- |
+| Unauthenticated     | 401   |
+| Unauthorized Actor  | 403   |
+| Target Not Found    | 404   |
+| Invalid Target Type | 400   |
+| Invalid Request     | 400   |
+
+## GET /reports/{reportId}
+### Purpose
+Retrieve a specific report.
+
+### Authorization
+Visible to:
+Reporter
+Relevant Governance Actors
+Platform Administrator
+
+Visibility remains governed by moderation visibility rules.
+
+### Response Contents
+May include:
+
+reportId
+targetType
+targetId
+reason
+context
+status
+createdAt
+updatedAt
+
+Subject to visibility restrictions.
+
+### Error Condition
+| Condition             | Error |
+| --------------------- | ----- |
+| Unauthenticated       | 401   |
+| Visibility Restricted | 403   |
+| Report Not Found      | 404   |
+
+## GET /reports
+### Purpose
+Retrieve report review queues.
+
+### Authorization
+Available only to governance actors with report review authority.
+
+### Query Behavior
+Governed by:
+Governance Query Standards (Part 2A)
+Including:
+page
+limit
+sort
+status
+targetType
+
+### Response Contents
+Returns:
+
+Report collection
+Pagination metadata
+
+### Queue Visibility Rules
+#### Shepherd
+May view reports relevant to assigned Herds.
+
+#### Herd Owner
+May view reports relevant to owned Herds.
+
+#### Platform Administrator
+May view all reports.
+
+### Error Conditions
+| Condition       | Error |
+| --------------- | ----- |
+| Unauthenticated | 401   |
+| Unauthorized    | 403   |
+| Invalid Query   | 400   |
+
+## Report Visibility Rules
+### Reporter Visibility
+Reporter may view:
+Own reports
+Report lifecycle status
+Final outcome status
+
+Reporter may not view:
+Internal governance notes
+Moderator notes
+Governance audit history
+
+### Governance Visibility
+Governance actors may view reports within their authority scope.
+Visibility never expands governance authority.
+
+### Public Visibility
+Reports are never publicly visible.
+
+## Report State Transition Authority
+| Transition               | Authority                 |
+| ------------------------ | ------------------------- |
+| Submitted → Under Review | Relevant Governance Actor |
+| Under Review → Escalated | Shepherd / Herd Owner     |
+| Under Review → Resolved  | Relevant Governance Actor |
+| Under Review → Dismissed | Relevant Governance Actor |
+| Escalated → Under Review | Receiving Authority       |
+| Escalated → Resolved     | Receiving Authority       |
+| Escalated → Dismissed    | Receiving Authority       |
+
+## Reporting API Validation
+Validated Against:
+Domain Model
+Resource Model
+CRUD Model
+Endpoint Inventory
+Authorization Boundaries
+Request Contracts
+Response Contracts
+Query & Pagination Standards
+Lifecycle Model
+Moderation Boundary Model
+
+Validation Result:
+Complete
+No governance inconsistencies identified
+No lifecycle inconsistencies identified
+No authorization inconsistencies identified
+
+# Moderation API Model (Part 2C)
+## Community Governance Workflow APIs
+### Community Governance Workflow Principles
+#### Principle 1 — Reports Drive Governance Review
+All community moderation workflows begin with a Report.
+Governance actions must reference an existing report.
+
+#### Principle 2 — Moderation Actions Represent Enforcement
+Enforcement outcomes are represented through Moderation Actions.
+Reports do not directly perform enforcement.
+
+#### Principle 3 — Governance Authority Remains Scoped
+Shepherd authority is limited to assigned Herds.
+Herd Owners may override Shepherd decisions within owned Herds.
+Platform Administrators retain platform-wide authority.
+Consistent with approved governance hierarchy.
+
+#### Principle 4 — Report Lifecycle And Moderation Lifecycle Remain Separate
+Report Lifecycle:
+Submitted
+Under Review
+Escalated
+Resolved
+Dismissed
+
+Moderation Action Lifecycle:
+Proposed
+Applied
+Reversed
+The two lifecycles remain independent.
+
+#### Principle 5 — Governance Decisions Must Be Auditable
+Every dismissal, moderation action, and escalation must create governance history.
+Governance history remains internal.
+
+## POST /reports/{reportId}/dismiss
+### Purpose
+Dismiss a report without applying moderation.
+
+### Authorization
+Allowed:
+Shepherd (relevant Herd)
+Herd Owner (relevant Herd)
+Platform Administrator
+
+Not Allowed:
+Visitor
+Member
+
+### Processing Rules
+#### Rule 1 — Report Must Be Active
+Allowed report states:
+Submitted
+Under Review
+Escalated
+
+Not Allowed:
+Resolved
+Dismissed
+
+#### Rule 2 — No Moderation Action Created
+Dismissal closes governance review.
+No Moderation Action is created.
+
+#### Rule 3 — Report State Updated
+Final report state:
+Dismissed
+
+### Success Outcome
+Returns workflow outcome.
+Report lifecycle becomes:
+Dismissed
+
+### Error Conditions
+| Condition               | Error |
+| ----------------------- | ----- |
+| Unauthorized            | 403   |
+| Report Not Found        | 404   |
+| Invalid Lifecycle State | 409   |
+
+## POST /reports/{reportId}/moderate
+### Purpose
+Apply moderation based on report review.
+
+### Authorization
+Allowed:
+Shepherd (relevant Herd)
+Herd Owner (relevant Herd)
+Platform Administrator
+
+### Request Body
+#### Required
+| Field      | Description            |
+| ---------- | ---------------------- |
+| actionType | Moderation action type |
+| rationale  | Governance rationale   |
+
+#### Optional
+| Field    | Description          |
+| -------- | -------------------- |
+| duration | Restriction duration |
+| notes    | Enforcement notes    |
+
+#### Forbidden
+moderatorId
+actionId
+reportStatus
+moderationStatus
+
+### Supported Moderation Actions
+#### Content Actions
+Remove Post
+Remove Comment
+
+#### Membership Actions
+Remove Herd Member
+
+#### Community Actions
+Restrict Herd
+
+#### Identity Actions
+Restrict Profile
+These actions correspond to approved governance capabilities and endpoints.
+
+### Processing Rules
+#### Rule 1 — Moderation Action Created
+System creates:
+Moderation Action
+resource.
+
+#### Rule 2 — Moderation Action Applied
+Initial moderation lifecycle state:
+Applied
+
+#### Rule 3 — Report Resolved
+Associated report lifecycle becomes:
+Resolved
+
+#### Rule 4 — Authority Scope Validation
+Governance actor must possess authority over target resource.
+
+### Success Outcome
+Returns:
+moderationActionId
+moderationActionState
+reportState
+
+### Error Conditions
+| Condition               | Error |
+| ----------------------- | ----- |
+| Unauthorized            | 403   |
+| Report Not Found        | 404   |
+| Invalid Action Type     | 400   |
+| Invalid Lifecycle State | 409   |
+
+## POST /reports/{reportId}/escalate
+### Purpose
+Escalate a report to a higher governance authority.
+
+### Authorization
+Allowed:
+Shepherd
+Herd Owner
+
+Not Allowed:
+Member
+Visitor
+Platform Administrators do not escalate matters.
+They are the final governance authority.
+
+### Processing Rules
+#### Rule 1 — Escalation Must Follow Governance Hierarchy
+Allowed escalation paths:
+Shepherd → Herd Owner
+Herd Owner → Platform Administrator
+
+#### Rule 2 — Report State Updated
+Report lifecycle becomes:
+Escalated
+
+#### Rule 3 — No Moderation Action Created
+Escalation transfers review authority.
+It does not apply enforcement.
+
+#### Rule 4 — Escalation History Recorded
+Governance escalation history is recorded internally.
+
+### Success Outcome
+Returns workflow outcome.
+Report lifecycle becomes:
+Escalated
+
+### Error Conditions
+| Condition               | Error |
+| ----------------------- | ----- |
+| Unauthorized            | 403   |
+| Report Not Found        | 404   |
+| Invalid Lifecycle State | 409   |
+| Invalid Escalation Path | 403   |
+
+## GET /reports/escalated
+### Purpose
+
+Retrieve reports requiring higher-level review.
+
+### Authorization
+#### Herd Owner
+May retrieve:
+Reports escalated from Shepherds within owned Herds.
+
+#### Platform Administrator
+May retrieve:
+Reports escalated to platform governance.
+
+### Query Behavior
+Governed by:
+Governance Query Standards (Part 2A)
+
+Supported filters:
+status
+targetType
+sort
+order
+page
+limit
+
+### Response Contents
+Returns:
+Report collection
+Pagination metadata
+Subject to governance visibility rules.
+
+### Queue Visibility Rules
+#### Herd Owner Queue
+Contains:
+Escalated reports requiring community-owner review.
+
+#### Platform Administrator Queue
+Contains:
+Escalated reports requiring platform review.
+
+### Error Conditions
+| Condition     | Error |
+| ------------- | ----- |
+| Unauthorized  | 403   |
+| Invalid Query | 400   |
+
+## Governance Workflow Validation
+Validated Against:
+Governance Domain Model
+Resource Model
+CRUD Model
+Endpoint Inventory
+Authorization Boundaries
+Request Contracts
+Response Contracts
+Governance Query Standards
+Lifecycle Boundary Model
+Moderation Boundary Model
+
+Validation Result:
+Complete
+Consistent with governance hierarchy
+Consistent with lifecycle model
+Consistent with moderation boundary model
+No additional endpoints required
+
+# Moderation API Model (Part 2D)
+## Enforcement API Specifications
+### Enforcement Design Principles
+#### Principle 1 — Enforcement Requires Authority
+Only authorized governance actors may execute enforcement.
+
+#### Principle 2 — Enforcement Produces A Moderation Action
+Every enforcement action creates or operates on a Moderation Action.
+
+#### Principle 3 — Enforcement Changes Lifecycle State
+Enforcement affects governed resources through lifecycle transitions.
+
+#### Principle 4 — Enforcement Never Transfers Ownership
+Ownership remains unchanged.
+
+#### Principle 5 — Enforcement Is Auditable
+Every enforcement action must be reviewable by higher governance authority.
+
+## Content Enforcement
+### POST /posts/{postId}/remove
+#### Purpose
+Remove a governed post.
+
+#### Authorization
+Shepherd (relevant Herd)
+Herd Owner (relevant Herd)
+Platform Administrator
+
+#### Required Inputs
+moderation rationale
+
+#### Optional Inputs
+enforcement notes
+
+#### Forbidden Inputs
+moderatorId
+lifecycleState
+moderationActionId
+
+#### Processing Rules
+System:
+Validate authority.
+Create Moderation Action.
+Associate target Post.
+Apply enforcement.
+
+#### Lifecycle Effect
+Published
+    ↓
+Removed
+
+#### Moderation Action Effect
+Proposed
+    ↓
+Applied
+
+#### Success Outcome
+Post removed.
+Moderation Action created.
+
+#### Error Conditions
+Unauthorized
+Post not found
+Already removed
+
+### POST /comments/{commentId}/remove
+Identical behavior to post removal.
+
+#### Lifecycle Effect
+Published
+    ↓
+Removed
+
+## Profile Enforcement
+### POST /profiles/{profileId}/restrict
+#### Purpose
+Restrict profile participation.
+
+#### Authorization
+Platform Administrator only.
+
+#### Required Inputs
+moderation rationale
+
+#### Optional Inputs
+restriction reason
+restriction duration
+
+#### Forbidden Inputs
+profile lifecycle state
+moderatorId
+
+#### Processing Rules
+System:
+Validate platform authority.
+Create Moderation Action.
+Apply profile restriction.
+
+#### Lifecycle Effect
+Profile remains active projection.
+Underlying account governance restrictions become effective.
+
+#### Moderation Action Effect
+Proposed
+    ↓
+Applied
+
+#### Success Outcome
+Profile restricted.
+
+## Community Enforcement
+### POST /herds/{herdId}/restrict
+#### Purpose
+Restrict community participation.
+
+#### Authorization
+Platform Administrator.
+
+#### Required Inputs
+moderation rationale
+
+#### Optional Inputs
+restriction duration
+restriction reason
+
+#### Forbidden Inputs
+herd lifecycle state
+moderatorId
+
+#### Lifecycle Effect
+Active
+    ↓
+Restricted
+
+#### Success Outcome
+Herd becomes restricted.
+
+## Membership Enforcement
+### POST /herds/{herdId}/members/{memberId}/remove
+#### Purpose
+Remove member from Herd.
+
+#### Authorization
+Shepherd
+Herd Owner
+Platform Administrator
+Scope rules apply.
+
+#### Required Inputs
+moderation rationale
+
+#### Optional Inputs
+enforcement notes
+
+#### Forbidden Inputs
+membership state
+moderatorId
+
+#### Lifecycle Effect
+Active
+    ↓
+Removed
+
+#### Success Outcome
+Membership removed.
+Moderation Action created.
+
+## Enforcement Review APIs
+### POST /moderation-actions/{actionId}/uphold
+#### Purpose
+Confirm existing moderation decision.
+
+#### Authorization
+Higher governance authority.
+Examples:
+Shepherd Decision
+    → Herd Owner Uphold
+
+Herd Owner Decision
+    → Platform Admin Uphold
+
+#### Processing Rules
+No lifecycle change.
+Decision remains valid.
+
+#### Moderation Action Effect
+No state change.
+Audit trail updated.
+
+#### Success Outcome
+Outcome upheld.
+
+### POST /moderation-actions/{actionId}/reverse
+#### Purpose
+Overturn moderation decision.
+
+#### Authorization
+Higher governance authority.
+
+#### Processing Rules
+Validate authority.
+Reverse enforcement.
+Update moderation action.
+
+#### Moderation Action Effect
+Applied
+    ↓
+Reversed
+
+#### Success Outcome
+Decision overturned.
+
+### POST /moderation-actions/{actionId}/restore
+#### Purpose
+Restore governed content after reversal.
+
+#### Authorization
+Platform Administrator.
+
+#### Supported Targets
+Post
+Comment
+
+#### Lifecycle Effects
+Post
+Removed
+    ↓
+Published
+Comment
+Removed
+    ↓
+Published
+#### Success Outcome
+Content restored.
+
+### POST /moderation-actions/{actionId}/expand
+#### Purpose
+Increase enforcement scope.
+Example:
+Remove Post
+      ↓
+Restrict Profile
+or
+Restrict Profile
+      ↓
+Restrict Herd
+
+#### Authorization
+Platform Administrator.
+
+#### Required Inputs
+expansion rationale
+
+#### Optional Inputs
+additional enforcement scope
+
+#### Forbidden Inputs
+moderatorId
+moderation lifecycle fields
+
+#### Processing Rules
+Existing moderation action reviewed.
+Additional enforcement applied.
+Additional moderation action created.
+
+#### Success Outcome
+Enforcement scope expanded.
+
+---
+
+# Moderation API MOdel (Part 2E) 
+## Governance Oversight APIs
+### Governance Oversight Design Principles
+#### Principle 1 — Oversight Is Read Only
+Oversight endpoints never execute moderation.
+
+#### Principle 2 — Oversight Reviews Governance Behavior
+Focus is governance activity rather than governed content.
+
+#### Principle 3 — Oversight Respects Visibility Rules
+Visibility remains governed by approved moderation visibility policies.
+
+#### Principle 4 — Oversight Supports Accountability
+Governance actors must remain reviewable by higher authority.
+
+#### Principle 5 — Oversight Does Not Create New Governance State
+Oversight APIs expose governance information only.
+
+### Governance Activity Review
+#### GET /governance/activity
+##### Purpose
+Review governance activity occurring across the platform.
+
+##### Authorization
+Platform Administrator only.
+
+##### Supported Query Parameters
+page
+limit
+sort
+order
+status
+Consistent with governance query standards.
+
+##### Default Sorting
+sort=createdAt
+order=desc
+Newest governance activity first.
+
+##### Returned Information
+May include:
+Report identifier
+Moderation action identifier
+Governance actor type
+Governance action type
+Governed resource type
+Governance outcome
+Timestamp
+
+##### Must Not Include
+Internal notes
+Investigation notes
+Audit trail details
+Internal governance discussions
+
+##### Success Outcome
+Governance activity collection returned.
+
+### Shepherd Conduct Review
+#### GET /governance/shepherds
+##### Purpose
+Review Shepherd governance behavior.
+
+##### Authorization
+Platform Administrator only.
+
+#### Supported Query Parameters
+page
+limit
+search
+herdId
+
+##### Returned Information
+May include:
+Shepherd identity
+Assigned Herds
+Active assignments
+Moderation actions performed
+Reports reviewed
+Escalations initiated
+
+##### Derived Information
+May include:
+Total moderation actions
+Total reports reviewed
+Total escalations
+
+##### Must Not Include
+Internal moderation notes
+Investigation commentary
+
+##### Success Outcome
+Governance review collection returned.
+
+### Herd Owner Conduct Review
+#### GET /governance/herd-owners
+##### Purpose
+Review Herd Owner governance activity.
+
+##### Authorization
+Platform Administrator only.
+
+#### Supported Query Parameters
+page
+limit
+search
+herdId
+
+##### Returned Information
+May include:
+Herd Owner identity
+Owned Herds
+Shepherd appointments
+Escalation resolutions
+Moderation reversals
+Governance actions performed
+
+##### Derived Information
+May include:
+Herd count
+Shepherd count
+Governance action count
+
+##### Must Not Include
+Internal governance discussions
+Internal moderation notes
+
+##### Success Outcome
+Governance review collection returned.
+
+### Governance Oversight Visibility Model
+#### Platform Administrator
+Full access to governance oversight endpoints.
+
+##### Accessible
+Governance activity
+Shepherd conduct
+Herd Owner conduct
+Governance outcomes
+Governance history summaries
+
+##### Restricted
+Internal moderation notes
+Internal investigations
+Internal governance discussions
+
+#### Herd Owner
+Does not access governance oversight endpoints.
+Uses:
+GET /reports
+GET /reports/escalated
+GET /moderation-actions/{actionId}
+for community governance oversight.
+
+#### Shepherd
+Does not access governance oversight endpoints.
+Uses community governance workflows only.
+
+#### Members
+No governance oversight access.
+
+### Response Model Requirements
+#### Governance Activity Entry
+May expose:
+activityId
+activityType
+actorType
+resourceType
+outcome
+createdAt
+
+#### Shepherd Review Entry
+May expose:
+profileId
+assignedHerds
+reportsReviewed
+moderationActions
+escalationsCreated
+
+#### Herd Owner Review Entry
+May expose:
+profileId
+ownedHerds
+shepherdAssignments
+reversalsPerformed
+escalationsResolved
+
+### Error Behavior
+#### 401 Unauthorized
+Unauthenticated request.
+
+#### 403 Forbidden
+Authenticated actor lacks Platform Administrator authority.
+
+#### 422 Validation Error
+Invalid query parameters.
+
+#### 429 Too Many Requests
+Rate limiting.
+
+### Validation
+#### Capability Validation
+| Capability                 | Status |
+| -------------------------- | ------ |
+| Review Governance Activity | Pass   |
+| Review Shepherd Conduct    | Pass   |
+| Review Herd Owner Conduct  | Pass   |
+
+#### User Flow Validation
+| Flow                                | Status |
+| ----------------------------------- | ------ |
+| PAF-04 Oversee Community Governance | Pass   |
+| HOJ-05 Community Oversight          | Pass   |
+| HOJ-06 Governance Escalation        | Pass   |
+
+
+#### Endpoint Inventory Validation
+Validated against approved governance oversight endpoints.
+
+# Platform Governance Workflow APIs
+## Governance Workflow Principles
+### Principle 1 — Higher Authority Review
+Platform Governance Workflow endpoints exist to review existing moderation outcomes.
+
+These endpoints do not create initial moderation decisions.
+
+### Principle 2 — Governance Hierarchy Enforcement
+A governance actor may only review moderation outcomes within approved authority boundaries.
+
+Higher authority may override lower authority.
+
+Lower authority may not override higher authority.
+
+### Principle 3 — Auditability Required
+Every governance workflow action must generate a governance audit record.
+
+Governance review actions must remain traceable.
+
+### Principle 4 — Lifecycle Consistency
+Governance workflow actions must not create invalid moderation lifecycle transitions.
+
+### Principle 5 — Visibility Restrictions Remain Enforced
+Governance review does not expand visibility rights.
+
+Approved visibility rules remain authoritative.
+
+## POST /moderation-actions/{actionId}/uphold
+### Purpose
+Confirm that an existing moderation outcome remains valid.
+
+Represents governance agreement with a previously applied moderation action.
+
+### Authorization
+Platform Administrator
+
+Herd Owner may uphold moderation outcomes originating from Shepherd authority within their own Herd.
+
+Lower authority may not uphold decisions made by higher authority.
+
+Consistent with Governance Override Matrix.
+
+### Required Inputs
+Path Parameters:
+
+actionId
+
+### Optional Inputs
+None.
+
+### Forbidden Inputs
+moderationOutcome
+lifecycleState
+moderatorId
+governanceState
+
+### Processing Rules
+Retrieve Moderation Action.
+Validate governance authority.
+Validate moderation action exists.
+Validate moderation action is reviewable.
+Record governance review outcome.
+Preserve existing moderation outcome.
+
+### Governance Validation Rules
+Must verify:
+
+Moderation Action exists.
+Reviewing authority is higher or equal authority.
+Review scope is valid.
+Action has not already been reversed.
+
+### Visibility Rules
+No visibility expansion.
+
+Existing visibility rules remain unchanged.
+
+### Lifecycle Effects
+No lifecycle transition occurs.
+
+Moderation Action remains:
+
+Applied
+
+### Moderation Action Effects
+No enforcement changes occur.
+
+Original moderation outcome remains active.
+
+### Audit Requirements
+Audit record must capture:
+
+actionId
+reviewActor
+reviewType=uphold
+timestamp
+
+### Success Outcome
+Moderation outcome confirmed.
+
+### Error Conditions
+401 Unauthorized
+403 Forbidden
+404 Not Found
+409 Conflict
+
+## POST /moderation-actions/{actionId}/reverse
+### Purpose
+Overturn an existing moderation outcome.
+
+Represents governance disagreement with a previously applied moderation action.
+
+### Authorization
+Platform Administrator
+
+Herd Owner may reverse moderation outcomes originating from Shepherd authority within the same Herd.
+
+Lower authority may not reverse higher authority decisions.
+
+### Required Inputs
+Path Parameters:
+
+actionId
+
+### Optional Inputs
+None.
+
+### Forbidden Inputs
+newLifecycleState
+newAuthorityLevel
+moderatorId
+
+### Processing Rules
+Retrieve Moderation Action.
+Validate authority.
+Validate action is reversible.
+Apply governance reversal.
+Update moderation lifecycle.
+
+### Governance Validation Rules
+Must verify:
+
+Action currently Applied.
+Action not previously reversed.
+Reviewing authority exceeds or equals originating authority.
+Governance scope remains valid.
+
+### Visibility Rules
+Governance rationale visibility remains restricted.
+
+Internal review information remains hidden.
+
+### Lifecycle Effects
+Applied → Reversed
+
+Only valid moderation lifecycle transition.
+
+Consistent with approved lifecycle model.
+
+### Moderation Action Effects
+Original enforcement becomes inactive.
+
+### Audit Requirements
+Audit record must capture:
+
+actionId
+reviewActor
+reviewType=reverse
+timestamp
+
+### Success Outcome
+Moderation outcome reversed.
+
+### Error Conditions
+401 Unauthorized
+403 Forbidden
+404 Not Found
+409 Conflict
+
+## POST /moderation-actions/{actionId}/restore
+### Purpose
+Restore previously governed content after moderation reversal review.
+
+### Authorization
+Platform Administrator only.
+
+### Required Inputs
+Path Parameters:
+
+actionId
+
+### Optional Inputs
+None.
+
+### Forbidden Inputs
+targetId
+targetType
+contentState
+
+### Processing Rules
+Retrieve Moderation Action.
+Validate governed resource.
+Validate restoration eligibility.
+Restore governed content.
+
+### Governance Validation Rules
+Restoration is allowed only when:
+
+Moderation Action has been reversed.
+Governed resource still exists.
+Resource lifecycle supports restoration.
+
+### Restoration Eligibility Rules
+Eligible:
+
+Post
+Comment
+Image
+
+Potentially eligible because approved lifecycle model explicitly permits governance restoration.
+
+Not Eligible:
+
+Herd Membership
+Shepherd Assignment
+User Profile Restriction
+Herd Restriction
+
+These require new governance actions rather than content restoration.
+
+### Visibility Rules
+Restored content follows normal visibility rules.
+
+No governance information becomes public.
+
+### Lifecycle Effects
+Governed resource returns to normal participation state.
+
+Moderation Action remains:
+
+Reversed
+
+No new moderation lifecycle state created.
+
+### Moderation Action Effects
+Previously removed content becomes visible again.
+
+### Audit Requirements
+Audit record must capture:
+
+actionId
+reviewActor
+reviewType=restore
+timestamp
+
+### Success Outcome
+Governed content restored.
+
+### Error Conditions
+401 Unauthorized
+403 Forbidden
+404 Not Found
+409 Conflict
+422 Validation Error
+
+## POST /moderation-actions/{actionId}/expand
+### Purpose
+Increase enforcement scope after platform governance review.
+
+### Authorization
+Platform Administrator only.
+
+### Required Inputs
+Path Parameters:
+
+actionId
+
+Request Body:
+
+expansionType
+expansionReason
+
+### Optional Inputs
+restrictionDuration
+enforcementNotes
+
+### Forbidden Inputs
+moderatorId
+governanceState
+reportStatus
+
+### Processing Rules
+Retrieve Moderation Action.
+Validate authority.
+Validate expansion eligibility.
+Apply expanded enforcement.
+Create additional enforcement action if required.
+
+### Governance Validation Rules
+Must verify:
+
+Original Moderation Action exists.
+Original Moderation Action remains Applied.
+Expansion scope is valid.
+Expansion target is governable.
+Expansion does not exceed platform authority rules.
+
+### Enforcement Expansion Rules
+Examples:
+
+Content Removal
+    →
+Profile Restriction
+
+Content Removal
+    →
+Community Restriction
+
+Membership Removal
+    →
+Profile Restriction
+
+Expansion represents broader enforcement based on governance review.
+
+### Scope Validation Rules
+Expansion must:
+
+Reference existing Moderation Action.
+Remain linked to original governance record.
+Target valid governance resources.
+Remain auditable.
+### Visibility Rules
+Expanded enforcement follows existing moderation visibility rules.
+
+No audit information becomes public.
+
+### Lifecycle Effects
+Original Moderation Action remains:
+
+Applied
+
+Expanded enforcement produces additional governance outcomes.
+
+No new lifecycle states created.
+
+### Moderation Action Effects
+Additional enforcement may be applied.
+
+Original enforcement remains active.
+
+### Audit Requirements
+Audit record must capture:
+
+actionId
+reviewActor
+reviewType=expand
+expansionType
+timestamp
+
+### Success Outcome
+Expanded enforcement applied.
+
+### Error Conditions
+401 Unauthorized
+403 Forbidden
+404 Not Found
+409 Conflict
+422 Validation Error
+
+## Findings
+### Finding 1 — Additional Constraint Required For Restore
+Restoration must require a previously reversed Moderation Action.
+
+Without this rule:
+
+Applied → Restore
+
+would bypass governance review.
+
+Constraint required.
+
+### Finding 2 — Additional Constraint Required For Expand
+Expansion must only operate on active moderation outcomes.
+
+Constraint required:
+
+Applied only
+
+Expansion of reversed actions should be forbidden.
+
+### Finding 3 — Additional Constraint Required For Reverse
+Reverse must be single-use.
+
+Constraint required:
+
+Applied → Reversed
+
+only once.
+
+### Finding 4 — Additional Constraint Required For Uphold
+Uphold should not operate on already reversed actions.
+
+Constraint required.
+
+## Validation
+| Validation Area                     | Result |
+| ----------------------------------- | ------ |
+| Governance Hierarchy                | Pass   |
+| Governance Authority Model          | Pass   |
+| Governance Visibility Model         | Pass   |
+| Governance State Model              | Pass   |
+| Authorization Boundaries            | Pass   |
+| Endpoint Inventory                  | Pass   |
+| Request Contract Model              | Pass   |
+| Response Contract Model             | Pass   |
+| Error Contract Model                | Pass   |
+| Lifecycle Consistency               | Pass   |
+| Auditability                        | Pass   |
+| Platform Administrator Flows        | Pass   |
+| Herd Owner Dispute Resolution Flows | Pass   |
+
+---
+
+# Moderation API Surface Validation
+## Governance Capability Coverage Validation
+### Reporting Capabilities
+| Capability      | Workflow Coverage             | Endpoint Coverage                 | Status   |
+| --------------- | ----------------------------- | --------------------------------- | -------- |
+| Submit Report   | Report Submission             | POST /reports                     | Complete |
+| Review Report   | Governance Review Queue       | GET /reports                      | Complete |
+| Dismiss Report  | Community Governance Workflow | POST /reports/{reportId}/dismiss  | Complete |
+| Escalate Report | Community Governance Workflow | POST /reports/{reportId}/escalate | Complete |
+
+Validation Result:
+Reporting Coverage = Complete
+
+### Community Governance Capabilities
+| Capability                 | Workflow Coverage               | Endpoint Coverage                                              | Status   |
+| -------------------------- | ------------------------------- | -------------------------------------------------------------- | -------- |
+| Review Community Reports   | Community Review Workflow       | GET /reports                                                   | Complete |
+| Apply Community Moderation | Moderation Workflow             | POST /reports/{reportId}/moderate                              | Complete |
+| Remove Herd Content        | Enforcement Workflow            | POST /posts/{postId}/remove, POST /comments/{commentId}/remove | Complete |
+| Remove Herd Member         | Membership Enforcement Workflow | POST /herds/{herdId}/members/{memberId}/remove                 | Complete |
+| Review Escalated Matters   | Escalation Review Workflow      | GET /reports/escalated                                         | Complete |
+
+Validation Result:
+Community Governance Coverage = Complete
+
+### Platform Governance Capabilities
+| Capability                 | Workflow Coverage               | Endpoint Coverage                           | Status   |
+| -------------------------- | ------------------------------- | ------------------------------------------- | -------- |
+| Restrict User Profile      | Profile Enforcement Workflow    | POST /profiles/{profileId}/restrict         | Complete |
+| Restrict Herd              | Community Enforcement Workflow  | POST /herds/{herdId}/restrict               | Complete |
+| Uphold Moderation Outcome  | Governance Review Workflow      | POST /moderation-actions/{actionId}/uphold  | Complete |
+| Reverse Moderation Outcome | Governance Review Workflow      | POST /moderation-actions/{actionId}/reverse | Complete |
+| Restore Governed Content   | Governance Restoration Workflow | POST /moderation-actions/{actionId}/restore | Complete |
+| Expand Enforcement Action  | Governance Expansion Workflow   | POST /moderation-actions/{actionId}/expand  | Complete |
+
+Validation Result:
+Platform Governance Coverage = Complete
+
+### Governance Oversight Capabilities
+| Capability                 | Workflow Coverage  | Endpoint Coverage           | Status   |
+| -------------------------- | ------------------ | --------------------------- | -------- |
+| Review Governance Activity | Oversight Workflow | GET /governance/activity    | Complete |
+| Review Shepherd Conduct    | Oversight Workflow | GET /governance/shepherds   | Complete |
+| Review Herd Owner Conduct  | Oversight Workflow | GET /governance/herd-owners | Complete |
+
+Validation Result:
+Governance Oversight Coverage = Complete
+
+## Endpoint Inventory Coverage Validation
+### Capability Model Validation
+Every approved governance capability maps to at least one endpoint.
+
+Validation Result:
+
+Pass
+
+### Resource Model Validation
+Governance Resources:
+
+Report
+Moderation Action
+
+Both governance resources have complete workflow support.
+
+Validation Result:
+
+Pass
+
+### CRUD Model Validation
+Governance resources remain workflow-driven rather than CRUD-driven.
+
+Validation Result:
+
+Pass
+### Authorization Model Validation
+Every governance endpoint has an approved authority boundary.
+
+Validation Result:
+
+Pass
+
+### Orphan Endpoint Validation
+No governance endpoint exists without a corresponding capability.
+
+Validation Result:
+
+Pass
+
+### Duplicate Responsibility Validation
+No governance endpoint duplicates another endpoint's responsibility.
+
+Validation Result:
+
+Pass
+
+## Authorization Coverage Validation
+### Shepherd Authority
+
+Authorized Capabilities:
+
+Review Reports
+Dismiss Reports
+Apply Community Moderation
+Remove Herd Content
+Remove Herd Members
+Escalate Reports
+
+Validation Result:
+
+Pass
+
+### Herd Owner Authority
+Authorized Capabilities:
+
+Review Reports
+Review Escalations
+Override Shepherd Outcomes
+Uphold Moderation Outcomes
+Reverse Moderation Outcomes
+
+Validation Result:
+
+Pass
+
+### Platform Administrator Authority
+Authorized Capabilities:
+
+Platform-wide Report Review
+Profile Restriction
+Herd Restriction
+Uphold Moderation Outcomes
+Reverse Moderation Outcomes
+Restore Governed Content
+Expand Enforcement Actions
+Governance Oversight
+
+Validation Result:
+
+Pass
+
+### Governance Hierarchy Validation
+Approved hierarchy:
+
+Applicable Law
+    ↓
+Platform Administrator
+    ↓
+Herd Owner
+    ↓
+Shepherd
+
+Validation Result:
+
+Pass
+
+No authority escalation loopholes identified.
+
+No hierarchy violations identified.
+
+## Governance Workflow Coverage Validation
+
+## Visibility Model Validation
+
+Validated Against:
+
+Public Users
+Reporters
+Shepherds
+Herd Owners
+Platform Administrators
+
+Confirmed:
+
+No governance information leaks.
+No reporter identity leaks.
+No moderation rationale leaks.
+No audit trail exposure conflicts.
+No visibility rule conflicts.
+
+Validation Result:
+
+Pass
+
+Consistent with Governance Visibility Model and Moderation Visibility Matrix.
+
+## Governance Resource Validation
+### Report Resource Coverage
+
+Supported Operations:
+
+Creation
+Review
+Escalation
+Resolution
+Dismissal
+
+Validation Result:
+
+Complete
+
+### Moderation Action Resource Coverage
+Supported Operations:
+
+Creation
+Enforcement
+Reversal
+Restoration
+Expansion
+Oversight
+
+Validation Result:
+
+Complete
+
+### Governance Resource Gap Validation
+Additional governance resources required:
+
+None
+
+Validation Result:
+
+Pass
+
+### Moderation Boundary Validation
+
+Approved Moderation Targets:
+
+Post
+Comment
+User Profile
+Herd
+Herd Membership
+
+#### Validation Result
+| Moderation Target | Enforcement Coverage | Authority Coverage | Visibility Coverage | Audit Coverage | Status   |
+| ----------------- | -------------------- | ------------------ | ------------------- | -------------- | -------- |
+| Post              | Yes                  | Yes                | Yes                 | Yes            | Complete |
+| Comment           | Yes                  | Yes                | Yes                 | Yes            | Complete |
+| User Profile      | Yes                  | Yes                | Yes                 | Yes            | Complete |
+| Herd              | Yes                  | Yes                | Yes                 | Yes            | Complete |
+| Herd Membership   | Yes                  | Yes                | Yes                 | Yes            | Complete |
+
+
+## Findings
+### Finding 1
+Every approved governance capability is represented by:
+
+At least one workflow
+At least one endpoint
+
+Status:
+
+Resolved
+
+### Finding 2
+Every approved moderation target has:
+
+Enforcement coverage
+Authority coverage
+Visibility coverage
+Audit coverage
+
+Status:
+
+Resolved
+
+### Finding 3
+All approved governance lifecycle transitions have workflow support.
+
+Status:
+
+Resolved
+
+### Finding 4
+No orphan governance endpoints exist.
+
+Status:
+
+Resolved
+
+### Finding 5
+No duplicate governance endpoint responsibilities exist.
+
+Status:
+
+Resolved
+
 #

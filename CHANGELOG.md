@@ -318,6 +318,231 @@
 - Updated:
   - API_CONTRACTS.md
 
+- Completed Moderation APIs (Part 1).
+
+- Defined Moderation API Design Principles.
+
+- Established authoritative moderation workflow principles covering:
+  - Governance-driven moderation
+  - Governance hierarchy enforcement
+  - Escalation behavior
+  - Auditability requirements
+  - Visibility boundaries
+  - Governance override rules
+
+- Defined governance resource responsibilities for:
+  - Report
+  - Moderation Action
+
+- Defined Governance Authority Model covering:
+  - Shepherd responsibilities
+  - Herd Owner responsibilities
+  - Platform Administrator responsibilities
+
+- Defined Governance Visibility Model covering:
+  - Report visibility
+  - Moderation Action visibility
+  - Escalation visibility
+  - Governance rationale visibility
+  - Internal moderation note visibility
+
+- Defined Governance State Model for:
+  - Report lifecycle states
+  - Moderation Action lifecycle states
+
+- Validated moderation APIs against:
+  - User Flows
+  - Governance Hierarchy
+  - Authorization Boundaries
+  - Lifecycle Model
+  - Endpoint Inventory
+
+- Confirmed:
+  - No governance model changes required.
+  - No lifecycle changes required.
+  - No authorization changes required.
+  - No additional moderation endpoints required.
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+
+- Completed Moderation APIs (Part 2A).
+
+- Defined Governance Query Standards.
+
+- Defined authoritative query behavior for:
+  - GET /reports
+  - GET /reports/escalated
+  - GET /governance/activity
+  - GET /governance/shepherds
+  - GET /governance/herd-owners
+
+- Defined governance filtering rules.
+
+- Defined governance sorting rules.
+
+- Defined Governance Pagination Behavior.
+
+- Defined pagination behavior for:
+  - Report collections
+  - Escalated report collections
+  - Governance activity collections
+  - Governance actor collections
+
+- Defined deterministic ordering guarantees.
+
+- Validated governance query and pagination behavior against:
+  - Domain Model
+  - Capability Model
+  - Resource Model
+  - CRUD Model
+  - Endpoint Inventory
+  - Authorization Boundaries
+  - Lifecycle Model
+  - Moderation Boundary Model
+
+- Confirmed:
+  - No new query conventions required.
+  - No governance-specific pagination model required.
+  - No cursor pagination required.
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed Moderation APIs (Part 2B)
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed Moderation APIs (Part 2C)
+
+- Defined Community Governance Workflow APIs
+
+- Defined report dismissal workflow
+
+- Defined moderation action creation workflow
+
+- Defined escalation workflow
+
+- Defined escalated review queue behavior
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed Moderation APIs (Enforcement APIs) part 2D
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed Moderation APIs (Part 2E)
+
+- Defined Governance Oversight APIs
+
+- Defined governance activity review behavior
+
+- Defined Shepherd conduct review behavior
+
+- Defined Herd Owner conduct review behavior
+
+- Defined governance oversight visibility rules
+
+- Validated governance oversight APIs against:
+  - Platform Administrator Flows
+  - Governance Capability Model
+  - Endpoint Inventory
+  - Authorization Boundaries
+  - Moderation Visibility Model
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed Moderation APIs (Part 3)
+
+- Defined Platform Governance Workflow APIs
+
+- Defined governance review workflow behavior for:
+  - Uphold Moderation Outcome
+  - Reverse Moderation Outcome
+  - Restore Governed Content
+  - Expand Enforcement Action
+
+- Defined:
+  - Higher-authority override rules
+  - Restoration eligibility rules
+  - Enforcement expansion rules
+  - Governance workflow validation rules
+  - Scope validation requirements
+  - Audit requirements
+  - Lifecycle consistency requirements
+
+- Confirmed:
+  - No new moderation resources required
+  - No new lifecycle states required
+  - No authorization changes required
+  - No endpoint inventory changes required
+
+- Validated against:
+  - Governance Authority Model
+  - Governance Visibility Model
+  - Governance State Model
+  - Authorization Boundaries
+  - Request Contract Model
+  - Response Contract Model
+  - Error Contract Model
+  - Platform Administrator Governance Flows
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed Moderation APIs (Part 4)
+
+- Performed Final Moderation API Validation & Coverage Review.
+
+- Validated:
+  - Governance Capability Coverage
+  - Endpoint Inventory Coverage
+  - Authorization Coverage
+  - Governance Workflow Coverage
+  - Visibility Coverage
+  - Governance Resource Coverage
+  - Moderation Boundary Coverage
+
+- Confirmed complete coverage for:
+  - Reporting Workflows
+  - Community Governance Workflows
+  - Platform Governance Workflows
+  - Governance Oversight Workflows
+
+- Confirmed:
+  - No moderation endpoint gaps remain.
+  - No governance workflow gaps remain.
+  - No authorization gaps remain.
+  - No visibility conflicts remain.
+  - No lifecycle gaps remain.
+  - No additional moderation resources required.
+  - No additional moderation endpoints required.
+
+- Approved MVP Moderation API Surface as complete.
+
+- Transitioned active work to:
+  - API Surface Validation
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
 
 ## 2026-06-21
 
