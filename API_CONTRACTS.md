@@ -1220,6 +1220,24 @@ Avoid duplicate retrieval surfaces.
 | GET /governance/shepherds   | Review shepherd conduct    | Governance | Governance     |
 | GET /governance/herd-owners | Review herd owner conduct  | Governance | Governance     |
 
+#### Profile Enforcement
+
+| Endpoint                          | Purpose                  | Operation         | Classification |
+| --------------------------------- | ------------------------ | ----------------- | -------------- |
+| POST /profiles/{profileId}/restrict | Restrict user profile   | Governance Action | Governance     |
+
+#### Community Enforcement
+
+| Endpoint                      | Purpose                  | Operation         | Classification |
+| ----------------------------- | ------------------------ | ----------------- | -------------- |
+| POST /herds/{herdId}/restrict | Restrict community       | Governance Action | Governance     |
+
+#### Membership Moderation
+
+| Endpoint                                         | Purpose                    | Operation         | Classification |
+| ------------------------------------------------ | -------------------------- | ----------------- | -------------- |
+| POST /herds/{herdId}/members/{memberId}/remove   | Remove herd member         | Governance Action | Governance     |
+
 
 ---
 
@@ -1646,21 +1664,24 @@ Consistent with approved endpoint inventory.
 | GET /reports            | Query Parameter Only |
 
 ### Governance Workflows
-| Endpoint                                    | Classification       |
-| ------------------------------------------- | -------------------- |
-| POST /reports/{reportId}/dismiss            | Path Parameter Only  |
-| POST /reports/{reportId}/moderate           | Path + Request Body  |
-| POST /reports/{reportId}/escalate           | Path Parameter Only  |
-| GET /reports/escalated                      | Query Parameter Only |
-| POST /posts/{postId}/remove                 | Path Parameter Only  |
-| POST /comments/{commentId}/remove           | Path Parameter Only  |
-| POST /moderation-actions/{actionId}/uphold  | Path Parameter Only  |
-| POST /moderation-actions/{actionId}/reverse | Path Parameter Only  |
-| POST /moderation-actions/{actionId}/restore | Path Parameter Only  |
-| POST /moderation-actions/{actionId}/expand  | Path + Request Body  |
-| GET /governance/activity                    | Query Parameter Only |
-| GET /governance/shepherds                   | Query Parameter Only |
-| GET /governance/herd-owners                 | Query Parameter Only |
+| Endpoint                                         | Classification       |
+| ------------------------------------------------ | -------------------- |
+| POST /reports/{reportId}/dismiss                 | Path Parameter Only  |
+| POST /reports/{reportId}/moderate                | Path + Request Body  |
+| POST /reports/{reportId}/escalate                | Path Parameter Only  |
+| GET /reports/escalated                           | Query Parameter Only |
+| POST /posts/{postId}/remove                      | Path Parameter Only  |
+| POST /comments/{commentId}/remove                | Path Parameter Only  |
+| POST /moderation-actions/{actionId}/uphold       | Path Parameter Only  |
+| POST /moderation-actions/{actionId}/reverse      | Path Parameter Only  |
+| POST /moderation-actions/{actionId}/restore      | Path Parameter Only  |
+| POST /moderation-actions/{actionId}/expand       | Path + Request Body  |
+| GET /governance/activity                         | Query Parameter Only |
+| GET /governance/shepherds                        | Query Parameter Only |
+| GET /governance/herd-owners                      | Query Parameter Only |
+| POST /profiles/{profileId}/restrict              | Path + Request Body  |
+| POST /herds/{herdId}/restrict                    | Path + Request Body  |
+| POST /herds/{herdId}/members/{memberId}/remove   | Path + Request Body  |
 
 ## Input Source Matrix
 ### Client Supplied
@@ -1858,9 +1879,11 @@ escalationState
 ### Moderation
 #### Required
 target identifier
-#### Optional
 moderation rationale
-expansion rationale
+#### Optional
+restriction reason
+restriction duration
+enforcement notes
 #### Forbidden
 moderatorId
 moderationActionId creation
@@ -2191,10 +2214,13 @@ Lifecycle:
 - Dismissed
 
 ### Moderation Actions 
-| Endpoint                        | Classification      |
-| ------------------------------- | ------------------- |
-| GET moderation-action           | Governance Resource |
-| All governance action endpoints | Workflow Outcome    |
+| Endpoint                                       | Classification      |
+| ---------------------------------------------- | ------------------- |
+| GET moderation-action                          | Governance Resource |
+| All governance action endpoints                | Workflow Outcome    |
+| POST /profiles/{profileId}/restrict            | Workflow Outcome    |
+| POST /herds/{herdId}/restrict                  | Workflow Outcome    |
+| POST /herds/{herdId}/members/{memberId}/remove | Workflow Outcome    |
 
 Supporting Resources:
 - Related Report
@@ -2251,6 +2277,7 @@ Lifecycle:
 | Information            | Public  | Reporter             | Shepherd/Herd Owner (Relevant Herd) | Platform Admin |
 | ---------------------- | ------- | -------------------- | ----------------------------------- | -------------- |
 | Content Removed        | Yes     | Yes                  | Yes                                 | Yes            |
+| User Profile Restricted| Yes     | Yes                  | Limited                             | Yes            |
 | Herd Restricted        | Yes     | Yes                  | Yes                                 | Yes            |
 | Membership Removed     | Limited | Limited              | Yes                                 | Yes            |
 | Report Existence       | No      | Own Reports Only     | Relevant Reports Only               | Yes            |
