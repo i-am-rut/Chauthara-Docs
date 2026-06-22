@@ -230,6 +230,62 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Completed MVP Feed API Specification.
+
+- Defined authoritative Feed API behavior for:
+  - Following Feed
+  - Herd Feed
+
+- Defined feed retrieval rules.
+
+- Defined feed visibility rules.
+
+- Defined feed composition rules.
+
+- Defined feed ordering model:
+  - Newest First
+  - Deterministic Ordering
+
+- Defined feed query standards.
+
+- Defined feed pagination behavior.
+
+- Defined Following Feed API specification.
+
+- Defined Herd Feed API specification.
+
+- Defined feed response model.
+
+- Defined feed error behavior.
+
+- Defined feed performance constraints.
+
+- Validated Feed APIs against:
+  - API Domain Model
+  - Capability Model
+  - Resource Model
+  - CRUD Model
+  - Endpoint Inventory
+  - Authorization Boundaries
+  - Request Contract Model
+  - Response Contract Model
+  - Query & Pagination Standards
+  - Error Contract Model
+  - Lifecycle Model
+  - Moderation Boundary Model
+
+- Confirmed:
+  - Feed remains a Derived Resource.
+  - Feed remains Read Only.
+  - Feed Items remain non-resources.
+  - No new endpoints required.
+  - No recommendation systems introduced.
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
 
 ## 2026-06-21
 

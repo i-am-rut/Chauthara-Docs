@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Feed APIs
+Define Moderation APIs
 
 Next Task:
-Define Moderation APIs
+API Surface Validation
 
 Blocked By:
 Nothing

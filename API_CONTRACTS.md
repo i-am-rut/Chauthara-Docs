@@ -3581,4 +3581,475 @@ Governed content does not leak moderation state.
 
 ---
 
+# MVP Feed API Model
+## Feed API Design Principles
+### Principle 1 — Feed Remains A Derived Resource
+The Feed resource remains a Derived Resource.
+
+Feed does not represent a persisted business entity.
+
+Feed composition is generated from existing business resources.
+
+Consistent with the approved Resource Model.
+
+### Principle 2 — Feed Remains Read Only
+Feeds support retrieval only.
+
+No Feed endpoint supports:
+
+Create
+Update
+Delete
+
+Consistent with the approved CRUD Model.
+
+### Principle 3 — Feed Items Are Not Resources
+Feed Items are response projections.
+
+Feed Items:
+
+Are not entities
+Are not resources
+Have no lifecycle
+Have no independent endpoints
+
+Consistent with the approved Resource Model.
+
+### Principle 4 — Ranking Remains Internal
+Ranking implementation is not exposed through the API.
+
+The API exposes ordering behavior only.
+
+Internal ranking calculations, scoring, and feed generation mechanisms remain implementation concerns.
+
+### Principle 5 — Recommendation Is Out Of Scope
+MVP feeds are eligibility-driven.
+
+MVP feeds do not expose:
+
+Recommendations
+Discovery content
+Suggested content
+Personalized ranking
+Algorithmic ranking
+
+Consistent with approved Feed feature specifications.
+
+## Feed Retrieval Model
+### Following Feed
+#### Purpose
+Provide a content stream composed of eligible content from followed users.
+
+#### Eligible Content
+The Following Feed contains:
+
+Personal Posts authored by followed users
+
+Requirements:
+
+Follow relationship must be active.
+Author account must remain active.
+Post must remain publicly visible.
+Post must not be deleted.
+Post must not be removed by moderation.
+
+Consistent with Following Feed and Follow System specifications.
+
+#### Not Eligible
+The Following Feed must not contain:
+
+Personal posts from non-followed users
+Herd posts
+Deleted posts
+Moderation-removed posts
+Restricted content
+Recommended content
+Discovery content
+Advertisements
+
+### Herd Feed
+#### Purpose
+Provide a content stream composed of eligible content from joined Herds.
+
+#### Eligible Content
+The Herd Feed contains:
+
+Herd Posts created within Herds the member currently belongs to
+
+Requirements:
+
+Viewer must currently be a Herd member.
+Herd must remain Active.
+Post must remain publicly visible.
+Post must not be deleted.
+Post must not be removed by moderation.
+
+Consistent with Herd Feed specifications.
+
+#### Not Eligible
+The Herd Feed must not contain:
+
+Personal posts
+Posts from Herds not joined
+Deleted posts
+Moderation-removed posts
+Restricted content
+Recommended content
+Discovery content
+Advertisements
+
+Consistent with Herd Feed specifications.
+
+## Feed Visibility Rules
+### Following Feed
+Access:
+
+Authenticated Member+
+Shepherd+
+Herd Owner+
+Platform Administrator+
+
+Not Accessible To:
+
+Visitors
+
+Authorization Source:
+
+Authenticated identity.
+
+Consistent with Authorization Boundaries.
+
+### Herd Feed
+Access:
+
+Authenticated Member+
+Shepherd+
+Herd Owner+
+Platform Administrator+
+
+Not Accessible To:
+
+Visitors
+
+Authorization Source:
+
+Authenticated identity.
+
+Consistent with Authorization Boundaries.
+
+## Feed Composition Rules
+### Included Information
+Each Feed Item represents an eligible Post projection.
+
+#### Post Information
+postId
+content
+createdAt
+
+#### Author Information
+profileId
+displayName
+profileImage
+
+#### Herd Information
+Included only for Herd Feed:
+
+herdId
+herdName
+herdImage
+
+#### Image Information
+Included when attached:
+
+imageId
+imageUrl
+
+#### Derived Information
+voteTotals
+commentCount
+
+Consistent with approved Response Contract principles requiring business-resource visibility and derived metric exposure.
+
+### Excluded Information
+Feed responses must not expose:
+
+Internal ranking score
+Recommendation source
+Recommendation metadata
+Governance history
+Moderation notes
+Report existence
+Report details
+Enforcement rationale
+Internal ownership metadata
+Internal lifecycle metadata
+Internal system identifiers
+
+Consistent with approved Response Contract and Governance visibility rules.
+
+## Feed Ordering Rules 
+### Following Feed Ordering
+Authoritative MVP Ordering:
+
+#### Newest First
+Requirements:
+
+Newer eligible content appears before older eligible content.
+Ordering must be deterministic.
+Ordering must remain stable within paginated results.
+
+The Following Feed must not use:
+
+Popularity ranking
+Recommendation ranking
+Engagement ranking
+Aura ranking
+Personalized ranking
+
+Consistent with MVP Feed simplicity and approved Following Feed feature requirements.
+
+### Herd Feed Ordering
+Authoritative MVP Ordering:
+
+#### Newest First
+Requirements:
+
+Newer eligible content appears before older eligible content.
+Ordering must be deterministic.
+Ordering must remain stable within paginated results.
+
+The Herd Feed must not use:
+
+Engagement ranking
+Recommendation ranking
+Aura ranking
+Personalized ranking
+Shepherd prioritization
+
+Consistent with Herd Feed feature specification.
+
+## Feed Query Standards
+### Supported Query Parameters
+| Parameter | Required | Type    |
+| --------- | -------- | ------- |
+| page      | No       | Integer |
+| limit     | No       | Integer |
+
+### Unsupported Parameters
+The Feed APIs do not support:
+
+sort
+filter
+search
+cursor
+before
+after
+offset
+
+Rationale:
+Feed ordering is fixed by Feed specifications.
+
+Feed filtering and Feed search are explicitly postponed beyond MVP.
+
+## Feed Pagination Behaviour
+Pagination follows approved platform-wide Pagination Standards.
+
+### Default Page Size
+
+20
+
+### Maximum Page Size
+
+100
+
+### Empty Page Behavior
+
+Valid empty collection response.
+
+Status:
+
+200 OK
+
+Example:
+
+{
+  "data": [],
+  "pagination": {
+    "page": 4,
+    "limit": 20,
+    "totalItems": 52,
+    "totalPages": 3
+  }
+}
+
+### End Of Feed Behavior
+No special response.
+
+Return:
+
+200 OK
+Empty data collection
+
+### Pagination Guarantees
+No duplicate Feed Items within a response.
+Stable ordering across page retrieval.
+Consistent pagination metadata.
+
+## Following Feed API Specification
+### Endpoint
+GET /feeds/following
+
+### Classification
+Derived Resource
+
+### Authorization
+Member+
+
+### Request Parameters
+| Parameter | Required |
+| --------- | -------- |
+| page      | No       |
+| limit     | No       |
+
+### Response Classification
+Resource Collection
+
+### Response Contents
+Collection of:
+
+Personal Posts from followed users
+
+Supporting Resources:
+Author Profile
+Attached Images
+
+Derived Information:
+Vote Totals
+Comment Count
+
+## Herd Feed API Specification
+### Endpoint
+GET /feeds/herds
+
+### Classification
+Derived Resource
+
+### Authorization
+Member+
+
+### Request Parameters
+| Parameter | Required |
+| --------- | -------- |
+| page      | No       |
+| limit     | No       |
+
+### Response Classification
+Resource Collection
+
+### Response Contents
+Collection of:
+Herd Posts from joined Herds
+
+Supporting Resources:
+Author Profile
+Herd Information
+Attached Images
+
+Derived Information:
+Vote Totals
+Comment Count
+
+## Feed Response Model
+```json
+{
+  "data": [
+    {
+      "postId": "post_123",
+      "content": "...",
+      "createdAt": "2026-06-22T12:00:00Z",
+      "author": {
+        "profileId": "profile_123",
+        "displayName": "Member",
+        "profileImage": {}
+      },
+      "herd": {},
+      "images": [],
+      "voteTotals": {
+        "hypeUp": 10,
+        "hypeDown": 2
+      },
+      "commentCount": 5
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "totalItems": 250,
+    "totalPages": 13
+  }
+}
+```
+Notes:
+herd is omitted for Following Feed items.
+Response shape follows approved Resource Collection standards.
+
+## Feed Error Behavior
+| Scenario                           | Status | Error Code              |
+| ---------------------------------- | ------ | ----------------------- |
+| Authentication Required            | 401    | AUTHENTICATION_REQUIRED |
+| Invalid Page                       | 400    | INVALID_PAGE            |
+| Invalid Limit                      | 400    | INVALID_LIMIT           |
+| Unsupported Query Parameter        | 400    | INVALID_QUERY_PARAMETER |
+| Feed Access Without Authentication | 401    | AUTHENTICATION_REQUIRED |
+| Rate Limited                       | 429    | RATE_LIMIT_EXCEEDED     |
+| Internal Failure                   | 500    | INTERNAL_ERROR          |
+All error responses must follow the approved Error Contract Model.
+
+## Feed Performance Constraints
+Requirements:
+Ordering must remain deterministic.
+Pagination must remain consistent.
+No duplicate Feed Items within a response.
+Feed eligibility changes must be reflected on subsequent retrieval.
+Moderation visibility changes must be reflected on subsequent retrieval.
+Membership changes must be reflected on subsequent retrieval.
+Follow relationship changes must be reflected on subsequent retrieval.
+
+No implementation requirements are imposed regarding:
+Caching
+Feed generation
+Storage strategy
+Indexing
+
+## Feed Validation Results
+Validated Against:
+API Domain Model
+API Capability Model
+Resource Model
+CRUD Model
+Endpoint Inventory
+Authorization Boundaries
+Request Contract Model
+Response Contract Model
+Query & Pagination Standards
+Error Contract Model
+Lifecycle Boundary Model
+Moderation Boundary Model
+User Flows MF-01 and MF-08
+
+Validation Result:
+Feed remains a Derived Resource.
+Feed remains Read Only.
+Feed Item remains a non-resource projection.
+No new resources introduced.
+No endpoint changes required.
+No authorization conflicts detected.
+No request contract conflicts detected.
+No response contract conflicts detected.
+No query contract conflicts detected.
+No governance visibility violations detected.
+Recommendation systems remain out of MVP scope.
+
+--- 
+
 #
