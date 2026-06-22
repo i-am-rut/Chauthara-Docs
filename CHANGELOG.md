@@ -54,8 +54,6 @@
   - CHANGELOG.md
   - TASKS.md
 
-### Documentation
-
 - Completed MVP Response Contract Model.
 
 - Defined platform-wide response contract principles.
@@ -117,6 +115,70 @@
   - Aggregate Boundaries
   - Lifecycle Boundaries
   - Moderation Boundaries
+
+- Updated:
+  - API_CONTRACTS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+- Completed MVP Query & Pagination Standards.
+
+- Defined platform-wide query design principles.
+
+- Defined platform-wide pagination design principles.
+
+- Evaluated:
+  - Offset Pagination
+  - Cursor Pagination
+  - Keyset Pagination
+
+- Selected Offset Pagination as the authoritative MVP pagination strategy.
+
+- Defined standard pagination parameters:
+  - page
+  - limit
+
+- Defined forbidden pagination parameters:
+  - cursor
+  - before
+  - after
+  - offset
+
+- Defined standard sorting model covering:
+  - Profiles
+  - Posts
+  - Comments
+  - Herds
+  - Members
+  - Shepherds
+  - Reports
+  - Feeds
+
+- Defined MVP-supported filtering model.
+
+- Defined feed query standards for:
+  - Following Feed
+  - Herd Feed
+
+- Defined governance query standards for:
+  - Report queues
+  - Escalated review queues
+
+- Defined collection response pagination metadata.
+
+- Validated query and pagination standards against:
+  - User Flows
+  - API Capability Model
+  - Resource Model
+  - Endpoint Inventory
+  - Authorization Boundaries
+  - Lifecycle Model
+  - Moderation Boundary Model
+
+- Approved MVP Query & Pagination Standards as the foundation for:
+  - Error Contracts
+  - Feed APIs
+  - Moderation APIs
 
 - Updated:
   - API_CONTRACTS.md

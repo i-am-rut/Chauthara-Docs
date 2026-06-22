@@ -3,10 +3,10 @@ Current Goal:
 Consolidate MVP Design
 
 Active Task:
-Define Query & Pagination Standards
+Define Error Contract
 
 Next Task:
-Define Error Contract
+Define Feed APIs
 
 Blocked By:
 Nothing

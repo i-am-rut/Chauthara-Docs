@@ -2323,4 +2323,399 @@ Approved voting specification requires private vote identities.
 
 ---
 
+# MVP Query & Pagination Standards
+## Pagination Strategy Decision
+### MVP Standard
+Offset Pagination
+
+Platform-wide standard:
+
+?page={number}
+&limit={number}
+
+Rationale:
+
+Simplest implementation.
+Matches MVP simplicity objective.
+Sufficient for projected MVP data volume.
+Consistent across all collection endpoints.
+Easier to document and consume.
+
+### Future Consideration
+
+If feed scale or performance requirements increase:
+
+Feed endpoints may migrate to cursor pagination.
+Collection contract should be designed so cursor metadata can be added later without breaking clients.
+
+No cursor pagination is introduced in MVP.
+
+## Query Design Principles
+### Principle 1 — Platform-Wide Consistency
+Collection endpoints use the same query model whenever possible.
+
+### Principle 2 — Predictable Parameters
+Parameter names must have identical meaning everywhere.
+
+Example:
+page
+limit
+sort
+order
+search
+
+must never change meaning between endpoints.
+
+### Principle 3 — Authorization-Aware Results
+Filtering never bypasses authorization boundaries.
+
+Returned results remain subject to approved authorization rules.
+
+### Principle 4 — Query Parameters Refine Collections
+Query parameters may refine collections.
+
+They never change business ownership, lifecycle state, or governance authority.
+
+### Principle 5 — Simplicity First
+Only MVP-required filters are supported.
+
+Future filtering capabilities remain out of scope.
+
+### Principle 6 — Future Extensibility
+Additional filters may be added later without changing existing parameter semantics.
+
+## Pagination Design Principles
+### Principle 1 — One Pagination Model
+All MVP collection endpoints use the same pagination model.
+
+### Principle 2 — Pagination Is Optional
+When omitted:
+
+page=1
+limit=20
+
+are assumed.
+
+### Principle 3 — Stable Ordering Required
+Pagination requires deterministic ordering.
+
+Every paginated collection must define a default sort order.
+
+### Principle 4 — Authorization Before Pagination
+Authorization filtering occurs before pagination.
+
+Unauthorized resources never contribute to page calculations.
+
+## Standard Pagination Parameters
+### Allowed Parameters
+| Parameter | Purpose     |
+| --------- | ----------- |
+| page      | Page number |
+| limit     | Page size   |
+
+### Forbidden Parameters
+| Parameter | Reason                            |
+| --------- | --------------------------------- |
+| cursor    | Cursor pagination not used in MVP |
+| before    | Cursor pagination not used in MVP |
+| after     | Cursor pagination not used in MVP |
+| offset    | Internal implementation detail    |
+
+### Defaults
+page=1
+limit=20
+### Maximum
+limit=100
+
+Requests above 100 are rejected.
+
+### Pagination Limits
+Minimum page: 1
+
+Minimum limit: 1
+
+Maximum limit: 100
+
+Requests exceeding the maximum limit are rejected.
+
+### Invalid Pagination Values
+The following are invalid:
+
+page < 1
+limit < 1
+limit > maximum allowed limit
+
+Invalid values result in a validation error.
+
+## Standard Query Parameter Inventory
+| Parameter  | Purpose                           | Category   |
+|------------|-----------------------------------|------------|
+| page       | Collection page number            | Pagination |
+| limit      | Collection page size              | Pagination |
+| sort       | Sort field                        | Sorting    |
+| order      | Sort direction                    | Sorting    |
+| search     | Text search                       | Filtering  |
+| authorId   | Filter by author                  | Filtering  |
+| herdId     | Filter by Herd                    | Filtering  |
+| status     | Filter governance lifecycle state | Filtering  |
+
+## Standard Sorting Model
+### Allowed Directions
+order=asc
+order=desc
+### Default Direction
+order=desc
+Newest first.
+
+### Standard Sort Parameter
+sort
+
+### Profiles
+Default:
+
+sort=createdAt
+order=desc
+
+### Posts
+Default:
+
+sort=createdAt
+order=desc
+
+### Comments
+Default:
+
+sort=createdAt
+order=asc
+
+Rationale:
+
+Discussion readability.
+
+### Herds
+Default:
+
+sort=createdAt
+order=desc
+
+### Members
+Default:
+
+sort=joinedAt
+order=desc
+
+### Shepherds
+Default:
+
+sort=assignedAt
+order=desc
+
+### Reports
+Default:
+
+sort=createdAt
+order=asc
+
+Oldest unresolved reports reviewed first.
+
+### Feeds
+Default:
+
+sort=createdAt
+order=desc
+
+Consistent with approved feed specifications.
+
+## Standard Filtering Model
+### MVP-Supported Filters
+#### Text Search
+Applicable:
+
+GET /profiles
+GET /posts
+GET /herds
+
+Parameter:
+
+search
+
+#### Author Filtering
+Applicable:
+
+GET /posts
+
+Parameter:
+
+authorId
+
+#### Herd Filtering
+Applicable:
+
+GET /posts
+
+Parameter:
+
+herdId
+
+#### Report Status Filtering
+Applicable:
+
+GET /reports
+
+Parameter:
+
+status
+
+Allowed values:
+
+submitted
+under_review
+escalated
+resolved
+dismissed
+
+Lifecycle-aligned.
+
+#### Future Filters
+Not MVP:
+
+date ranges
+vote thresholds
+follower counts
+membership counts
+moderation outcome filters
+advanced governance filters
+
+#### Forbidden Filters
+Clients may not filter by:
+
+ownership state
+moderation authority
+internal governance assignments
+derived ranking scores
+internal lifecycle transitions
+
+## Feed Query Standards
+### Following Feed
+Endpoint:
+
+GET /feeds/following
+
+Rules:
+
+Chronological ordering.
+Newest eligible content first.
+Pagination uses page/limit.
+Refresh returns current first page.
+No recommendations.
+No ranking system.
+
+Consistent with approved Following Feed requirements.
+
+### Herd Feed
+Endpoint:
+
+GET /feeds/herds
+
+Rules:
+
+Chronological ordering.
+Newest eligible content first.
+Pagination uses page/limit.
+Refresh returns current first page.
+Joined Herd content only.
+
+Consistent with approved Herd Feed consumption flows.
+
+### Duplicate Prevention
+- MVP does not guarantee duplicate-free pagination across refreshes.
+- Clients should replace feed state when refreshing from page 1.
+
+## Governance Query Standards
+### Report Queue
+Endpoint:
+
+GET /reports
+
+Supported filter:
+
+status
+
+### Escalated Review Queue
+Endpoint:
+
+GET /reports/escalated
+
+Ordering:
+
+createdAt asc
+
+Oldest escalation first.
+
+### Governance Visibility
+Report visibility remains governed by approved authorization boundaries:
+
+Reporter
+Relevant Shepherd
+Relevant Herd Owner
+Platform Administrator
+
+Unauthorized users cannot query governance collections.
+
+## Collection Response Metadata Standard
+All paginated collection responses include:
+{
+  "page": 1,
+  "limit": 20,
+  "totalCount": 125,
+  "totalPages": 7,
+  "hasNextPage": true,
+  "hasPreviousPage": false
+}
+
+### MVP Metadata Fields
+| Field           | Included |
+| --------------- | -------- |
+| page            | Yes      |
+| limit           | Yes      |
+| totalCount      | Yes      |
+| totalPages      | Yes      |
+| hasNextPage     | Yes      |
+| hasPreviousPage | Yes      |
+| nextCursor      | No       |
+| previousCursor  | No       |
+
+## Validation Results
+### User Flows
+Validated against:
+
+Visitor discovery flows
+Member feed consumption flows
+Community participation flows
+Governance review flows
+
+No conflicts identified.
+
+### Resource Model
+Validated against:
+
+Primary resources
+Relationship resources
+Derived resources
+Governance resources
+
+No resource-specific pagination exception required.
+
+### Authorization Boundaries
+Authorization filtering occurs before pagination and sorting.
+
+No authorization conflicts identified.
+
+### Lifecycle Model
+Report filtering aligns with approved Report lifecycle states.
+
+No lifecycle conflicts identified.
+
+---
+
 #
