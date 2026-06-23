@@ -4,9 +4,10 @@
 - Store accepted architectural decisions.
 
 ## Current Status:
-- No ADRs have been created yet.
+- Backend ADRs will be added.
 
 ### Accepted
+| ADR-001 | Adopt Domain-Oriented Modular Monolith Backend Architecture | Accepted |
 
 ### Deprecated
 

@@ -671,4 +671,105 @@ All future ADRs should explicitly reference these drivers when evaluating altern
 
 --- 
 
-#
+# Backend Architecture Definition
+## Backend Architectural Style
+
+### Architectural Style
+The backend architecture follows a Domain-Oriented Modular Monolith.
+
+The system is implemented as a single deployable application while organizing business logic around approved business domains.
+
+Approved backend domains:
+
+- Identity
+- Social Graph
+- Content
+- Community
+- Feed
+- Media
+- Governance
+
+Operationally the platform remains a monolith.
+
+Architecturally the platform is modular.
+
+---
+
+### Architectural Style Rationale
+The Domain-Oriented Modular Monolith was selected because it:
+
+- Aligns with Simplicity First.
+- Aligns with Evolutionary Architecture.
+- Preserves approved domain boundaries.
+- Preserves governance boundaries.
+- Preserves ownership boundaries.
+- Minimizes operational complexity.
+- Supports solo developer operation.
+- Provides a clear future evolution path.
+
+The architecture intentionally avoids microservices and service-oriented architectures during MVP development.
+
+---
+
+### Architectural Characteristics
+Characteristics:
+
+- Single deployable backend application.
+- Single primary database.
+- Domain-oriented internal organization.
+- Explicit module boundaries.
+- API-first design.
+- Governance-aware architecture.
+- Ownership-aware architecture.
+- Low operational overhead.
+- Evolution-friendly structure.
+
+---
+
+### Architectural Boundaries
+Backend modules align with approved MVP domains:
+
+- Identity
+- Social Graph
+- Content
+- Community
+- Feed
+- Media
+- Governance
+
+Domain boundaries remain authoritative.
+
+Cross-domain access must occur through explicit module contracts rather than direct internal dependency chains.
+
+---
+
+### Architectural Responsibilities
+Each module owns:
+
+- Business rules
+- Lifecycle enforcement
+- Ownership enforcement
+- Authorization rules
+- Governance constraints
+- Domain-specific workflows
+
+The backend architecture remains responsible for enforcing approved governance hierarchy and ownership boundaries.
+
+---
+
+### Evolution Strategy
+MVP:
+- Single deployable modular monolith.
+
+Near-Term:
+- Strengthen module isolation.
+- Increase internal contract discipline.
+
+Future:
+- Extract individual modules into independent services only when justified by measurable operational requirements.
+
+Architectural evolution follows the Evolutionary Architecture principle.
+
+---
+
+##

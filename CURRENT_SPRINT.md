@@ -3,10 +3,10 @@ Current Goal:
 MVP Architecture Design
 
 Active Task:
-Define Backend Architectural Style
+Define Backend Domain Architecture
 
 Next Task:
-Define Backend Domain Architecture
+Define Backend Module Boundaries
 
 Blocked By:
 Nothing

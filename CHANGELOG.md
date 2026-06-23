@@ -164,7 +164,36 @@
   - TASKS.md
   - LEARNINGS.md
 
+- Completed Define Backend Architectural Style.
 
+- Evaluated:
+  - Layered Monolith
+  - Modular Monolith
+  - Microservices
+  - Service-Oriented Architecture
+
+- Selected:
+  - Domain-Oriented Modular Monolith
+
+- Established backend architectural foundation for:
+  - Backend Domain Architecture
+  - Module Boundaries
+  - Authorization Architecture
+  - Governance Architecture
+  - Data Access Architecture
+
+- Approved architectural evolution strategy.
+
+- Created ADR-001:
+  - Adopt Domain-Oriented Modular Monolith Backend Architecture
+
+- Updated:
+  - ARCHITECTURE.md
+  - ADR_INDEX.md
+  - ADR-001.md
+  - CHANGELOG.md
+  - LEARNINGS.md
+  - TASKS.md
 
 ## 2026-06-22
 

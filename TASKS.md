@@ -2,12 +2,11 @@
 - MVP Architecture Design
     - Architecture Refinement
         - Backend Architecture Definition
-            - Define Backend Architectural Style
+            - Define Backend Domain Architecture
             
 
 
 # Pending
-Define Backend Domain Architecture
 Define Backend Module Boundaries
 Define Backend Application Layer Architecture
 Define Backend Authorization Architecture
@@ -110,3 +109,4 @@ API Surface Validation
 MVP Design Sign-Off
 Define Architecture Drivers (Functional Drivers and Quality Drivers)
 Define Architecture Drivers (Constraints and Architectural Principles)
+Define Backend Architectural Style
