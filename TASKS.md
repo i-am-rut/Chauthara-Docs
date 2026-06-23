@@ -2,12 +2,11 @@
 - MVP Architecture Design
     - Architecture Refinement
         - Backend Architecture Definition
-            - Define Backend Application Layer Architecture
+            - Define Backend Authorization Architecture
             
 
 
 # Pending
-Define Backend Authorization Architecture
 Define Backend Governance Architecture
 Define Backend Data Access Architecture
 Define Backend Feed Architecture
@@ -110,3 +109,4 @@ Define Architecture Drivers (Constraints and Architectural Principles)
 Define Backend Architectural Style
 Define Backend Domain Architecture
 Define Backend Module Boundaries
+Define Backend Application Layer Architecture

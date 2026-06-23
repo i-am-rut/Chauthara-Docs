@@ -2733,4 +2733,1381 @@ Future Extraction
 Governance can become a separate service without redefining ownership.
 Feed can become a separate read service without redefining ownership.
 
+## Backend Application Layer Architecture
+### Application Service Architecture
+Authoritative execution model:
+Controller
+    ↓
+Application Service
+    ↓
+Domain Logic
+    ↓
+Repository
+    ↓
+Infrastructure
+
+Application Services become the primary location for:
+Use-case orchestration
+Transaction ownership
+Cross-module coordination
+Authorization invocation
+Governance invocation
+Ownership enforcement coordination
+Lifecycle enforcement coordination
+
+### Layer Inventory
+#### Layer 1 — API Layer
+
+Purpose
+Translate HTTP requests into application use cases.
+This layer represents Express controllers and route handlers.
+
+Responsibilities
+Controllers MAY:
+Request Extraction
+Read:
+Path parameters
+Query parameters
+Request body
+Authenticated identity
+
+Request Mapping
+Transform HTTP input into application input models.
+Example:
+POST /posts
+↓
+CreatePostRequest
+
+Response Mapping
+Transform application results into API responses.
+Example:
+CreatePostResult
+↓
+201 Created
+
+Error Translation Delegation
+Pass errors to centralized error middleware.
+
+Controllers Must NOT
+Must Not Contain Business Rules
+Forbidden:
+if user is herd owner
+inside controller.
+
+Must Not Execute Authorization Logic
+Forbidden:
+if role === shepherd
+inside controller.
+
+Must Not Execute Governance Logic
+Forbidden:
+if community restricted
+inside controller.
+
+Must Not Execute Ownership Validation
+Forbidden:
+if post.authorId !== user.id
+inside controller.
+
+Must Not Execute Persistence
+Forbidden:
+PostModel.create()
+inside controller.
+
+Must Not Coordinate Transactions
+Controllers never own transactions.
+
+API Layer Summary
+Controllers are transport adapters.
+Nothing more.
+
+#### Layer 2 — Application Layer
+Purpose
+Execute use cases.
+This is the most important layer in the architecture.
+Application Services become the workflow engine of the platform.
+
+Responsibilities
+Application Services own:
+Use Case Orchestration
+Examples:
+Register User
+Create Post
+Join Herd
+Assign Shepherd
+Create Report
+Remove Membership
+Cross-Module Coordination
+Examples:
+Content Service may call:
+Community Contract
+Identity Contract
+Governance Contract
+
+Authorization Invocation
+Application Services invoke authorization evaluation.
+They do not implement authorization rules themselves.
+
+Governance Invocation
+Application Services invoke governance validation.
+
+Ownership Validation Coordination
+Application Services invoke ownership validation.
+
+Lifecycle Enforcement Coordination
+Application Services ensure valid state transitions.
+
+Transaction Ownership
+Application Services own transaction boundaries.
+No other layer owns transactions.
+
+Audit Generation Coordination
+Governance workflows require:
+Moderation records
+Enforcement records
+Activity records
+Application Services coordinate creation.
+
+Application Services Must NOT
+Must Not Perform HTTP Logic
+No:
+req.body
+res.status
+
+Must Not Contain Database Queries
+Forbidden:
+mongoose.find()
+
+Must Not Contain Cloudinary Logic
+Forbidden:
+cloudinary.uploader.upload()
+
+Must Not Contain Persistence Details
+Persistence belongs below.
+
+Application Layer Summary
+Application Services own workflow execution.
+This becomes the primary execution layer of the platform.
+
+#### Layer 3 — Domain Layer
+Purpose
+Own business rules.
+This layer represents the business model of the platform.
+
+Responsibilities
+Domain Layer owns:
+Ownership Rules
+Examples:
+Post author can edit post
+Only herd owner can assign shepherd
+
+Lifecycle Rules
+Examples:
+Deleted post cannot receive votes
+Closed report cannot be escalated
+
+Community Rules
+Examples:
+Membership required to post
+Cannot join invite-only herd without invitation
+
+Voting Rules
+Examples:
+One vote per user
+
+Governance Rules
+Examples:
+Shepherd cannot override platform administrator
+
+Aggregate Consistency Rules
+Rules protecting aggregate integrity.
+
+Domain Layer Must NOT
+Must Not Access HTTP
+Must Not Access Database
+Must Not Access Cloudinary
+Must Not Access Express
+Must Not Access MongoDB Models
+
+Domain Layer Summary
+Domain Layer answers:
+What is allowed?
+Application Layer answers:
+What should happen?
+
+#### Layer 4 — Repository Layer
+Purpose
+Persistence abstraction.
+Repositories manage storage operations.
+
+Responsibilities
+Repositories own:
+Aggregate Retrieval
+Example:
+Get Post
+Get Herd
+Get Report
+
+Aggregate Persistence
+Example:
+Save Post
+Save Report
+
+Query Operations
+Example:
+Find Comments By Post
+
+Repositories Must NOT
+Must Not Execute Authorization
+Must Not Execute Governance Logic
+Must Not Execute Ownership Rules
+Must Not Execute Business Workflows
+Must Not Coordinate Modules
+
+Repository Summary
+Repositories answer:
+How is data stored and retrieved?
+Nothing else.
+
+#### Layer 5 — Infrastructure Layer
+Purpose
+Integrate external systems.
+
+Responsibilities
+Infrastructure owns:
+MongoDB
+Cloudinary
+Email Provider
+Logging
+Cache
+Environment Configuration
+Third-Party APIs
+
+Infrastructure Must NOT
+Must Not Execute Business Rules
+Must Not Execute Authorization Rules
+Must Not Execute Governance Rules
+Must Not Own Workflows
+
+Infrastructure Summary
+Infrastructure answers:
+How does the system interact with the outside world?
+
+#### Allowed dependency direction:
+API
+ ↓
+Application
+ ↓
+Domain
+ ↓
+Repository
+ ↓
+Infrastructure
+
+### Request Execution Model
+#### Execution Architecture Principles
+EA-01 — Application Services Own Workflow Execution
+Controllers receive requests.
+Application Services execute workflows.
+This remains the most important execution rule.
+Controller
+    ↓
+Application Service
+Controllers never execute business workflows.
+
+EA-02 — Authorization Is Explicit
+Authorization must never be implicit.
+Every protected use case must invoke authorization evaluation explicitly.
+This aligns with:
+Security By Default
+Explicit Authority Boundaries
+
+EA-03 — Governance Is Explicit
+Governance must never be hidden.
+Governance validation should be visible inside execution flows.
+This aligns with Governance-Aware Design.
+
+EA-04 — Ownership Enforcement Is Explicit
+Ownership validation must occur before state mutation.
+Ownership checks should never be delegated to repositories.
+
+EA-05 — Domain Rules Execute Before Persistence
+Business validity must be confirmed before storage operations.
+
+EA-06 — Persistence Happens Last
+Database mutation should be the final step before response creation.
+
+EA-07 — API Layer Remains Stateless
+Controllers do not retain execution state.
+Execution state exists only inside application workflows.
+
+#### Standard Request Execution Flow
+This becomes the default request lifecycle for most write operations.
+Authoritative Flow
+Request
+    ↓
+Authentication
+    ↓
+Controller
+    ↓
+Request Validation
+    ↓
+Application Service
+    ↓
+Authorization
+    ↓
+Ownership Validation
+    ↓
+Governance Validation
+    ↓
+Domain Rules
+    ↓
+Transaction Start
+    ↓
+Persistence
+    ↓
+Transaction Commit
+    ↓
+Result Mapping
+    ↓
+Response
+
+#### Execution Stage Responsibilities
+Stage 1 — Authentication
+Purpose:
+Identify actor.
+Output:
+AuthenticatedUser
+Examples:
+userId
+roles
+permissions
+Authentication must complete before controller execution.
+
+Stage 2 — Controller
+Purpose:
+Translate HTTP request into application request.
+Example:
+POST /posts
+↓
+CreatePostCommand
+No business logic.
+
+Stage 3 — Request Validation
+Purpose:
+Validate API contract compliance.
+Examples:
+Required fields
+Data types
+Length constraints
+Query constraints
+Business validation does not occur here.
+
+Stage 4 — Application Service Entry
+Application Service becomes workflow owner.
+Example:
+CreatePostApplicationService
+All subsequent business execution occurs here.
+
+Stage 5 — Authorization
+Purpose:
+Determine whether actor may perform operation.
+Examples:
+Can create herd?
+Can assign shepherd?
+Can moderate report?
+Authorization executes before business mutation.
+
+Stage 6 — Ownership Validation
+Purpose:
+Verify ownership rights.
+Examples:
+User owns post
+User owns profile
+User owns image
+Ownership remains separate from authorization.
+
+Stage 7 — Governance Validation
+Purpose:
+Verify governance restrictions.
+Examples:
+User restricted?
+Post restricted?
+Herd restricted?
+Governance enforcement becomes a mandatory checkpoint.
+
+Stage 8 — Domain Rule Execution
+Purpose:
+Apply business rules.
+Examples:
+One vote per user
+Membership required
+Closed report cannot escalate
+Domain Layer owns these rules.
+
+Stage 9 — Transaction Start
+Transaction begins only after workflow validity is confirmed.
+Purpose:
+Protect consistency.
+
+Stage 10 — Persistence
+Repositories execute storage operations.
+Examples:
+Save Post
+Save Membership
+Save Report
+
+Stage 11 — Commit
+Transaction completes.
+Changes become durable.
+
+Stage 12 — Result Mapping
+Application result becomes API result.
+
+Stage 13 — Response
+Controller returns API contract response.
+
+#### Read Request Execution Flow
+Read workflows are different.
+No mutation.
+No transaction ownership.
+
+Authoritative Read Flow
+Request
+    ↓
+Authentication (if required)
+    ↓
+Controller
+    ↓
+Request Validation
+    ↓
+Application Service
+    ↓
+Authorization
+    ↓
+Visibility Validation
+    ↓
+Query Execution
+    ↓
+Result Composition
+    ↓
+Response
+
+Why Ownership Validation Usually Does Not Exist
+Reads generally require:
+Can user see this?
+rather than:
+Does user own this?
+Ownership checks only execute when ownership controls visibility.
+
+#### Governance Workflow Execution Flow
+Governance workflows require additional execution stages.
+Example
+Remove Herd Member
+
+Authoritative Governance Flow
+Request
+    ↓
+Authentication
+    ↓
+Controller
+    ↓
+Request Validation
+    ↓
+Governance Application Service
+    ↓
+Authority Validation
+    ↓
+Governance Hierarchy Validation
+    ↓
+Scope Validation
+    ↓
+Target Validation
+    ↓
+Moderation Rule Evaluation
+    ↓
+Transaction Start
+    ↓
+Create Moderation Action
+    ↓
+Execute Enforcement
+    ↓
+Create Audit Record
+    ↓
+Commit
+    ↓
+Response
+
+Why Separate Governance Flow Exists
+Governance operations contain:
+Authority
+Hierarchy
+Escalation
+Enforcement
+Normal workflows do not.
+
+#### Ownership Enforcement Flow
+Ownership enforcement becomes standardized.
+
+Authoritative Pattern
+Application Service
+    ↓
+Load Aggregate
+    ↓
+Ownership Evaluation
+    ↓
+Continue Workflow
+
+Example
+Edit Post
+Load Post
+    ↓
+Verify Author
+    ↓
+Continue Edit
+
+Important Rule
+Ownership enforcement occurs before mutation.
+Never after persistence.
+
+#### Authorization Invocation Flow
+Authorization becomes a mandatory application-layer concern.
+
+Authoritative Pattern
+Application Service
+    ↓
+Authorization Service
+    ↓
+Decision
+    ↓
+Continue / Reject
+
+Examples
+Assign Shepherd
+Delete Herd
+Review Report
+Escalate Moderation Action
+
+Important Rule
+Authorization rules remain centralized.
+Controllers never evaluate permissions.
+Repositories never evaluate permissions.
+
+#### Governance Enforcement Invocation Flow
+Governance enforcement remains separate from authorization.
+
+Example
+Create Post
+
+Authorization
+Can user create post?
+
+Governance
+Is user restricted?
+Is herd restricted?
+
+Authoritative Pattern
+Application Service
+    ↓
+Authorization
+    ↓
+Governance Validation
+    ↓
+Continue Workflow
+
+Why Separate?
+Authorization answers:
+May this actor perform this action?
+Governance answers:
+Has authority restricted this actor or resource?
+These are fundamentally different concerns.
+
+#### Feed Execution Architecture
+Feed is a special case.
+Feed owns no authoritative state.
+Feed remains derived.
+
+Following Feed Flow
+Request
+    ↓
+Feed Controller
+    ↓
+Feed Application Service
+    ↓
+Identity Queries
+    ↓
+Social Graph Queries
+    ↓
+Content Queries
+    ↓
+Governance Visibility Filtering
+    ↓
+Feed Composition
+    ↓
+Response
+
+Herd Feed Flow
+Request
+    ↓
+Feed Controller
+    ↓
+Feed Application Service
+    ↓
+Community Validation
+    ↓
+Content Queries
+    ↓
+Governance Visibility Filtering
+    ↓
+Feed Composition
+    ↓
+Response
+
+Important Feed Rule
+Feed never modifies state.
+Feed never owns transactions.
+Feed only composes.
+
+#### Cross-Module Workflow Example
+Example:
+Create Herd Post
+
+Execution Flow
+Request
+    ↓
+Content Controller
+    ↓
+CreatePostApplicationService
+    ↓
+Authorization
+    ↓
+Community Contract
+       Verify Membership
+    ↓
+Governance Contract
+       Verify Restrictions
+    ↓
+Content Domain Rules
+    ↓
+Save Post
+    ↓
+Response
+
+Why This Matters
+It demonstrates:
+Module ownership preserved
+Governance invoked explicitly
+Application Service owns workflow
+Content never modifies Community data
+
+### Module Interaction Model
+#### Module Interaction Principles
+MI-01 — Modules Communicate Through Capabilities
+Modules communicate through capabilities.
+Not through internal implementation details.
+
+Example:
+Content should ask:
+Community:
+CanUserPostInHerd?
+Not:
+Read Membership Collection Directly
+
+MI-02 — Ownership Remains Local
+Only the owning module may modify its resources.
+
+Example:
+Community owns:
+Herd
+Membership
+Shepherd Assignment
+Content may never modify them.
+
+MI-03 — Application Layer Is The Communication Boundary
+Cross-module communication occurs exclusively through Application Services.
+This becomes a critical architecture rule.
+
+MI-04 — Repositories Never Cross Modules
+Repositories belong to a module.
+Repositories are never shared.
+
+MI-05 — Domain Rules Remain Local
+Business rules execute inside the owning module.
+Never inside consuming modules.
+
+MI-06 — Governance Remains Independent
+Governance acts upon modules.
+Modules do not depend on Governance for normal operation.
+This preserves the approved Governance Domain position.
+
+#### Authoritative Module Communication Model
+Approved Pattern
+Application Service
+        ↓
+Module Contract
+        ↓
+Target Module Application Service
+
+Example
+Create Herd Post
+
+Content Application Service
+        ↓
+Community Contract
+        ↓
+Community Application Service
+        ↓
+Membership Evaluation
+        ↓
+Result
+
+Why This Model
+The caller receives:
+Business Capability
+instead of:
+Database Access
+This preserves ownership boundaries.
+
+#### Module Contract Architecture
+Every module exposes a public contract.
+
+Example:
+Identity Module
+Public Contract:
+GetUserById()
+UserExists()
+ProfileExists()
+
+Community Module
+Public Contract:
+CanUserJoinHerd()
+CanUserPostInHerd()
+IsShepherd()
+IsHerdOwner()
+
+Governance Module
+Public Contract:
+IsUserRestricted()
+IsPostRestricted()
+IsCommunityRestricted()
+
+Important Rule
+Contracts expose:
+Capabilities
+Not entities.
+Preferred:
+CanUserPostInHerd()
+Avoid:
+GetMembershipDocument()
+The capability abstraction protects module boundaries.
+
+#### Authoritative Invocation Pattern
+Standard Pattern
+Controller
+        ↓
+Application Service
+        ↓
+Module Contract
+        ↓
+Target Application Service
+        ↓
+Repository
+
+Example
+Follow User
+
+SocialGraphApplicationService
+        ↓
+IdentityContract
+        ↓
+IdentityApplicationService
+        ↓
+User Exists?
+        ↓
+Return Result
+        ↓
+Continue Follow Workflow
+
+Why This Matters
+The Social Graph module never touches:
+Identity Repository
+Identity Model
+Identity Collections
+Boundary preserved.
+
+#### Allowed Communication Patterns
+Pattern A
+Application Service
+→ Module Contract
+→ Application Service
+Allowed
+
+Pattern B
+Feed
+→ Multiple Module Contracts
+Allowed
+Feed is a derived aggregation module.
+
+Pattern C
+Governance
+→ Module Contracts
+Allowed
+Governance evaluates targets owned by other modules.
+
+Pattern D
+Read-Only Capability Queries
+Allowed
+Example:
+UserExists()
+
+Pattern E
+Business Capability Requests
+Allowed
+Example:
+CanUserPostInHerd()
+
+#### Forbidden Communication Patterns
+These become hard architectural rules.
+Forbidden Pattern 1
+Repository → Repository
+Content Repository
+        ↓
+Community Repository
+Forbidden.
+Reason:
+Destroys module boundaries.
+
+Forbidden Pattern 2
+Repository → Module
+Repository
+        ↓
+Application Service
+Forbidden.
+Repositories are persistence components.
+Not workflow coordinators.
+
+Forbidden Pattern 3
+Controller → Repository
+Controller
+        ↓
+Repository
+Forbidden.
+Bypasses application layer.
+
+Forbidden Pattern 4
+Controller → Foreign Module
+Content Controller
+        ↓
+Community Module
+Forbidden.
+Controllers never coordinate workflows.
+
+Forbidden Pattern 5
+Domain → Domain Mutation
+Content Domain
+        ↓
+Modify Community Aggregate
+Forbidden.
+Only owning module may mutate aggregate state.
+
+Forbidden Pattern 6
+Cross-Module Aggregate Modification
+Example:
+Content
+        ↓
+Update Membership
+Forbidden.
+Community owns Membership.
+Only Community may modify it.
+
+Forbidden Pattern 7
+Direct Database Access Across Modules
+Example:
+Content Module
+        ↓
+Membership Collection
+Forbidden.
+
+Forbidden Pattern 8
+Circular Invocation Chains
+
+Example:
+Content
+ ↓
+Community
+ ↓
+Governance
+ ↓
+Content
+Forbidden.
+Violates acyclic dependency architecture.
+
+#### Dependency Enforcement Model
+Rule DE-01
+Dependencies follow approved module graph.
+
+Rule DE-02
+No dependency cycles.
+Ever.
+
+Rule DE-03
+Dependencies originate at Application Services.
+Not repositories.
+Not controllers.
+Not domain objects.
+
+Rule DE-04
+Contracts are the only cross-module entry point.
+
+#### Governance Communication Model
+Governance requires special treatment.
+
+Governance Consumes Capabilities
+Example:
+Governance
+    ↓
+Content Contract
+Query:
+Does Post Exist?
+
+Governance Executes Governance
+Example:
+Restrict Post
+Governance creates:
+Moderation Action
+
+Content Executes Mutation
+Example:
+Apply Restriction State
+
+Important Governance Rule
+Governance owns:
+Decision
+Target module owns:
+State Mutation
+This preserves ownership boundaries.
+Example
+Governance
+    ↓
+Restrict Post
+Produces:
+Restriction Decision
+Then:
+Content Contract
+    ↓
+Apply Restriction
+Content performs the actual aggregate update.
+
+#### Feed Communication Model
+Feed is unique.
+Feed owns no authoritative state.
+Feed May Read
+Identity
+Social Graph
+Content
+Community
+Governance
+
+Feed May NOT Modify
+Anything.
+Ever.
+
+Feed Pattern
+Feed Application Service
+        ↓
+Identity Contract
+        ↓
+Social Graph Contract
+        ↓
+Content Contract
+        ↓
+Governance Contract
+        ↓
+Compose Feed
+
+#### Future Extraction Readiness
+This architecture intentionally mirrors service boundaries.
+Current:
+Application Service
+        ↓
+Module Contract
+        ↓
+Application Service
+
+Future:
+Service A
+        ↓
+API
+        ↓
+Service B
+
+Minimal redesign required.
+This aligns with Evolutionary Architecture.
+
+#### Authoritative Communication Architecture
+The official communication model becomes:
+Module A
+Application Service
+        ↓
+Module Contract
+        ↓
+Module B
+Application Service
+All cross-module interactions must use this pattern.
+No exceptions.
+
+### Transaction Architecture
+#### Transaction Ownership Model
+Decision
+Application Services own transactions.
+This becomes the authoritative rule.
+
+Why Not Controllers?
+Controllers are transport adapters.
+They do not own workflows.
+They do not understand business consistency requirements.
+
+Why Not Repositories?
+Repositories own persistence.
+They do not understand:
+Authorization
+Governance
+Ownership
+Domain rules
+
+Authoritative Ownership Model
+Application Service
+        ↓
+Begin Transaction
+        ↓
+Execute Workflow
+        ↓
+Commit / Rollback
+
+#### Transaction Lifecycle
+Authoritative Sequence
+Validation
+        ↓
+Authorization
+        ↓
+Ownership
+        ↓
+Governance
+        ↓
+Domain Rules
+        ↓
+Transaction Start
+        ↓
+Persistence
+        ↓
+Commit
+
+Important Rule
+Transactions begin as late as possible.
+This minimizes:
+Lock duration
+Transaction scope
+Failure surface
+
+Example
+Create Post
+
+Correct:
+Validate Input
+        ↓
+Validate Membership
+        ↓
+Validate Restrictions
+        ↓
+Start Transaction
+        ↓
+Save Post
+        ↓
+Commit
+
+Incorrect:
+Start Transaction
+        ↓
+Perform Validation
+        ↓
+Perform Authorization
+        ↓
+Perform Governance
+This wastes transaction lifetime.
+
+#### Cross Module Transaction Strategy
+Single Workflow Owner Transaction
+Application Service coordinates workflow.
+Other modules provide validation capabilities.
+Only owning module mutates its resources.
+
+Example
+Create Herd Post
+
+Content Service
+        ↓
+Community Validation
+        ↓
+Governance Validation
+        ↓
+Content Transaction
+        ↓
+Save Post
+
+Only Content mutates.
+Only Content owns transaction.
+Every mutation workflow has one transaction owner.
+The owner is:
+Owning Module Application Service
+
+#### Eventual Consistency Requirement
+For MVP:
+Eventual consistency is not required.
+
+Reason:
+Most workflows modify only one aggregate owner.
+
+Examples:
+Create Post
+Vote
+Join Herd
+Follow User
+Create Report
+Ownership boundaries naturally reduce cross-module mutation.
+
+Future Evolution Path
+If future requirements introduce:
+One workflow
+        ↓
+Multiple aggregate owners
+
+Then:
+Domain Events
+Outbox Pattern
+Eventual Consistency
+may be introduced.
+Not now.
+
+### Validation Architecture
+#### Validation Categories
+Validation is not one thing.
+The architecture contains five validation classes:
+| Validation Type          | Purpose                 |
+| ------------------------ | ----------------------- |
+| Input Validation         | API correctness         |
+| Authorization Validation | Permission checks       |
+| Ownership Validation     | Resource ownership      |
+| Governance Validation    | Restriction enforcement |
+| Domain Validation        | Business rules          |
+
+#### Input Validation Placement
+Responsibility
+API Layer
+Examples
+Required fields
+Field length
+Email format
+Pagination constraints
+
+Purpose
+Ensure request matches API contract.
+
+Must NOT Include
+User owns post
+User can assign shepherd
+Membership required
+These are business validations.
+
+Decision
+Input validation occurs:
+Controller
+        ↓
+Validation Middleware
+before Application Service execution.
+
+#### Authorization Validation Placement
+Responsibility
+Application Layer
+
+Purpose
+Determine:
+May actor perform action?
+Examples
+Can create herd?
+Can assign shepherd?
+Can moderate report?
+
+Execution Pattern
+Application Service
+        ↓
+Authorization Service
+
+Decision
+Authorization belongs to Application Layer.
+Not Controllers.
+Not Repositories.
+
+#### Ownership Validation Placement
+Responsibility
+Domain Layer
+Executed by Application Layer.
+
+Purpose
+Determine:
+Does actor own resource?
+Examples
+Owns Post?
+Owns Profile?
+Owns Herd?
+
+Pattern
+Application Service
+        ↓
+Load Aggregate
+        ↓
+Ownership Rule
+
+Decision
+Ownership rules belong to Domain.
+Invocation belongs to Application Layer.
+
+#### Governance Validation Placement
+Responsibility
+Governance Module
+Invoked by Application Layer.
+
+Purpose
+Determine:
+Has authority restricted action?
+Examples
+User restricted?
+Post restricted?
+Herd restricted?
+
+Pattern
+Application Service
+        ↓
+Governance Contract
+        ↓
+Governance Evaluation
+
+Decision
+Governance rules remain centralized in Governance.
+
+#### Domain Validation Placement
+Responsibility
+Domain Layer
+
+Examples
+One vote per user
+Cannot join twice
+Cannot escalate closed report
+
+Purpose
+Protect business invariants.
+
+Decision
+Domain validation belongs exclusively to Domain Layer.
+
+### Error Architecture
+#### Error Classification
+Category 1
+Input Validation Errors
+
+Examples:
+Missing field
+Invalid format
+Invalid pagination
+
+Category 2
+Authorization Errors
+
+Examples:
+Permission denied
+Role insufficient
+
+Category 3
+Ownership Errors
+
+Examples:
+Not post owner
+Not herd owner
+
+Category 4
+Governance Errors
+
+Examples:
+Restricted user
+Restricted herd
+Restricted content
+
+Category 5
+Domain Rule Violations
+
+Examples:
+Already voted
+Already member
+Closed report
+
+Category 6
+Infrastructure Errors
+
+Examples:
+Mongo unavailable
+Cloudinary unavailable
+Email provider failure
+
+#### Error Origination Model
+| Error Type     | Origin                |
+| -------------- | --------------------- |
+| Input          | Validation Middleware |
+| Authorization  | Authorization Service |
+| Ownership      | Domain Rules          |
+| Governance     | Governance Module     |
+| Domain         | Domain Layer          |
+| Infrastructure | Infrastructure Layer  |
+
+#### Error Propagation Flow
+Authoritative Pattern
+Error
+        ↓
+Throw Domain/Application Error
+        ↓
+Application Service
+        ↓
+Bubble Up
+        ↓
+Global Error Middleware
+        ↓
+API Error Contract
+        ↓
+Response
+
+Important Rule
+Controllers do not translate errors.
+Global Error Middleware translates errors.
+
+Example
+NotPostOwnerError
+
+Flow:
+Domain Layer
+        ↓
+Application Service
+        ↓
+Error Middleware
+        ↓
+403 Response
+
+#### API Error Contract Compatibility
+The architecture remains compatible with the approved API Error Contract.
+Validation errors.
+Authorization errors.
+Governance errors.
+Domain errors.
+Infrastructure errors.
+All eventually become standardized API responses.
+
+---
+
 ## 
