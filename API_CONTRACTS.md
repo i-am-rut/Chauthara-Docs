@@ -122,6 +122,7 @@ Related Data Model Areas:
 | -------------------------------- | --------- |
 | Discover Herds                   | Community |
 | View Herd Identity               | Community |
+| View Herd Description            | Community |
 | View Herd Rules                  | Community |
 | View Herd Membership Information | Community |
 | View Herd Content                | Content   |
@@ -131,6 +132,7 @@ Related Data Model Areas:
 | Required API Capabilities          | Domain     |
 | ---------------------------------- | ---------- |
 | View Herd Identity                 | Community  |
+| View Herd Description              | Community  |
 | View Herd Rules                    | Community  |
 | View Herd Discussions              | Content    |
 | View Discussion Threads            | Content    |
@@ -189,6 +191,7 @@ Related Data Model Areas:
 | Required API Capabilities | Domain    |
 | ------------------------- | --------- |
 | View Herd Identity        | Community |
+| View Herd Description     | Community |
 | Join Herd                 | Community |
 | Leave Herd                | Community |
 
@@ -221,6 +224,7 @@ Related Data Model Areas:
 | Required API Capabilities | Domain    |
 | ------------------------- | --------- |
 | Maintain Herd Identity    | Community |
+| Maintain Herd Description | Community |
 | Maintain Herd Rules       | Community |
 | Manage Herd Images        | Media     |
 
@@ -347,6 +351,7 @@ Withdraw Content Evaluation
 ### Community
 Discover Herds
 View Herd Identity
+View Herd Description
 View Herd Rules
 View Herd Membership Information
 Join Herd
@@ -650,6 +655,19 @@ Primary Resource
 Why It Exists
 
 Represents community boundary.
+
+Identity Fields:
+
+- name
+- description
+
+Governance Fields:
+
+- rules
+
+Media Fields:
+
+- image references
 
 User Flows
 Create herd
@@ -2130,6 +2148,12 @@ Lifecycle:
 - Active
 - Restricted
 - Closed
+
+Visible Herd Identity Information:
+- Name
+- Description
+- Rules
+- Images
 
 ### Membership
 | Endpoint          | Classification          |

@@ -34,6 +34,17 @@
   - CHANGELOG.md
   - TASKS.md
 
+- Added Description field to Herds.
+
+- Updated: 
+  - API_CONTRACTS.md
+  - DATA_MODEL.md
+  - FEATURES.md
+  - USER_FLOWS.md
+  - CHANGELOG.md
+
+
+
 ## 2026-06-22
 
 ### Documentation

@@ -294,6 +294,22 @@ are derived concepts and do not participate in the relationship model.
 | Report              | Report → Herd              | Many-to-Many |
 | Moderation Action   | Moderation Action ↔ Herd   | Many-to-Many |
 
+#### Herd Identity Model
+
+A Herd is defined by the following identity attributes:
+
+- Name
+- Description
+- Rules
+- Images
+
+Identity Attribute Responsibilities:
+
+- Name identifies the community.
+- Description explains community purpose, intended audience, and discussion focus.
+- Rules define participation expectations and community conduct standards.
+- Images support community branding and recognition.
+
 ### Herd Membership
 | Related Entity    | Direction                           | Cardinality  |
 | ----------------- | ----------------------------------- | ------------ |

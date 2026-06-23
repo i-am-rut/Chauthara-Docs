@@ -130,6 +130,7 @@ Visitor wants to discover topic-focused communities.
 Visitor discovers a Herd.
 Visitor opens the Herd page.
 Visitor reviews Herd identity and purpose.
+Visitor Views Herd Description
 Visitor reviews Herd rules.
 Visitor reviews Herd membership information.
 Visitor reviews recent Herd content.
@@ -183,6 +184,7 @@ Visitor enters a Herd that appears relevant.
 ## Main Flow
 
 Visitor opens a Herd.
+Visitor reviews Herd Description
 Visitor reviews community rules.
 Visitor reviews recent Herd posts.
 Visitor reviews comments and replies within discussions.
@@ -614,7 +616,7 @@ Member discovers a Herd aligned with personal interests.
 ## Main Flow
 
 Member opens a Herd.
-Member reviews Herd information and rules.
+Member reviews Herd Description and rules.
 Member decides to join.
 Membership is created.
 Member gains Herd membership.

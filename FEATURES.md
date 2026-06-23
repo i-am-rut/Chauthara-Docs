@@ -1615,6 +1615,13 @@ Herd name.
 Herd description.
 Creator/owner identity.
 Community rules.
+
+Description explains:
+- Community purpose
+- Intended audience
+- Discussion focus
+Description is publicly visible.
+
 Optional
 Herd avatar/image.
 Herd Cover image
