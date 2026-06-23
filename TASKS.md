@@ -1,7 +1,7 @@
 # Ongoing
 - MVP Architecture Design
     - Architecture Refinement
-        - Define Architecture Drivers
+        - Define Architecture Drivers (Constraints and Architectural Principles)
             
 
 
@@ -92,3 +92,4 @@ Define Moderation APIs part 3
 Define Moderation APIs part 4
 API Surface Validation
 MVP Design Sign-Off
+Define Architecture Drivers (Functional Drivers and Quality Drivers)
