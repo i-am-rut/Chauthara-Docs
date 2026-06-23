@@ -3,10 +3,10 @@ Current Goal:
 MVP Architecture Design
 
 Active Task:
-Define Backend Module Boundaries
+Define Backend Application Layer Architecture
 
 Next Task:
-Define Backend Application Layer Architecture
+Define Backend Authorization Architecture
 
 Blocked By:
 Nothing

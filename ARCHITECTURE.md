@@ -1863,3 +1863,874 @@ Its sole purpose is consumption.
 6. Identity remains the root identity authority.
 7. Community remains the sole authority for Herd and Membership lifecycles.
 8. Content remains the sole authority for Post, Comment, and Vote lifecycles.
+
+---
+
+## Backend Module Boundaries
+### Backend Module Boundary Principles
+#### MBP-01 — Domain Alignment
+Every module maps to exactly one approved domain.
+No module may span multiple domains.
+
+#### MBP-02 — Exclusive Ownership
+A module owns:
+resources
+aggregates
+lifecycle rules
+business rules
+workflows
+Only the owning module may modify them.
+
+#### MBP-03 — Read Is Not Ownership
+Modules may read information from other modules.
+Reading never transfers ownership.
+
+#### MBP-04 — Governance Does Not Own Governed Resources
+Governance acts upon resources.
+Governance never owns them.
+
+#### MBP-05 — Feed Owns No Authoritative State
+Feed consumes information.
+Feed does not own information.
+
+#### MBP-06 — Dependency Direction Matters
+Modules depend on capabilities.
+Not internal implementation.
+
+#### MBP-07 — No Shared Business Logic
+Business rules belong to exactly one module.
+
+#### MBP-08 — Independent Evolvability
+Modules should evolve independently whenever possible.
+
+#### MBP-09 — Future Extraction Readiness
+Every module should remain a potential future extraction candidate.
+No extraction is planned.
+Readiness is required.
+
+#### MBP-10 — Authority Is Explicit
+Authority boundaries remain visible in architecture.
+No implicit governance privileges.
+
+### Backend Module Inventory
+Approved Module Inventory
+| Module       | Classification             |
+| ------------ | -------------------------- |
+| Identity     | Core Business Module       |
+| Social Graph | Core Business Module       |
+| Content      | Core Business Module       |
+| Community    | Core Business Module       |
+| Feed         | Derived Module             |
+| Media        | Supporting Business Module |
+| Governance   | Authority Module           |
+
+
+### Module Ownership Matrix
+#### Identity Module
+##### Purpose
+Manage platform identity and participation eligibility.
+
+##### Owned Resources
+User Profile
+
+##### Owned Aggregates
+User Identity Aggregate
+
+##### Owned Lifecycles
+User Account
+User Profile
+
+##### Owned Business Rules
+Registration eligibility
+Authentication eligibility
+Identity management
+
+##### Owned Workflows
+Register
+Login
+Logout
+Verify Email
+Password Recovery
+Profile Maintenance
+
+##### Authorization Responsibilities
+Identity establishment
+Actor resolution
+
+##### Governance Responsibilities
+Expose governance targets.
+Never execute governance.
+
+#### Social Graph Module
+##### Purpose
+Manage user relationships.
+
+##### Owned Resources
+Follow Relationship
+
+##### Owned Aggregates
+Follow Aggregate
+
+##### Owned Lifecycles
+Follow Relationship lifecycle
+
+##### Owned Business Rules
+Follow creation
+Follow removal
+
+##### Owned Workflows
+Follow
+Unfollow
+
+##### Authorization Responsibilities
+Validate relationship participation.
+
+##### Governance Responsibilities
+Expose moderation targets.
+
+#### Content Module
+##### Purpose
+Manage platform discussion.
+
+##### Owned Resources
+Post
+Comment
+Vote
+
+##### Owned Aggregates
+Personal Content Aggregate
+Discussion Aggregate
+Voting Aggregate
+
+##### Owned Lifecycles
+Post lifecycle
+Comment lifecycle
+Vote lifecycle
+
+##### Owned Business Rules
+Content creation
+Discussion participation
+Voting
+
+##### Owned Workflows
+Post creation
+Comment creation
+Reply creation
+Voting
+
+##### Authorization Responsibilities
+Content ownership enforcement.
+
+##### Governance Responsibilities
+Expose governance targets.
+
+#### Community Module
+##### Purpose
+Manage communities.
+
+##### Owned Resources
+Herd
+Membership
+Shepherd Assignment
+
+##### Owned Aggregates
+Community Aggregate
+Membership Aggregate
+
+##### Owned Lifecycles
+Herd lifecycle
+Membership lifecycle
+Shepherd lifecycle
+
+##### Owned Business Rules
+Community creation
+Membership participation
+Governance delegation
+
+##### Owned Workflows
+Create Herd
+Join Herd
+Leave Herd
+Assign Shepherd
+Revoke Shepherd
+
+##### Authorization Responsibilities
+Community authority validation.
+
+##### Governance Responsibilities
+Expose governance targets.
+
+#### Media Module
+##### Purpose
+Manage media assets.
+
+##### Owned Resources
+Image
+Owned Aggregates
+Media Aggregate
+
+##### Owned Lifecycles
+Image lifecycle
+
+##### Owned Business Rules
+Upload
+Attachment eligibility
+Ownership
+
+##### Owned Workflows
+Upload Image
+Remove Image
+
+##### Authorization Responsibilities
+Media ownership validation.
+
+##### Governance Responsibilities
+Expose moderation targets.
+
+#### Governance Module
+##### Purpose
+Manage reporting, moderation, enforcement, escalation and oversight.
+
+##### Owned Resources
+Report
+Moderation Action
+
+##### Owned Aggregates
+Reporting Aggregate
+Moderation Aggregate
+
+##### Owned Lifecycles
+Report lifecycle
+Moderation Action lifecycle
+
+##### Owned Business Rules
+Governance authority
+Escalation
+Enforcement
+Review
+Owned Workflows
+Report review
+Moderation execution
+Escalation
+Enforcement
+Oversight
+
+##### Authorization Responsibilities
+Governance authority validation.
+
+##### Governance Responsibilities
+Own governance.
+
+#### Feed Module
+##### Purpose
+Provide derived consumption views.
+
+##### Owned Resources
+None
+
+##### Owned Aggregates
+None
+
+##### Owned Lifecycles
+None
+
+##### Owned Business Rules
+Feed composition rules only.
+
+##### Owned Workflows
+Following Feed retrieval
+Herd Feed retrieval
+
+##### Authorization Responsibilities
+Feed visibility validation.
+
+##### Governance Responsibilities
+Honor governance outcomes.
+
+#### Implementation Implications
+##### Backend
+The backend architecture now has a stable module inventory and ownership model.
+
+##### Database
+No database changes required.
+
+##### APIs
+No API changes required.
+
+##### Governance
+Governance remains the only authority module.
+
+##### Feed
+Feed remains read-only and derived.
+
+### Module Dependency Model
+#### Dependency Principles
+##### MDP-01 — Ownership Before Dependency
+Ownership determines authority.
+Dependency never grants authority.
+
+##### MDP-02 — Capability Dependency Only
+Modules consume capabilities.
+Never internal rules.
+Never internal workflows.
+Never internal lifecycle control.
+
+##### MDP-03 — No Shared Ownership
+No resource may be jointly owned.
+Ownership remains singular.
+
+##### MDP-04 — Read Does Not Grant Write
+Reading another module's information does not grant modification authority.
+
+##### MDP-05 — Dependency Direction Must Be Explicit
+Every dependency must have a business rationale.
+
+##### MDP-06 — No Dependency Cycles
+Cycles are forbidden.
+
+##### MDP-07 — Feed Is Consumer Only
+Feed may consume.
+Feed may not be consumed.
+
+##### MDP-08 — Governance Is Authority Only
+Governance governs.
+Governance does not become owner.
+
+##### MDP-09 — Future Extraction Safe
+Dependencies should be designed as though modules may become services later.
+
+#### Module Dependency Analysis
+##### Identity Module
+Depends On
+
+None
+
+Exposes
+Identity Resolution
+Profile Retrieval
+Participation Eligibility
+Consumed By
+Social Graph
+Content
+Community
+Feed
+Governance
+
+##### Social Graph Module
+Depends On
+
+Identity
+
+Consumes
+User identity
+Profile existence
+Exposes
+Follow relationships
+Follower information
+Consumed By
+
+Feed
+
+##### Content Module
+Depends On
+
+Identity
+Community
+Media
+
+Consumes
+
+Identity:
+
+Author validation
+
+Community:
+
+Herd validation
+Membership validation
+
+Media:
+
+Image attachment eligibility
+Exposes
+Posts
+Comments
+Votes
+Content retrieval
+Consumed By
+
+Feed
+Governance
+
+##### Community Module
+Depends On
+
+Identity
+
+Consumes
+Member identity
+Herd ownership identity
+Shepherd identity
+Exposes
+Herd information
+Membership information
+Shepherd assignments
+Consumed By
+
+Content
+Feed
+Governance
+
+##### Media Module
+Depends On
+
+Identity
+
+Consumes
+Ownership validation
+Exposes
+Image retrieval
+Image ownership information
+Consumed By
+
+Content
+Community
+Feed
+Governance
+
+##### Governance Module
+Depends On
+
+Identity
+Content
+Community
+Media
+
+Consumes
+
+Identity:
+
+Profile targets
+
+Content:
+
+Post targets
+Comment targets
+
+Community:
+
+Herd targets
+Membership targets
+
+Media:
+
+Image targets
+Exposes
+Reports
+Moderation outcomes
+Enforcement decisions
+Consumed By
+
+Feed
+
+##### Feed Module
+Depends On
+
+Identity
+Social Graph
+Content
+Community
+Media
+Governance
+
+Consumes
+
+Identity:
+
+Author information
+
+Social Graph:
+
+Follow relationships
+
+Content:
+
+Posts
+Comments
+Vote totals
+
+Community:
+
+Herd information
+
+Media:
+
+Image references
+
+Governance:
+
+Visibility outcomes
+Exposes
+Following Feed
+Herd Feed
+Consumed By
+
+None
+
+#### Module Dependency Matrix
+| Module       | Depends On                                                    |
+| ------------ | ------------------------------------------------------------- |
+| Identity     | None                                                          |
+| Social Graph | Identity                                                      |
+| Community    | Identity                                                      |
+| Media        | Identity                                                      |
+| Content      | Identity, Community, Media                                    |
+| Governance   | Identity, Content, Community, Media                           |
+| Feed         | Identity, Social Graph, Content, Community, Media, Governance |
+
+#### Dependency Graph
+                    Identity
+                    /  |   \
+                   /   |    \
+                  /    |     \
+                 /     |      \
+        Social Graph  Community  Media
+                \        |        /
+                 \       |       /
+                  \      |      /
+                     Content
+                        |
+                        |
+                   Governance
+                        |
+                        |
+                       Feed
+
+#### Allowed Dependencies
+| Consumer     | Provider     |
+| ------------ | ------------ |
+| Social Graph | Identity     |
+| Community    | Identity     |
+| Media        | Identity     |
+| Content      | Identity     |
+| Content      | Community    |
+| Content      | Media        |
+| Governance   | Identity     |
+| Governance   | Content      |
+| Governance   | Community    |
+| Governance   | Media        |
+| Feed         | Identity     |
+| Feed         | Social Graph |
+| Feed         | Content      |
+| Feed         | Community    |
+| Feed         | Media        |
+| Feed         | Governance   |
+
+#### Forbidden Dependencies
+Identity → Anything
+
+Forbidden.
+
+Identity is foundational.
+
+Social Graph → Content
+
+Forbidden.
+
+Following relationships do not own content.
+
+Social Graph → Community
+
+Forbidden.
+
+Relationship graph independent of communities.
+
+Community → Content
+
+Forbidden.
+
+Communities host content.
+
+They do not own content.
+
+Community → Governance
+
+Forbidden.
+
+Governance remains independent.
+
+Content → Governance
+
+Forbidden.
+
+Content cannot make governance decisions.
+
+Media → Content
+
+Forbidden.
+
+Media remains reusable.
+
+Governance → Feed
+
+Forbidden.
+
+Governance governs resources.
+
+Not consumption surfaces.
+
+Feed → Feed
+
+Forbidden.
+
+Feed owns no authoritative data.
+
+### Cross-Module Communication Model
+#### MVP Communication Model
+Internal Capability Contracts + Direct Invocation
+Rule:
+A module may invoke another module only through exposed capabilities.
+Not through owned resources.
+Not through owned lifecycles.
+Not through internal workflows.
+
+#### Future Evolution Path
+MVP
+Direct capability invocation
+Future
+Capability contracts become service contracts
+Future Service Extraction
+Replace direct invocation with API communication
+No module redesign required.
+
+This directly supports ADR-001 future evolution goals.
+
+#### Implementation Implications
+Backend
+Module contracts become the primary dependency mechanism.
+
+Governance
+Governance remains downstream consumer of governed modules.
+Never upstream owner.
+
+Feed
+Feed becomes the largest consumer.
+Owns no authoritative state.
+
+Future Architecture
+Dependency graph remains extraction-ready.
+
+### Governance Boundary Model
+#### Governance Ownership Model
+Governance owns:
+Resource
+Report
+Moderation Action
+Only these resources.
+No others.
+
+#### Governance Authority Model
+Governance may:
+Review reports
+Execute moderation
+Restrict visibility
+Remove memberships
+Restrict communities
+Restrict profiles
+Escalate actions
+Reverse actions
+Restore resources
+
+#### Governance Access Model
+Governance may read:
+Module
+Identity
+Community
+Content
+Media
+Governance requires visibility into moderation targets.
+
+#### Governance Modification Model
+Governance may influence:
+
+| Resource Type | Authority |
+| ------------- | --------- |
+| Profile       | Restrict  |
+| Herd          | Restrict  |
+| Membership    | Remove    |
+| Post          | Restrict  |
+| Comment       | Restrict  |
+| Image         | Restrict  |
+
+Notice:
+Governance influences.
+Governance does not own.
+
+#### Governance Workflow Ownership
+Governance owns:
+Reporting
+Review
+Escalation
+Enforcement
+Oversight
+Restoration
+No other module may own these workflows.
+
+#### Governance Boundary Matrix
+| Capability          | Governance May Read | Governance May Modify | Governance Owns |
+| ------------------- | ------------------- | --------------------- | --------------- |
+| User Profile        | Yes                 | Restrict              | No              |
+| Follow Relationship | Read Only           | No                    | No              |
+| Herd                | Yes                 | Restrict              | No              |
+| Membership          | Yes                 | Remove                | No              |
+| Shepherd Assignment | Yes                 | Revoke                | No              |
+| Post                | Yes                 | Restrict              | No              |
+| Comment             | Yes                 | Restrict              | No              |
+| Vote                | Yes                 | No                    | No              |
+| Image               | Yes                 | Restrict              | No              |
+| Report              | Yes                 | Yes                   | Yes             |
+| Moderation Action   | Yes                 | Yes                   | Yes             |
+
+#### Governance Authority Rules
+These become authoritative.
+
+GAB-01
+Governance may govern.
+Governance may not own.
+
+GAB-02
+Governance decisions must be auditable.
+
+GAB-03
+Governance authority must follow hierarchy.
+
+GAB-04
+Governance cannot bypass ownership rules.
+
+GAB-05
+Governance actions must target resources through explicit workflows.
+
+GAB-06
+Governance owns moderation state.
+Not business state.
+
+### Feed Boundary Model
+#### Feed Ownership Model
+Feed owns:
+Nothing.
+
+#### Feed Owned Resources
+None.
+
+#### Feed Owned Aggregates
+None.
+
+#### Feed Owned Lifecycles
+None.
+
+#### Feed Owned Business Entities
+None.
+
+#### Feed Capability Model
+Feed may:
+Read
+Aggregate
+Filter
+Order
+Compose
+Nothing else.
+
+#### Feed Read Dependencies
+Feed may read:
+Module
+Identity
+Social Graph
+Content
+Community
+Media
+Governance
+
+#### Feed Composition Responsibilities
+Feed composes:
+
+Following Feed
+Using:
+Social Graph
+Content
+Governance
+
+Herd Feed
+Using:
+Community
+Content
+Governance
+
+#### Feed Modification Authority
+Feed may modify:
+Nothing.
+
+#### Feed Lifecycle Authority
+Feed owns:
+No lifecycle.
+
+#### Feed Governance Authority
+Feed may not:
+Moderate
+Enforce
+Escalate
+Restore
+Feed only consumes governance outcomes.
+
+#### Feed Boundary Matrix
+| Capability          | Feed May Read | Feed May Modify | Feed Owns |
+| ------------------- | ------------- | --------------- | --------- |
+| Identity            | Yes           | No              | No        |
+| Social Graph        | Yes           | No              | No        |
+| Content             | Yes           | No              | No        |
+| Community           | Yes           | No              | No        |
+| Media               | Yes           | No              | No        |
+| Governance Outcomes | Yes           | No              | No        |
+
+
+#### Feed Authority Rules
+These become authoritative.
+
+FAB-01
+Feed owns no business resources.
+
+FAB-02
+Feed owns no aggregates.
+
+FAB-03
+Feed owns no lifecycle.
+
+FAB-04
+Feed may compose.
+Feed may not create.
+
+FAB-05
+Feed may filter.
+Feed may not govern.
+
+FAB-06
+Feed may consume governance outcomes.
+Feed may not generate governance outcomes.
+
+FAB-07
+Feed remains read-only.
+
+#### Implementation Implications
+Backend
+Authority checks become separate from ownership checks.
+
+Governance
+Governance workflows remain centralized.
+
+Feed
+Feed remains stateless and derived.
+
+Future Extraction
+Governance can become a separate service without redefining ownership.
+Feed can become a separate read service without redefining ownership.
+
+## 
