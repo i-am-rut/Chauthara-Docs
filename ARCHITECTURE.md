@@ -380,8 +380,272 @@ Horizontal growth paths
 Stateless application design where practical
 Scalable storage patterns
 
+## Constraints
+### C-01 — MVP Scope Constraint
+#### Description
+Architecture must support approved MVP functionality only.
+
+#### Source
+PROJECT_CONTEXT.md
+FEATURES.md
+
+#### Architectural Impact
+No architecture for future hypothetical features.
+No infrastructure introduced solely for future scale.
+Architecture must remain proportional to MVP scope.
+
+### C-02 — Approved Domain Boundary Constraint
+#### Description
+Architecture must preserve approved business domains.
+
+#### Source
+DATA_MODEL.md
+API_CONTRACTS.md
+
+#### Architectural Impact
+Architecture should align with:
+
+Identity
+Social Graph
+Content
+Community
+Feed
+Media
+Governance
+
+Domain boundaries should not be merged arbitrarily.
+
+### C-03 — Governance Hierarchy Constraint
+#### Description
+Architecture must preserve approved governance authority.
+
+#### Source
+DATA_MODEL.md
+API_CONTRACTS.md
+
+#### Architectural Impact
+Architecture must enforce:
+
+Law
+↓
+Platform Administrator
+↓
+Herd Owner
+↓
+Shepherd
+↓
+Member
+
+Governance rules cannot be bypassed by implementation choices.
+
+### C-04 — Ownership Boundary Constraint
+#### Description
+Architecture must preserve approved ownership responsibilities.
+
+#### Source
+DATA_MODEL.md
+
+#### Architectural Impact
+Ownership, stewardship, and moderation authority must remain distinct concerns.
+
+### C-05 — API Contract Constraint
+#### Description
+Approved API contracts are authoritative.
+
+#### Source
+API_CONTRACTS.md
+
+#### Architectural Impact
+Architecture supports APIs.
+
+APIs should not be redesigned to fit implementation preferences.
+
+### C-06 — Technology Constraint
+#### Description
+Implementation target is MERN-based.
+
+#### Source
+PROJECT_CONTEXT.md
+
+#### Architectural Impact
+Architecture should remain compatible with:
+
+Next.js
+TypeScript
+Node.js
+Express
+MongoDB
+
+Technology choices should not require platform replacement.
+
+### C-07 — Solo Developer Constraint
+#### Description
+Architecture must remain operable by a single developer.
+
+#### Source
+PROJECT_CONTEXT.md
+
+#### Architectural Impact
+Avoid:
+
+Excessive service decomposition
+Operationally expensive infrastructure
+Complex deployment topologies
+
+### C-08 — Operational Simplicity Constraint
+#### Description
+Operational burden must remain proportional to MVP scale.
+
+#### Source
+Quality Drivers
+
+#### Architectural Impact
+Prefer:
+
+Fewer moving parts
+Simpler deployments
+Reduced operational overhead
+
+### C-09 — Deployment Reality Constraint
+#### Description
+Architecture must support cost-conscious deployment.
+
+#### Source
+PROJECT_CONTEXT.md
+
+#### Architectural Impact
+Architecture should not require:
+
+Large managed-service ecosystems
+Complex orchestration platforms
+Enterprise infrastructure
+
+### C-10 — Learning Value Constraint
+#### Description
+Project serves both product goals and learning goals.
+
+#### Source
+PROJECT_CONTEXT.md
+
+#### Architectural Impact
+Architectural decisions should expose important real-world concepts without introducing unnecessary complexity.
+
+## Architectural Principles
+### AP-01 — Simplicity First
+#### Principle Statement
+Choose the simplest architecture that satisfies approved requirements.
+
+#### Rationale
+Simplicity is the primary architectural optimization goal.
+
+#### Architectural Impact
+Prefer:
+Monolithic deployment
+Simple service boundaries
+Direct communication patterns
+
+Avoid speculative complexity.
+
+### AP-02 — Evolutionary Architecture
+#### Principle Statement
+Design for current requirements while preserving future growth paths.
+
+#### Rationale
+Architecture should evolve when requirements evolve.
+
+#### Architectural Impact
+Avoid premature optimization.
+
+Document future scaling paths instead of implementing them immediately.
+
+### AP-03 — Domain-Driven Boundaries
+#### Principle Statement
+Architecture should align with approved business domains.
+
+#### Rationale
+Business boundaries are more stable than technical boundaries.
+
+#### Architectural Impact
+Backend organization, APIs, and data ownership should reflect approved domains.
+
+### AP-04 — API-First Thinking
+#### Principle Statement
+API contracts are authoritative external system contracts.
+
+#### Rationale
+Approved API surface already represents validated business behavior.
+
+#### Architectural Impact
+Implementation should serve APIs rather than redesign them.
+
+### AP-05 — Ownership Boundary Preservation
+#### Principle Statement
+Ownership boundaries must remain explicit throughout the architecture.
+
+#### Rationale
+Ownership is a core platform concept.
+
+#### Architectural Impact
+Resource ownership rules must remain enforceable at every architectural layer.
+
+### AP-06 — Governance-Aware Design
+#### Principle Statement
+Governance is a first-class platform capability.
+
+#### Rationale
+Moderation is part of core platform behavior.
+
+#### Architectural Impact
+Governance workflows must be represented explicitly rather than treated as exceptional cases.
+
+### AP-07 — Security By Default
+#### Principle Statement
+Secure behavior should be the default behavior.
+
+#### Rationale
+Identity and governance systems require strong protection.
+
+#### Architectural Impact
+Favor:
+
+Authentication-first workflows
+Explicit authorization checks
+Least-privilege access
+
+### AP-08 — Explicit Authority Boundaries
+#### Principle Statement
+Authority must be explicit and verifiable.
+
+#### Rationale
+Governance depends on clearly defined authority.
+
+#### Architectural Impact
+Avoid implicit permission models.
+
+Authority decisions should be traceable.
+
+### AP-09 — Independent Evolvability
+#### Principle Statement
+Domains should evolve with minimal impact on unrelated domains.
+
+#### Rationale
+Supports maintainability and future growth.
+
+#### Architectural Impact
+Favor low coupling between domains.
+
+### AP-10 — Operational Simplicity
+#### Principle Statement
+Operational complexity should scale only when justified by real requirements.
+
+#### Rationale
+Operations should not become the primary maintenance burden.
+
+#### Architectural Impact
+Prefer operationally simple solutions by default.
+
 ## Architectural Implications
-These drivers establish the following architecture expectations:
+The drivers establish the following architecture expectations:
 
 - Architecture should be organized around approved business domains.
 - Governance must be treated as a first-class architectural concern.
@@ -393,3 +657,18 @@ These drivers establish the following architecture expectations:
 - All future ADRs should be evaluated against these functional and quality drivers.
 
 Architecture readiness remains high because MVP specifications, ownership boundaries, lifecycle definitions, governance rules, and API boundaries are already stable.
+
+The constraints and principles establish the following expectations:
+
+Architecture should remain a modular monolith unless requirements prove otherwise.
+Business domains should become primary architectural boundaries.
+Governance concerns must be represented explicitly throughout the system.
+API contracts remain authoritative architectural inputs.
+Security and authorization must be integrated into all architectural layers.
+Simplicity takes precedence over speculative scalability.
+Future scaling paths should be documented rather than prematurely implemented.
+All future ADRs should explicitly reference these drivers when evaluating alternatives.
+
+--- 
+
+#

@@ -1,12 +1,28 @@
 # Ongoing
 - MVP Architecture Design
     - Architecture Refinement
-        - Define Architecture Drivers (Constraints and Architectural Principles)
+        - Backend Architecture Definition
+            - Define Backend Architectural Style
             
 
 
 # Pending
-Backend Architecture Definition
+Define Backend Domain Architecture
+Define Backend Module Boundaries
+Define Backend Application Layer Architecture
+Define Backend Authorization Architecture
+Define Backend Governance Architecture
+Define Backend Data Access Architecture
+Define Backend Feed Architecture
+Define Backend Media Architecture
+Define Backend Error Handling Architecture
+Define Backend Validation Architecture
+Define Backend Background Processing Strategy
+Define Backend Observability Architecture
+Define Backend Configuration Architecture
+Define Backend API Layer Architecture
+Define Backend Security Architecture
+Backend Architecture Validation
 Frontend Architecture Definition
 Database Design
 Infrastructure Definition
@@ -93,3 +109,4 @@ Define Moderation APIs part 4
 API Surface Validation
 MVP Design Sign-Off
 Define Architecture Drivers (Functional Drivers and Quality Drivers)
+Define Architecture Drivers (Constraints and Architectural Principles)
