@@ -772,4 +772,1094 @@ Architectural evolution follows the Evolutionary Architecture principle.
 
 ---
 
-##
+## Backend Domain Architecture
+
+### Domain Design Principles
+
+The backend shall follow a Domain-Oriented Modular Monolith architecture.
+
+Domain boundaries shall align with approved business domains rather than technical layers.
+
+Every domain shall:
+
+- Own its business resources.
+- Own its aggregate lifecycles.
+- Own its business rules.
+- Expose capabilities through defined interfaces.
+- Prevent direct modification of resources owned by other domains.
+
+Domains may reference information from other domains but may not assume ownership authority.
+
+Feed remains a derived domain.
+
+Governance remains an independent authority domain.
+
+---
+
+### Approved Backend Domains
+
+#### Identity
+
+Purpose:
+
+Manage platform identity and participation eligibility.
+
+Owns:
+
+- User Account
+- User Profile
+
+---
+
+#### Social Graph
+
+Purpose:
+
+Manage user-to-user relationships.
+
+Owns:
+
+- Follow Relationship
+
+---
+
+#### Content
+
+Purpose:
+
+Manage discussion and contribution content.
+
+Owns:
+
+- Post
+- Comment
+- Vote
+
+---
+
+#### Community
+
+Purpose:
+
+Manage communities and participation structures.
+
+Owns:
+
+- Herd
+- Herd Membership
+- Shepherd Assignment
+
+---
+
+#### Media
+
+Purpose:
+
+Manage reusable media assets.
+
+Owns:
+
+- Image
+
+---
+
+#### Governance
+
+Purpose:
+
+Manage reporting, moderation, enforcement, escalation, and oversight workflows.
+
+Owns:
+
+- Report
+- Moderation Action
+
+---
+
+#### Feed
+
+Purpose:
+
+Provide derived content consumption views.
+
+Owns:
+
+No authoritative business resources.
+
+---
+
+### Domain Responsibilities
+
+#### Identity
+
+Business Responsibilities
+Account lifecycle management
+Authentication workflows
+Identity verification
+Profile management
+Identity retrieval
+
+Owned Resources
+User Profile
+
+Owned Aggregates
+User Identity Aggregate
+
+Ownership Responsibilities
+Enforce:
+User ownership of accounts
+User ownership of profiles
+
+Governance Responsibilities
+Expose governance targets:
+Profile restriction
+Account enforcement
+Does not execute governance.
+
+Lifecycle Responsibilities
+Owns:
+User Account lifecycle
+User Profile lifecycle
+
+#### Social Graph
+
+Business Responsibilities
+Follow creation
+Follow removal
+Relationship discovery
+
+Owned Resources
+Follow Relationship
+
+Owned Aggregates
+Follow Aggregate
+
+Ownership Responsibilities
+Enforce:
+Following user ownership
+Governance Responsibilities
+Expose follow relationships as governance targets.
+
+Lifecycle Responsibilities
+Owns:
+Follow lifecycle
+
+#### Content
+
+Business Responsibilities
+Publish content
+Manage discussions
+Manage voting
+Maintain authorship
+
+Owned Resources
+Post
+Comment
+Vote
+
+Owned Aggregates
+Personal Content Aggregate
+Discussion Aggregate
+Voting Aggregate
+
+Ownership Responsibilities
+Enforce:
+Content ownership
+Comment ownership
+Vote ownership
+
+Governance Responsibilities
+Expose moderation targets:
+Posts
+Comments
+Votes
+
+Lifecycle Responsibilities
+Owns:
+Post lifecycle
+Comment lifecycle
+Vote lifecycle
+
+#### Community
+
+Business Responsibilities
+Herd management
+Membership management
+Shepherd assignment
+
+Owned Resources
+Herd
+Membership
+Shepherd Assignment
+
+Owned Aggregates
+Community Aggregate
+Membership Aggregate
+
+Ownership Responsibilities
+Enforce:
+Herd ownership
+Membership ownership
+Shepherd assignment authority
+
+Governance Responsibilities
+Provide governance structure:
+Herd Owner authority
+Shepherd authority
+Does not execute governance workflows.
+
+Lifecycle Responsibilities
+Owns:
+Herd lifecycle
+Membership lifecycle
+Shepherd lifecycle
+
+#### Media
+
+Business Responsibilities
+Image upload
+Image attachment
+Image removal
+
+Owned Resources
+Image
+
+Owned Aggregates
+Media Aggregate
+
+Ownership Responsibilities
+Enforce image ownership.
+
+Governance Responsibilities
+Expose images as moderation targets.
+
+Lifecycle Responsibilities
+Owns image lifecycle.
+
+#### Governance
+
+Business Responsibilities
+Reporting
+Moderation
+Enforcement
+Escalation
+Oversight
+
+Owned Resources
+Report
+Moderation Action
+
+Owned Aggregates
+Reporting Aggregate
+Moderation Aggregate
+Ownership Responsibilities
+Enforce platform ownership of governance artifacts.
+
+Governance Responsibilities
+Primary governance owner.
+
+Lifecycle Responsibilities
+Owns:
+Report lifecycle
+Moderation Action lifecycle
+
+#### Feed
+
+Business Responsibilities
+Following Feed generation
+Herd Feed generation
+Feed retrieval
+
+Owned Resources
+Feed
+
+Owned Aggregates
+None
+
+Ownership Responsibilities
+None
+
+Governance Responsibilities
+Consume governance outcomes.
+Does not perform governance.
+
+Lifecycle Responsibilities
+None
+Feed owns no business lifecycle.
+
+---
+
+### Domain Relationships
+
+#### Identity
+Downstream Consumers
+| Consumer     | Dependency Type         | Rationale                                     |
+| ------------ | ----------------------- | --------------------------------------------- |
+| Social Graph | Reference Dependency    | Follow relationships reference users          |
+| Content      | Reference Dependency    | Content authors are users                     |
+| Community    | Reference Dependency    | Herd participation references users           |
+| Media        | Reference Dependency    | Media ownership references users              |
+| Governance   | Reference Dependency    | Governance actors and targets reference users |
+| Feed         | Derived Data Dependency | Feed visibility depends on user identity      |
+
+Upstream Dependencies
+None.
+Identity is a foundational domain.
+
+#### Social Graph
+Upstream Dependencies
+| Provider | Dependency Type      |
+| -------- | -------------------- |
+| Identity | Reference Dependency |
+
+Downstream Consumers
+| Consumer   | Dependency Type         | Rationale                                    |
+| ---------- | ----------------------- | -------------------------------------------- |
+| Feed       | Derived Data Dependency | Following Feed depends on follows            |
+| Governance | Governance Dependency   | Follow relationships may require enforcement |
+
+
+#### Content
+Upstream Dependencies
+| Provider  | Dependency Type      |
+| --------- | -------------------- |
+| Identity  | Reference Dependency |
+| Community | Reference Dependency |
+
+Downstream Consumers
+| Consumer   | Dependency Type         |
+| ---------- | ----------------------- |
+| Feed       | Derived Data Dependency |
+| Governance | Governance Dependency   |
+
+Rationale
+Feed derives content visibility.
+Governance moderates content.
+Neither owns content.
+
+
+#### Community
+Upstream Dependencies
+| Provider | Dependency Type      |
+| -------- | -------------------- |
+| Identity | Reference Dependency |
+
+Downstream Consumers
+| Consumer   | Dependency Type         |
+| ---------- | ----------------------- |
+| Content    | Workflow Dependency     |
+| Feed       | Derived Data Dependency |
+| Governance | Governance Dependency   |
+
+Rationale
+Content creation inside Herds depends on Community membership.
+Feed visibility depends on Herd participation.
+Governance actions may target Herds and memberships.
+
+#### Media
+Upstream Dependencies
+| Provider | Dependency Type      |
+| -------- | -------------------- |
+| Identity | Reference Dependency |
+
+Downstream Consumers
+| Consumer   | Dependency Type       |
+| ---------- | --------------------- |
+| Identity   | Workflow Dependency   |
+| Content    | Workflow Dependency   |
+| Community  | Workflow Dependency   |
+| Governance | Governance Dependency |
+
+Rationale
+Profiles, Posts, and Herds may attach media.
+Governance may restrict media.
+Media remains independently owned.
+
+#### Governance
+Upstream Dependencies
+| Provider     | Dependency Type       |
+| ------------ | --------------------- |
+| Identity     | Reference Dependency  |
+| Content      | Governance Dependency |
+| Community    | Governance Dependency |
+| Media        | Governance Dependency |
+| Social Graph | Governance Dependency |
+
+Downstream Consumers
+None.
+Governance is a terminal authority domain.
+
+Rationale
+Governance consumes information from other domains.
+Other domains should not depend on Governance for normal business operation.
+This is a major architectural rule.
+
+#### Feed
+Upstream Dependencies
+| Provider     | Dependency Type         |
+| ------------ | ----------------------- |
+| Identity     | Derived Data Dependency |
+| Social Graph | Derived Data Dependency |
+| Content      | Derived Data Dependency |
+| Community    | Derived Data Dependency |
+| Governance   | Derived Data Dependency |
+
+Downstream Consumers
+None.
+Feed is a presentation-oriented derived domain.
+
+---
+
+### Domain Authority Boundaries
+
+#### Identity
+
+Owns
+User Account
+User Profile
+Identity lifecycle
+
+References
+Images
+
+Does Not Own
+Follows
+Posts
+Herds
+Reports
+
+Must Not Modify
+Follow relationships
+Posts
+Memberships
+Moderation actions
+
+#### Social Graph
+
+Owns
+Follow relationships
+
+References
+User identities
+
+Does Not Own
+Profiles
+Posts
+Herds
+
+Must Not Modify
+User profiles
+Content
+Community state
+
+#### Content
+
+Owns
+Posts
+Comments
+Votes
+
+References
+Users
+Herds
+Media
+
+Does Not Own
+Herd lifecycle
+Membership lifecycle
+Governance lifecycle
+
+Must Not Modify
+Herd membership
+Shepherd assignments
+Reports
+Moderation actions
+
+#### Community
+
+Owns
+Herds
+Memberships
+Shepherd Assignments
+
+References
+Users
+Media
+
+Does Not Own
+Posts
+Votes
+Reports
+
+Must Not Modify
+Content lifecycle
+Governance lifecycle
+
+#### Media
+
+Owns
+Images
+
+References
+Users
+Posts
+Herds
+Profiles
+
+Does Not Own
+Profiles
+Posts
+Herds
+
+Must Not Modify
+Profile state
+Post state
+Herd state
+
+#### Governance
+
+Owns
+Reports
+Moderation Actions
+Enforcement workflows
+Escalation workflows
+
+References
+Users
+Posts
+Comments
+Herds
+Images
+Memberships
+
+Does Not Own
+Governed resources
+
+Must Not Modify Directly
+Business ownership
+Content ownership
+Community ownership
+
+Important Clarification
+Governance may:
+Restrict
+Remove
+Restore
+Escalate
+
+But governance never becomes the owner.
+Ownership remains with originating domains.
+This preserves Ownership Boundary constraints.
+
+#### Feed
+
+Owns
+Nothing authoritative.
+
+References
+Identity
+Social Graph
+Content
+Community
+Governance
+
+Does Not Own
+Any business resource.
+
+Must Not Modify
+Anything.
+Feed is read-only.
+Always.
+
+---
+
+### Authority Boundary Rules
+
+These rules become authoritative.
+
+Rule DB-01
+A domain may modify only resources it owns.
+
+Rule DB-02
+A domain may reference another domain's resources.
+Reference does not imply authority.
+
+Rule DB-03
+Cross-domain lifecycle transitions are prohibited.
+Only the owning domain may execute lifecycle transitions.
+
+Rule DB-04
+Feed never becomes a source-of-truth domain.
+
+Rule DB-05
+Governance never becomes a business ownership domain.
+
+Rule DB-06
+Identity remains the root identity authority.
+
+Rule DB-07
+Community remains the sole authority for:
+Herd lifecycle
+Membership lifecycle
+Shepherd lifecycle
+
+Rule DB-08
+Content remains the sole authority for:
+Posts
+Comments
+Votes
+
+---
+
+### Governance Placement
+
+Governance is an independent domain.
+
+Governance owns:
+
+- Reporting
+- Enforcement
+- Escalation
+- Oversight
+
+Governance targets include:
+
+- Profiles
+- Posts
+- Comments
+- Herds
+- Memberships
+- Images
+
+Governance actions never transfer ownership.
+
+Governance authority follows:
+
+Law
+↓
+Platform Administrator
+↓
+Herd Owner
+↓
+Shepherd
+↓
+Member
+
+Governance Ownership Model
+Governance Owns
+Governance Workflows
+
+Including:
+
+Report submission
+Report review
+Report dismissal
+Escalation
+Enforcement
+Appeal review
+Governance oversight
+Governance Resources
+
+Owns:
+
+Report
+Moderation Action
+
+These are already platform-owned entities.
+
+Governance Lifecycles
+
+Owns:
+
+Report lifecycle
+Moderation Action lifecycle
+
+No other domain may change governance state.
+
+Governance Authority
+
+Owns:
+
+Enforcement decisions
+Escalation decisions
+Override decisions
+Restoration decisions
+Governance Does NOT Own
+
+Governance never owns:
+
+User Profiles
+Posts
+Comments
+Votes
+Herds
+Memberships
+Images
+
+These remain owned by their original domains.
+
+Governance Targets
+Identity Domain
+
+Governance Targets:
+
+User Profile
+
+Examples:
+
+Profile restriction
+Profile restoration
+Content Domain
+
+Governance Targets:
+
+Post
+Comment
+Vote
+
+Examples:
+
+Content removal
+Content restoration
+Community Domain
+
+Governance Targets:
+
+Herd
+Membership
+Shepherd Assignment
+
+Examples:
+
+Herd restriction
+Membership removal
+Shepherd removal
+Media Domain
+
+Governance Targets:
+
+Images
+
+Examples:
+
+Media restriction
+Media removal
+Social Graph Domain
+
+Governance Targets:
+
+Follow Relationships
+
+Possible but uncommon.
+
+MVP governance generally focuses on:
+
+Profiles
+Content
+Communities
+Media
+Governance Integration Points
+
+Governance must be able to:
+
+Query
+
+Information about:
+
+Profiles
+Posts
+Comments
+Herds
+Memberships
+Images
+Act Upon
+
+Governance outcomes affecting:
+
+Visibility
+Participation
+Membership
+Enforcement state
+Audit
+
+Historical moderation activity.
+
+Governance Workflow Boundaries
+Reporting Workflow
+
+Owned By:
+
+Governance
+
+Consumes:
+
+Identity
+Content
+Community
+Media
+Enforcement Workflow
+
+Owned By:
+
+Governance
+
+Targets:
+
+Identity
+Content
+Community
+Media
+Escalation Workflow
+
+Owned By:
+
+Governance
+
+Hierarchy:
+
+Shepherd
+→ Herd Owner
+→ Platform Administrator
+
+This is entirely governance-owned.
+
+Oversight Workflow
+
+Owned By:
+
+Governance
+
+Targets:
+
+Moderators
+Shepherds
+Herd Owners
+Governance Escalation Boundaries
+Shepherd
+
+Can govern:
+
+Herd-local content
+Herd-local membership
+
+Cannot govern:
+
+Platform-wide identity
+Platform-wide restrictions
+Herd Owner
+
+Can govern:
+
+Entire herd
+Shepherd actions
+
+Cannot govern:
+
+Platform-wide governance
+Platform Administrator
+
+Can govern:
+
+Entire platform
+
+Can override:
+
+Herd Owner decisions
+Shepherd decisions
+Law
+
+External authority.
+
+Outside application architecture.
+
+Must supersede platform decisions.
+
+Governance Placement Decision
+
+Governance is:
+
+Independent Domain
+Independent Lifecycle Owner
+Independent Workflow Owner
+Independent Authority Owner
+Not Embedded Inside Any Other Domain
+
+This is now authoritative.
+
+---
+
+### Feed Domain Position
+
+Feed is a derived domain.
+
+Feed:
+
+- Owns no authoritative resources.
+- Owns no aggregates.
+- Owns no lifecycle.
+- Owns no governance workflows.
+
+Feed may:
+
+- Compose content views.
+- Apply visibility rules.
+- Retrieve feed items.
+
+Feed may not modify any domain state.
+
+Feed Ownership Analysis
+Does Feed Own Business Data?
+
+No.
+
+Feed contains projections of:
+
+Posts
+Authors
+Herds
+Membership visibility
+Governance visibility
+
+All owned elsewhere.
+
+Does Feed Own Aggregates?
+
+No.
+
+Feed Aggregate does not exist.
+
+Approved aggregate model contains no Feed aggregate.
+
+Does Feed Own Lifecycle?
+
+No.
+
+Feed has no lifecycle.
+
+Posts do.
+
+Memberships do.
+
+Feed does not.
+
+Does Feed Own Governance?
+
+No.
+
+Feed consumes governance outcomes.
+
+Feed never creates governance decisions.
+
+Feed Responsibilities
+
+Feed owns exactly four concerns.
+
+Responsibility 1
+
+Feed Composition
+
+Example:
+
+Following Feed composition.
+
+Responsibility 2
+
+Feed Visibility
+
+Determine which items appear.
+
+Responsibility 3
+
+Feed Ordering
+
+Newest-first ordering.
+
+Approved by Feed API specification.
+
+Responsibility 4
+
+Feed Retrieval
+
+Expose feed views.
+
+Feed Limitations
+
+Feed may NOT:
+
+Create Content
+Modify Content
+Delete Content
+Modify Memberships
+Modify Profiles
+Modify Governance State
+Own Lifecycle State
+Own Business Rules
+
+Feed only applies business rules created elsewhere.
+
+Feed Dependencies
+
+Feed depends on:
+
+Domain	Reason
+Identity	Author visibility
+Social Graph	Following Feed
+Content	Feed items
+Community	Herd Feed
+Governance	Visibility filtering
+
+Feed consumes all domains.
+
+No domain consumes Feed.
+
+Feed Authority Boundary
+Feed Owns
+Feed composition rules
+Feed retrieval rules
+Feed References
+Profiles
+Follows
+Posts
+Herds
+Memberships
+Governance outcomes
+Feed Does Not Own
+
+Any business resource.
+
+Feed Must Not Modify
+
+Anything.
+
+Feed remains read-only.
+
+Always.
+
+Feed Position Decision
+
+Feed is officially classified as:
+
+Derived Domain
+
+Characteristics:
+
+Read Only
+No Ownership
+No Lifecycle
+No Governance Authority
+No Aggregate Ownership
+
+Its sole purpose is consumption.
+
+---
+
+### Domain Dependency Rules
+
+1. A domain may modify only resources it owns.
+2. Cross-domain ownership is prohibited.
+3. Cross-domain lifecycle transitions are prohibited.
+4. Feed shall remain read-only.
+5. Governance shall remain independent.
+6. Identity remains the root identity authority.
+7. Community remains the sole authority for Herd and Membership lifecycles.
+8. Content remains the sole authority for Post, Comment, and Vote lifecycles.
