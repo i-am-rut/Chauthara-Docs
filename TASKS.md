@@ -1,7 +1,5 @@
 # Ongoing
 - MVP Product Design Consolidation
-    - Define MVP API surface.
-        - API Surface Validation
             
 
 
@@ -77,3 +75,4 @@ Define Moderation APIs part 2D
 Define Moderation APIs part 2E
 Define Moderation APIs part 3
 Define Moderation APIs part 4
+API Surface Validation
