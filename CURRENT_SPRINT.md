@@ -1,15 +1,15 @@
 # Current Sprint
 Current Goal:
-Consolidate MVP Design
+MVP Architecture Design
 
 Active Task:
-To Be Determined
+Define Architecture Drivers
 
 Next Task:
-To Be Determined
+Backend Architecture Definition
 
 Blocked By:
 Nothing
 
 Definition of Done:
-All MVP design is consolidated.
+All MVP Architecture Design is finalized and documented.

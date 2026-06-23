@@ -1,12 +1,27 @@
 # Ongoing
-- MVP Product Design Consolidation
+- MVP Architecture Design
+    - Architecture Refinement
+        - Define Architecture Drivers
             
 
 
 # Pending
-Architecture Refinement
-
+Backend Architecture Definition
+Frontend Architecture Definition
+Database Design
+Infrastructure Definition
+Security Architecture Definition
 ADR Creation
+Architecture Validation
+API Design Freeze
+Development Sprint Planning
+Backend Implementation Planning
+Frontend Implementation Planning
+Implementation / Development
+Testing
+Deployment
+MVP Release
+Operations
 
 <!-- At the time of definition of:
 Account Deletion Behavior
@@ -76,3 +91,4 @@ Define Moderation APIs part 2E
 Define Moderation APIs part 3
 Define Moderation APIs part 4
 API Surface Validation
+MVP Design Sign-Off
