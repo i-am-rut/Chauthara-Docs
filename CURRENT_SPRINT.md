@@ -3,10 +3,10 @@ Current Goal:
 MVP Architecture Design
 
 Active Task:
-Define Backend Authorization Architecture
+Define Backend Governance Architecture
 
 Next Task:
-Define Backend Governance Architecture
+Define Backend Data Access Architecture
 
 Blocked By:
 Nothing

@@ -4110,4 +4110,1565 @@ All eventually become standardized API responses.
 
 ---
 
-## 
+## Backend Authorization Architecture
+
+### Authorization Principles
+The following become authoritative.
+
+AUTH-01 — Authentication Is Not Authorization
+Authentication answers:
+Who are you?
+Authorization answers:
+What may you do?
+Authenticated users are not automatically authorized.
+
+AUTH-02 — Explicit Authorization
+Every state-changing workflow must perform explicit authorization.
+No implicit permissions.
+
+AUTH-03 — Ownership First
+Resource owners receive primary authority over their resources.
+Unless governance authority applies.
+
+AUTH-04 — Governance Overrides Ownership
+Approved governance actors may override ownership authority.
+Consistent with approved Governance Override Matrix.
+
+AUTH-05 — Least Privilege
+Actors receive minimum authority required.
+No broad permissions.
+No wildcard ownership.
+
+AUTH-06 — Deny By Default
+If authority cannot be proven:
+Access denied.
+Never infer authority.
+
+AUTH-07 — Traceable Authority Decisions
+Authorization decisions must be explainable.
+
+Inputs:
+Actor
+Resource
+Scope
+Authority source
+must be identifiable.
+
+AUTH-08 — Domain Ownership Preservation
+Authorization never transfers ownership.
+Authority ≠ ownership.
+Consistent with Domain Architecture.
+
+AUTH-09 — Governance Scope Isolation
+Governance authority exists only within approved scope.
+Example:
+Shepherd authority applies only to assigned Herds.
+
+AUTH-10 — Hierarchy Enforcement
+Higher governance authority may override lower authority.
+Lower authority may never override higher authority.
+Consistent with approved governance hierarchy.
+
+### Authorization Execution Model
+#### Selected Architecture
+Hybrid Authorization Model
+
+Authentication Middleware
+Middleware Responsibilities
+Authentication only.
+
+Examples:
+JWT validation
+Session validation
+Identity extraction
+
+Output:
+AuthenticatedPrincipal
+
+Application Service Responsibilities
+Authorization.
+
+Examples:
+Ownership checks
+Governance checks
+Role checks
+Scope checks
+Hierarchy checks
+This becomes the authoritative authorization execution boundary.
+
+#### Authorization Execution Boundary
+Primary Execution Boundary
+Application Services
+
+Reason:
+Application Services own workflow execution.
+Authorization is workflow-specific.
+
+Secondary Enforcement Boundary
+Domain invariants.
+Domains reject invalid state.
+Domains do not perform permission evaluation.
+
+Validation Order
+Request
+    ↓
+Authentication Middleware
+    ↓
+Controller
+    ↓
+Application Service
+    ↓
+Authorization Evaluation
+    ↓
+Ownership Evaluation
+    ↓
+Governance Evaluation
+    ↓
+Domain Execution
+    ↓
+Persistence
+This becomes the authoritative execution sequence.
+
+#### Authorization Service Architecture
+Selected Model
+Hybrid Authorization Service
+Not controller logic.
+Not module-specific duplication.
+Not global permission matrix.
+
+Architecture
+Application Service
+        ↓
+Authorization Service
+        ↓
+Ownership Policies
+Governance Policies
+Scope Policies
+
+AuthorizationService Responsibilities
+Evaluate Ownership
+Examples:
+CanEditPost
+CanDeleteComment
+CanDeleteImage
+
+Evaluate Governance
+Examples:
+CanModeratePost
+CanRemoveMember
+CanAssignShepherd
+
+Evaluate Scope
+Examples:
+Shepherd belongs to Herd
+Content belongs to Herd
+
+Evaluate Hierarchy
+Examples:
+Herd Owner overrides Shepherd
+Platform Admin overrides Herd Owner
+
+Inputs
+Actor
+Action
+Target Resource
+Context
+
+Outputs
+Authorized
+Denied
+Reason
+Authority Source
+
+Authority Source examples:
+Ownership
+Shepherd Authority
+Herd Owner Authority
+Platform Authority
+Dependencies
+
+AuthorizationService may consume capability contracts from:
+Identity Module
+Content Module
+Community Module
+Governance Module
+
+while preserving module boundaries required by ADR-001.
+
+
+### Ownership Authorization
+#### Ownership authority model
+Authoritative Ownership Rule
+Every mutable resource must have exactly one authoritative ownership model.
+Authorization always evaluates ownership before business execution.
+Ownership authority becomes the primary authorization mechanism.
+Governance authority becomes the exception mechanism.
+
+Ownership Sources
+Ownership may originate from:
+Direct Ownership
+Examples:
+Profile Owner
+Post Author
+Comment Author
+Image Owner
+
+Relationship Ownership
+Examples:
+Follow Relationship Owner
+Membership Owner
+Vote Owner
+
+Community Ownership
+Examples:
+Herd Owner
+Shepherd Assignment Owner
+
+System Ownership
+Examples:
+Report
+Moderation Action
+These are not user-owned resources.
+Ownership authorization is not applicable.
+Governance authorization applies instead.
+
+#### Resource Ownership Authority Matrix
+Identity Domain
+User Profile
+Owner:
+Profile Owner
+Allowed:
+View Profile
+Update Profile
+Manage Profile Media
+Denied:
+Modify Another User Profile
+Governance Override:
+Platform Administrator
+Social Graph Domain
+
+Follow Relationship
+Owner:
+Following User
+Allowed:
+Create Follow
+Delete Follow
+Denied:
+Modify Another User Follow Relationship
+Governance Override:
+Platform Administrator
+
+Content Domain
+Post
+Owner:
+Post Author
+Allowed:
+Edit Post
+Delete Post
+Manage Post Images
+Denied:
+Edit Another User Post
+Delete Another User Post
+Governance Override:
+Shepherd (Scoped)
+Herd Owner (Scoped)
+Platform Administrator
+
+Comment
+Owner:
+Comment Author
+Allowed:
+Edit Comment
+Delete Comment
+Denied:
+Edit Another User Comment
+Delete Another User Comment
+Governance Override:
+Shepherd (Scoped)
+Herd Owner (Scoped)
+Platform Administrator
+
+Vote
+Owner:
+Voting User
+Allowed:
+Change Vote
+Withdraw Vote
+Denied:
+Modify Another User Vote
+Governance Override:
+Platform Administrator
+
+Community Domain
+Herd
+Owner:
+Herd Owner
+Allowed:
+Update Herd
+Update Rules
+Manage Identity
+Manage Shepherds
+Denied:
+Modify Another Herd
+Governance Override:
+Platform Administrator
+
+Membership
+Owner:
+Membership User
+Allowed:
+Leave Herd
+Denied:
+Remove Other Memberships
+Governance Override:
+Shepherd
+Herd Owner
+Platform Administrator
+
+Shepherd Assignment
+Owner:
+Herd Owner
+Allowed:
+Assign Shepherd
+Revoke Shepherd
+Denied:
+Modify Other Herd Governance
+Governance Override:
+Platform Administrator
+
+Media Domain
+Image
+Owner:
+Uploading User
+Allowed:
+Delete Image
+Denied:
+Delete Another User Image
+Governance Override:
+Shepherd (Scoped)
+Herd Owner (Scoped)
+Platform Administrator
+
+#### Ownership Validation Flow
+Standard Flow
+Request
+    ↓
+Authentication
+    ↓
+Load Resource
+    ↓
+Ownership Validation
+    ↓
+Governance Override Check
+    ↓
+Domain Execution
+    ↓
+Persistence
+
+This becomes the default ownership workflow.
+Why Resource Load Happens First
+Ownership evaluation requires:
+ownerId
+authorId
+membershipOwnerId
+herdOwnerId
+imageOwnerId
+These values belong to the resource.
+Therefore resource retrieval must occur before ownership validation.
+
+#### Ownership Authorization Service Model
+Ownership checks are centralized through AuthorizationService.
+Application Services do not directly compare IDs.
+Example
+Avoid:
+if (post.authorId !== actor.id)
+inside multiple services.
+Instead:
+authorizationService.assertCanEditPost(
+    actor,
+    post
+)
+
+#### Ownership Capability Inventory
+Identity
+CanModifyProfile()
+
+Social Graph
+CanManageFollowRelationship()
+
+Content
+CanEditPost()
+CanDeletePost()
+CanEditComment()
+CanDeleteComment()
+CanManageVote()
+
+Community
+CanManageHerd()
+CanAssignShepherd()
+CanRevokeShepherd()
+CanLeaveMembership()
+
+Media
+CanDeleteImage()
+These become authoritative ownership authorization capabilities.
+
+#### Relationship Resource Ownership Model
+Relationship resources require special handling.
+
+Follow Relationship
+Authority Source:
+Relationship Creator
+Validation:
+actorId == followerId
+
+Vote
+Authority Source:
+Voting User
+Validation:
+actorId == voterId
+
+Membership
+Authority Source:
+Membership User
+Validation:
+actorId == memberId
+Relationship resources follow the same ownership architecture as primary resources.
+No special authorization framework required.
+
+#### Authoritative Decision Tree
+Request
+    ↓
+Ownership Check
+    ↓
+Owner?
+    ├── Yes → Allow
+    │
+    └── No
+          ↓
+     Governance Check
+          ↓
+     Authorized?
+          ├── Yes → Allow
+          └── No → Deny
+
+#### Ownership Preservation Rules
+These become authoritative architecture rules.
+
+OWN-01
+Ownership never changes because of moderation.
+
+OWN-02
+Moderation authority does not imply ownership authority.
+
+OWN-03
+Governance actions operate on resources.
+They never acquire resources.
+
+OWN-04
+Only owning domains may modify ownership fields.
+Consistent with Domain Authority Boundaries.
+
+OWN-05
+Ownership checks execute before business logic.
+
+OWN-06
+Ownership decisions must be explicit and traceable.
+
+#### Ownership Audit Requirements
+Ownership denials should generate structured security events.
+Example:
+
+Actor:
+User-123
+
+Action:
+EditPost
+
+Target:
+Post-456
+
+Decision:
+Denied
+
+Reason:
+OwnershipViolation
+
+For MVP:
+Required
+Authorization denial logs
+Governance override logs
+Moderation ownership overrides
+
+Not Required Yet
+Dedicated authorization audit database
+Real-time security monitoring
+SIEM integration
+Consistent with MVP scope and solo developer constraints.
+
+
+### Governance Authorization
+#### Governance Authorization Principles
+GOV-AUTH-01 — Governance Is Authority, Not Ownership
+Governance actors gain authority.
+They never gain ownership.
+Example:
+Shepherd removes Post
+Result:
+Post Owner remains unchanged
+Ownership survives moderation.
+
+GOV-AUTH-02 — Scope Before Authority
+Authority cannot be evaluated until scope is validated.
+Example:
+Shepherd of Herd A
+cannot moderate:
+Content in Herd B
+even if content is otherwise moderateable.
+
+GOV-AUTH-03 — Hierarchy Before Action
+Authority level must be validated before governance execution.
+Lower authority may never overrule higher authority.
+
+GOV-AUTH-04 — Explicit Override
+Governance overrides must be intentional.
+No implicit moderation authority.
+Every override must identify:
+Authority Source
+Scope
+Reason
+
+GOV-AUTH-05 — Traceable Governance
+Every governance decision must be explainable and auditable.
+
+GOV-AUTH-06 — Deny By Default
+Unknown governance authority equals denied authority.
+
+#### Governance Authority Model
+Member
+Authority:
+Report Content
+Report Profiles
+Report Herds
+Cannot:
+Moderate
+Restrict
+Remove
+Restore
+Override
+
+Shepherd
+Authority Scope:
+Assigned Herd Only
+May:
+Review Reports
+Remove Herd Content
+Remove Herd Memberships
+Dismiss Reports
+Escalate Reports
+Cannot:
+Restrict Profiles
+Assign Shepherds
+Override Herd Owner
+Execute Platform Actions
+
+Herd Owner
+Authority Scope:
+Owned Herd Only
+May:
+Everything Shepherd Can Do
+Assign Shepherds
+Remove Shepherds
+Override Shepherd Decisions
+Manage Herd Governance
+Cannot:
+Platform Restrictions
+Platform Identity Enforcement
+Platform-Wide Governance
+
+Platform Administrator
+Authority Scope:
+Entire Platform
+May:
+Review Escalations
+Restrict Profiles
+Restrict Herds
+Reverse Governance Actions
+Restore Content
+Expand Enforcement
+Override Herd Owners
+Override Shepherds
+This becomes the highest internal authority.
+
+#### Authoritative Governance Evaluation Sequence
+Request
+    ↓
+Authentication
+    ↓
+Role Evaluation
+    ↓
+Scope Evaluation
+    ↓
+Authority Evaluation
+    ↓
+Hierarchy Evaluation
+    ↓
+Governance Execution
+This becomes the mandatory governance workflow.
+
+#### Governance Authorization Service Architecture
+Governance authorization remains centralized.
+Selected Model
+AuthorizationService
+    ↓
+Governance Policy Layer
+
+Responsibilities
+Evaluate Governance Roles
+Examples:
+IsShepherd()
+IsHerdOwner()
+IsPlatformAdmin()
+
+Evaluate Governance Scope
+Examples:
+CanModerateWithinHerd()
+CanManageMembership()
+
+Evaluate Governance Hierarchy
+Examples:
+CanOverrideDecision()
+CanReverseAction()
+
+Evaluate Governance Overrides
+Examples:
+CanRemovePost()
+CanRestrictProfile()
+CanRestoreContent()
+
+#### Governance Scope Architecture
+Scope is the most important governance control.
+Without scope enforcement:
+One Shepherd
+=
+Platform Administrator
+which would be catastrophic.
+
+Shepherd Scope
+Scope Boundary:
+Assigned Herd
+Governable Resources:
+Herd Posts
+Herd Comments
+Herd Memberships
+Not Governable:
+Profiles
+Other Herds
+Platform Governance
+
+Herd Owner Scope
+Scope Boundary:
+Owned Herd
+Governable Resources:
+Entire Herd
+Memberships
+Shepherd Assignments
+Herd Content
+Not Governable:
+Platform Identity
+Other Herds
+Platform Restrictions
+
+Platform Administrator Scope
+Scope Boundary:
+Global
+Governable Resources:
+All Resources
+All Governance Actors
+All Governance Decisions
+
+#### Governance Override Architecture
+This is where governance intersects ownership.
+
+Principle
+Ownership evaluated first.
+Governance evaluated second.
+
+Override Decision Model
+Ownership Check
+      ↓
+Authorized?
+      ↓
+ YES → Execute
+
+ NO
+      ↓
+ Governance Authority Check
+      ↓
+ Authorized?
+      ↓
+ YES → Execute Override
+
+ NO → Deny
+This becomes authoritative.
+
+#### Governance Escalation Architecture
+Escalation is not authorization failure.
+Escalation is authority transfer.
+
+Escalation Path
+Shepherd
+    ↓
+Herd Owner
+    ↓
+Platform Administrator
+Already defined in governance model.
+
+Escalation Rules
+Shepherd
+May escalate to:
+Herd Owner
+Platform Administrator
+
+Herd Owner
+May escalate to:
+Platform Administrator
+
+Platform Administrator
+Terminal authority.
+No internal escalation exists.
+
+#### Governance Capability Inventory
+These become authoritative governance authorization capabilities.
+
+Community Governance
+CanReviewReport()
+CanDismissReport()
+CanEscalateReport()
+CanRemoveMembership()
+CanModerateContent()
+
+Herd Governance
+CanAssignShepherd()
+CanRemoveShepherd()
+CanOverrideShepherdDecision()
+
+Platform Governance
+CanRestrictProfile()
+CanRestrictHerd()
+CanRestoreContent()
+CanReverseGovernanceAction()
+CanExpandEnforcement()
+CanReviewEscalation()
+
+Hierarchy Capabilities
+CanOverrideDecision()
+CanEscalateDecision()
+
+#### Governance Audit Architecture
+Governance decisions are business-critical.
+All governance actions must generate audit records.
+Required MVP Audit Fields:
+
+ActorId
+ActorRole
+
+Action
+
+TargetType
+TargetId
+
+Scope
+
+Decision
+
+AuthoritySource
+
+Reason
+
+Timestamp
+
+Governance Audit Categories
+Governance Action
+Example:
+Membership Removal
+
+Governance Override
+Example:
+Shepherd removed Post
+
+Governance Escalation
+Example:
+Escalated to Platform Admin
+
+Governance Reversal
+Example:
+Platform Admin restored Post
+
+#### Governance Architecture Rules
+These become authoritative.
+GOV-ARCH-01
+Governance authority never transfers ownership.
+
+GOV-ARCH-02
+Scope evaluation precedes authority evaluation.
+
+GOV-ARCH-03
+Hierarchy evaluation precedes governance execution.
+
+GOV-ARCH-04
+Governance overrides must be explicit.
+
+GOV-ARCH-05
+All governance actions are auditable.
+
+GOV-ARCH-06
+Higher authority may override lower authority.
+
+GOV-ARCH-07
+Lower authority may never override higher authority.
+
+GOV-ARCH-08
+Governance authorization executes inside Application Services.
+
+GOV-ARCH-09
+Governance authority is evaluated through AuthorizationService.
+
+GOV-ARCH-10
+Governance decisions remain traceable and explainable.
+
+### Cross-Module Authorization
+#### Cross-Module Authorization Principles
+CMA-01 — Authorization Never Bypasses Module Ownership
+Authorization may query a module.
+Authorization may not directly access another module's persistence layer.
+Forbidden:
+Content Service
+    ↓
+Community Database Collection
+Allowed:
+Content Service
+    ↓
+Community Contract
+
+CMA-02 — Ownership Remains Local
+Only owning modules know authoritative ownership.
+Example:
+Community owns Herd Owner
+Content cannot decide Herd ownership.
+Community must answer.
+
+CMA-03 — Authorization Consumes Capabilities
+Authorization consumes capabilities.
+Not databases.
+Not repositories.
+Not domain entities directly.
+
+CMA-04 — Authorization Queries Are Read-Only
+Cross-module authorization never modifies state.
+Authorization is information gathering.
+Not workflow execution.
+
+CMA-05 — Authorization Must Remain Explicit
+Dependencies required for authorization must be visible.
+No hidden repository calls.
+No indirect database access.
+
+#### Cross-Module Authorization Mode
+Module Contract-Based Authorization
+Authorization
+     ↓
+Module Contracts
+
+Selected.
+Preserves ownership.
+Preserves modularity.
+Consistent with Module Boundary Architecture.
+
+Authoritative Model
+Authorization acquires information exclusively through module capability contracts.
+
+#### Authorization Dependency Architecture
+Authorization becomes a consumer of module contracts.
+Architecture
+Application Service
+        ↓
+AuthorizationService
+        ↓
+Module Contracts
+        ↓
+Owning Modules
+
+Example
+Edit Post
+PostApplicationService
+        ↓
+AuthorizationService
+        ↓
+ContentCapabilities
+        ↓
+GetPostAuthor()
+Authorization never touches repositories directly.
+
+#### Authorization Capability Contract Model
+Modules expose authorization-safe capabilities.
+Not business services.
+Not repositories.
+Not domain internals.
+
+Identity Module
+Exposes:
+GetUserIdentity()
+IsActiveUser()
+IsRestrictedUser()
+Purpose:
+Identity eligibility validation.
+
+Social Graph Module
+Exposes:
+IsFollowing()
+GetFollowOwner()
+Purpose:
+Relationship ownership validation.
+
+Content Module
+Exposes:
+GetPostAuthor()
+GetCommentAuthor()
+GetVoteOwner()
+IsPostInHerd()
+Purpose:
+Content ownership validation.
+
+Community Module
+Exposes:
+GetHerdOwner()
+IsShepherd()
+IsMember()
+GetMembershipOwner()
+GetAssignedHerd()
+Purpose:
+Community authority validation.
+
+Media Module
+Exposes:
+GetImageOwner()
+IsImageAttached()
+Purpose:
+Media ownership validation.
+
+Governance Module
+Exposes:
+GetGovernanceRole()
+CanOverrideAuthority()
+GetModerationScope()
+Purpose:
+Governance authority validation.
+
+#### Authorization Contract Rules
+These become architectural rules.
+AUTH-CONTRACT-01
+Contracts expose facts.
+Not workflows.
+Good:
+GetPostAuthor()
+Bad:
+DeletePost()
+
+AUTH-CONTRACT-02
+Contracts expose authority information.
+Not internal implementation.
+Good:
+GetHerdOwner()
+Bad:
+GetHerdAggregate()
+
+AUTH-CONTRACT-03
+Contracts remain read-only.
+No state mutation.
+
+AUTH-CONTRACT-04
+Contracts return minimal information.
+Only information needed for authorization.
+
+#### Authorization Query Categories
+Authorization queries fall into four categories.
+Category 1
+Ownership Queries
+Examples:
+GetPostAuthor()
+GetCommentAuthor()
+GetImageOwner()
+
+Category 2
+Relationship Queries
+Examples:
+GetMembershipOwner()
+GetFollowOwner()
+
+Category 3
+Scope Queries
+Examples:
+IsMember()
+IsShepherd()
+GetAssignedHerd()
+
+Category 4
+Governance Queries
+Examples:
+CanOverrideAuthority()
+GetGovernanceRole()
+
+#### Authorization Decision Execution Model
+Authorization becomes an orchestration workflow.
+Example
+Can User Remove Membership?
+Required Data:
+Actor
+Membership
+Herd
+Role
+
+Execution:
+AuthorizationService
+        ↓
+Community Contract
+        ↓
+GetMembershipOwner()
+
+Community Contract
+        ↓
+GetHerdOwner()
+
+Governance Contract
+        ↓
+GetGovernanceRole()
+Decision produced.
+No direct repository access.
+No cross-domain mutation.
+
+#### Allowed Authorization Dependency Graph
+Consistent with approved domain dependency model.
+Identity
+Authorization may query:
+Identity
+Only.
+
+Social Graph
+Authorization may query:
+Identity
+Social Graph
+
+Content
+Authorization may query:
+Identity
+Content
+Community
+Governance
+
+Community
+Authorization may query:
+Identity
+Community
+Governance
+
+Media
+Authorization may query:
+Identity
+Media
+Governance
+
+Governance
+Authorization may query:
+Identity
+Community
+Content
+Media
+Social Graph
+Governance
+Consistent with Governance's approved dependency position.
+
+Feed
+Authorization may query:
+Identity
+Social Graph
+Content
+Community
+Governance
+Because Feed is derived.
+
+#### Forbidden Authorization Patterns
+These are important.
+Forbidden Pattern 1
+Cross-Repository Access
+Content Repository
+    ↓
+Community Repository
+Prohibited.
+
+Forbidden Pattern 2
+Cross-Domain Entity Mutation
+Governance
+    ↓
+Modify Post Aggregate
+Prohibited.
+Governance requests actions.
+Owning domain executes changes.
+Consistent with Domain Authority Boundaries.
+
+Forbidden Pattern 3
+Shared Authorization Tables
+Authorization Database
+Rejected.
+Creates duplicate ownership model.
+
+Forbidden Pattern 4
+Controller Authorization Orchestration
+Controller
+    ↓
+Multiple Module Calls
+Rejected.
+Authorization belongs in Application Services.
+
+Forbidden Pattern 5
+Repository-Level Authorization
+Rejected by approved authorization architecture.
+
+#### Governance + Cross-Module Authorization
+Governance is unique.
+Governance frequently requires information from multiple domains.
+Example:
+Can Shepherd Remove Post?
+Requires:
+Content → Post
+Community → Herd
+Community → Shepherd Assignment
+Governance → Authority Rules
+
+Execution:
+AuthorizationService
+      ↓
+Content Contract
+      ↓
+Community Contract
+      ↓
+Governance Contract
+      ↓
+Decision
+
+This remains acceptable because:
+Read-only
+Contract-based
+Ownership preserved
+
+#### Future Evolution Strategy
+Current Architecture:
+AuthorizationService
+        ↓
+In-Process Module Contracts
+Suitable for Modular Monolith.
+
+Future Service Extraction:
+AuthorizationService
+        ↓
+Capability APIs
+No redesign required.
+Only transport changes.
+This aligns with Evolutionary Architecture and ADR-001 future extraction guidance.
+
+#### Cross-Module Authorization Rules
+These become authoritative.
+CMA-RULE-01
+Authorization may query any required module through approved capability contracts.
+
+CMA-RULE-02
+Authorization may never access another module's repository.
+
+CMA-RULE-03
+Authorization contracts are read-only.
+
+CMA-RULE-04
+Authorization contracts expose facts, not workflows.
+
+CMA-RULE-05
+Authorization never bypasses ownership boundaries.
+
+CMA-RULE-06
+Governance authority never implies resource ownership.
+
+CMA-RULE-07
+Authorization orchestration belongs to AuthorizationService.
+
+CMA-RULE-08
+Cross-module authorization dependencies must remain explicit.
+
+CMA-RULE-09
+Authorization decisions remain traceable to source modules.
+
+CMA-RULE-10
+Future service extraction must preserve capability-contract semantics.
+
+
+- Capability contract model
+- Authorization dependency rules
+- Allowed patterns
+- Forbidden patterns
+
+### Authorization Errors
+#### Authorization Failure Classification Model
+Authorization failures are not all identical.
+Different failure categories communicate different architectural problems.
+AUTH-FAIL-01
+Not Authenticated
+Meaning:
+Actor identity unavailable
+Examples:
+Missing JWT
+Invalid JWT
+Expired Session
+Result:
+401 Unauthorized
+Application execution stops immediately.
+
+AUTH-FAIL-02
+Insufficient Authority
+Meaning:
+Actor exists
+BUT
+Does not possess required authority
+Examples:
+Member attempts shepherd action
+Shepherd attempts admin action
+Result:
+403 Forbidden
+
+AUTH-FAIL-03
+Ownership Violation
+Meaning:
+Actor is authenticated
+BUT
+Resource ownership check fails
+Examples:
+Edit another user's post
+Delete another user's image
+Modify another user's profile
+Result:
+403 Forbidden
+
+AUTH-FAIL-04
+Governance Scope Violation
+Meaning:
+Governance actor exists
+BUT
+Requested resource is outside approved scope
+Examples:
+Shepherd of Herd A
+attempts moderation inside Herd B
+Result:
+403 Forbidden
+
+AUTH-FAIL-05
+Governance Hierarchy Violation
+Meaning:
+Requested action violates authority hierarchy
+Examples:
+Shepherd reversing Herd Owner decision
+Herd Owner reversing Platform Admin decision
+Result:
+403 Forbidden
+
+AUTH-FAIL-06
+Restricted Resource Access
+Meaning:
+Resource exists
+BUT
+Actor is not permitted to interact with it
+Examples:
+Restricted profile
+Restricted herd
+Governed content
+Result:
+403 Forbidden
+
+AUTH-FAIL-07
+Governance State Violation
+Meaning:
+Governance workflow state prevents action
+Examples:
+Dismiss already resolved report
+Review closed escalation
+Result:
+409 Conflict
+This is not a permission problem.
+This is a workflow-state problem.
+
+#### Authorization Exception Model
+Authorization failures should become explicit application exceptions.
+
+Base Exception
+AuthorizationException
+
+Derived Exceptions
+AuthenticationRequiredException
+InsufficientAuthorityException
+OwnershipViolationException
+GovernanceScopeViolationException
+GovernanceHierarchyViolationException
+RestrictedResourceAccessException
+
+Why
+Provides:
+Consistent handling
+Consistent logging
+Consistent API responses
+Easier testing
+
+#### Authorization Error Propagation Architecture
+Selected model:
+
+Authorization Layer
+        ↓
+Application Service
+        ↓
+Global Error Handler
+        ↓
+API Error Contract
+This aligns with the Application Service Architecture already approved.
+
+Standard Flow
+Request
+    ↓
+Authentication
+    ↓
+Authorization
+    ↓
+Failure
+    ↓
+Authorization Exception
+    ↓
+Application Layer
+    ↓
+Global Error Handler
+    ↓
+Error Contract Response
+
+Why This Model
+Prevents:
+Controller-specific error handling
+Prevents:
+Duplicate authorization response logic
+Creates:
+Single security error path
+
+#### Authorization → API Contract Mapping
+Authorization architecture must remain consistent with API Error Contracts.
+
+Authentication Failure
+AuthenticationRequiredException
+Response:
+{
+  "code": "AUTHENTICATION_REQUIRED",
+  "message": "Authentication required."
+}
+HTTP:
+401 Unauthorized
+
+Ownership Violation
+OwnershipViolationException
+Response:
+{
+  "code": "OWNERSHIP_VIOLATION",
+  "message": "You are not authorized to perform this action."
+}
+HTTP:
+403 Forbidden
+
+Governance Scope Violation
+{
+  "code": "GOVERNANCE_SCOPE_VIOLATION",
+  "message": "You are not authorized to perform this action."
+}
+HTTP:
+403 Forbidden
+
+Governance Hierarchy Violation
+{
+  "code": "GOVERNANCE_HIERARCHY_VIOLATION",
+  "message": "You are not authorized to perform this action."
+}
+HTTP:
+403 Forbidden
+
+Insufficient Authority
+{
+  "code": "INSUFFICIENT_AUTHORITY",
+  "message": "You are not authorized to perform this action."
+}
+HTTP:
+403 Forbidden
+
+##### Important Security Decision
+Public responses remain intentionally generic.
+Do NOT reveal:
+ownership IDs
+governance roles
+scope details
+hierarchy information
+Reason:
+Security By Default principle.
+
+#### Resource Existence vs Authorization
+This is an important architectural decision.
+
+Problem
+User requests:
+PATCH /posts/123
+Two possibilities:
+Post does not exist
+or
+Post exists but actor lacks authority
+
+Selected MVP Strategy
+Resource lookup executes first.
+Then:
+404 Not Found
+if resource absent.
+Otherwise:
+403 Forbidden
+if authorization fails.
+
+Rationale
+Advantages:
+Simpler implementation
+Easier debugging
+Better developer experience
+Suitable for MVP
+Potential information disclosure risk is acceptable for MVP scope.
+
+### Authorization Audit Model
+#### Authorization Audit Architecture
+Not every authorization event deserves permanent audit records.
+Different events have different value.
+Category A
+Governance Actions
+Always audited.
+Examples:
+Content Removal
+Membership Removal
+Profile Restriction
+Content Restoration
+Required.
+
+Category B
+Governance Overrides
+Always audited.
+Examples:
+Shepherd Override
+Herd Owner Override
+Platform Admin Override
+Required.
+
+Category C
+Governance Escalations
+Always audited.
+Examples:
+Report Escalated
+Decision Escalated
+Required.
+
+Category D
+Authorization Denials
+Logged.
+Not stored as governance records.
+Examples:
+Ownership violation
+Authority violation
+Scope violation
+
+#### Security Event Architecture
+Authorization failures may generate security events.
+
+Logged Security Events
+Repeated Ownership Violations
+Example:
+User repeatedly attempts to edit
+resources owned by others
+
+Repeated Governance Violations
+Example:
+Repeated moderation attempts
+outside scope
+
+Repeated Privilege Escalation Attempts
+Example:
+Member repeatedly calls admin APIs
+
+For MVP:
+Simple structured logs are sufficient.
+No SIEM.
+No intrusion detection system.
+Consistent with operational simplicity constraints.
+
+#### Authorization Logging Model
+Every authorization decision should be loggable.
+Recommended structure:
+Timestamp
+ActorId
+Action
+TargetType
+TargetId
+Decision
+AuthoritySource
+FailureReason
+
+Example
+Actor:
+user-123
+
+Action:
+DeletePost
+
+Target:
+post-456
+
+Decision:
+Denied
+
+Reason:
+OwnershipViolation
+
+#### Authorization Error Rules
+These become authoritative.
+AUTH-ERR-01
+Authentication failures return 401.
+
+AUTH-ERR-02
+Authorization failures return 403.
+
+AUTH-ERR-03
+Workflow-state violations return 409.
+
+AUTH-ERR-04
+Authorization failures must propagate through the Global Error Handler.
+
+AUTH-ERR-05
+Authorization responses must not reveal internal authority details.
+
+AUTH-ERR-06
+Governance actions must always be auditable.
+
+AUTH-ERR-07
+Governance overrides must always be auditable.
+
+AUTH-ERR-08
+Authorization denials must be logged.
+
+AUTH-ERR-09
+Authorization exceptions must be explicit application exceptions.
+
+AUTH-ERR-10
+Authorization error behavior must remain consistent with the platform-wide Error Contract.
+
+---
+
+##
