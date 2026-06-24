@@ -7399,4 +7399,2927 @@ Backend Governance Architecture Approved.
 
 ---
 
-## 
+## Backend Data Access Architecture
+
+### Purpose
+
+The Backend Data Access Architecture defines how backend modules interact with persistence while preserving:
+
+- Domain Ownership
+- Module Ownership
+- Authorization Boundaries
+- Governance Boundaries
+- Feed Read-Only Boundaries
+- Future Evolution Readiness
+
+The architecture follows:
+
+- Domain-Oriented Modular Monolith
+- Capability-Based Module Interaction
+- Repository + Query Separation
+- Persistence Encapsulation
+- Evolutionary Architecture
+
+Adopt Repository + Query Separation as the authoritative Backend Data Access Architecture.
+Authoritative Architecture:
+Controller
+    ↓
+Application Service
+    ↓
+Repository
+    ↓
+MongoDB
+
+Query Services
+    ↓
+MongoDB
+
+Why This Fits Chauthara
+
+Because it aligns with every approved architecture decision:
+
+Preserves Module Ownership
+
+Repositories remain owned by modules.
+
+Preserves Feed Design
+
+Feed is read-only and query-oriented.
+
+Feed naturally becomes a query consumer rather than a repository owner.
+
+Preserves Governance Design
+
+Governance workflows use repositories.
+
+Governance review surfaces use query services.
+
+Prevents Repository Bloat
+
+Repositories remain focused on:
+
+Aggregate persistence
+Aggregate retrieval
+Lifecycle persistence
+
+Not feed composition.
+
+Not reporting dashboards.
+
+Not governance analytics.
+
+Supports Future Extraction
+
+Future service extraction becomes easier because:
+
+Repository
+=
+Write Contract
+
+Query Service
+=
+Read Contract
+
+without introducing CQRS complexity today.
+
+---
+
+### Data Access Principles
+
+#### DAP-01
+
+Persistence ownership follows module ownership.
+
+#### DAP-02
+
+Only owning modules may modify authoritative resources.
+
+#### DAP-03
+
+Cross-module persistence access is prohibited.
+
+#### DAP-04
+
+Modules consume capabilities, not repositories.
+
+#### DAP-05
+
+Persistence implementation details remain encapsulated.
+
+#### DAP-06
+
+Feed remains a derived read-only domain.
+
+#### DAP-07
+
+Governance governs resources but does not own them.
+
+Authoritative Repository Architecture
+Rule DAA-01
+Repositories are the only persistence abstraction allowed for authoritative resource modification.
+
+Rule DAA-02
+Repositories belong exclusively to the owning module.
+
+Rule DAA-03
+Repositories manage aggregate persistence.
+
+Rule DAA-04
+Complex retrieval logic belongs in Query Services.
+
+Rule DAA-05
+Application Services orchestrate repositories and query services.
+
+Rule DAA-06
+Repositories never orchestrate workflows.
+
+Rule DAA-07
+Feed retrieval must use Query Services.
+
+Rule DAA-08
+Governance review surfaces should use Query Services.
+
+Rule DAA-09
+Repositories remain internal implementation details of their owning module.
+
+Rule DAA-10
+Cross-module repository access is prohibited.
+
+---
+
+### Repository Architecture
+
+Architecture Pattern:
+
+Controller
+→ Application Service
+→ Repository
+→ MongoDB
+
+Repositories own:
+
+- Persistence
+- Lifecycle persistence
+- Existence checks
+- Ownership-scoped retrieval
+
+Repositories do not own:
+
+- Workflow orchestration
+- Authorization
+- Governance decisions
+- Feed composition
+- Cross-module integration
+
+Aggregate-to-Repository Mapping
+Hybrid Rule
+One Authoritative Resource = One Repository
+Because:
+Resource ownership is already defined.
+API contracts are resource-oriented.
+MongoDB collections naturally align.
+Simpler than strict aggregate repositories.
+Easier for solo development.
+
+#### Repository Principles
+
+- Repository ownership follows module ownership.
+- One authoritative resource maps to one repository.
+- Repositories remain internal module assets.
+- Repositories are not integration contracts.
+
+ROP-01 — Repository Ownership Follows Module Ownership
+Repository ownership must always align with module ownership.
+
+Example:
+
+Identity Module
+    ↓
+UserProfileRepository
+Content Module
+    ↓
+PostRepository
+
+Repository ownership can never cross module boundaries.
+
+ROP-02 — Repository Authority Follows Resource Authority
+The repository that persists a resource is the authoritative persistence owner.
+
+Example:
+
+PostRepository
+
+owns Post persistence authority.
+
+No other repository may write Post state.
+
+ROP-03 — Repositories Are Internal Module Assets
+Repositories are implementation details of modules.
+
+Repositories are not cross-module contracts.
+
+Modules expose capabilities.
+
+Not repositories.
+
+ROP-04 — One Resource Owner = One Repository Owner
+Every authoritative resource must have exactly one repository owner.
+
+Never:
+
+PostRepository
+AND
+FeedRepository
+
+owning Post persistence.
+
+Ownership remains singular.
+
+ROP-05 — Feed Owns No Repositories
+Feed owns no authoritative resources.
+
+Therefore Feed owns no repositories.
+
+Feed only owns query services.
+
+This follows approved Feed architecture.
+
+ROP-06 — Governance Owns Governance Repositories Only
+Governance owns:
+
+ReportRepository
+ModerationActionRepository
+
+Governance never owns:
+
+PostRepository
+HerdRepository
+UserProfileRepository
+
+Governance governs.
+
+Governance does not own.
+
+This follows approved Governance architecture.
+
+ROP-07 — Repository Writes Remain Local
+Repositories may write only resources owned by their module.
+
+Cross-module writes are forbidden.
+
+ROP-08 — Repositories Do Not Orchestrate
+Repositories:
+
+Persist
+Retrieve
+Query owned aggregates
+
+Repositories do not:
+
+Coordinate workflows
+Invoke authorization
+Invoke governance
+Start transactions
+
+Application Services own those responsibilities.
+
+---
+
+### Repository Inventory
+
+#### Identity
+Identity Module
+
+Owned Resource:
+
+User Profile
+
+Repository:
+
+UserProfileRepository
+
+Responsibilities:
+
+Create profile
+Retrieve profile
+Update profile
+Profile existence checks
+Profile lookup
+
+Owns:
+users
+collection.
+
+#### Social Graph
+Social Graph Module
+
+Owned Resource:
+
+Follow Relationship
+
+Repository:
+
+FollowRepository
+
+Responsibilities:
+
+Follow creation
+Follow removal
+Follow existence checks
+Follow retrieval
+
+Owns:
+follows
+collection.
+
+#### Content
+Content Module
+
+Owned Resources:
+
+Post
+Comment
+Vote
+
+Repositories:
+
+PostRepository
+CommentRepository
+VoteRepository
+
+Responsibilities:
+
+PostRepository
+Post persistence
+Post retrieval
+Post updates
+Post deletion lifecycle
+CommentRepository
+Comment persistence
+Reply persistence
+Comment retrieval
+VoteRepository
+Vote persistence
+Vote updates
+Vote removal
+
+Owns:
+posts
+comments
+votes
+collections.
+
+#### Community
+Community Module
+
+Owned Resources:
+
+Herd
+Membership
+Shepherd Assignment
+
+Repositories:
+
+HerdRepository
+MembershipRepository
+ShepherdAssignmentRepository
+
+Owns:
+herds
+memberships
+shepherdAssignments
+collections.
+
+#### Media
+Media Module
+
+Owned Resource:
+
+Image
+
+Repository:
+
+ImageRepository
+
+Owns:
+images
+collection.
+
+#### Governance
+Governance Module
+
+Owned Resources:
+
+Report
+Moderation Action
+
+Repositories:
+
+ReportRepository
+ModerationActionRepository
+
+Owns:
+reports
+moderationActions
+collections.
+
+#### Feed
+Feed Module
+
+Repositories:
+
+NONE
+
+Feed owns:
+FollowingFeedQueryService
+HerdFeedQueryService
+only.
+Feed owns no persistence state.
+
+#### Repository Inventory Matrix
+| Module       | Repository                   |
+| ------------ | ---------------------------- |
+| Identity     | UserProfileRepository        |
+| Social Graph | FollowRepository             |
+| Content      | PostRepository               |
+| Content      | CommentRepository            |
+| Content      | VoteRepository               |
+| Community    | HerdRepository               |
+| Community    | MembershipRepository         |
+| Community    | ShepherdAssignmentRepository |
+| Media        | ImageRepository              |
+| Governance   | ReportRepository             |
+| Governance   | ModerationActionRepository   |
+| Feed         | None                         |
+
+#### Repository Responsibility Boundaries
+Each repository may:
+Allowed
+Persist owned resources
+Retrieve owned resources
+Execute ownership-scoped queries
+Execute existence checks
+Execute lifecycle persistence
+
+Forbidden
+Repositories must never:
+Call repositories from other modules
+Invoke Application Services
+Perform authorization
+Perform governance decisions
+Execute workflows
+Compose feeds
+Send events
+Manage transactions
+
+#### Authoritative Repository Ownership Rules
+DAA-11
+Repository ownership follows module ownership.
+
+DAA-12
+Repositories are internal module implementation details.
+
+DAA-13
+Cross-module repository access is prohibited.
+
+DAA-14
+Cross-module repository writes are prohibited.
+
+DAA-15
+One authoritative resource maps to one authoritative repository.
+
+DAA-16
+Repositories persist owned resources only.
+
+DAA-17
+Repositories never perform workflow orchestration.
+
+DAA-18
+Repositories never perform authorization.
+
+DAA-19
+Repositories never perform governance decisions.
+
+DAA-20
+Feed owns no repositories.
+
+DAA-21
+Governance owns only governance repositories.
+
+DAA-22
+Repositories never become module integration points.
+Application Services remain module integration points.
+
+---
+
+### Cross-Module Data Access Rules
+
+#### Cross-Module Data Access Model
+
+Authoritative flow:
+
+Application Service
+        ↓
+Module Capability
+        ↓
+Owning Module
+        ↓
+Repository
+
+Never:
+
+Application Service
+        ↓
+Foreign Repository
+
+#### Approved Integration Mechanism
+
+Capability Contracts
+
+Modules may consume:
+
+- Existence checks
+- Validation checks
+- Approved retrieval operations
+- Governance retrieval operations
+
+Modules may not consume:
+
+- Foreign repositories
+- Foreign query services
+- Foreign collections
+- Foreign schemas
+- Foreign persistence models
+
+#### Cross-Module Access Pattern
+
+Application Service
+→ Capability Contract
+→ Owning Module
+→ Repository
+
+#### Capability Categories
+Not every capability is equal.
+Category 1 — Existence Capabilities
+Purpose:
+Validate existence.
+
+Examples:
+identityCapability.userExists(userId)
+communityCapability.herdExists(herdId)
+contentCapability.postExists(postId)
+
+Category 2 — Validation Capabilities
+Purpose:
+Validate business conditions.
+
+Examples:
+communityCapability.isMember(
+  userId,
+  herdId
+)
+
+communityCapability.canPostInHerd(
+  userId,
+  herdId
+)
+
+mediaCapability.canAttachImage(
+  imageId,
+  userId
+)
+
+Category 3 — Retrieval Capabilities
+Purpose:
+Expose approved read data.
+
+Examples:
+contentCapability.getPostSummary(postId)
+communityCapability.getHerdSummary(herdId)
+identityCapability.getProfileSummary(userId)
+
+Important:
+Summary.
+Not internal entity exposure.
+
+Category 4 — Governance Capabilities
+Purpose:
+Provide moderation visibility.
+
+Examples:
+contentCapability.getModerationTarget(postId)
+communityCapability.getModerationTarget(herdId)
+identityCapability.getModerationTarget(userId)
+
+#### Authoritative Dependency Pattern
+Content → Community
+Allowed
+Validate Membership
+Validate Herd
+Validate Posting Eligibility
+Through:
+Community Capability
+Only.
+Never:
+MembershipRepository
+
+Content → Media
+Allowed
+Image Ownership Validation
+Image Existence Validation
+Through:
+Media Capability
+Only.
+
+Social Graph → Identity
+Allowed
+User Existence
+Profile Visibility
+Through:
+Identity Capability
+Only.
+
+Governance → Identity
+Allowed
+Profile Information
+Profile Governance Target
+Through:
+Identity Capability
+Only.
+
+Governance → Content
+Allowed
+Post Target
+Comment Target
+Through:
+Content Capability
+Only.
+
+Governance → Community
+Allowed
+Herd Target
+Membership Target
+Through:
+Community Capability
+Only.
+
+Feed → Everything
+Feed is special.
+Feed consumes:
+Identity
+Social Graph
+Content
+Community
+Governance
+
+through:
+Query Services
+not repositories.
+Feed remains read-only.
+This preserves approved Feed architecture.
+
+#### Repository Visibility Rules
+Allowed
+Repository visible to:
+
+Owning Module Only
+
+Example:
+
+PostRepository
+
+Visible To:
+Content Module
+Only.
+
+Forbidden
+Governance → PostRepository
+
+Feed → MembershipRepository
+
+Community → UserProfileRepository
+
+Content → HerdRepository
+
+All forbidden.
+
+#### Capability Ownership Rules
+Capabilities belong to the owning module.
+Example:
+Community Module
+Exposes:
+Membership Validation
+Membership Retrieval
+Herd Retrieval
+Posting Eligibility
+Community remains owner.
+Consumers remain consumers.
+
+#### Future Extraction Alignment
+Current:
+Content
+    ↓
+CommunityCapability
+
+Future:
+Content
+    ↓
+Community Service API
+
+No architectural redesign required.
+Only implementation changes.
+This is exactly what ADR-001 expects when future extraction becomes justified.
+
+#### Authoritative Cross-Module Data Access Rules
+DAA-23
+Modules may not access repositories owned by other modules.
+
+DAA-24
+Repository access remains internal to the owning module.
+
+DAA-25
+Cross-module access must occur through capability contracts.
+
+DAA-26
+Capabilities are the only approved module integration mechanism.
+
+DAA-27
+Capabilities may expose:
+Existence checks
+Validation checks
+Approved retrieval operations
+Governance retrieval operations
+
+DAA-28
+Capabilities must not expose repository implementations.
+
+DAA-29
+Capabilities must not expose database structures.
+
+DAA-30
+Capabilities must not expose collection ownership.
+
+DAA-31
+Feed consumes query services, never repositories.
+
+DAA-32
+Governance consumes governance-target capabilities, never foreign repositories.
+
+DAA-33
+Cross-module writes are prohibited.
+
+DAA-34
+Only owning modules may execute lifecycle persistence.
+
+DAA-35
+Capability contracts must remain future-service-extraction compatible.
+
+#### Cross-Module Access Matrix
+| Consumer                | Access Method        |
+| ----------------------- | -------------------- |
+| Social Graph → Identity | Identity Capability  |
+| Community → Identity    | Identity Capability  |
+| Media → Identity        | Identity Capability  |
+| Content → Identity      | Identity Capability  |
+| Content → Community     | Community Capability |
+| Content → Media         | Media Capability     |
+| Governance → Identity   | Identity Capability  |
+| Governance → Content    | Content Capability   |
+| Governance → Community  | Community Capability |
+| Governance → Media      | Media Capability     |
+| Feed → Identity         | Query Services       |
+| Feed → Social Graph     | Query Services       |
+| Feed → Content          | Query Services       |
+| Feed → Community        | Query Services       |
+| Feed → Governance       | Query Services       |
+
+
+---
+
+### Query Architecture
+
+Architecture Pattern:
+
+Controller
+→ Application Service
+→ Query Service
+→ MongoDB
+
+#### Dedicated Query Services
+Authoritative Architecture:
+
+Controller
+      ↓
+Application Service
+      ↓
+Query Service
+      ↓
+MongoDB
+
+For reads.
+
+And:
+
+Controller
+      ↓
+Application Service
+      ↓
+Repository
+      ↓
+MongoDB
+
+For writes.
+
+#### Query Categories
+
+##### Resource Queries
+
+- Profile retrieval
+- Post retrieval
+- Herd retrieval
+
+Category 1 — Resource Queries
+
+Purpose:
+
+Retrieve owned resources.
+
+Examples:
+
+Get Profile
+Get Post
+Get Comment
+Get Herd
+
+Characteristics:
+
+Simple retrieval
+Ownership-oriented
+Single resource focus
+
+Example:
+
+PostQueryService.getPost(postId)
+
+##### Validation Queries
+
+- Existence checks
+- Membership checks
+
+Category 2 — Validation Queries
+
+Purpose:
+
+Support capability contracts.
+
+Examples:
+
+User Exists
+Membership Exists
+Post Exists
+Image Exists
+
+Example:
+
+communityCapability.isMember()
+
+internally using:
+
+MembershipQueryService
+
+Characteristics:
+
+Lightweight
+Authorization support
+Workflow support
+
+##### Feed Queries
+
+- Following Feed
+- Herd Feed
+
+Category 3 — Feed Queries
+
+Purpose:
+
+Compose derived feed views.
+
+Examples:
+
+Following Feed
+Herd Feed
+
+Characteristics:
+
+Multi-module
+Aggregation heavy
+Read-only
+
+These belong to Feed.
+
+Not Content.
+
+Not Community.
+
+This preserves Feed ownership.
+
+##### Governance Queries
+
+- Report review queues
+- Escalation queues
+- Governance activity
+
+Category 4 — Governance Queries
+
+Purpose:
+
+Support moderation workflows.
+
+Examples:
+
+Report Queue
+Escalation Queue
+Governance Activity
+Moderation History
+
+Characteristics:
+
+Multi-resource
+Governance-owned
+Audit-focused
+
+These belong to Governance.
+
+Not Content.
+
+Not Community.
+
+Not Identity.
+
+#### Administrative Queries
+Category 5 — Administrative Queries
+
+Future category.
+
+Examples:
+
+Operational Reports
+Platform Statistics
+
+Not required for MVP.
+
+Document only.
+
+#### Query Ownership Model
+
+The most important decision.
+
+Rule
+
+Queries belong to the module that owns the read concern.
+
+Not the module that owns the data.
+
+Example:
+
+Following Feed.
+
+Consumes:
+
+Posts
+Profiles
+Follows
+Governance Visibility
+
+Who owns query?
+
+Answer:
+
+Feed Module
+
+because Feed owns feed composition.
+
+Not Content.
+
+Example:
+
+Governance Queue.
+
+Consumes:
+
+Reports
+Moderation Actions
+Posts
+Comments
+Profiles
+
+Who owns query?
+
+Answer:
+
+Governance Module
+
+because Governance owns moderation review.
+
+#### Query Ownership Matrix
+| Query Type           | Owner        |
+| -------------------- | ------------ |
+| Profile Retrieval    | Identity     |
+| Follow Retrieval     | Social Graph |
+| Post Retrieval       | Content      |
+| Comment Retrieval    | Content      |
+| Vote Retrieval       | Content      |
+| Herd Retrieval       | Community    |
+| Membership Retrieval | Community    |
+| Image Retrieval      | Media        |
+| Following Feed       | Feed         |
+| Herd Feed            | Feed         |
+| Report Queue         | Governance   |
+| Escalation Queue     | Governance   |
+| Governance Activity  | Governance   |
+
+#### Query Service Inventory
+Identity
+UserProfileQueryService
+
+Responsibilities
+
+Profile Retrieval
+Profile Existence
+Profile Summary
+Social Graph
+FollowQueryService
+
+Responsibilities
+
+Relationship Retrieval
+Follower Lists
+Following Lists
+Content
+PostQueryService
+CommentQueryService
+VoteQueryService
+
+Responsibilities
+
+Post Retrieval
+Comment Retrieval
+Vote Retrieval
+Content Summaries
+Community
+HerdQueryService
+MembershipQueryService
+ShepherdAssignmentQueryService
+
+Responsibilities
+
+Herd Retrieval
+Membership Retrieval
+Participation Validation
+Media
+ImageQueryService
+
+Responsibilities
+
+Image Retrieval
+Ownership Retrieval
+Governance
+ReportQueryService
+GovernanceReviewQueryService
+GovernanceActivityQueryService
+
+Responsibilities
+
+Review Queues
+Escalation Queues
+Audit Retrieval
+Feed
+FollowingFeedQueryService
+HerdFeedQueryService
+
+Responsibilities
+
+Feed Composition
+Feed Filtering
+Feed Ordering
+Feed Retrieval
+
+
+
+#### Feed Query Architecture
+Feed Query Architecture
+
+This deserves special treatment.
+
+Feed is a derived domain.
+
+Feed owns:
+
+Composition
+Filtering
+Ordering
+Retrieval
+
+Not content.
+
+Not follows.
+
+Not profiles.
+
+Authoritative model:
+
+FollowingFeedQueryService
+
+      ↓
+
+Identity Capability
+Social Graph Capability
+Content Capability
+Governance Capability
+
+Never:
+
+FollowingFeedQueryService
+       ↓
+PostRepository
+
+Directly.
+
+Feed consumes capabilities and query contracts.
+
+Not repositories.
+
+#### Governance Query Architecture
+Governance owns moderation review.
+
+Therefore Governance owns moderation queries.
+
+Example:
+
+GovernanceReviewQueryService
+
+Consumes:
+
+Content Capability
+Community Capability
+Identity Capability
+
+Produces:
+
+Review Queue
+Escalation Queue
+Moderation Context
+
+This preserves Governance ownership.
+
+#### MongoDB Query Strategy
+MongoDB Query Strategy
+
+Repositories:
+
+Prefer:
+
+Simple CRUD
+Simple Persistence Queries
+Existence Checks
+
+Query Services:
+
+May use:
+
+Aggregation Pipelines
+Sorting
+Filtering
+Pagination
+Projection
+Read Optimization
+
+This creates a clean separation:
+| Layer               | Responsibility |
+| ------------------- | -------------- |
+| Repository          | Persistence    |
+| Query Service       | Retrieval      |
+| Application Service | Workflow       |
+| Capability          | Integration    |
+
+#### Query Visibility Rules
+Query Services May
+Read multiple collections
+Aggregate data
+Project data
+Build DTOs
+Support feed composition
+Support governance review
+
+Query Services May Not
+Modify persistence state
+Start workflows
+Execute lifecycle transitions
+Perform authorization decisions
+Perform governance decisions
+
+#### Authoritative Query Rules
+DAA-36
+Queries and persistence are separate architectural concerns.
+
+DAA-37
+Repositories own persistence.
+
+DAA-38
+Query Services own retrieval.
+
+DAA-39
+Complex read operations must use Query Services.
+
+DAA-40
+Feed retrieval must use Feed-owned Query Services.
+
+DAA-41
+Governance review retrieval must use Governance-owned Query Services.
+
+DAA-42
+Query ownership follows read responsibility ownership.
+
+DAA-43
+Repositories must not contain feed composition logic.
+
+DAA-44
+Repositories must not contain governance review logic.
+
+DAA-45
+Query Services may aggregate multiple collections.
+
+DAA-46
+Query Services remain read-only.
+
+DAA-47
+Query Services may not modify persistence state.
+
+DAA-48
+Query Services may not execute workflows.
+
+DAA-49
+Application Services orchestrate Query Services.
+
+DAA-50
+Feed remains the owner of feed composition queries.
+
+#### Query Ownership Rule
+
+Queries belong to the module that owns the read concern.
+
+Not necessarily the module that owns the data.
+
+#### Feed Query Ownership
+
+Feed owns:
+
+- FollowingFeedQueryService
+- HerdFeedQueryService
+
+#### Governance Query Ownership
+
+Governance owns:
+
+- GovernanceReviewQueryService
+- GovernanceActivityQueryService
+
+---
+
+### Transaction Architecture
+
+#### Transaction Ownership Model
+Transaction Ownership Model
+Controller
+      ↓
+Application Service
+      ↓
+Transaction
+      ↓
+Repositories
+
+TAA-01
+Only Application Services may start transactions.
+
+TAA-02
+Repositories may participate in transactions.
+Repositories may not create transactions.
+
+TAA-03
+Query Services never participate in transactions.
+Query Services are read-only.
+
+#### Transaction Boundary Rule
+Transactions exist only when:
+Multiple persistence changes
+must succeed or fail together.
+
+Examples
+Create Post
+Writes:
+posts
+only.
+Transaction:
+Not required.
+
+Create Comment
+Writes:
+comments
+only.
+Transaction:
+Not required.
+
+Vote
+Writes:
+votes
+only.
+Transaction:
+Not required.
+
+Join Herd
+Writes:
+memberships
+only.
+Transaction:
+Not required.
+
+Shepherd Assignment
+Writes:
+shepherdAssignments
+and potentially updates herd governance metadata.
+Transaction:
+Required.
+
+Governance Enforcement
+Writes:
+moderationActions
+and
+target enforcement state
+Transaction:
+Required.
+
+TAA-04
+Single-write workflows should not use MongoDB transactions.
+
+TAA-05
+Transactions are reserved for multi-write consistency requirements.
+
+#### Transaction Ownership
+
+Application Services own transactions.
+
+Repositories participate in transactions but never create them.
+
+#### Transaction Usage
+
+Transactions are used only when:
+
+- Multiple persistence changes must succeed together
+- Governance enforcement requires consistency
+- Multi-document consistency is required
+
+#### Cross-Module Consistency Model
+Validate → Persist
+
+Pattern:
+
+Capability Validation
+        ↓
+Local Persistence
+
+Example:
+
+Content Service
+
+↓
+Community Capability
+
+Validate Membership
+
+↓
+
+PostRepository
+
+Create Post
+
+No distributed transaction.
+
+No shared persistence ownership.
+
+TAA-06
+Cross-module workflows must prefer:
+Validate
+Then Persist
+over distributed transactions.
+
+TAA-07
+Cross-module validation does not imply shared transaction ownership.
+
+#### Governance Transaction Rule
+Governance actions must remain auditable and consistent.
+Therefore:
+
+Moderation Action
++
+Governed State Change
+
+must commit together.
+
+TAA-08
+Governance enforcement workflows require transactions.
+Example
+Governance Service
+
+Start Transaction
+↓
+Create Moderation Action
+↓
+Apply Restriction
+↓
+Commit
+
+#### MongoDB Transaction Policy
+Use transactions for:
+Governance Enforcement
+Multi-document consistency
+Multi-collection writes
+Critical authority transitions
+
+Avoid transactions for:
+Reads
+Queries
+Feed Retrieval
+Validation
+Single-document writes
+
+TAA-09
+MongoDB transactions are an exception mechanism.
+Not the default persistence model.
+
+#### Failure Recovery Model
+When transaction exists:
+
+Commit
+OR
+Rollback
+
+No partial success.
+
+When transaction does not exist:
+
+Validation
+↓
+Persistence
+
+Failure simply returns error.
+
+No compensation required.
+
+TAA-10
+Failure recovery should remain transaction-based rather than compensation-based.
+
+#### Future Extraction Validation
+
+Current:
+
+Application Service
+        ↓
+Local Transaction
+
+Future:
+
+Module Service
+        ↓
+Local Transaction
+
+No redesign required.
+
+What does NOT scale?
+
+Cross-Module Transactions
+
+Exactly why we avoid them.
+
+#### Transaction Responsibility Matrix
+| Component             | May Start Transaction |
+| --------------------- | --------------------- |
+| Controller            | No                    |
+| Application Service   | Yes                   |
+| Repository            | No                    |
+| Query Service         | No                    |
+| Capability Contract   | No                    |
+| Governance Capability | No                    |
+| Feed Query Service    | No                    |
+
+
+#### Authoritative Transaction Rules
+TAA-01
+Application Services own transactions.
+
+TAA-02
+Repositories participate but never create transactions.
+
+TAA-03
+Query Services never participate in transactions.
+
+TAA-04
+Single-write workflows should not use transactions.
+
+TAA-05
+Transactions are reserved for multi-write consistency requirements.
+
+TAA-06
+Cross-module workflows must prefer Validate → Persist.
+
+TAA-07
+Cross-module validation does not imply shared transactions.
+
+TAA-08
+Governance enforcement workflows require transactions.
+
+TAA-09
+MongoDB transactions are exceptional, not default.
+
+TAA-10
+Failure recovery should prefer rollback over compensation.
+
+TAA-11
+Cross-module transactions are prohibited by default.
+
+TAA-12
+Distributed consistency mechanisms are out of MVP scope.
+
+---
+
+### Persistence Isolation Rules
+Repository Isolation + Persistence Encapsulation
+
+Authoritative Architecture:
+
+Module
+   ↓
+Capability
+   ↓
+Repository
+   ↓
+Persistence
+
+Only the owning module may see persistence internals.
+
+#### Public Layer
+Visible to other modules.
+
+Examples:
+
+Capability Contracts
+DTOs
+Validation Responses
+Query Results
+
+#### Internal Layer
+Visible only inside module.
+
+Examples:
+
+Repositories
+Query Services
+Mongoose Models
+Schemas
+Indexes
+Collection Names
+
+#### Persistence Layer
+(Database) Visible only through persistence layer.
+
+Examples:
+
+Mongo Collections
+Aggregation Pipelines
+Index Definitions
+Database Queries
+
+#### Authoritative Visibility Model
+External Modules
+      ↓
+Capabilities
+
+Internal Module
+      ↓
+Repositories
+Query Services
+
+Persistence
+      ↓
+MongoDB
+
+#### Isolation Rules
+##### Collection Isolation Rules
+Question:
+Should Content know:
+memberships
+collection exists?
+
+Recommended Rule
+No.
+Content should know:
+communityCapability.isMember()
+exists.
+Nothing else.
+
+PIA-01
+Collection names are private implementation details.
+
+PIA-02
+Collection ownership belongs exclusively to the owning module.
+
+PIA-03
+Foreign modules must not reference foreign collections.
+
+Example
+Allowed:
+communityCapability.isMember(...)
+
+Forbidden:
+db.collection("memberships")
+inside Content.
+
+##### Schema Isolation Rules
+Question:
+
+Should Content know:
+
+Membership Schema
+
+fields?
+
+Example:
+
+{
+  herdId,
+  memberId,
+  joinedAt,
+  status
+}
+Recommended Rule
+
+No.
+
+Only Community owns membership structure.
+
+Content should receive:
+
+{
+  isMember: true
+}
+
+or
+
+{
+  canPost: true
+}
+
+through capability contracts.
+
+PIA-04
+Schema definitions are private module assets.
+
+PIA-05
+Foreign modules must not depend on foreign schema structure.
+
+PIA-06
+Capability contracts are the approved abstraction boundary.
+
+##### Mongoose Model Isolation Rules
+Question:
+
+Should:
+
+MembershipModel
+
+be importable by Content?
+
+Recommended:
+
+No.
+
+Never.
+
+Example
+
+Forbidden:
+
+import MembershipModel
+from community
+
+inside Content.
+
+Allowed:
+communityCapability.isMember(...)
+
+PIA-07
+Mongoose Models remain module-private.
+
+PIA-08
+Cross-module model imports are prohibited.
+
+PIA-09
+Repositories are the only consumers of Mongoose Models.
+
+Result
+Repository
+    ↓
+Model
+
+instead of
+
+Application Service
+    ↓
+Model
+
+or
+
+Foreign Module
+    ↓
+Model
+
+##### Index Isolation Rules
+Question:
+
+Should Content know:
+
+Community indexes?
+
+Example:
+
+{ herdId: 1, memberId: 1 }
+
+Answer:
+
+No.
+
+Indexes are persistence optimization details.
+
+Not business contracts.
+
+PIA-10
+Index definitions are private persistence concerns.
+
+PIA-11
+Index structures may change without affecting consumers.
+
+PIA-12
+Capabilities must not expose index assumptions.
+
+##### Query Service Isolation Rules
+Query Services are not integration points.
+
+This is important.
+
+Many architectures accidentally expose query services.
+
+Wrong:
+
+Content
+      ↓
+MembershipQueryService
+
+Correct:
+
+Content
+      ↓
+Community Capability
+      ↓
+MembershipQueryService
+
+PIA-13
+Query Services remain internal to their owning module.
+
+PIA-14
+Cross-module Query Service access is prohibited.
+
+PIA-15
+Query Services are implementation details.
+Not contracts.
+
+##### Repository Isolation Rules
+No Cross-Module Repository Access
+
+PIA-16
+Repositories are visible only inside their owning module.
+
+PIA-17
+Cross-module repository imports are prohibited.
+
+PIA-18
+Repository APIs are not module contracts.
+
+PIA-19
+Repositories remain replaceable implementation details.
+
+
+- Cross-module repository access prohibited.
+- Cross-module query service access prohibited.
+- Cross-module model imports prohibited.
+- Cross-module collection access prohibited.
+
+#### Persistence Encapsulation Model
+Every module owns:
+
+Capability Contracts
+Repositories
+Query Services
+Models
+Schemas
+Indexes
+Collections
+
+External modules may see:
+
+Capability Contracts
+Only
+
+Architecture:
+
+Content
+
+   ↓
+
+Community Capability
+
+   ↓
+
+Community Internal Layer
+
+   ↓
+   ├─ Repository
+   ├─ Query Service
+   ├─ Model
+   ├─ Schema
+   └─ Collection
+
+Everything below capability boundary remains hidden.
+
+#### Persistence Isolation Matrix
+| Artifact                   | Visible Outside Module |
+| -------------------------- | ---------------------- |
+| Capability Contract        | Yes                    |
+| DTOs                       | Yes                    |
+| Validation Results         | Yes                    |
+| Repository                 | No                     |
+| Query Service              | No                     |
+| Mongoose Model             | No                     |
+| Schema                     | No                     |
+| Collection                 | No                     |
+| Index                      | No                     |
+| Aggregation Pipeline       | No                     |
+| Transaction Implementation | No                     |
+
+#### Future Service Extraction Validation
+Current:
+
+Content
+    ↓
+Community Capability
+
+Future:
+
+Content
+    ↓
+Community API
+
+No redesign required.
+
+Why?
+Because Content never knew:
+
+Collections
+Models
+Schemas
+Indexes
+
+in the first place.
+
+This directly supports ADR-001 future evolution goals.
+
+#### Authoritative Persistence Isolation Rules
+PIA-01
+Collection names are private implementation details.
+
+PIA-02
+Collection ownership belongs exclusively to owning modules.
+
+PIA-03
+Foreign collection access is prohibited.
+
+PIA-04
+Schemas are module-private assets.
+
+PIA-05
+Foreign schema dependencies are prohibited.
+
+PIA-06
+Capability contracts are the approved abstraction boundary.
+
+PIA-07
+Mongoose Models are module-private.
+
+PIA-08
+Cross-module model imports are prohibited.
+
+PIA-09
+Repositories are the only consumers of Mongoose Models.
+
+PIA-10
+Indexes are private persistence concerns.
+
+PIA-11
+Index structures may evolve independently.
+
+PIA-12
+Capabilities must not expose persistence optimizations.
+
+PIA-13
+Query Services are internal implementation details.
+
+PIA-14
+Cross-module Query Service access is prohibited.
+
+PIA-15
+Query Services are not contracts.
+
+PIA-16
+Repositories are visible only inside owning modules.
+
+PIA-17
+Cross-module repository imports are prohibited.
+
+PIA-18
+Repository APIs are not module contracts.
+
+PIA-19
+Repositories remain replaceable implementation details.
+
+PIA-20
+Capability contracts are the only approved persistence boundary crossing mechanism.
+
+
+---
+
+### MongoDB Alignment
+MongoDB organization must preserve:
+
+Domain Ownership
+Module Ownership
+Repository Ownership
+Governance Boundaries
+Feed Read-Only Nature
+Future Service Extraction
+
+without introducing:
+
+Premature denormalization
+Premature CQRS
+Premature multi-database architecture
+
+Resource-Based Collection Ownership
+
+Collection ownership should follow authoritative resource ownership.
+
+This aligns with:
+
+Repository Architecture
+Resource Ownership Model
+API Resource Model
+Module Ownership Model
+
+
+
+#### Collection Ownership Model
+
+Identity Module
+
+Owns:
+
+users
+
+Collection.
+
+Repository:
+
+UserProfileRepository
+
+Social Graph Module
+
+Owns:
+
+follows
+
+Collection.
+
+Repository:
+
+FollowRepository
+
+Content Module
+
+Owns:
+
+posts
+comments
+votes
+
+Collections.
+
+Repositories:
+
+PostRepository
+CommentRepository
+VoteRepository
+
+Community Module
+
+Owns:
+
+herds
+memberships
+shepherdAssignments
+
+Collections.
+
+Repositories:
+
+HerdRepository
+MembershipRepository
+ShepherdAssignmentRepository
+
+Media Module
+
+Owns:
+
+images
+
+Collection.
+
+Repository:
+
+ImageRepository
+
+Governance Module
+
+Owns:
+
+reports
+moderationActions
+
+Collections.
+
+Repositories:
+
+ReportRepository
+ModerationActionRepository
+
+Feed Module
+Owns:
+No Collections
+Feed remains a derived domain.
+Feed owns no persistence state.
+This remains consistent with the approved Feed architecture.
+
+##### Collection Ownership Matrix
+| Module       | Collection          |
+| ------------ | ------------------- |
+| Identity     | users               |
+| Social Graph | follows             |
+| Content      | posts               |
+| Content      | comments            |
+| Content      | votes               |
+| Community    | herds               |
+| Community    | memberships         |
+| Community    | shepherdAssignments |
+| Media        | images              |
+| Governance   | reports             |
+| Governance   | moderationActions   |
+| Feed         | None                |
+
+
+#### Repository-to-Collection Alignment
+Should repositories span multiple collections?
+
+Example
+PostRepository
+
+manages:
+
+posts
+
+only.
+
+or
+
+PostRepository
+
+manages:
+
+posts
+comments
+votes
+
+?
+
+Recommended Rule
+
+Repository authority should align with resource authority.
+
+Result:
+
+UserProfileRepository
+      ↓
+users
+
+FollowRepository
+      ↓
+follows
+
+PostRepository
+      ↓
+posts
+
+CommentRepository
+      ↓
+comments
+
+VoteRepository
+      ↓
+votes
+
+etc.
+
+MAA-01
+One authoritative repository owns one authoritative collection.
+
+MAA-02
+Repository ownership follows collection ownership.
+
+MAA-03
+Cross-collection repository ownership is prohibited.
+
+Why?
+
+Because future extraction becomes trivial.
+
+Example:
+
+Today:
+
+PostRepository
+       ↓
+posts
+
+Future:
+
+Content Service
+       ↓
+posts
+
+No redesign.
+
+#### Aggregate Alignment Evaluation
+
+A subtle but important topic.
+
+Question:
+
+Should MongoDB collections align with:
+
+Modules?
+Aggregates?
+Resources?
+Evaluation
+Module Alignment
+
+Rejected.
+
+Too coarse.
+
+Aggregate Alignment
+
+Partially useful.
+
+But aggregate boundaries do not map cleanly to MongoDB collections.
+
+Examples:
+
+Post
+Comment
+Vote
+
+remain independent resources.
+
+Resource Alignment
+
+Best fit.
+
+Resources already drive:
+
+Ownership
+APIs
+Authorization
+Governance
+Recommended Rule
+
+Collections align primarily with resources.
+
+Aggregates remain a business concept.
+
+Collections remain a persistence concept.
+
+MAA-04
+Aggregate boundaries do not mandate collection boundaries.
+
+MAA-05
+Collections align with authoritative resources.
+
+#### Persistence Model
+
+- Resource-oriented collections
+- One repository per authoritative resource
+- Reference-based relationships
+- Limited embedding for value objects only
+
+#### MongoDB Modeling Strategy
+Should we aggressively embed documents?
+Reference-Based Modeling
+
+Example:
+
+{
+  "_id": "comment",
+  "postId": "..."
+}
+Advantages
+Aligns with ownership.
+Aligns with moderation.
+Aligns with repositories.
+
+Modeling Rule
+Prefer:
+Reference-Based Modeling
+for authoritative resources.
+
+MAA-06
+Authoritative resources should remain independently persisted.
+
+MAA-07
+Relationships should primarily use references rather than deep embedding.
+
+MAA-08
+Embedding is allowed only for small lifecycle-dependent value objects.
+
+Examples:
+Image Metadata
+Audit Metadata
+Display Preferences
+not independent resources.
+
+#### Feed Persistence Rule
+
+Feed owns no collections.
+
+Feed is not a source of truth.
+
+Feed remains special.
+
+Feed owns:
+
+FollowingFeedQueryService
+HerdFeedQueryService
+
+Only.
+
+Feed owns:
+
+No Collection
+
+No Repository.
+
+No Persistence State.
+
+Feed composes from:
+
+posts
+profiles
+follows
+memberships
+governance visibility
+
+through Query Services and Capabilities.
+
+MAA-09
+Feed remains persistence-free.
+
+MAA-10
+Feed never becomes a source of truth.
+
+#### Governance Ownership Rule
+
+Governance authority does not imply collection ownership.
+
+Governance owns:
+
+reports
+moderationActions
+
+only.
+
+Governance does not own:
+
+posts
+comments
+herds
+profiles
+
+Even though Governance may govern them.
+
+This distinction is critical.
+
+MAA-11
+Governance authority does not imply collection ownership.
+
+MAA-12
+Governed resources remain owned by originating modules.
+
+Example
+
+Post Restriction:
+
+Content
+      owns Post
+
+Governance
+      owns ModerationAction
+
+Both remain independent.
+
+#### Future Database Decomposition Validation
+Current Architecture:
+MongoDB
+ ├─ users
+ ├─ follows
+ ├─ posts
+ ├─ comments
+ ├─ votes
+ ├─ herds
+ ├─ memberships
+ ├─ shepherdAssignments
+ ├─ images
+ ├─ reports
+ └─ moderationActions
+
+Future:
+Identity Database
+
+Content Database
+
+Community Database
+
+Governance Database
+
+possible.
+
+Why?
+Because ownership already exists.
+
+Collections already map naturally.
+
+No redesign required.
+
+MAA-13
+Collection ownership must remain future-database-decomposition compatible.
+
+MAA-14
+Current architecture remains single MongoDB deployment.
+
+MAA-15
+Future decomposition must not influence MVP complexity.
+
+---
+
+### Future Evolution Strategy
+The Future Evolution Strategy must answer:
+
+If Chauthara grows significantly:
+
+Can modules become services?
+
+Can databases be split?
+Can read models evolve?
+Can feeds scale independently?
+Can governance scale independently?
+
+Without requiring:
+
+Major Redesign
+Domain Reclassification
+Ownership Rewrites
+Persistence Rewrites
+
+Evolution Philosophy
+Build For Change
+
+Current architecture remains simple.
+
+Future evolution remains possible.
+
+Advantages
+Matches Architecture Drivers.
+Matches ADR-001.
+Matches Evolutionary Architecture principle.
+
+FES-01
+Current architecture must optimize for current requirements.
+
+FES-02
+Future evolution must remain possible without redesign.
+
+FES-03
+Future scalability concerns must not introduce present-day complexity.
+
+#### Service Extraction Boundary
+Service Extraction Evaluation
+Identity
+
+Extraction Difficulty:
+
+Low
+
+Reasons:
+
+Clear ownership
+Limited dependencies
+Social Graph
+
+Extraction Difficulty:
+
+Low
+
+Reasons:
+
+Single resource ownership
+Simple contracts
+Content
+
+Extraction Difficulty:
+
+Moderate
+
+Reasons:
+
+High dependency volume
+Feed participation
+
+Still manageable.
+
+Community
+
+Extraction Difficulty:
+
+Moderate
+
+Reasons:
+
+Membership validation
+Governance integration
+Governance
+
+Extraction Difficulty:
+
+Low
+
+Reasons:
+
+Strong ownership boundaries already established
+Feed
+
+Extraction Difficulty:
+
+Very Low
+
+Reasons:
+
+No persistence ownership
+Read-only domain
+
+FES-04
+Capability contracts are the future service extraction boundary.
+
+FES-05
+Repositories must never become extraction boundaries.
+
+FES-06
+Collection ownership must not be exposed externally.
+
+#### Database Decomposition Boundary
+Database Decomposition Readiness
+
+Current Architecture:
+MongoDB
+users
+follows
+posts
+comments
+votes
+herds
+memberships
+shepherdAssignments
+images
+reports
+moderationActions
+
+Future Possibility:
+
+Identity Database
+
+Content Database
+
+Community Database
+
+Governance Database
+
+Question:
+
+Can this happen?
+
+Answer:
+
+Yes.
+
+Because ownership is already explicit.
+
+Current:
+
+Collection Ownership
+
+Future:
+
+Database Ownership
+
+No conceptual change required.
+
+Only infrastructure changes.
+
+FES-07
+Collection ownership is the foundation of future database ownership.
+
+FES-08
+Database decomposition must follow module ownership.
+
+FES-09
+Database decomposition must never split a module.
+
+Example
+
+Good:
+
+Content Database
+
+posts
+comments
+votes
+
+Bad:
+
+posts database
+
+comments database
+
+votes database
+
+This would violate module ownership.
+
+#### Repository Evolution Strategy
+
+Current:
+
+Repository
+      ↓
+MongoDB
+
+Question:
+
+Do repositories need to evolve?
+
+Potentially.
+
+Stage 1 (Current MVP)
+
+Repositories:
+
+CRUD
+Persistence
+Existence Checks
+
+Stage 2 (Growing Platform)
+Repositories:
+
+Persistence
+Optimized Queries
+Caching Support
+
+Stage 3 (Large Scale)
+Repositories:
+
+Persistence Only
+
+Complex reads move entirely into query services.
+
+Important:
+
+No architectural change required.
+
+Only responsibility refinement.
+
+FES-10
+Repository responsibilities may shrink over time.
+
+FES-11
+Repositories remain persistence-focused throughout all growth stages.
+
+#### Query Evolution
+
+Query services are the approved read-scaling mechanism.
+Query Services are the most likely scaling pressure point.
+
+Current:
+
+Feed Query Services
+Governance Query Services
+Resource Query Services
+
+Future:
+
+Potential evolution:
+
+Read Models
+
+Search Infrastructure
+
+Analytics Pipelines
+
+Recommendation Systems
+
+Question:
+
+Does current architecture block this?
+
+Answer:
+
+No.
+
+Because Query Services are already separate.
+
+Current:
+
+FollowingFeedQueryService
+
+Future:
+
+FeedReadModel
+
+behind same service boundary.
+
+Consumers remain unchanged.
+
+FES-12
+Query Services are the approved evolution point for read scaling.
+
+FES-13
+Read-model architecture may evolve behind Query Service boundaries.
+
+FES-14
+Repository architecture should not absorb read-scaling concerns.
+
+#### Feed Evolution Strategy
+Feed deserves special treatment.
+
+Current MVP:
+
+Chronological Feed
+
+No recommendations.
+
+Future Possibilities:
+
+Ranking
+Recommendations
+Trending
+Personalization
+
+Question:
+
+Where do these belong?
+
+Not Content.
+
+Not Community.
+
+They belong exclusively to:
+
+Feed Domain
+
+This validates the earlier decision that Feed owns query composition.
+
+FES-15
+Future feed intelligence belongs exclusively to Feed.
+
+FES-16
+Content must never own feed algorithms.
+
+FES-17
+Feed evolution must not affect content ownership.
+
+#### Governance Evolution Strategy
+Current Governance:
+
+Reports
+Moderation Actions
+
+Future Possibilities:
+
+Automated Detection
+Risk Scoring
+Moderator Tooling
+Governance Analytics
+
+Question:
+
+Where do these belong?
+
+Answer:
+
+Governance.
+
+Not Content.
+
+Not Community.
+
+FES-18
+Future governance intelligence belongs to Governance.
+
+FES-19
+Governance evolution must not require resource ownership changes.
+
+#### Stable Architectural Boundaries
+
+The following remain stable across future evolution:
+
+- Domain Ownership
+- Module Ownership
+- Capability Contracts
+- Governance Hierarchy
+- Feed Derived-Domain Model
+
+#### Scaling Trigger Rule
+
+Scaling actions require demonstrated operational pressure.
+
+Hypothetical future scale is not a trigger.
+
+Repository Scaling Trigger
+
+Consider evolution when:
+
+Repository complexity
+becomes difficult to maintain.
+
+Not before.
+
+Feed Scaling Trigger
+
+Consider evolution when:
+
+Feed query performance
+becomes measurable bottleneck.
+
+Not before.
+
+Database Scaling Trigger
+
+Consider decomposition when:
+
+Operational constraints
+justify separate ownership.
+
+Not before.
+
+Service Extraction Trigger
+
+Consider extraction when:
+
+Independent deployment
+becomes valuable.
+
+Not before.
+
+FES-20
+Scaling actions require demonstrated pressure.
+
+FES-21
+Hypothetical future scale is not a sufficient trigger.
+
+
+#### Architectural Migration Boundaries
+Stable Boundary 1
+
+Domain Ownership
+
+Must remain.
+
+Stable Boundary 2
+
+Module Ownership
+
+Must remain.
+
+Stable Boundary 3
+
+Capability Contracts
+
+Must remain.
+
+Stable Boundary 4
+
+Governance Authority Model
+
+Must remain.
+
+Stable Boundary 5
+
+Feed Derived-Domain Model
+
+Must remain.
+
+FES-22
+Future evolution must preserve ownership boundaries.
+
+FES-23
+Future evolution must preserve capability contracts.
+
+FES-24
+Future evolution must preserve governance hierarchy.
+
+FES-25
+Future evolution must preserve feed as a derived domain.
+
+
+---
+
+### Validation Summary
+
+Validated Against:
+
+- Architecture Drivers
+- Domain Architecture
+- Module Boundaries
+- Application Layer Architecture
+- Authorization Architecture
+- Governance Architecture
+- ADR-001
+
+Status:
+APPROVED
+
+#### Architectural Risks Review
+
+No blocking risks identified.
+
+Minor future considerations:
+
+Risk 1
+
+Feed query complexity may eventually increase.
+
+Mitigation:
+
+Already isolated behind Feed Query Services.
+
+Risk 2
+
+Governance review queries may grow.
+
+Mitigation:
+
+Already isolated behind Governance Query Services.
+
+Risk 3
+
+Repository growth in Content module.
+
+Mitigation:
+
+Repository ownership already split by resource.
+
+No redesign required.
+
+---
+
+##
