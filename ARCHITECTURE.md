@@ -13565,4 +13565,2745 @@ Media repositories remain private to the module.
 
 ---
 
+## Backend Error Handling Architecture
+
+### Error Handling Principles
+EHP-01 — Errors Are Domain-Aware
+
+Errors are not technical implementation details.
+
+Errors represent:
+
+Business rule violations
+Ownership violations
+Governance violations
+Resource state violations
+Infrastructure failures
+
+The architecture treats errors as first-class architectural objects.
+
+EHP-02 — Errors Originate At The Lowest Responsible Layer
+
+Errors should be created where knowledge exists.
+| Situation                | Owner                  |
+| ------------------------ | ---------------------- |
+| Invalid membership state | Community Domain       |
+| Post already deleted     | Content Domain         |
+| Unauthorized moderation  | Governance Domain      |
+| Database unavailable     | Infrastructure         |
+| Missing resource         | Repository/Application |
+
+EHP-03 — Errors Flow Upward Only
+
+Errors propagate:
+
+Infrastructure
+    ↑
+Repository
+    ↑
+Domain
+    ↑
+Application
+    ↑
+API
+
+No layer may push errors downward.
+
+EHP-04 — Error Translation Occurs At Boundaries
+
+Errors may be translated only when crossing architectural boundaries.
+
+Examples:
+
+MongoError
+    ↓
+InfrastructureError
+
+InfrastructureError
+    ↓
+InternalErrorResponse
+
+EHP-05 — Internal Errors Are Never API Contracts
+
+Internal implementation failures must never become client-visible responses.
+
+Examples:
+
+Forbidden:
+
+MongoDB exceptions
+Cloudinary exceptions
+Stack traces
+Collection names
+Internal queries
+File paths
+
+EHP-06 — Ownership Boundaries Apply To Errors
+
+The module that owns the violated rule owns the error.
+
+Example:
+
+Membership violation:
+
+Owned by Community module.
+
+Not Content.
+
+Even if Content triggered the workflow.
+
+### Error Taxonomy
+Category 1 — Validation Errors
+
+Purpose:
+
+Input violates API contract.
+
+Examples:
+
+Missing required field
+Invalid enum
+Invalid query parameter
+Invalid pagination
+Created By
+
+API Validation Layer
+
+May Be Transformed By
+
+Application Layer
+
+Exposed To Client
+
+Yes
+
+Category 2 — Authentication Errors
+
+Purpose:
+
+Identity cannot be established.
+
+Examples:
+
+Missing token
+Invalid token
+Expired session
+Created By
+
+Authentication middleware
+
+May Be Transformed By
+
+Application Layer
+
+Exposed
+
+Yes
+
+Category 3 — Authorization Errors
+
+Purpose:
+
+Actor lacks permission.
+
+Examples:
+
+Non-owner edits post
+Non-shepherd moderates herd
+Created By
+
+Authorization services
+
+Owned By
+
+Authorization Architecture
+
+Exposed
+
+Yes
+
+Category 4 — Ownership Errors
+
+Purpose:
+
+Ownership boundary violation.
+
+Examples:
+
+Edit foreign post
+Delete foreign image
+Modify foreign herd
+Created By
+
+Owning Domain
+
+Examples:
+
+Content
+Media
+Community
+Exposed
+
+Yes
+
+Category 5 — Governance Errors
+
+Purpose:
+
+Governance authority violation.
+
+Examples:
+
+Shepherd outside scope
+Invalid escalation
+Restricted actor attempt
+Created By
+
+Governance Module
+
+Exposed
+
+Yes
+
+Category 6 — Resource Errors
+
+Purpose:
+
+Requested resource unavailable.
+
+Examples:
+
+Post not found
+Herd not found
+Image not found
+Created By
+
+Repository/Application Layer
+
+Exposed
+
+Yes
+
+Category 7 — Conflict Errors
+
+Purpose:
+
+Requested state transition invalid.
+
+Examples:
+
+Already following
+Duplicate vote
+Already member
+Created By
+
+Owning Domain
+
+Exposed
+
+Yes
+
+Category 8 — Infrastructure Errors
+
+Purpose:
+
+Platform dependency unavailable.
+
+Examples:
+
+Mongo unavailable
+Storage unavailable
+Cache unavailable
+Created By
+
+Infrastructure Layer
+
+Exposed
+
+No
+
+Translated before API response.
+
+Category 9 — External Service Errors
+
+Purpose:
+
+Third-party integration failure.
+
+Examples:
+
+Cloudinary failure
+Email provider failure
+Created By
+
+Infrastructure Layer
+
+Exposed
+
+No
+
+Category 10 — Internal System Errors
+
+Purpose:
+
+Unexpected failure.
+
+Examples:
+
+Null state
+Invariant violation
+Unhandled exception
+Created By
+
+Any layer
+
+Exposed
+
+Never directly
+
+#### Layer Responsibility Model
+API Layer
+
+Owns:
+
+Request validation errors
+Error response generation
+Final translation boundary
+
+Must NOT:
+
+Create business errors
+Create governance errors
+Create ownership errors
+Rule ER-API-01
+
+Controllers may reject malformed requests.
+
+Controllers may not reject valid business requests.
+
+Application Layer
+
+Owns:
+
+Workflow-level error coordination
+Error propagation
+Boundary translation
+
+May:
+
+Translate lower-layer errors
+
+Must NOT:
+
+Create domain rules
+Domain Layer
+
+Owns:
+
+Business rule errors
+Ownership errors
+Lifecycle errors
+Conflict errors
+
+This becomes the primary business error owner.
+
+Repository Layer
+
+Owns:
+
+Resource retrieval failures
+Persistence translation
+
+May create:
+
+ResourceNotFound
+PersistenceFailure
+
+Must NOT create:
+
+Authorization errors
+Governance errors
+Business rule errors
+Infrastructure Layer
+
+Owns:
+
+External system failures
+Driver failures
+Network failures
+
+Must never expose raw implementation exceptions.
+
+### Error Ownership Model
+| Responsibility           | Owner                           |
+| ------------------------ | ------------------------------- |
+| Error Creation           | Layer where failure is detected |
+| Error Classification     | Error Origin Layer              |
+| Error Propagation        | All layers                      |
+| Error Translation        | Boundary-crossing layer         |
+| Error Logging            | Application + Infrastructure    |
+| Error Audit              | Governance                      |
+| HTTP Response Generation | API Layer                       |
+
+### Error Boundary Rules
+EBR-01 — Controllers Cannot Create Business Errors
+
+Forbidden:
+
+if (!membership)
+   return CannotPostInHerd
+
+Business errors belong to domain/application execution.
+
+EBR-02 — Repositories Cannot Create Domain Errors
+
+Forbidden:
+
+Repository:
+DuplicateVoteError
+
+Repositories do not understand voting rules.
+
+Only persistence.
+
+EBR-03 — Repositories May Create Resource Errors
+
+Allowed:
+
+PostNotFound
+
+because repository owns retrieval.
+
+EBR-04 — Infrastructure Cannot Leak Implementation Exceptions
+
+Forbidden:
+
+MongoServerError
+CloudinaryError
+AxiosError
+
+outside Infrastructure boundary.
+
+Must translate.
+
+EBR-05 — Domains Cannot Generate HTTP Errors
+
+Forbidden:
+
+404
+403
+409
+
+Domains create business errors.
+
+Not transport responses.
+
+EBR-06 — Application Services Are The Primary Error Boundary
+
+Application Services become the central location where:
+
+Domain errors converge
+Authorization errors converge
+Governance errors converge
+Infrastructure errors converge
+
+before reaching API translation.
+
+EBR-07 — Module Boundaries Preserve Error Ownership
+
+Example:
+
+Content Service
+    ↓
+Community Contract
+    ↓
+MembershipRequiredError
+
+The error remains Community-owned.
+
+Content must not reclassify it as a Content error.
+
+### Error Propagation Principles
+EPP-01 — Errors Propagate Toward Workflow Owners
+
+Errors always move upward toward the current workflow owner.
+
+For MVP:
+
+Infrastructure
+    ↑
+Repository
+    ↑
+Domain
+    ↑
+Application Service
+    ↑
+Controller
+    ↑
+Error Middleware
+
+The Application Service remains the primary error convergence point.
+
+EPP-02 — Workflow Owners Decide Outcomes
+
+The layer that owns the workflow determines:
+
+Continue
+Retry
+Rollback
+Abort
+
+For most workflows:
+
+Application Service
+
+owns that decision.
+
+EPP-03 — Error Translation Occurs Once
+
+Errors should not be repeatedly translated.
+
+Preferred:
+
+Mongo Error
+    ↓
+Infrastructure Error
+    ↑
+Application Service
+    ↑
+API Translation
+
+Avoid:
+
+Mongo Error
+ ↓
+Infra Error
+ ↓
+Repository Error
+ ↓
+Application Error
+ ↓
+Controller Error
+ ↓
+HTTP Error
+
+Excessive translation destroys error meaning.
+
+EPP-04 — Failed Workflows Terminate Early
+
+When a failure makes success impossible:
+
+Execution stops immediately.
+
+Example:
+
+User Restricted
+
+No reason to continue:
+
+Authorization
+Persistence
+Feed updates
+
+EPP-05 — Error Propagation Must Preserve Ownership
+
+Errors retain ownership while propagating.
+
+Example:
+
+CommunityMembershipRequiredError
+
+remains a Community error even when:
+
+Community
+  ↑
+Content
+  ↑
+Controller
+
+### Write Workflow Error Architecture
+Write Workflow Error Architecture
+
+Authoritative write flow:
+
+Controller
+    ↓
+Application Service
+    ↓
+Authorization
+    ↓
+Ownership
+    ↓
+Governance
+    ↓
+Domain Rules
+    ↓
+Repository
+    ↓
+Infrastructure
+Stage 1 — Controller Errors
+
+Possible Errors:
+
+ValidationError
+
+Examples:
+
+Missing title
+Invalid page
+Invalid body
+Propagation
+
+Stops immediately.
+
+Transaction
+
+Not started.
+
+Response
+
+Direct API error.
+
+Stage 2 — Authorization Errors
+
+Possible:
+
+AuthorizationError
+
+Examples:
+
+Cannot assign shepherd
+Cannot delete herd
+Propagation
+
+Authorization
+↑
+Application Service
+
+Stops.
+
+Transaction
+
+Never starts.
+
+Response
+
+403
+
+Stage 3 — Ownership Errors
+
+Examples:
+
+NotPostOwner
+NotImageOwner
+NotHerdOwner
+Propagation
+
+Ownership Validation
+↑
+Application Service
+
+Stops.
+
+Transaction
+
+Never starts.
+
+Response
+
+403
+
+Stage 4 — Governance Errors
+
+Examples:
+
+UserRestricted
+CommunityRestricted
+InvalidModerationScope
+Propagation
+
+Governance
+↑
+Application Service
+
+Stops.
+
+Transaction
+
+Never starts.
+
+Response
+
+403
+
+or
+
+409
+
+depending on approved API contract.
+
+Stage 5 — Domain Errors
+
+Examples:
+
+MembershipRequired
+DuplicateVote
+AlreadyFollowing
+Propagation
+
+Domain
+↑
+Application Service
+
+Stops workflow.
+
+Transaction
+
+May not yet exist.
+
+If transaction exists:
+
+Rollback.
+
+Stage 6 — Repository Errors
+
+Examples:
+
+PostNotFound
+MembershipNotFound
+Propagation
+
+Repository
+↑
+Application Service
+
+Stops workflow.
+
+Response
+
+404
+
+Stage 7 — Infrastructure Errors
+
+Examples:
+
+MongoUnavailable
+StorageUnavailable
+Propagation
+
+Infrastructure
+↑
+Repository
+↑
+Application Service
+
+Stops workflow.
+
+Transaction
+
+Rollback.
+
+Response
+
+500
+
+Write Workflow Failure Sequence
+
+Example:
+
+Create Herd Post
+
+Controller
+ ↓
+Application Service
+ ↓
+Authorization
+ ✓
+ ↓
+Membership Validation
+ ✗
+ ↓
+MembershipRequiredError
+ ↑
+Application Service
+ ↑
+Error Middleware
+ ↓
+403
+
+Persistence never executes.
+
+### Read Workflow Error Architecture
+Read Workflow Error Architecture
+
+Authoritative Read Flow
+
+Controller
+    ↓
+Application Service
+    ↓
+Authorization
+    ↓
+Visibility Evaluation
+    ↓
+Query Service
+    ↓
+Repository
+
+No transaction ownership.
+
+No mutation.
+
+Read Error Sources
+Validation
+
+Examples:
+
+Invalid pagination
+Invalid sorting
+
+Stops immediately.
+
+Authorization
+
+Examples:
+
+Private governance queue
+Restricted moderation view
+
+Stops immediately.
+
+Visibility Errors
+
+Examples:
+
+Restricted profile
+Restricted herd
+Hidden content
+
+Stops immediately.
+
+Resource Errors
+
+Examples:
+
+PostNotFound
+CommentNotFound
+
+Stops immediately.
+
+Infrastructure Errors
+
+Examples:
+
+Database unavailable
+Read timeout
+
+Stops immediately.
+
+Return:
+
+500
+
+Read Workflow Failure Example
+
+Get Herd
+
+Controller
+ ↓
+Application Service
+ ↓
+Visibility Validation
+ ✗
+ ↓
+RestrictedHerdError
+ ↑
+Application Service
+ ↑
+Controller
+ ↓
+403
+
+No repository query beyond visibility evaluation.
+
+### Governance Error Architecture
+Governance Error Architecture
+
+Governance workflows contain additional authority stages.
+
+Authoritative Governance Flow:
+
+Governance Application Service
+    ↓
+Authority Validation
+    ↓
+Hierarchy Validation
+    ↓
+Scope Validation
+    ↓
+Target Validation
+    ↓
+Moderation Rules
+    ↓
+Persistence
+Authority Validation Failures
+
+Examples:
+
+NotShepherd
+NotHerdOwner
+NotPlatformAdmin
+
+Propagation:
+
+Authority Validation
+    ↑
+Governance Service
+
+Stops immediately.
+
+Hierarchy Validation Failures
+
+Examples:
+
+CannotModerateHigherAuthority
+CannotOverrideAdmin
+
+Stops immediately.
+
+Scope Validation Failures
+
+Examples:
+
+OutsideHerdScope
+WrongCommunity
+InvalidTargetScope
+
+Stops immediately.
+
+Target Validation Failures
+
+Examples:
+
+ReportClosed
+TargetRemoved
+TargetNotFound
+
+Stops immediately.
+
+Enforcement Failures
+
+Examples:
+
+RestrictionAlreadyExists
+MembershipAlreadyRemoved
+
+Stops workflow.
+
+Rollback transaction.
+
+Governance Failure Example
+Review Report
+ ↓
+Authority Validation
+ ✓
+ ↓
+Scope Validation
+ ✗
+ ↓
+OutsideHerdScopeError
+ ↑
+Governance Service
+ ↑
+Controller
+ ↓
+403
+
+No moderation action created.
+
+No audit mutation created.
+
+### Feed Error Architecture
+Feed Error Architecture
+
+Feed is unique because it consumes multiple modules.
+
+Feed owns:
+
+No authoritative state
+No transactions
+No mutations
+
+Feed performs:
+
+Composition
+Filtering
+Aggregation
+Visibility
+Feed Error Sources
+Identity Failures
+
+Examples:
+
+Profile unavailable
+Identity lookup failure
+Social Graph Failures
+
+Examples:
+
+Follow query failure
+Content Failures
+
+Examples:
+
+Post retrieval failure
+Community Failures
+
+Examples:
+
+Membership visibility failure
+Governance Failures
+
+Examples:
+
+Visibility evaluation failure
+
+#### Feed Failure Model
+Rule FE-01 — Visibility Failure Is Fatal
+
+If Feed cannot determine visibility:
+
+Do Not Show Item
+
+Visibility defaults to deny.
+
+Security first.
+
+Rule FE-02 — Missing Item Is Non-Fatal
+
+Example:
+
+Deleted Post
+
+Remove item.
+
+Continue composition.
+
+Rule FE-03 — Composition Integrity Failure Is Fatal
+
+Example:
+
+Feed cannot determine actor identity.
+
+Abort feed request.
+
+Return error.
+
+Rule FE-04 — Feed Never Returns Restricted Data
+
+When uncertain:
+
+Hide
+Don't expose
+Feed Failure Example
+Feed Service
+ ↓
+Content Query
+ ✓
+ ↓
+Governance Visibility
+ ✗
+ ↓
+Visibility Unknown
+ ↓
+Exclude Item
+ ↓
+Continue Feed
+
+No restricted content leaks.
+
+### Error Propagation Architecture
+
+Authoritative Flow:
+
+Infrastructure
+↑
+Repository
+↑
+Domain
+↑
+Application Service
+↑
+Controller
+↑
+Error Middleware
+
+Application Services are the primary error convergence boundary.
+
+### Error Escalation Model
+Escalation Level 1 — Expected Business Error
+
+Examples:
+
+Authorization
+Ownership
+Conflict
+Resource
+
+Behavior:
+
+Stop Workflow
+Return Contract Error
+
+No alerts.
+
+No operational escalation.
+
+Escalation Level 2 — Governance Failure
+
+Examples:
+
+Authority Violation
+Invalid Escalation
+Scope Violation
+
+Behavior:
+
+Stop Workflow
+Audit
+Return Contract Error
+
+Governance visibility required.
+
+Escalation Level 3 — Infrastructure Failure
+
+Examples:
+
+Mongo Down
+Storage Failure
+Email Provider Failure
+
+Behavior:
+
+Rollback
+Log
+Operational Visibility
+Return 500
+Escalation Level 4 — Internal System Failure
+
+Examples:
+
+Unhandled Exception
+Invariant Violation
+Unexpected State
+
+Behavior:
+
+Rollback
+Log
+Correlate
+Operational Alert Candidate
+Return 500
+
+#### Rollback Rules
+RR-01
+
+Validation failures:
+
+No transaction
+No rollback
+RR-02
+
+Authorization failures:
+
+No transaction
+No rollback
+RR-03
+
+Governance failures:
+
+No transaction
+No rollback
+RR-04
+
+Domain failures before persistence:
+
+No rollback
+RR-05
+
+Failures after transaction start:
+
+Rollback Required
+
+Examples:
+
+Repository failures
+Infrastructure failures
+Enforcement failures
+
+### Error Translation Principles
+ETP-01 — Internal Errors And API Errors Are Different Things
+
+Internal errors exist to support:
+
+Business execution
+Debugging
+Logging
+Auditability
+Operations
+
+API errors exist to support:
+
+Client behavior
+API contracts
+User feedback
+
+They are not the same object.
+
+Example
+
+Internal:
+
+MembershipRequiredError
+
+External:
+
+{
+  "error": {
+    "code": "MEMBERSHIP_REQUIRED",
+    "message": "Membership is required."
+  }
+}
+
+The internal implementation remains hidden.
+
+ETP-02 — Translation Occurs At Architectural Boundaries
+
+Translation occurs only when crossing:
+
+Internal Architecture
+        ↓
+API Boundary
+
+Errors remain internal until response generation.
+
+ETP-03 — Translation Must Preserve Meaning
+
+Translation may simplify.
+
+Translation may sanitize.
+
+Translation must not change business meaning.
+
+Example:
+
+Allowed:
+
+ShepherdOutsideScopeError
+        ↓
+403 GOVERNANCE_SCOPE_VIOLATION
+
+Forbidden:
+
+ShepherdOutsideScopeError
+        ↓
+500 INTERNAL_ERROR
+
+Meaning lost.
+
+ETP-04 — Translation Must Never Leak Implementation
+
+Clients should never learn:
+
+Database structure
+Collection names
+Query logic
+Cloudinary internals
+Driver exceptions
+Stack traces
+ETP-05 — External Contracts Remain Stable
+
+Internal implementation may evolve.
+
+External contracts remain unchanged.
+
+This supports future extraction readiness.
+
+### Internal Error Model
+Decision
+
+Adopt a typed internal error hierarchy.
+
+Authoritative model:
+
+BaseError
+│
+├── ValidationError
+├── AuthenticationError
+├── AuthorizationError
+├── OwnershipError
+├── GovernanceError
+├── ResourceError
+├── ConflictError
+├── InfrastructureError
+├── ExternalServiceError
+└── InternalSystemError
+
+#### Base Error Architecture
+BaseError
+
+Every internal error inherits:
+
+errorType
+errorCode
+message
+module
+workflow
+severity
+cause
+metadata
+Purpose
+
+Provides:
+
+Consistent propagation
+Consistent logging
+Consistent translation
+Consistent observability
+
+#### Domain Error Model
+ValidationError
+
+Examples:
+
+InvalidPagination
+InvalidSortField
+InvalidRequestBody
+
+Created By:
+
+API Validation
+AuthenticationError
+
+Examples:
+
+MissingAuthentication
+ExpiredSession
+InvalidToken
+
+Created By:
+
+Identity Module
+Authentication Middleware
+AuthorizationError
+
+Examples:
+
+InsufficientPermissions
+RoleRequired
+OperationForbidden
+
+Created By:
+
+Authorization Services
+OwnershipError
+
+Examples:
+
+NotPostOwner
+NotImageOwner
+NotHerdOwner
+
+Created By:
+
+Owning Domain
+GovernanceError
+
+Examples:
+
+ActorRestricted
+ScopeViolation
+HierarchyViolation
+InvalidModerationAction
+
+Created By:
+
+Governance Module
+ResourceError
+
+Examples:
+
+PostNotFound
+HerdNotFound
+ImageNotFound
+
+Created By:
+
+Repository/Application
+ConflictError
+
+Examples:
+
+AlreadyFollowing
+AlreadyMember
+DuplicateVote
+
+Created By:
+
+Domain Layer
+InfrastructureError
+
+Examples:
+
+DatabaseUnavailable
+StorageUnavailable
+CacheUnavailable
+
+Created By:
+
+Infrastructure
+ExternalServiceError
+
+Examples:
+
+CloudinaryUnavailable
+EmailProviderUnavailable
+
+Created By:
+
+Infrastructure
+InternalSystemError
+
+Examples:
+
+UnexpectedState
+InvariantViolation
+UnhandledException
+
+Created By:
+
+Any layer.
+
+### Error Translation Model
+#### Layer Translation Responsibilities
+API Layer
+
+Owns:
+
+Internal Error
+        ↓
+API Error Response
+
+This is the final translation boundary.
+
+API Layer Must Never
+
+Create:
+
+OwnershipError
+GovernanceError
+ConflictError
+
+Those belong below.
+
+Application Layer
+
+Owns:
+
+Boundary translation.
+
+Examples:
+
+MongoServerError
+        ↓
+InfrastructureError
+CloudinaryError
+        ↓
+ExternalServiceError
+
+Application Services normalize errors.
+
+Domain Layer
+
+May create:
+
+Business Errors
+
+Must not translate into HTTP concepts.
+
+Forbidden:
+
+403
+404
+409
+
+inside Domain.
+
+Repository Layer
+
+May translate:
+
+Mongo Not Found
+        ↓
+ResourceError
+
+Must not expose driver exceptions.
+
+Infrastructure Layer
+
+Must translate:
+
+MongoServerError
+NetworkError
+CloudinaryError
+
+into platform-owned error types.
+
+#### Translation Flow Architecture
+Domain Error Example
+Content Domain
+        ↓
+MembershipRequiredError
+        ↑
+Application Service
+        ↑
+Controller
+        ↑
+Error Middleware
+        ↓
+403
+
+Error ownership preserved.
+
+Repository Error Example
+Mongo Query
+        ↓
+Document Missing
+        ↓
+PostNotFoundError
+        ↑
+Application Service
+        ↑
+API
+        ↓
+404
+Infrastructure Error Example
+Mongo Timeout
+        ↓
+DatabaseUnavailableError
+        ↑
+Application Service
+        ↑
+API
+        ↓
+500
+
+Mongo never reaches clients.
+
+### Error Translation Architecture
+
+Internal errors are translated into API contract errors only at the API boundary.
+
+Infrastructure details must never be exposed externally.
+
+#### Module Boundary Translation Model
+Decision
+
+Modules expose contract errors.
+
+Not raw errors.
+
+Not implementation errors.
+
+Authoritative Pattern
+Content Module
+        ↓
+Community Contract
+        ↓
+MembershipRequiredError
+
+Allowed.
+
+Forbidden Pattern
+Content Module
+        ↓
+Community Repository
+        ↓
+Mongo Exception
+
+Forbidden.
+
+Why
+
+Capability contracts must remain stable.
+
+Module consumers should never depend on:
+
+Persistence
+Drivers
+Storage
+
+This directly supports future extraction.
+
+### HTTP Mapping Architecture
+HTTP Mapping Architecture
+
+This layer preserves the approved API Error Contract.
+
+HTTP 400
+
+Maps To:
+
+ValidationError
+
+Examples:
+
+InvalidRequest
+InvalidPagination
+InvalidFilter
+HTTP 401
+
+Maps To:
+
+AuthenticationError
+
+Examples:
+
+InvalidToken
+MissingAuthentication
+ExpiredSession
+HTTP 403
+
+Maps To:
+
+AuthorizationError
+OwnershipError
+GovernanceError
+
+Examples:
+
+NotOwner
+InsufficientPermission
+RestrictedActor
+HTTP 404
+
+Maps To:
+
+ResourceError
+
+Examples:
+
+PostNotFound
+CommentNotFound
+ProfileNotFound
+HTTP 409
+
+Maps To:
+
+ConflictError
+
+Examples:
+
+DuplicateVote
+AlreadyFollowing
+AlreadyMember
+HTTP 429
+
+Maps To:
+
+RateLimitExceeded
+
+Infrastructure-adjacent but externally visible.
+
+HTTP 500
+
+Maps To:
+
+InfrastructureError
+ExternalServiceError
+InternalSystemError
+
+Examples:
+
+DatabaseUnavailable
+CloudinaryUnavailable
+UnexpectedState
+
+### Information Exposure Rules
+IER-01 — No Infrastructure Details
+
+Never expose:
+
+MongoServerError
+MongoTimeout
+ConnectionPoolError
+IER-02 — No Cloudinary Details
+
+Never expose:
+
+CloudinaryError
+CloudinaryResponse
+CloudinaryRequest
+IER-03 — No Stack Traces
+
+Never expose:
+
+Stack traces
+File paths
+Line numbers
+IER-04 — No Query Information
+
+Never expose:
+
+Aggregation pipeline
+Collection names
+Indexes
+Queries
+IER-05 — No Security Internals
+
+Never expose:
+
+Permission evaluation
+Authorization logic
+Governance logic
+
+Only outcomes.
+
+IER-06 — Governance Must Be Sanitized
+
+Allowed:
+
+Insufficient moderation authority.
+
+Forbidden:
+
+Actor failed shepherd hierarchy rule 4.
+IER-07 — Unknown Failures Default To Generic Internal Error
+
+Fallback:
+
+{
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "message": "An unexpected error occurred."
+  }
+}
+
+No additional information.
+
+### Future Service Extraction Readiness
+
+Current:
+
+Module
+    ↓
+Module Contract
+    ↓
+Module
+
+Future:
+
+Service
+    ↓
+API Contract
+    ↓
+Service
+
+Error model remains unchanged.
+
+Because:
+
+Errors are contract-based.
+Errors are not persistence-based.
+Errors are not framework-based.
+
+This is fully compatible with ADR-001 future extraction goals.
+
+### Error Visibility Principles
+EVP-01 — Not All Errors Are Equal
+
+The architecture distinguishes between:
+
+Business Errors
+
+Expected failures.
+
+Examples:
+
+AlreadyFollowing
+MembershipRequired
+NotPostOwner
+
+These are part of normal system behavior.
+
+Operational Errors
+
+Unexpected failures.
+
+Examples:
+
+MongoUnavailable
+CloudinaryUnavailable
+UnhandledException
+
+These indicate system problems.
+
+Governance Errors
+
+Authority-related failures.
+
+Examples:
+
+InvalidModerationScope
+HierarchyViolation
+UnauthorizedModerationAttempt
+
+These may require auditing.
+
+EVP-02 — Logging And Auditing Are Different Concerns
+
+Logging answers:
+
+What happened?
+
+Auditing answers:
+
+Who did what?
+Why?
+Against whom?
+
+Logs are operational.
+
+Audit records are governance artifacts.
+
+Never combine them.
+
+EVP-03 — Every Error Must Be Traceable
+
+Every significant failure must be traceable through:
+
+Request
+    ↓
+Controller
+    ↓
+Application Service
+    ↓
+Module
+    ↓
+Repository
+    ↓
+Infrastructure
+
+No error should become anonymous.
+
+EVP-04 — Security Overrides Visibility
+
+Operational visibility must never expose:
+
+Tokens
+Passwords
+Session secrets
+Internal permissions
+Infrastructure credentials
+
+Security remains the highest priority.
+
+### Error Logging Architecture
+#### Logging Responsibility Model
+| Error Type         | Log Required |
+| ------------------ | ------------ |
+| Validation         | No (default) |
+| Authentication     | Yes          |
+| Authorization      | Yes          |
+| Ownership          | Optional     |
+| Governance         | Yes          |
+| Resource Not Found | Optional     |
+| Conflict           | Optional     |
+| Infrastructure     | Mandatory    |
+| External Service   | Mandatory    |
+| Internal System    | Mandatory    |
+
+#### Logging Classification Model
+Level 1 — Debug
+
+Purpose:
+
+Development diagnostics.
+
+Examples:
+
+Validation failures
+Expected conflicts
+
+Not required in production.
+
+Level 2 — Info
+
+Purpose:
+
+Important workflow outcomes.
+
+Examples:
+
+Governance action denied
+Authentication failure
+Level 3 — Warning
+
+Purpose:
+
+Suspicious or unusual behavior.
+
+Examples:
+
+Repeated authorization failures
+Repeated moderation failures
+Level 4 — Error
+
+Purpose:
+
+Workflow failure.
+
+Examples:
+
+Database unavailable
+Storage unavailable
+Repository failure
+Level 5 — Critical
+
+Purpose:
+
+System integrity risk.
+
+Examples:
+
+Unhandled exception
+Invariant violation
+Corrupted state detection
+
+#### Structured Error Logging Architecture
+Decision
+
+Adopt structured logging.
+
+Never rely on free-form strings.
+
+Standard Error Log Structure
+
+Every error log should contain:
+
+timestamp
+requestId
+errorCode
+errorType
+severity
+module
+workflow
+userId
+resourceType
+resourceId
+message
+Example
+{
+  "timestamp": "2026-06-24T12:00:00Z",
+  "requestId": "req_123",
+  "errorCode": "POST_NOT_FOUND",
+  "errorType": "ResourceError",
+  "severity": "warning",
+  "module": "Content",
+  "workflow": "EditPost",
+  "userId": "user_456",
+  "resourceType": "Post",
+  "resourceId": "post_789"
+}
+
+#### Logging Ownership Model
+API Layer
+
+May log:
+
+Request correlation
+Response outcome
+
+Must not own error logging.
+
+Application Layer
+
+Primary logging owner.
+
+Responsible for:
+
+Workflow failure logging
+Cross-module failure logging
+Governance workflow logging
+
+Application Services become the primary logging boundary.
+
+Domain Layer
+
+May create error metadata.
+
+Must not write logs directly.
+
+This preserves separation of concerns.
+
+Repository Layer
+
+May log:
+
+Persistence failures
+
+Must not log business failures.
+
+Infrastructure Layer
+
+Owns:
+
+Database failures
+Network failures
+Storage failures
+
+Must emit structured operational logs.
+
+### Governance Audit Error Model
+Governance introduces special requirements.
+
+Auditability is a first-class architecture driver.
+
+Audit Principle
+
+Not every governance error becomes an audit record.
+
+Only authority-relevant failures.
+
+Must Audit
+Unauthorized Moderation Attempt
+
+Example:
+
+Member attempts moderation action
+
+Reason:
+
+Potential abuse attempt.
+
+Governance Scope Violation
+
+Example:
+
+Shepherd moderates wrong herd
+
+Reason:
+
+Authority boundary violation.
+
+Hierarchy Violation
+
+Example:
+
+Shepherd attempts override of Herd Owner
+
+Reason:
+
+Governance integrity concern.
+
+Invalid Escalation Attempt
+
+Example:
+
+Escalate closed report
+
+Reason:
+
+Governance workflow violation.
+
+Governance Override Failure
+
+Example:
+
+Invalid restoration
+Invalid reversal
+
+Reason:
+
+Oversight visibility.
+
+Not Required For Audit
+
+Examples:
+
+Report not found
+Already restricted
+Already restored
+
+These are operational workflow outcomes.
+
+Not authority violations.
+
+Governance Audit Record Structure
+
+Governance audit failures should contain:
+
+auditId
+timestamp
+actorId
+actorRole
+workflow
+action
+targetType
+targetId
+failureCode
+failureReason
+requestId
+Example
+{
+  "actorId": "user_123",
+  "actorRole": "Shepherd",
+  "action": "RestrictPost",
+  "targetType": "Post",
+  "targetId": "post_789",
+  "failureCode": "SCOPE_VIOLATION",
+  "requestId": "req_456"
+}
+
+### Governance Audit Architecture
+
+Governance authority violations must generate audit records.
+
+Audit records remain distinct from operational logs.
+
+### Error Correlation Model
+Problem
+
+A single error may travel through:
+
+Controller
+ ↓
+Application Service
+ ↓
+Repository
+ ↓
+Infrastructure
+
+Without correlation:
+
+4 separate logs
+0 visibility
+Decision
+
+Adopt Request Correlation IDs.
+
+Every request receives:
+
+requestId
+
+at the API boundary.
+
+Correlation Flow
+HTTP Request
+    ↓
+requestId generated
+    ↓
+Controller
+    ↓
+Application Service
+    ↓
+Repository
+    ↓
+Infrastructure
+
+All logs include the same identifier.
+
+Correlation Requirements
+EC-01
+
+Every error log contains:
+
+requestId
+
+Mandatory.
+
+EC-02
+
+Cross-module workflows preserve requestId.
+
+Example:
+
+Content
+ ↓
+Community
+ ↓
+Governance
+
+Same requestId.
+
+EC-03
+
+Infrastructure logs preserve requestId.
+
+Example:
+
+Mongo timeout
+
+must remain linked to originating request.
+
+EC-04
+
+Governance audit records include requestId.
+
+Allows correlation between:
+
+Audit Record
++
+Operational Logs
+
+#### Workflow Failure Traceability Model
+Write Workflow
+Request
+ ↓
+requestId
+ ↓
+Controller
+ ↓
+Application Service
+ ↓
+Authorization
+ ↓
+Governance
+ ↓
+Repository
+ ↓
+Infrastructure
+
+Failure can be reconstructed.
+
+Governance Workflow
+Request
+ ↓
+Authority Validation
+ ↓
+Hierarchy Validation
+ ↓
+Scope Validation
+ ↓
+Enforcement
+
+Every stage traceable.
+
+Feed Workflow
+Feed Request
+ ↓
+Identity Query
+ ↓
+Social Graph Query
+ ↓
+Content Query
+ ↓
+Governance Visibility
+ ↓
+Composition
+
+Failures remain correlated.
+
+### Operational Visibility Foundation
+The MVP does not require:
+
+Distributed tracing
+OpenTelemetry
+Metrics platform
+Log aggregation infrastructure
+Alerting infrastructure
+
+These belong to future Observability Architecture.
+
+MVP Requires
+Structured Logs
+
+Mandatory.
+
+Request Correlation IDs
+
+Mandatory.
+
+Governance Audit Records
+
+Mandatory.
+
+Error Classification
+
+Mandatory.
+
+Consistent Error Metadata
+
+Mandatory.
+
+### Error Logging Rules
+ELR-01
+Business errors may be logged.
+Operational errors must be logged.
+
+ELR-02
+Governance authority violations must be auditable.
+
+ELR-03
+Every operational error must contain requestId.
+
+ELR-04
+Audit records and logs remain separate systems.
+
+ELR-05
+Application Services remain the primary logging boundary.
+
+ELR-06
+Domain objects never write logs.
+
+ELR-07
+Infrastructure exceptions must be correlated.
+
+ELR-08
+No sensitive information may appear in logs.
+
+### Error Evolution Principles
+EES-01 — Error Contracts Must Outlive Implementations
+
+Implementations change.
+
+Error contracts should remain stable.
+
+EES-02 — Errors Must Remain Domain-Oriented
+
+EES-03 — Error Ownership Follows Domain Ownership
+
+Future features may add:
+
+New modules
+New services
+New infrastructure
+
+Error ownership remains with the domain that owns the rule.
+
+This preserves architectural consistency.
+
+EES-04 — Translation Boundaries Must Remain Stable
+
+Future systems may introduce:
+
+Queues
+Workers
+Search
+Cache
+Third-party APIs
+
+Translation architecture remains:
+
+Internal Error
+        ↓
+Contract Error
+
+unchanged.
+
+### Error Evolution Architecture
+
+- Error ownership remains module-scoped.
+- Error contracts remain stable.
+- Service extraction must not require error redesign.
+
+#### Background Job Evolution
+Potential Future Capabilities
+
+Examples:
+
+Email Delivery
+Report Processing
+Cleanup Tasks
+Feed Rebuilding
+Media Cleanup
+New Error Sources
+
+Examples:
+
+JobExecutionFailure
+JobTimeout
+JobRetryExhausted
+JobCancelled
+Architectural Decision
+
+Background jobs should use the same internal hierarchy.
+
+Example:
+
+InfrastructureError
+        └── JobExecutionError
+
+No parallel error system.
+
+Error Ownership
+
+Workflow owner remains:
+
+Responsible Module
+
+Example:
+
+Media Cleanup Failure
+
+belongs to:
+
+Media Module
+
+not a generic background-job module.
+
+#### Notification System Evolution
+
+Future:
+
+Email Notifications
+Push Notifications
+In-App Notifications
+New Error Sources
+
+Examples:
+
+DeliveryFailure
+ProviderUnavailable
+NotificationTimeout
+Architectural Decision
+
+Classify as:
+
+ExternalServiceError
+
+or
+
+InfrastructureError
+
+depending on source.
+
+No new top-level category required.
+
+#### Search Architecture Evolution
+
+Future:
+
+Search Index
+Full Text Search
+Search Projections
+New Error Sources
+
+Examples:
+
+IndexUnavailable
+SearchTimeout
+ProjectionFailure
+Architectural Decision
+
+Classify as:
+
+InfrastructureError
+
+until Search becomes an independent module.
+
+If Search becomes a module:
+
+SearchError
+
+may be introduced.
+
+Not before.
+
+Evolution Rule
+
+Do not create categories for domains that do not yet exist.
+
+#### Cache Evolution
+
+Future:
+
+Redis
+Response Cache
+Feed Cache
+New Error Sources
+
+Examples:
+
+CacheUnavailable
+CacheTimeout
+CacheCorruption
+Architectural Decision
+
+Classify as:
+
+InfrastructureError
+Critical Rule
+
+Cache failures must not become business failures.
+
+Example:
+
+Cache Failure
+        ↓
+Fallback To Source
+
+when possible.
+
+#### External Integration Evolution
+
+Future:
+
+OAuth
+Email Provider
+Analytics
+Spam Detection
+AI Services
+New Error Sources
+
+Examples:
+
+ProviderUnavailable
+ProviderRejectedRequest
+RateLimitExceeded
+InvalidProviderResponse
+Architectural Decision
+
+Remain under:
+
+ExternalServiceError
+
+No redesign required.
+
+#### Media Pipeline Evolution
+
+Current Media:
+
+Upload
+Attach
+Delete
+
+Future Media:
+
+Compression
+Resizing
+Thumbnail Generation
+Moderation Scanning
+New Error Sources
+
+Examples:
+
+ImageProcessingFailure
+CompressionFailure
+ThumbnailFailure
+ModerationScanFailure
+Architectural Decision
+
+Remain owned by:
+
+Media Module
+
+and classified as:
+
+InfrastructureError
+
+or
+
+ExternalServiceError
+
+depending on implementation.
+
+#### Modular Monolith Evolution Validation
+
+Current Architecture
+
+Identity
+Social Graph
+Content
+Community
+Media
+Governance
+Feed
+
+Each module owns:
+
+Business rules
+Errors
+Error codes
+Error semantics
+
+This must remain authoritative.
+
+#### Module Error Ownership Rule
+EER-01
+
+A module owns the errors produced by rules it owns.
+
+Example:
+
+Community
+    ↓
+MembershipRequiredError
+
+Owned by Community forever.
+
+EER-02
+
+Consuming modules must never redefine foreign errors.
+
+Example:
+
+Forbidden:
+
+Content
+    ↓
+Translate MembershipRequired
+    ↓
+ContentError
+
+Ownership lost.
+
+EER-03
+
+Cross-module contracts expose contract errors.
+
+Not implementation errors.
+
+This remains compatible with service extraction.
+
+### Service Extraction Readiness Assessment
+The error architecture should require no redesign.
+
+Current State
+Content
+    ↓
+Community Contract
+    ↓
+MembershipRequiredError
+Future State
+Content Service
+    ↓
+HTTP/gRPC/API
+    ↓
+Community Service
+    ↓
+MembershipRequiredError
+
+Error meaning remains unchanged.
+
+Why This Works
+
+Because errors are:
+
+Contract-Based
+
+rather than:
+
+Implementation-Based
+
+### Future Error Handling Guidance
+#### Future Distributed System Compatibility
+If modules become services:
+
+Current:
+
+DomainError
+
+Future:
+
+RemoteDomainError
+
+Translation still produces:
+
+MembershipRequired
+
+externally.
+
+Evolution Rule
+
+Service boundaries may change.
+
+Error semantics must not.
+
+#### Future Observability Compatibility
+
+A future Observability Architecture may introduce:
+
+Metrics
+Distributed Tracing
+Alerting
+Dashboards
+OpenTelemetry
+
+The current architecture already provides:
+
+requestId
+errorCode
+module
+workflow
+severity
+
+Therefore observability can be added incrementally.
+
+No redesign required.
+
+#### Future Error Category Governance
+Decision
+
+Top-level error categories should remain stable.
+
+Current hierarchy:
+
+ValidationError
+AuthenticationError
+AuthorizationError
+OwnershipError
+GovernanceError
+ResourceError
+ConflictError
+InfrastructureError
+ExternalServiceError
+InternalSystemError
+Rule FEG-01
+
+New subtypes may be added freely.
+
+Example:
+
+InfrastructureError
+    ├── DatabaseUnavailable
+    ├── CacheUnavailable
+    ├── SearchUnavailable
+
+Allowed.
+
+Rule FEG-02
+
+New top-level categories require architectural justification.
+
+This prevents taxonomy explosion.
+
+#### Future Governance Compatibility
+
+Governance is expected to grow significantly.
+
+Potential additions:
+
+Appeals
+Moderator Reviews
+Reputation Systems
+Automated Moderation
+Architectural Decision
+
+All governance-related failures remain:
+
+GovernanceError
+
+subtypes.
+
+Example:
+
+AppealNotEligible
+AutomatedReviewBlocked
+ModeratorReviewConflict
+
+No redesign required.
+
+---
+
 ##
