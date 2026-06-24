@@ -10322,4 +10322,1827 @@ No redesign required.
 
 ---
 
-##
+## Backend Feed Architecture
+
+### Feed Architectural Position
+
+Feed is a Derived Domain.
+
+Feed exists to provide content consumption views.
+
+Feed:
+
+- Owns no authoritative resources.
+- Owns no aggregates.
+- Owns no lifecycle.
+- Owns no governance workflows.
+- Owns no business state.
+
+Feed remains permanently read-only.
+
+Feed consumes information from:
+
+- Identity
+- Social Graph
+- Content
+- Community
+- Media
+- Governance
+
+Feed may compose feed views.
+
+Feed may not modify domain state.
+
+---
+
+### Feed Responsibility Model
+
+#### Feed-Owned Concerns
+FR-01 — Feed Composition
+
+Feed owns composition of feed views.
+
+Examples:
+
+Following Feed
+Herd Feed
+
+Composition means:
+
+Collecting eligible content
+Combining content into a feed response
+Producing a feed representation
+
+Feed does not create content.
+
+Feed only assembles content.
+
+FR-02 — Feed Visibility Evaluation
+
+Feed owns visibility evaluation during feed generation.
+
+Examples:
+
+Author visibility evaluation
+Governance visibility evaluation
+Membership visibility evaluation
+Herd visibility evaluation
+
+Feed determines:
+
+Can this item appear?
+
+Feed does not determine:
+
+Should this item be moderated?
+
+FR-03 — Feed Filtering
+
+Feed owns filtering of ineligible content.
+
+Examples:
+
+Restricted content
+Restricted authors
+Restricted communities
+Invisible membership contexts
+
+Feed removes items that fail visibility requirements.
+
+FR-04 — Feed Ordering
+
+Feed owns feed ordering.
+
+Approved MVP ordering:
+
+Newest First
+Deterministic Ordering
+
+Already defined in Feed APIs and Architecture Drivers.
+
+Feed does not rank.
+
+Feed does not score.
+
+Feed does not recommend.
+
+FR-05 — Feed Retrieval
+
+Feed owns feed retrieval workflows.
+
+Examples:
+
+Retrieve Following Feed
+Retrieve Herd Feed
+
+Feed exposes:
+
+GET /feeds/following
+GET /feeds/herds
+
+as approved API capabilities.
+
+#### Feed-Consumed Concerns
+Identity
+
+Consumes:
+
+Author identity
+Author visibility information
+Profile visibility information
+
+Purpose:
+
+Determine whether author information may appear in a feed.
+
+Social Graph
+
+Consumes:
+
+Follow relationships
+
+Purpose:
+
+Construct Following Feed candidate set.
+
+Content
+
+Consumes:
+
+Posts
+Post metadata
+Post timestamps
+Vote totals
+Content visibility information
+
+Purpose:
+
+Provide feed items.
+
+Community
+
+Consumes:
+
+Herd information
+Membership information
+Herd visibility information
+
+Purpose:
+
+Construct Herd Feed candidate set.
+
+Media
+
+Consumes:
+
+Image references
+Media visibility information
+
+Purpose:
+
+Enrich feed item representation.
+
+Governance
+
+Consumes:
+
+Moderation outcomes
+Enforcement outcomes
+Visibility restrictions
+
+Purpose:
+
+Remove ineligible content.
+
+Governance remains the authority.
+
+Feed only consumes outcomes.
+
+#### Feed-Forbidden Concerns
+FF-01 — Content Creation
+
+Feed may never:
+
+Create posts
+Create comments
+Create votes
+
+Content owns those workflows.
+
+FF-02 — Content Modification
+
+Feed may never:
+
+Edit posts
+Remove posts
+Restore posts
+Change vote totals
+
+FF-03 — Community Modification
+
+Feed may never:
+
+Join Herds
+Leave Herds
+Remove members
+Assign shepherds
+
+Community owns these workflows.
+
+FF-04 — Governance Operations
+
+Feed may never:
+
+Create reports
+Execute moderation
+Escalate moderation
+Restrict resources
+Restore resources
+
+Governance owns these workflows.
+
+FF-05 — Identity Modification
+
+Feed may never:
+
+Modify profiles
+Modify accounts
+Restrict users
+
+FF-06 — Lifecycle Ownership
+
+Feed may never:
+
+Create lifecycle states
+Transition lifecycle states
+Persist lifecycle states
+
+Feed owns no lifecycle.
+
+FF-07 — Persistence Ownership
+
+Feed may never:
+
+Own collections
+Own repositories
+Own authoritative records
+
+Feed is derived.
+
+Feed is not a source of truth.
+
+FF-08 — Recommendation Responsibilities
+
+Explicitly forbidden for MVP:
+
+Recommendation engines
+Ranking systems
+Personalization
+Trending feeds
+Engagement scoring
+
+Consistent with architecture constraints and task requirements.
+
+#### Feed Responsibility Rules (Authoritative)
+FRR-01
+Feed may compose.
+Feed may not create.
+
+FRR-02
+Feed may retrieve.
+Feed may not modify.
+
+FRR-03
+Feed may filter.
+Feed may not govern.
+
+FRR-04
+Feed may consume governance outcomes.
+Feed may not generate governance outcomes.
+
+FRR-05
+Feed may reference authoritative resources.
+Feed may not own authoritative resources.
+
+FRR-06
+Feed may order content.
+Feed may not rank content.
+
+FRR-07
+Feed may evaluate visibility.
+Feed may not evaluate moderation authority.
+
+FRR-08
+Feed remains read-only under all circumstances.
+No exceptions.
+
+---
+
+### Feed Composition Architecture
+
+#### Approved Feed Types
+
+MVP supports:
+
+- Following Feed
+- Herd Feed
+
+No additional feed types are approved.
+
+#### Feed Composition Principles
+FCP-01 — Feed Is Composed, Never Stored
+
+Feed views are generated from authoritative domain data.
+
+Feed does not own feed records.
+
+Feed does not persist feed items.
+
+Feed does not maintain feed state.
+
+FCP-02 — Feed Composition Is Deterministic
+
+Given identical:
+
+User
+Visibility state
+Governance state
+Content state
+
+Feed generation must produce identical results.
+
+No randomness.
+
+No ranking.
+
+No recommendation logic.
+
+FCP-03 — Feed Composition Consumes Authority Decisions
+
+Feed does not make authority decisions.
+
+Feed consumes:
+
+Authorization outcomes
+Membership outcomes
+Governance outcomes
+
+produced elsewhere.
+
+FCP-04 — Visibility Before Composition
+
+Visibility eligibility must be determined before feed assembly.
+
+Invisible items never participate in composition.
+
+FCP-05 — Ordering Happens After Eligibility
+
+Feed ordering applies only to eligible items.
+
+Workflow:
+
+Candidate Items
+→ Visibility Filtering
+→ Eligibility Filtering
+→ Ordering
+→ Response
+
+#### Following Feed Composition Inputs
+Social Graph Inputs
+
+Consumes:
+
+Follow Relationships
+
+Purpose:
+
+Determine feed source authors.
+
+Content Inputs
+
+Consumes:
+
+Personal Posts
+Herd Posts
+Post Metadata
+Post Timestamps
+
+Purpose:
+
+Provide candidate feed items.
+
+Identity Inputs
+
+Consumes:
+
+Author Information
+Author Visibility State
+
+Purpose:
+
+Validate author visibility.
+
+Community Inputs
+
+Consumes:
+
+Herd Visibility Information
+Membership Visibility Information
+
+Purpose:
+
+Validate herd-context posts.
+
+Governance Inputs
+
+Consumes:
+
+Post Restrictions
+Author Restrictions
+Herd Restrictions
+
+Purpose:
+Remove ineligible items.
+
+#### Following Feed Composition Workflow
+User
+    ↓
+Load Follow Relationships
+    ↓
+Identify Followed Authors
+    ↓
+Retrieve Candidate Posts
+    ↓
+Evaluate Visibility
+    ↓
+Apply Governance Outcomes
+    ↓
+Remove Ineligible Posts
+    ↓
+Order By CreatedAt DESC
+    ↓
+Generate Feed Response
+
+#### Following Feed Eligibility Model
+A post is eligible only when all conditions are satisfied.
+
+FFE-01 — Author Eligibility
+Author must be visible.
+
+Examples:
+
+Allowed:
+
+Active profile
+
+Rejected:
+
+Restricted profile
+Invisible profile
+
+FFE-02 — Post Eligibility
+Post must be visible.
+
+Examples:
+
+Allowed:
+
+Active post
+
+Rejected:
+
+Removed post
+Restricted post
+
+FFE-03 — Herd Context Eligibility
+For Herd Posts:
+
+The herd must remain visible.
+
+Examples:
+
+Allowed:
+
+Active herd
+
+Rejected:
+
+Restricted herd
+
+FFE-04 — Governance Eligibility
+Governance outcomes must allow visibility.
+
+Examples:
+
+Allowed:
+
+No active restriction
+
+Rejected:
+
+Active moderation restriction
+
+#### Herd Feed Composition Inputs
+Community Inputs
+
+Consumes:
+
+Herd Information
+Membership Information
+
+Purpose:
+
+Determine feed scope.
+
+Content Inputs
+
+Consumes:
+
+Herd Posts
+Post Metadata
+Post Timestamps
+
+Purpose:
+
+Provide candidate feed items.
+
+Identity Inputs
+
+Consumes:
+
+Author Information
+Author Visibility State
+
+Purpose:
+
+Validate author visibility.
+
+Governance Inputs
+
+Consumes:
+
+Herd Restrictions
+Post Restrictions
+Author Restrictions
+
+Purpose:
+
+Remove ineligible items.
+
+#### Herd Feed Composition Workflow
+User
+    ↓
+Validate Herd Visibility
+    ↓
+Validate Herd Access Eligibility
+    ↓
+Retrieve Herd Posts
+    ↓
+Evaluate Author Visibility
+    ↓
+Apply Governance Outcomes
+    ↓
+Remove Ineligible Posts
+    ↓
+Order By CreatedAt DESC
+    ↓
+Generate Feed Response
+
+#### Herd Feed Eligibility Model
+A post is eligible only when all conditions are satisfied.
+HFE-01 — Herd Eligibility
+Herd must be visible.
+
+Examples:
+
+Allowed:
+
+Active herd
+
+Rejected:
+
+Restricted herd
+
+HFE-02 — Access Eligibility
+User must satisfy herd access requirements.
+
+Examples:
+
+Allowed:
+
+Public herd access
+Valid member access
+
+Rejected:
+
+No access rights
+
+Feed does not determine membership.
+
+Community owns membership authority.
+
+Feed consumes membership outcomes.
+
+HFE-03 — Post Eligibility
+Post must remain visible.
+
+Examples:
+
+Allowed:
+
+Active post
+
+Rejected:
+
+Removed post
+Restricted post
+
+HFE-04 — Author Eligibility
+Author must remain visible.
+
+Examples:
+
+Allowed:
+
+Active profile
+
+Rejected:
+
+Restricted profile
+
+HFE-05 — Governance Eligibility
+Governance outcomes must allow visibility.
+
+Examples:
+
+Allowed:
+
+No active restriction
+
+Rejected:
+
+Active moderation restriction
+
+#### Feed Visibility Rules
+
+Following Feed:
+
+Author Visible
+AND
+Post Visible
+AND
+Governance Allows Visibility
+AND
+(Herd Post ⇒ Herd Visible)
+This becomes the authoritative Following Feed visibility rule.
+
+Herd Feed:
+
+User Has Herd Access
+AND
+Herd Visible
+AND
+Author Visible
+AND
+Post Visible
+AND
+Governance Allows Visibility
+This becomes the authoritative Herd Feed visibility rule.
+
+#### Feed Filtering Architecture
+Filtering occurs after candidate retrieval and before ordering.
+Filter Stage 1 — Author Filtering
+Remove:
+
+Restricted authors
+Invisible authors
+
+Filter Stage 2 — Herd Filtering
+Remove:
+
+Restricted herds
+Invisible herds
+
+Filter Stage 3 — Post Filtering
+Remove:
+
+Restricted posts
+Removed posts
+Invisible posts
+
+Filter Stage 4 — Governance Filtering
+Apply moderation outcomes.
+
+Feed consumes:
+
+Content restrictions
+Profile restrictions
+Herd restrictions
+
+Feed never evaluates moderation authority.
+
+Feed only applies outcomes.
+
+#### Feed Ordering Rules
+Ordering remains:
+
+CreatedAt DESC
+
+Newest content first.
+
+Deterministic Tie-Breaking
+When timestamps are identical:
+
+CreatedAt DESC
+↓
+Resource Identifier ASC
+
+Purpose:
+
+Stable pagination
+Deterministic retrieval
+Consistent feed generation
+
+No ranking signals.
+
+No popularity signals.
+
+No engagement signals.
+
+#### Authoritative Feed Composition Rules
+FCR-01
+Feed composition occurs dynamically from authoritative module data.
+
+FCR-02
+Feed items are never stored as authoritative resources.
+
+FCR-03
+Visibility evaluation occurs before feed composition.
+
+FCR-04
+Governance outcomes must be applied before ordering.
+
+FCR-05
+Only eligible items may participate in feed ordering.
+
+FCR-06
+Following Feed source scope is determined exclusively by follow relationships.
+
+FCR-07
+Herd Feed source scope is determined exclusively by herd context.
+
+FCR-08
+Ordering remains chronological:
+Newest First
+
+FCR-09
+Feed may consume governance outcomes.
+Feed may not create governance outcomes.
+
+FCR-10
+Feed composition remains read-only.
+No feed workflow may modify business state.
+
+---
+
+### Feed Query Architecture
+
+#### Feed Query Services
+
+Approved Feed Query Services:
+
+- FollowingFeedQueryService
+- HerdFeedQueryService
+
+#### Feed Query Principles
+FQP-01 — Feed Owns Feed Queries
+
+Feed owns:
+
+Following Feed queries
+Herd Feed queries
+
+Feed does not own:
+
+Content queries
+Profile queries
+Membership queries
+
+Those remain owned by their respective modules.
+
+FQP-02 — Feed Consumes Capabilities
+
+Feed consumes module capabilities.
+
+Feed never consumes:
+
+Repositories
+Collections
+Persistence models
+Database queries
+
+This preserves module isolation.
+
+FQP-03 — Repository Isolation Is Absolute
+
+Feed must never access:
+
+Identity repositories
+Social Graph repositories
+Content repositories
+Community repositories
+Media repositories
+Governance repositories
+
+Repository ownership remains module-local.
+
+FQP-04 — Query Services Are Feed-Owned
+
+Feed owns query orchestration.
+
+Feed does not own source data retrieval implementations.
+
+FQP-05 — Capabilities Before Data
+
+Feed depends on capabilities.
+
+Not data structures.
+
+Not persistence models.
+
+Not collections.
+
+This preserves future extraction readiness.
+
+#### FollowingFeedQueryService
+Responsibility
+Generate Following Feed candidate views.
+
+Responsibilities:
+Load followed authors
+Retrieve candidate posts
+Retrieve author information
+Retrieve governance visibility information
+Assemble feed candidates
+Return feed-ready projections
+
+Does not:
+
+Modify state
+Persist data
+Execute moderation
+Execute authorization decisions
+Inputs
+Required Inputs
+viewerId
+page
+limit
+
+Derived from:
+
+GET /feeds/following
+
+Approved Feed API.
+
+Outputs
+
+Returns:
+
+FollowingFeedResult
+ ├─ Feed Items
+ ├─ Pagination Metadata
+ └─ Visibility-Eligible Content
+
+Output remains derived.
+
+No authoritative resources created.
+
+##### Dependencies
+Consumes capabilities from:
+
+Social Graph
+
+Purpose:
+
+Determine followed authors.
+
+Consumes:
+
+GetFollowedProfiles()
+
+Content
+
+Purpose:
+
+Retrieve posts authored by followed users.
+
+Consumes:
+
+GetPostsByAuthors()
+
+Identity
+
+Purpose:
+
+Retrieve author visibility information.
+
+Consumes:
+
+GetProfileVisibility()
+
+Community
+
+Purpose:
+
+Validate herd-context visibility.
+
+Consumes:
+
+GetHerdVisibility()
+
+Governance
+
+Purpose:
+
+Retrieve moderation visibility outcomes.
+
+Consumes:
+
+GetVisibilityRestrictions()
+
+Media
+
+Purpose:
+
+Resolve image references.
+
+Consumes:
+
+GetMediaReferences()
+
+Feed may not directly access:
+
+- Foreign repositories
+- Foreign collections
+- Foreign persistence models
+
+#### Following Feed Query Workflow
+FollowingFeedQueryService
+        ↓
+Social Graph Capability
+        ↓
+Followed Profiles
+        ↓
+Content Capability
+        ↓
+Candidate Posts
+        ↓
+Identity Capability
+        ↓
+Author Visibility
+        ↓
+Community Capability
+        ↓
+Herd Visibility
+        ↓
+Governance Capability
+        ↓
+Visibility Outcomes
+        ↓
+Media Capability
+        ↓
+Image References
+        ↓
+Feed Projection
+
+#### HerdFeedQueryService
+Responsibility
+
+Generate Herd Feed candidate views.
+
+Responsibilities:
+
+Retrieve herd posts
+Retrieve author information
+Retrieve herd visibility information
+Retrieve governance outcomes
+Assemble feed candidates
+
+Does not:
+
+Persist state
+Execute moderation
+Change membership
+Change content
+Inputs
+Required Inputs
+viewerId
+herdId
+page
+limit
+
+Derived from:
+
+GET /feeds/herds
+
+Approved Feed API.
+
+Outputs
+
+Returns:
+
+HerdFeedResult
+ ├─ Feed Items
+ ├─ Pagination Metadata
+ └─ Visibility-Eligible Content
+
+Derived only.
+
+##### Dependencies
+
+Consumes capabilities from:
+
+Community
+
+Purpose:
+
+Validate herd access.
+
+Consumes:
+
+GetHerdAccessInformation()
+GetMembershipInformation()
+
+Content
+
+Purpose:
+
+Retrieve herd posts.
+
+Consumes:
+
+GetPostsByHerd()
+
+Identity
+
+Purpose:
+
+Retrieve author visibility.
+
+Consumes:
+
+GetProfileVisibility()
+
+Governance
+
+Purpose:
+
+Retrieve moderation visibility outcomes.
+
+Consumes:
+
+GetVisibilityRestrictions()
+
+Media
+
+Purpose:
+
+Resolve image references.
+
+Consumes:
+
+GetMediaReferences()
+
+Feed may not directly access:
+
+- Foreign repositories
+- Foreign collections
+- Foreign persistence models
+
+#### Herd Feed Query Workflow
+HerdFeedQueryService
+        ↓
+Community Capability
+        ↓
+Access Validation Data
+        ↓
+Content Capability
+        ↓
+Candidate Herd Posts
+        ↓
+Identity Capability
+        ↓
+Author Visibility
+        ↓
+Governance Capability
+        ↓
+Visibility Outcomes
+        ↓
+Media Capability
+        ↓
+Image References
+        ↓
+Feed Projection
+
+#### Feed Query Dependency Model
+Feed may consume capabilities from approved modules only.
+
+Identity Capabilities
+Feed May Consume:
+
+Profile Retrieval
+Profile Visibility
+Profile Summary Information
+
+Feed Must Not Consume:
+
+Identity Repository
+User Collection
+Authentication Infrastructure
+
+Social Graph Capabilities
+Feed May Consume:
+
+Follow Relationship Retrieval
+Followed Profile Discovery
+
+Feed Must Not Consume:
+
+Follow Repository
+Follow Collection
+Persistence Queries
+
+Content Capabilities
+Feed May Consume:
+
+Post Retrieval
+Post Visibility Information
+Post Metadata
+
+Feed Must Not Consume:
+
+Post Repository
+Comment Repository
+Vote Repository
+Mongo Collections
+
+Community Capabilities
+Feed May Consume:
+
+Herd Visibility
+Membership Visibility
+Herd Access Information
+
+Feed Must Not Consume:
+
+Herd Repository
+Membership Repository
+Shepherd Repository
+
+Media Capabilities
+Feed May Consume:
+
+Media References
+
+Media Visibility
+Feed Must Not Consume:
+
+Media Repository
+Storage Provider
+Cloudinary Integration
+
+Governance Capabilities
+Feed May Consume:
+
+Visibility Outcomes
+Restriction Outcomes
+Moderation Visibility Information
+
+Feed Must Not Consume:
+
+Report Repository
+Moderation Repository
+Governance Workflows
+
+#### Feed Query Boundary Rules
+FQB-01
+Feed may consume capabilities.
+Feed may not consume repositories.
+
+FQB-02
+Feed may consume projections.
+Feed may not consume persistence models.
+
+FQB-03
+Feed may consume visibility outcomes.
+Feed may not consume governance workflows.
+
+FQB-04
+Feed may retrieve authoritative information.
+Feed may never become authoritative.
+
+FQB-05
+Feed may orchestrate retrieval.
+Feed may not execute lifecycle transitions.
+
+FQB-06
+Cross-module access must occur through capability contracts only.
+Direct repository access is prohibited.
+
+FQB-07
+Cross-module collection access is prohibited.
+
+FQB-08
+Cross-module persistence model access is prohibited.
+
+FQB-09
+Feed Query Services are the only approved Feed retrieval orchestration layer.
+
+#### Approved Feed Query Structure
+Feed Controller
+        ↓
+Feed Application Service
+        ↓
+Feed Query Service
+        ↓
+Capability Contracts
+        ↓
+Identity Module
+
+Social Graph Module
+
+Content Module
+
+Community Module
+
+Media Module
+
+Governance Module
+
+Not allowed:
+
+Feed Service
+      ↓
+Content Repository
+
+Not allowed:
+
+Feed Service
+      ↓
+Mongo Collection
+
+Not allowed:
+
+Feed Service
+      ↓
+Foreign Persistence Model
+
+---
+
+### Feed Execution Architecture
+
+#### Following Feed Execution Flow
+
+Request
+    ↓
+Authentication
+    ↓
+Feed Controller
+    ↓
+Request Validation
+    ↓
+GetFollowingFeedApplicationService
+    ↓
+Authorization
+    ↓
+FollowingFeedQueryService
+    ↓
+Visibility Evaluation
+    ↓
+Governance Filtering
+    ↓
+Feed Composition
+    ↓
+Ordering
+    ↓
+Response
+
+Stage 1 — Request
+
+Example:
+
+GET /feeds/following?page=1&limit=20
+
+Request enters API layer.
+
+Stage 2 — Authentication
+
+Purpose:
+
+Identify viewer.
+
+Produces:
+
+AuthenticatedUser
+ ├─ userId
+ ├─ roles
+ └─ identity context
+
+Feed execution requires viewer context.
+
+Stage 3 — Feed Controller
+
+Responsibilities:
+
+Read query parameters
+Read authenticated identity
+Create application request object
+
+Example:
+
+GetFollowingFeedRequest
+ ├─ viewerId
+ ├─ page
+ └─ limit
+
+Controller performs no business logic.
+
+Consistent with Application Layer Architecture.
+
+Stage 4 — Request Validation
+
+Validate:
+
+page
+limit
+query contract compliance
+
+Examples:
+
+Allowed:
+
+page=1
+limit=20
+
+Rejected:
+
+page=-1
+limit=5000
+
+Business validation does not occur here.
+
+Stage 5 — Feed Application Service
+
+Execution ownership begins.
+
+Example:
+
+GetFollowingFeedApplicationService
+
+Responsibilities:
+
+Coordinate workflow
+Invoke authorization
+Invoke query service
+Coordinate visibility evaluation
+Coordinate composition
+
+This becomes the workflow owner.
+
+Stage 6 — Feed Authorization Check
+
+Purpose:
+
+Determine whether actor may retrieve feed.
+
+Questions answered:
+
+Is user authenticated?
+
+Is user allowed to access feed APIs?
+
+This is not ownership validation.
+
+Feed retrieval is not ownership-driven.
+
+Authorization remains explicit.
+
+Stage 7 — FollowingFeedQueryService
+
+Purpose:
+
+Retrieve candidate feed projections.
+
+Consumes:
+
+Social Graph capabilities
+Content capabilities
+Identity capabilities
+Community capabilities
+Governance capabilities
+Media capabilities
+
+Returns:
+
+Candidate Feed Items
+
+No visibility guarantees yet.
+
+Stage 8 — Visibility Evaluation
+
+Purpose:
+
+Determine feed eligibility.
+
+Checks:
+
+Author Visible?
+
+Post Visible?
+
+Herd Visible?
+
+Rules originate from:
+
+Identity
+Content
+Community
+
+Feed applies them.
+
+Feed does not own them.
+
+Stage 9 — Governance Filtering
+
+Purpose:
+
+Apply moderation outcomes.
+
+Examples:
+
+Remove:
+
+Restricted profiles
+Restricted posts
+Restricted herds
+
+Feed consumes governance decisions.
+
+Feed does not create governance decisions.
+
+Consistent with Governance Architecture.
+
+Stage 10 — Feed Composition
+
+Purpose:
+
+Build feed representation.
+
+Output:
+
+Feed Item Projection
+
+Contains:
+
+Post
+Author summary
+Herd summary (if applicable)
+Media references
+Vote totals
+
+Still derived.
+
+Stage 11 — Ordering
+
+Apply approved feed ordering:
+
+CreatedAt DESC
+
+Tie breaker:
+
+CreatedAt DESC
+↓
+ResourceId ASC
+
+Deterministic ordering preserved.
+
+Stage 12 — Response Mapping
+
+Convert application result into API contract response.
+
+Produces:
+
+FollowingFeedResponse
+
+Consistent with Feed API contracts.
+
+#### Herd Feed Execution Flow
+
+Request
+    ↓
+Authentication
+    ↓
+Feed Controller
+    ↓
+Request Validation
+    ↓
+GetHerdFeedApplicationService
+    ↓
+Authorization
+    ↓
+Herd Access Validation
+    ↓
+HerdFeedQueryService
+    ↓
+Visibility Evaluation
+    ↓
+Governance Filtering
+    ↓
+Feed Composition
+    ↓
+Ordering
+    ↓
+Response
+
+Additional Herd Feed Stage
+
+Unlike Following Feed, Herd Feed requires access validation.
+
+Herd Access Validation
+
+Purpose:
+
+Determine whether actor may access the requested herd feed.
+
+Consumes:
+
+Community capabilities.
+
+Questions answered:
+
+Does Herd Exist?
+
+Is Herd Visible?
+
+Does User Have Access?
+
+Examples:
+
+Allowed:
+
+Public herd
+Valid member access
+
+Rejected:
+
+Access denied
+Membership required
+
+Important:
+
+Feed consumes access outcomes.
+
+Community owns access decisions.
+
+
+
+#### Feed Execution Principles
+FEP-01 — Feed Is A Read Workflow
+
+Feed execution is fundamentally different from:
+
+Create Post
+Join Herd
+Follow User
+Report Content
+
+Those are write workflows.
+
+Feed execution is a read workflow.
+
+Therefore:
+
+No state mutation
+No ownership mutation
+No lifecycle transitions
+No transaction ownership
+
+FEP-02 — Feed Application Service Owns Execution
+
+Consistent with Application Layer Architecture.
+
+Controllers remain transport adapters.
+
+Feed Application Services become execution owners.
+
+Examples:
+
+GetFollowingFeedApplicationService
+
+GetHerdFeedApplicationService
+
+Responsibilities:
+
+Workflow orchestration
+Visibility coordination
+Feed composition coordination
+Query service invocation
+Response preparation
+
+FEP-03 — Visibility Is Explicit
+
+Feed visibility evaluation must never be implicit.
+
+Visibility must be executed as a dedicated stage.
+
+Examples:
+
+Author visibility
+Post visibility
+Herd visibility
+Governance visibility
+
+FEP-04 — Governance Is Explicit
+
+Feed must explicitly consume governance outcomes.
+
+Feed may not bypass governance restrictions.
+
+Feed may not infer governance decisions.
+
+Feed may only use approved governance capabilities.
+
+FEP-05 — Composition Happens After Eligibility
+
+Feed composition may only occur after:
+
+Authorization
+Visibility evaluation
+Governance evaluation
+
+Only eligible items participate in composition.
+
+#### Feed Authorization Checkpoints
+Checkpoint 1 — Authentication
+
+Required before feed execution begins.
+
+Purpose:
+
+Identify actor.
+
+Checkpoint 2 — Feed Access Authorization
+
+Purpose:
+
+Determine feed retrieval eligibility.
+
+Example:
+
+Authenticated User
+→ Allowed
+Checkpoint 3 — Herd Access Authorization
+
+Herd Feed only.
+
+Purpose:
+
+Determine herd visibility eligibility.
+
+Delegated to Community capability.
+
+#### Feed Visibility Checkpoints
+Visibility evaluation occurs after query retrieval.
+| Visibility Check       | Source Module |
+| ---------------------- | ------------- |
+| Author Visibility      | Identity      |
+| Post Visibility        | Content       |
+| Herd Visibility        | Community     |
+| Media Visibility       | Media         |
+| Restriction Visibility | Governance    |
+
+#### Feed Governance Checkpoints
+Governance evaluation occurs before composition.
+| Governance Outcome | Effect                 |
+| ------------------ | ---------------------- |
+| Profile Restricted | Remove Content         |
+| Post Restricted    | Remove Content         |
+| Herd Restricted    | Remove Content         |
+| Media Restricted   | Remove Media Reference |
+
+#### Query Execution Sequence
+Following Feed
+Social Graph
+    ↓
+Content
+    ↓
+Identity
+    ↓
+Community
+    ↓
+Governance
+    ↓
+Media
+
+Rationale:
+
+Follow relationships determine candidate scope.
+
+Everything else narrows visibility.
+
+Herd Feed
+Community
+    ↓
+Content
+    ↓
+Identity
+    ↓
+Governance
+    ↓
+Media
+
+Rationale:
+
+Herd context determines candidate scope.
+
+Everything else narrows visibility.
+
+#### Response Generation Architecture
+Feed Result Model
+
+Application Service returns:
+
+FeedResult
+ ├─ Items
+ ├─ Pagination
+ ├─ Metadata
+
+Controller converts result into:
+
+API Response
+
+Controller remains transport-only.
+
+
+#### Feed Execution Rules
+FER-01
+Feed execution is a read workflow.
+
+FER-02
+Feed Application Services own feed execution.
+
+FER-03
+Controllers remain transport adapters.
+
+FER-04
+Authorization executes before feed retrieval.
+
+FER-05
+Visibility evaluation executes before composition.
+
+FER-06
+Governance filtering executes before composition.
+
+FER-07
+Only eligible items may participate in feed ordering.
+
+FER-08
+Feed execution never owns transactions.
+
+FER-09
+Feed execution never performs persistence.
+
+FER-10
+Feed execution remains read-only.
+No exceptions.
+
+---
+
+### Feed Validation Summary
+
+Validated Against:
+
+- Architecture Drivers
+- Backend Architectural Style
+- Backend Domain Architecture
+- Backend Module Boundaries
+- Backend Application Layer Architecture
+- Backend Authorization Architecture
+- Backend Governance Architecture
+- Backend Data Access Architecture
+- ADR-001
+
+Validation Results:
+
+- Ownership Boundaries: PASS
+- Authority Boundaries: PASS
+- Dependency Boundaries: PASS
+- Read-Only Guarantees: PASS
+- Governance Integration: PASS
+- Architectural Principle Compliance: PASS
+
+Backend Feed Architecture approved.
+
+--- 
+
+## 

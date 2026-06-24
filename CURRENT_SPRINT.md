@@ -3,10 +3,10 @@ Current Goal:
 MVP Architecture Design
 
 Active Task:
-Define Backend Feed Architecture
+Define Backend Media Architecture
 
 Next Task:
-Define Backend Media Architecture
+Define Backend Error Handling Architecture
 
 Blocked By:
 Nothing
