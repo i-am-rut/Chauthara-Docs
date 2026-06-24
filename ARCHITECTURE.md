@@ -16306,4 +16306,1197 @@ No redesign required.
 
 ---
 
-##
+## Backend Validation Architecture
+### Validation Principles
+VAL-01 — Validation Is Explicit
+Validation must never be implied.
+Every validation category must be visible in execution flows.
+Rationale:
+
+Improves maintainability
+Improves auditability
+Improves developer understanding
+Aligns with Explicit Authority Boundaries
+
+VAL-02 — Validation Does Not Imply Authorization
+Validation and authorization solve different problems.
+
+VAL-03 — Validation Does Not Imply Ownership
+Ownership validation is a specialized validation category.
+Ownership and authorization remain independent concerns.
+
+VAL-04 — Validation Is Layered
+Validation occurs at multiple architectural layers.
+No single layer owns all validation.
+Each layer validates only what it owns.
+
+VAL-05 — Validation Fails Early
+The earliest responsible layer should reject invalid operations.
+Benefits:
+
+Reduced execution cost
+Simpler debugging
+Better security posture
+
+VAL-06 — Business Validation Remains Domain-Owned
+Business rules belong exclusively to the owning domain.
+No shared business-rule engine.
+No global validation framework.
+Preserves module ownership boundaries.
+
+VAL-07 — Ownership Boundaries Determine Validation Ownership
+The owner of a resource owns its business validation.
+
+VAL-08 — Governance Validation Is Independent
+Governance validation is not authorization.
+Governance validation is not ownership.
+Governance validation is not domain validation.
+
+VAL-09 — Validation Must Be Deterministic
+Given identical inputs and identical system state:
+Validation must produce identical outcomes.
+No hidden side effects.
+No validation-time mutations.
+Validation remains read-only.
+
+VAL-10 — Validation Never Mutates State
+Validation evaluates state.
+Validation never changes state.
+
+### Validation Taxonomy
+The preliminary five-category model defined during Application Layer Architecture is insufficient for full backend architecture.
+
+Approved Validation Categories
+| Validation Type             | Required | Independent Architecture |
+| --------------------------- | -------- | ------------------------ |
+| Input Validation            | Yes      | Yes                      |
+| Authentication Validation   | Yes      | Yes                      |
+| Authorization Validation    | Yes      | Yes                      |
+| Ownership Validation        | Yes      | Yes                      |
+| Governance Validation       | Yes      | Yes                      |
+| Domain Validation           | Yes      | Yes                      |
+| State Transition Validation | Yes      | Domain Subtype           |
+| Cross-Module Validation     | Yes      | Yes                      |
+| Persistence Validation      | Limited  | Repository Concern       |
+
+Final Validation Taxonomy
+Input Validation
+Authentication Validation
+Authorization Validation
+Ownership Validation
+Governance Validation
+Domain Validation
+ └─ State Transition Validation
+
+Cross-Module Validation
+
+Persistence Validation
+
+### Validation Ownership Model
+Validation ownership follows module ownership.
+
+Authoritative Validation Responsibility Matrix
+| Validation Type             | Primary Owner              | Execution Boundary                         |
+| --------------------------- | -------------------------- | ------------------------------------------ |
+| Input Validation            | API Layer                  | Controller / Validation Middleware         |
+| Authentication Validation   | Identity                   | Authentication Middleware                  |
+| Authorization Validation    | Authorization Architecture | Application Service                        |
+| Ownership Validation        | Owning Domain              | Domain Rule invoked by Application Service |
+| Governance Validation       | Governance Module          | Governance Contract                        |
+| Domain Validation           | Owning Domain              | Domain Layer                               |
+| State Transition Validation | Owning Domain              | Domain Layer                               |
+| Cross-Module Validation     | Owning Module              | Module Contract                            |
+| Persistence Validation      | Repository Layer           | Repository / Database                      |
+
+### Validation Execution Architecture
+VEP-01 — Validation Executes In Ownership Order
+Validation should execute according to architectural ownership boundaries.
+
+VEP-02 — Validation Executes Before Mutation
+No mutation may occur before all required validation succeeds.
+
+VEP-03 — Validation Ownership Follows Rule Ownership
+The component owning a rule executes the rule.
+
+VEP-04 — Validation Remains Read-Only
+Validation may read state.
+Validation may not mutate state.
+Validation services are evaluators.
+Not workflow executors.
+
+VEP-05 — Expensive Validation Executes Last
+Low-cost validation should reject requests before expensive validation runs.
+
+#### Authoritative Validation Pipeline
+The preliminary execution model established during Application Layer Architecture now becomes fully formalized.
+
+Standard Write Validation Pipeline
+This becomes the authoritative write execution model.
+Request
+    ↓
+Authentication Validation
+    ↓
+Controller
+    ↓
+Input Validation
+    ↓
+Application Service
+    ↓
+Authorization Validation
+    ↓
+Ownership Validation
+    ↓
+Governance Validation
+    ↓
+Domain Validation
+    ↓
+State Transition Validation
+    ↓
+Transaction Start
+    ↓
+Persistence Validation
+    ↓
+Persistence
+    ↓
+Commit
+    ↓
+Response
+
+Why This Order?
+Authentication Before Everything
+Need actor identity.
+Without identity:
+No authorization.
+No ownership.
+No governance evaluation.
+
+#### Layer-Specific Validation Responsibilities
+API Layer Validation
+Allowed
+API layer validates:
+Request Shape
+Nothing else.
+
+Application Layer Validation
+Application Services become validation coordinators.
+Allowed
+Application layer owns:
+Validation Coordination not Validation Rules
+
+Domain Layer Validation
+The Domain Layer owns business validity.
+Allowed
+Domain validates:
+Business Correctness
+
+Repository Layer Validation
+Important architectural decision.
+Allowed
+Repositories validate:
+Persistence Integrity Only.
+
+#### Read Validation Architecture
+Reads differ fundamentally from writes.
+No mutation.
+No transactions.
+No lifecycle transitions.
+
+Authoritative Read Pipeline
+Request
+    ↓
+Authentication (if required)
+    ↓
+Input Validation
+    ↓
+Application Service
+    ↓
+Authorization Validation
+    ↓
+Visibility Validation
+    ↓
+Cross-Module Validation
+    ↓
+Query Execution
+    ↓
+Result Composition
+    ↓
+Response
+
+Why Ownership Usually Does Not Execute
+Ownership-Based Reads
+Ownership executes only when visibility depends on ownership.
+
+#### Write Validation Architecture
+Write operations require the complete validation stack.
+
+Authoritative Write Pipeline
+Authentication
+↓
+Input Validation
+↓
+Authorization Validation
+↓
+Ownership Validation
+↓
+Governance Validation
+↓
+Domain Validation
+↓
+State Transition Validation
+↓
+Persistence Validation
+↓
+Mutation
+
+#### Governance Validation Architecture
+Governance workflows require specialized validation.
+Governance is an authority domain, not a resource domain.
+
+Governance Validation Pipeline
+Authentication
+    ↓
+Input Validation
+    ↓
+Authority Validation
+    ↓
+Hierarchy Validation
+    ↓
+Scope Validation
+    ↓
+Target Validation
+    ↓
+Governance Rule Validation
+    ↓
+State Transition Validation
+    ↓
+Enforcement Execution
+
+Governance Validation Ownership Matrix
+| Validation                       | Owner                      |
+| -------------------------------- | -------------------------- |
+| Authority Validation             | Authorization Architecture |
+| Hierarchy Validation             | Governance                 |
+| Scope Validation                 | Governance                 |
+| Target Validation                | Owning Domain              |
+| Enforcement Validation           | Governance                 |
+| Governance State Validation      | Governance                 |
+| Governance Transition Validation | Governance                 |
+
+### Domain Validation Architecture
+#### Domain Validation Principles
+These principles become authoritative.
+
+DVP-01 — Business Rules Are Domain-Owned
+Every business rule belongs to exactly one domain.
+No shared business rules.
+No shared validation ownership.
+
+DVP-02 — Domain Validation Protects Invariants
+Domain validation exists to protect business invariants.
+
+DVP-03 — Domain Validation Is Independent Of Transport
+Domain validation must not know:
+HTTP
+Express
+REST
+JWT
+MongoDB
+Domain validation receives business state only.
+
+DVP-04 — Domain Validation Is Independent Of Persistence
+Domain validation must not depend on:
+MongoDB
+Collection Names
+Indexes
+Mongoose Models
+Domain rules evaluate business state.
+Not storage state.
+
+DVP-05 — Domain Validation Never Mutates State
+Validation evaluates.
+Validation never modifies.
+
+DVP-06 — Domain Validation Must Be Reusable
+The same rule must execute consistently regardless of entry point.
+
+DVP-07 — Validation Ownership Follows Aggregate Ownership
+Aggregate owner owns aggregate validation.
+
+Domain Rule Validation Architecture
+This section defines how business rules are modeled.
+
+#### Domain Rule Validation Architecture
+This section defines how business rules are modeled.
+
+Domain Rule Categories
+Category 1 — Participation Rules
+Owner:
+Community
+
+Category 2 — Uniqueness Rules
+Owner:
+Owning Domain
+
+Category 3 — Lifecycle Rules
+Owner:
+Aggregate Owner
+
+Category 4 — Capability Rules
+Owner:
+Community
+
+Category 5 — Consistency Rules
+Owner:
+Aggregate Owner
+
+Domain Rule Execution Model
+Authoritative pattern:
+Application Service
+        ↓
+Load Aggregate
+        ↓
+Domain Validation
+        ↓
+Continue Workflow
+
+#### Domain Rule Violation Handling
+Domain validation failures become typed domain errors.
+
+Rule:
+Domain validators never generate HTTP responses.
+They generate domain failures.
+Error translation remains centralized in Error Architecture.
+
+### Ownership Validation Architecture
+Ownership is important enough to receive dedicated architecture.
+Ownership is not authorization.
+Ownership is not governance.
+Ownership is a domain concern.
+
+#### Ownership Validation Principles
+OVP-01 — Ownership Remains Domain-Owned
+Resource owner validates ownership.
+
+OVP-02 — Ownership Validation Uses Aggregate State
+Ownership evaluation requires authoritative aggregate data.
+
+OVP-03 — Ownership Is Explicit
+Ownership must be evaluated explicitly.
+Never inferred.
+Never assumed.
+
+OVP-04 — Ownership Does Not Grant Unlimited Authority
+Ownership grants ownership authority.
+Not governance authority.
+Governance remains separate.
+
+Ownership Evaluation Strategy
+Authoritative flow:
+Load Aggregate
+        ↓
+Evaluate Owner
+        ↓
+Match Actor
+        ↓
+Pass / Fail
+
+Ownership Rule Model
+Each domain owns ownership evaluators.
+
+Ownership Violation Handling
+Ownership failures become dedicated ownership errors.
+Ownership violations are not generic authorization failures.
+This preserves auditability and debugging quality.
+
+### State Transition Validation Architecture
+State transition validation protects lifecycle integrity.
+
+STV-01 — Lifecycle Owner Owns Transition Rules
+Only owner defines valid transitions.
+
+STV-02 — Invalid Transitions Must Be Impossible
+if lifecycle does not allow it.
+
+STV-03 — Transitions Are Domain Rules
+State transition validation is a specialized form of domain validation.
+Not separate architecture.
+
+State Transition Execution Pattern
+Load Aggregate
+        ↓
+Current State
+        ↓
+Requested State
+        ↓
+Validate Transition
+        ↓
+Persist
+
+State Transition Violation Handling
+InvalidMembershipTransitionError
+InvalidReportTransitionError
+InvalidPostTransitionError
+These remain domain-level failures.
+
+### Aggregate Validation Architecture
+Aggregate validation protects consistency inside aggregate boundaries.
+
+#### Aggregate Validation Principles
+AVP-01 — Aggregate Owner Protects Aggregate Integrity
+Aggregate consistency belongs to aggregate owner.
+Never external modules.
+
+AVP-02 — Aggregate Validation Executes Before Mutation
+Consistency must be verified before persistence.
+
+AVP-03 — External Modules Cannot Validate Internal Consistency
+Content cannot.
+This preserves module boundaries.
+
+#### Aggregate Validation Categories
+Membership Consistency
+Community owns.
+
+Discussion Consistency
+Content owns.
+
+Governance Consistency
+Governance owns.
+
+Media Consistency
+Media owns.
+
+#### Aggregate Validation Execution
+Load Aggregate
+        ↓
+Validate Aggregate Integrity
+        ↓
+Allow Mutation
+
+### Cross-Module Validation Architecture
+This is the most critical validation architecture for a Modular Monolith.
+
+#### Cross-Module Validation Principles
+CMV-01 — Validation Follows Capability Contracts
+Cross-module validation occurs through capabilities.
+Never through repositories.
+Never through collections.
+Consistent with approved Module Boundary Architecture.
+
+CMV-02 — Consuming Module Never Reimplements Provider Rules
+
+CMV-03 — Validation Authority Remains Local
+Rule ownership never moves.
+Provider validates.
+Consumer consumes result.
+
+CMV-04 — Cross-Module Validation Is Read-Only
+Validation never grants mutation authority.
+
+#### Capability Validation Model
+Preferred capability style:
+CanUserPostInHerd()
+CanUserJoinHerd()
+CanAssignShepherd()
+IsUserRestricted()
+CanAttachImage()
+
+Avoid:
+GetMembershipDocument()
+GetRestrictionRecord()
+GetImageDocument()
+Capabilities preserve encapsulation.
+
+#### Cross-Module Validation Flow
+Create Herd Post
+Content Application Service
+        ↓
+Community Contract
+        ↓
+CanUserPostInHerd()
+        ↓
+Governance Contract
+        ↓
+IsUserRestricted()
+        ↓
+Content Validation
+        ↓
+Persist Post
+
+Upload Post Image
+Content Application Service
+        ↓
+Media Contract
+        ↓
+CanAttachImage()
+        ↓
+Content Validation
+        ↓
+Persist Post
+
+Restrict Post
+Governance Application Service
+        ↓
+Content Contract
+        ↓
+Validate Target
+        ↓
+Governance Validation
+        ↓
+Enforcement
+
+#### Cross-Module Boundary Preservation Rules
+These become authoritative.
+CMR-01
+Validation never bypasses capability contracts.
+
+CMR-02
+Repositories never cross module boundaries.
+
+CMR-03
+Aggregate validation remains local.
+
+CMR-04
+Ownership validation remains local.
+
+CMR-05
+State transition validation remains local.
+
+CMR-06
+Cross-module validation returns decisions.
+Not internal state.
+
+CMR-07
+Cross-module validation never transfers authority.
+
+### Validation Error Architecture
+#### Validation Failure Principles
+VFP-01 — Every Validation Failure Is Intentional
+Validation failures are expected business outcomes.
+They are not system failures.
+
+VFP-02 — Validation Failures Must Be Typed
+Validation failures must have explicit types.
+
+VFP-03 — Validation Failures Preserve Ownership
+The owner of the validation rule owns the failure.
+
+VFP-04 — Validation Failures Must Be Deterministic
+Identical inputs and state must produce identical failures.
+
+VFP-05 — Validation Failures Never Leak Infrastructure Details
+Validation failures remain business-facing.
+These are persistence concerns.
+Not validation concerns.
+Consistent with Error Boundary Architecture.
+
+#### Validation Failure Classification Model
+Each category now receives an official failure model.
+
+Category 1 — Input Validation Failures
+
+Owner:
+
+API Layer
+Characteristics:
+
+Earliest failures
+No business context required
+No aggregate loading required
+
+Category 2 — Authentication Validation Failures
+
+Owner:
+
+Identity
+Characteristics:
+
+Identity establishment failure
+Workflow never begins
+
+Category 3 — Authorization Validation Failures
+
+Owner:
+
+Authorization Architecture
+Characteristics:
+
+Actor known
+Authority rejected
+
+Category 4 — Ownership Validation Failures
+
+Owner:
+
+Owning Domain
+Characteristics:
+
+Actor known
+Resource known
+Ownership mismatch
+
+Category 5 — Governance Validation Failures
+
+Owner:
+
+Governance
+Characteristics:
+
+Governance restriction detected
+Governance hierarchy enforced
+
+Category 6 — Domain Validation Failures
+
+Owner:
+
+Owning Domain
+Characteristics:
+
+Business rule violation
+Aggregate invariant protection
+
+Category 7 — State Transition Failures
+
+Owner:
+
+Lifecycle Owner
+Characteristics:
+
+Lifecycle violation
+State machine protection
+
+Category 8 — Persistence Validation Failures
+
+Owner:
+
+Repository Layer
+Characteristics:
+
+Persistence integrity protection
+Final validation boundary
+
+#### Validation-to-Error Integration Architecture
+This section integrates Validation Architecture with Error Handling Architecture.
+
+Adopt Hybrid Validation Result Strategy
+
+Authoritative model:
+
+Input Validation
+
+Result-oriented.
+
+Allows:
+
+username invalid
+email invalid
+password invalid
+
+to return together.
+
+Business Validation
+
+Exception-oriented.
+
+Examples:
+
+AlreadyMemberError
+RestrictedUserError
+OwnershipViolationError
+
+These fail fast.
+
+Validation Failure Flow
+
+Authoritative pattern:
+
+Validation
+        ↓
+Typed Validation Error
+        ↓
+Application Service
+        ↓
+Error Propagation
+        ↓
+Error Middleware
+        ↓
+API Error Contract
+        ↓
+Response
+
+Consistent with approved Error Propagation Architecture.
+
+### Validation Consistency Architecture
+Consistency is the primary reason to define a dedicated Validation Architecture.
+Without consistency:
+Rules drift
+Governance becomes unreliable
+Ownership becomes inconsistent
+
+VC-01 — One Rule, One Owner
+
+A rule may exist in exactly one location.
+
+Bad:
+
+Controller
+↓
+Checks Membership
+
+Community
+↓
+Checks Membership
+
+Duplicate rule.
+
+Forbidden.
+
+VC-02 — One Rule, One Error
+
+A rule should produce one canonical failure.
+
+Example:
+
+MembershipRequired
+
+Always produces:
+
+MembershipRequiredError
+
+Never:
+
+ForbiddenError
+InvalidMembershipError
+MembershipMissingError
+
+Consistency improves debugging.
+
+VC-03 — One Capability, One Validation Path
+
+Example:
+
+CanUserPostInHerd()
+
+must execute the same validation regardless of caller.
+
+Examples:
+
+Post API
+Future Admin Tool
+Future Mobile API
+
+All use the same capability.
+
+VC-04 — Governance Validation Remains Centralized
+
+Restrictions must never be duplicated.
+
+Forbidden:
+
+Content Checks Restrictions
+Community Checks Restrictions
+Media Checks Restrictions
+
+Allowed:
+
+Governance
+↓
+Restriction Evaluation
+
+Single source of truth.
+
+VC-05 — Ownership Validation Remains Local
+
+Ownership validation remains with owning module.
+
+Never centralized.
+
+Reason:
+
+Ownership is domain-specific.
+
+VC-06 — Feed Validation Consumes Outcomes
+
+Feed must not recreate validation.
+
+Feed consumes:
+
+Visibility Outcomes
+Governance Outcomes
+
+Feed does not reevaluate restrictions.
+
+Consistent with Feed Architecture.
+
+
+#### Validation Reuse Architecture
+
+Reuse is necessary.
+
+Duplication is dangerous.
+
+However excessive centralization is equally dangerous.
+
+#### Shared Validation Categories
+Category A — Technical Validation Utilities
+
+Allowed as shared utilities.
+
+Examples:
+
+Email Format
+Username Format
+Slug Format
+URL Format
+Pagination Format
+
+These are not business rules.
+
+Safe to centralize.
+
+Category B — Contract Validators
+
+Allowed.
+
+Examples:
+
+Request DTO Validation
+Response Contract Validation
+Query Validation
+
+Owned by API layer.
+
+Domain Validators
+
+Must remain domain-owned.
+
+Examples:
+
+AlreadyMember
+AlreadyVoted
+CanAssignShepherd
+MembershipRequired
+
+Must never become shared utilities.
+
+Capability Validators
+
+Preferred reusable business validation pattern.
+
+Examples:
+
+CanUserJoinHerd()
+CanUserPostInHerd()
+CanAttachImage()
+IsUserRestricted()
+
+These become reusable capability contracts.
+
+Consistent with Module Boundary Architecture.
+
+Reuse Strategy Decision
+
+Adopt:
+
+Shared Technical Validators
++
+Domain-Owned Business Validators
++
+Capability-Based Reuse
+
+Reject:
+
+Global Business Validation Framework
+
+Reason:
+
+Violates ownership boundaries.
+
+#### Validation Audit Strategy
+
+Most validation failures do not require audit records.
+
+Logging everything creates noise.
+
+We need explicit rules.
+
+Category A — No Audit Required
+
+Examples:
+
+Invalid Email
+Missing Field
+Invalid Pagination
+Already Member
+Already Voted
+
+Reason:
+
+Routine user mistakes.
+
+Not governance relevant.
+
+Category B — Structured Logging Required
+
+Examples:
+
+Repeated Ownership Violations
+Unexpected Validation Patterns
+Abnormal Validation Rates
+
+Reason:
+
+Operational visibility.
+
+Supports Operability.
+
+Category C — Governance Audit Required
+
+Examples:
+
+Governance Scope Violation
+Governance Authority Violation
+Governance Hierarchy Violation
+Moderation Enforcement Rejection
+
+Reason:
+
+Governance actions must remain auditable.
+
+Consistent with Governance Architecture and QD-06 Auditability.
+
+#### Validation Audit Matrix
+| Failure Type                   | Log      | Audit |
+| ------------------------------ | -------- | ----- |
+| Input Validation               | Optional | No    |
+| Authentication                 | Yes      | No    |
+| Authorization                  | Yes      | No    |
+| Ownership                      | Yes      | No    |
+| Domain Validation              | Optional | No    |
+| Governance Validation          | Yes      | Yes   |
+| Governance Hierarchy Violation | Yes      | Yes   |
+| Governance Scope Violation     | Yes      | Yes   |
+| Infrastructure Validation      | Yes      | No    |
+
+#### Validation Consistency Rules
+These become authoritative.
+
+VCR-01
+Validation ownership follows rule ownership.
+
+VCR-02
+Validation failures are typed.
+
+VCR-03
+One rule produces one canonical failure.
+
+VCR-04
+Governance validation remains centralized.
+
+VCR-05
+Ownership validation remains local.
+
+VCR-06
+Feed consumes validation outcomes.
+
+VCR-07
+Repositories never execute business validation.
+
+VCR-08
+Business validators remain domain-owned.
+
+VCR-09
+Capability contracts become the preferred reuse mechanism.
+
+VCR-10
+Validation must remain compatible with future service extraction.
+Consistent with ADR-001 evolutionary goals.
+
+### Validation Evolution Strategy
+Validation architecture is a foundational architecture.
+Unlike API contracts or feed algorithms, validation architecture touches nearly every workflow.
+Therefore evolution must be controlled.
+
+#### Validation Evolution Principles
+VES-01 — Validation Ownership Must Remain Stable
+
+The most important evolution rule.
+
+Future features may introduce:
+
+New domains
+New workflows
+New resources
+
+But ownership principles must not change.
+
+Rule:
+
+Who Owns The Rule
+↓
+Owns The Validation
+↓
+Owns The Error
+
+This remains permanent.
+
+Reason:
+
+Ownership stability is more valuable than validation reuse.
+
+VES-02 — Validation Categories May Expand
+
+Current taxonomy:
+
+Input
+Authentication
+Authorization
+Ownership
+Governance
+Domain
+State Transition
+Cross-Module
+Persistence
+
+Future categories may appear.
+
+Examples:
+
+Rate Limiting Validation
+Anti-Spam Validation
+Risk Validation
+Fraud Validation
+
+However:
+
+New categories must not collapse existing ownership boundaries.
+
+VES-03 — Validation Execution Order Remains Stable
+
+Current authoritative order:
+
+Authentication
+↓
+Input
+↓
+Authorization
+↓
+Ownership
+↓
+Governance
+↓
+Domain
+↓
+State Transition
+↓
+Persistence
+
+Future categories may be inserted.
+
+Example:
+
+Authorization
+↓
+Risk Validation
+↓
+Ownership
+
+But the existing order should remain stable whenever possible.
+
+Reason:
+
+Predictability improves maintainability.
+
+VES-04 — Domain Validation Must Never Become Centralized
+
+Future growth often introduces:
+
+ValidationEngine
+BusinessRuleEngine
+RuleFramework
+
+Decision:
+
+Rejected.
+
+Reason:
+
+Violates:
+
+Domain ownership
+Module ownership
+Independent evolvability
+
+Consistent with Domain-Oriented Modular Monolith principles.
+
+VES-05 — Capability Contracts Remain Validation Boundaries
+
+Current architecture:
+
+Module A
+↓
+Capability Contract
+↓
+Module B Validation
+
+Future service extraction:
+
+Service A
+↓
+API
+↓
+Service B Validation
+
+Minimal redesign required.
+
+This preserves ADR-001 future evolution goals.
+
+Future Evolution Path
+MVP
+
+Current architecture:
+
+Application Service
+↓
+Capability Contract
+↓
+Domain Validation
+Future Growth
+
+Possible additions:
+
+Rate Limiting
+Spam Detection
+Trust Scoring
+Abuse Detection
+
+without redesigning:
+
+Domain validation
+Ownership validation
+Governance validation
+Service Extraction Future
+
+If:
+
+Community
+
+becomes an independent service.
+
+Validation architecture becomes:
+
+Content
+↓
+Community API
+↓
+Community Validation
+
+No rule ownership changes.
+
+No validation redesign required.
+
+This is an important architecture quality indicator.
+
+---
+
+## 

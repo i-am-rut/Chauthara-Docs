@@ -3,10 +3,10 @@ Current Goal:
 MVP Architecture Design
 
 Active Task:
-Define Backend Validation Architecture
+Define Backend Background Processing Strategy
 
 Next Task:
-Define Backend Background Processing Strategy
+Define Backend Observability Architecture
 
 Blocked By:
 Nothing
