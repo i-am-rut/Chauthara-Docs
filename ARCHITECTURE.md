@@ -5671,4 +5671,1732 @@ Authorization error behavior must remain consistent with the platform-wide Error
 
 ---
 
-##
+## Backend Governance Architecture
+
+### Governance Principles
+#### Architectural Rule GA-01
+Governance owns authority, not resources.
+
+Governance owns:
+
+Governance Resources
+Report
+Moderation Action
+
+Governance Lifecycles
+Report lifecycle
+Moderation Action lifecycle
+
+Governance Workflows
+Report intake
+Review
+Dismissal
+Escalation
+Enforcement
+Restoration
+Oversight
+
+Governance Decisions
+Moderation outcomes
+Enforcement outcomes
+Escalation outcomes
+Override outcomes
+
+Governance Audit Records
+
+Governance event history
+
+Governance decision history
+
+Governance does not own:
+
+Identity Domain Resources
+User Profile
+
+Content Domain Resources
+Post
+Comment
+Vote
+
+Community Domain Resources
+Herd
+Membership
+Shepherd Assignment
+
+Media Domain Resources
+Image
+
+Governance acts upon them.
+
+Governance never owns them.
+
+Ownership remains with originating domains.
+
+---
+
+#### Architectural Rule GA-02
+
+Every governance action must belong to exactly one governance workflow.
+
+No orphan moderation actions are permitted.
+
+Workflow Classification Model
+| Workflow              | Classification       |
+| --------------------- | -------------------- |
+| Report Intake         | Intake Workflow      |
+| Community Review      | Review Workflow      |
+| Community Enforcement | Enforcement Workflow |
+| Escalation            | Authority Workflow   |
+| Platform Review       | Review Workflow      |
+| Platform Enforcement  | Enforcement Workflow |
+| Oversight             | Audit Workflow       |
+
+Workflow 1 — Report Intake
+Purpose
+
+Receive governance concerns.
+
+Trigger
+
+Member submits report.
+
+Output
+
+Report created.
+
+Owner
+
+Governance Module.
+
+Workflow 2 — Community Review
+Purpose
+
+Evaluate herd-scoped governance issues.
+
+Actors
+Shepherd
+Herd Owner
+Output
+
+Moderation outcome.
+
+Owner
+
+Governance Module.
+
+Workflow 3 — Community Enforcement
+Purpose
+
+Apply community-scoped governance actions.
+
+Examples:
+
+Remove post
+Remove comment
+Remove membership
+Owner
+
+Governance Module.
+
+Workflow 4 — Escalation
+Purpose
+
+Transfer authority review upward.
+
+Hierarchy:
+
+Shepherd
+↓
+Herd Owner
+↓
+Platform Administrator
+
+Owner
+
+Governance Module.
+
+Workflow 5 — Platform Review
+Purpose
+
+Review escalated or platform-level issues.
+
+Actor
+
+Platform Administrator.
+
+Owner
+
+Governance Module.
+
+Workflow 6 — Platform Enforcement
+Purpose
+
+Apply platform-wide restrictions.
+
+Examples:
+
+Restrict profile
+Restrict herd
+Expand enforcement
+Owner
+
+Governance Module.
+
+Workflow 7 — Oversight
+Purpose
+
+Review governance behavior itself.
+
+Targets:
+
+Shepherds
+Herd Owners
+Governance history
+Owner
+
+Governance Module.
+
+---
+
+#### Architectural Rule GA-03
+
+Governance authority must always be validated before governance workflow execution.
+
+Authorization determines whether a governance actor may act.
+
+Governance determines what governance workflow executes.
+
+This preserves separation from Authorization Architecture.
+
+Shepherd
+Responsibilities
+Review herd reports
+Moderate herd content
+Moderate herd membership
+Escalate issues
+
+Authority Scope
+Assigned Herd only.
+
+Limitations
+Cannot:
+Restrict profiles
+Restrict herds
+Override herd owner decisions
+Escalation Authority
+
+Can escalate upward.
+
+Override Authority
+None.
+
+Herd Owner
+Responsibilities
+Resolve community disputes
+Review escalations
+Govern own herd
+
+Authority Scope
+Owned Herd only.
+
+Limitations
+Cannot:
+Apply platform restrictions
+Override platform decisions
+Escalation Authority
+
+Can escalate upward.
+
+Override Authority
+Can override Shepherd decisions.
+
+Platform Administrator
+Responsibilities
+Platform governance
+Platform enforcement
+Governance oversight
+
+Authority Scope
+Entire platform.
+
+Limitations
+None within platform governance scope.
+
+Escalation Authority
+
+Final internal authority.
+
+Override Authority
+Can override:
+Shepherd
+Herd Owner
+
+Governance Hierarchy Model
+Platform Administrator
+          ↑
+      Herd Owner
+          ↑
+       Shepherd
+          ↑
+        Member
+
+---
+
+#### GA-04 — Governance Must Be Auditable
+
+All governance decisions must be:
+
+- Traceable
+- Reviewable
+- Reconstructable
+
+Governance history remains authoritative.
+
+---
+
+### Governance Workflow Architecture
+
+#### Workflow Inventory
+
+Governance owns:
+
+1. Report Intake
+2. Community Review
+3. Community Enforcement
+4. Escalation
+5. Platform Review
+6. Platform Enforcement
+7. Oversight
+
+---
+
+#### Report Lifecycle
+
+Submitted
+↓
+Under Review
+↓
+Dismissed | Moderated | Escalated
+↓
+Platform Review
+↓
+Final Outcome
+
+Report Lifecycle Architecture
+Report States
+Submitted
+    ↓
+Under Review
+    ↓
+ ┌───────────────┬───────────────┐
+ │               │               │
+Dismissed    Moderated      Escalated
+                             ↓
+                      Platform Review
+                             ↓
+                       Final Outcome
+Submitted
+
+Created by:
+
+Member
+Shepherd
+Herd Owner
+Platform Administrator
+
+Contains:
+
+Target
+Reason
+Reporter
+Context
+
+Ownership:
+
+Governance Domain
+
+Under Review
+
+Report assigned to:
+
+Shepherd
+Herd Owner
+Platform Administrator
+
+Depending on governance scope.
+
+No enforcement exists yet.
+
+Dismissed
+
+Review completed.
+
+No moderation required.
+
+Terminal state.
+
+Moderated
+
+Community governance outcome applied.
+
+Moderation Action created.
+
+Terminal unless escalated later.
+
+Escalated
+
+Community governance unable or unwilling to resolve.
+
+Transferred upward.
+
+Governance ownership unchanged.
+
+Platform Review
+
+Platform Administrator becomes reviewing authority.
+
+Community authority ends.
+
+Final Outcome
+
+Platform decision recorded.
+
+May include:
+
+Uphold
+Reverse
+Restore
+Expand
+
+Terminal review state.
+
+Architectural Rule GW-01
+A Report may only move forward through governance lifecycle states.
+Backward transitions are prohibited.
+
+---
+
+#### Community Governance Flow
+
+Report
+↓
+Shepherd Review
+↓
+Dismiss | Moderate | Escalate
+↓
+Herd Owner Review
+↓
+Resolve | Reverse | Escalate
+
+Shepherd Moderation Workflow
+Report Submitted
+      ↓
+Shepherd Review
+      ↓
+ ┌─────────────┬─────────────┐
+ │             │             │
+Dismiss    Moderate     Escalate
+
+Shepherd Review Responsibilities
+Can:
+
+Review herd reports
+Review herd content
+Review herd membership issues
+
+Cannot:
+
+Restrict profiles
+Restrict herds
+Execute platform enforcement
+
+Shepherd Outcomes
+Dismiss
+
+Report closed.
+
+Moderate
+
+Moderation Action created.
+
+Community enforcement applied.
+
+Escalate
+
+Transferred to Herd Owner.
+
+Herd Owner Review Workflow
+Escalated Matter
+        ↓
+ Herd Owner Review
+        ↓
+ ┌───────────────┬───────────────┐
+ │               │               │
+Uphold      Reverse      Escalate
+
+Herd Owner Responsibilities
+Can:
+
+Review Shepherd decisions
+Reverse Shepherd outcomes
+Uphold Shepherd outcomes
+
+Cannot:
+
+Restrict profiles
+Restrict platform-wide resources
+
+Herd Owner Outcomes
+Uphold
+
+Original moderation remains.
+
+Reverse
+
+Moderation reversed.
+
+Escalate
+
+Transferred to Platform Governance.
+
+Architectural Rule GW-02
+Community governance may govern only herd-scoped resources.
+
+---
+
+#### Platform Governance Flow
+
+Escalated Matter
+↓
+Platform Review
+↓
+Uphold | Reverse | Expand
+↓
+Final Outcome
+
+Platform Review Responsibilities
+
+Review:
+
+Escalations
+Platform reports
+Governance disputes
+Governance actor behavior
+
+Platform Outcomes
+Uphold
+
+Existing moderation remains.
+
+No additional enforcement.
+
+Reverse
+
+Previous moderation invalidated.
+
+Enforcement removed.
+
+Restore
+
+Previously restricted resource restored.
+
+May accompany reversal.
+
+Expand
+
+Additional enforcement applied.
+
+Examples:
+
+Remove Post
+      ↓
+Restrict Profile
+
+or
+
+Remove Content
+      ↓
+Restrict Herd
+
+Architectural Rule GW-03
+Only Platform Administrators may execute enforcement expansion.
+
+Recommended Decision Flow
+Report Submitted
+        ↓
+Governance Intake
+        ↓
+Scope Determination
+        ↓
+Authority Assignment
+        ↓
+Community Review
+        ↓
+ ┌─────────────┬─────────────┬──────────────┐
+ │             │             │
+Dismiss    Moderate     Escalate
+                          ↓
+                    Herd Owner
+                          ↓
+                ┌─────────┴─────────┐
+                │                   │
+            Resolve           Escalate
+                                    ↓
+                          Platform Review
+                                    ↓
+                   ┌────────┬────────┬────────┐
+                   │        │        │
+                Uphold  Reverse  Expand
+                                    ↓
+                            Final Outcome
+
+
+#### Governance Scope Determination
+Before review begins:
+Governance identifies:
+Target Type
+Profile
+Post
+Comment
+Herd
+Membership
+Image
+
+Target Context
+Herd-scoped
+Platform-scoped
+
+Required Authority
+Shepherd
+Herd Owner
+Platform Administrator
+
+Architectural Rule GW-04
+Authority assignment must occur before review begins.
+Reviewers are never self-selected.
+
+#### Workflow Ownership Architecture
+Content Module
+
+Provides:
+
+Post information
+Comment information
+
+Does not:
+
+Execute moderation workflow
+
+Community Module
+
+Provides:
+
+Herd information
+Membership information
+
+Does not:
+
+Execute moderation workflow
+
+Identity Module
+
+Provides:
+
+Actor identity
+Profile information
+
+Does not:
+
+Execute moderation workflow
+
+Media Module
+
+Provides:
+
+Image information
+
+Does not:
+
+Execute moderation workflow
+
+Architectural Rule GW-05
+Governance workflows may consume domain information.
+Governance workflows may not be executed by non-governance modules.
+
+---
+
+### Governance Enforcement Architecture
+
+#### Enforcement Principles
+Governance enforces authority.
+Governance does not assume ownership.
+Ownership remains unchanged.
+
+Enforcement Definition
+Enforcement Means
+
+A governance decision that changes:
+
+Visibility
+Participation
+Access
+Eligibility
+
+Without transferring ownership.
+
+Enforcement Does NOT Mean
+Ownership transfer
+Aggregate transfer
+Lifecycle ownership transfer
+Resource reassignment
+
+Architectural Rule GE-01
+Governance enforces.
+Ownership persists.
+Always.
+
+
+---
+
+#### Enforcement Model
+Enforcement Execution Model
+Governance Decision
+↓
+Moderation Action
+↓
+Enforcement Outcome
+↓
+Owning Domain Applies State Change
+
+Why
+
+This preserves:
+
+Domain ownership
+Governance authority
+Module boundaries
+
+Example — Post Removal
+Governance Decision
+        ↓
+Remove Post
+        ↓
+Content Module
+        ↓
+Post Visibility Restricted
+
+Ownership remains:
+
+Post Owner = Original Author
+
+Example — Membership Removal
+Governance Decision
+        ↓
+Remove Membership
+        ↓
+Community Module
+        ↓
+Membership Disabled
+
+Ownership remains:
+
+Membership Owner = Member
+
+Architectural Rule GE-02
+Governance decisions create enforcement outcomes.
+Owning domains execute resulting state changes.
+
+Enforcement Execution Responsibilities
+Governance Module
+
+Responsible for:
+
+Decision creation
+Enforcement determination
+Enforcement recording
+Enforcement auditing
+Owning Domain
+
+Responsible for:
+
+Resource state updates
+Visibility changes
+Participation changes
+Lifecycle compliance
+
+Architectural Rule GE-03
+Governance decides.
+Owning domains apply.
+
+Enforcement Reversal Architecture
+Enforcement Reversal Flow
+Moderation Action
+        ↓
+Enforcement Applied
+        ↓
+Platform Review
+        ↓
+Reversal Decision
+        ↓
+Enforcement Removed
+Example
+Post Removed
+      ↓
+Platform Review
+      ↓
+Decision Reversed
+      ↓
+Post Restored
+
+Ownership unchanged.
+
+Architectural Rule GE-04
+Every enforcement action must be reversible unless prohibited by law or external policy.
+
+Enforcement Expansion Definition
+
+Escalating governance consequences.
+
+Example:
+
+Remove Post
+      ↓
+Restrict Profile
+
+Another example:
+
+Remove Membership
+       ↓
+Restrict Herd
+Recommended Model
+Existing Enforcement
+          ↓
+Platform Review
+          ↓
+Expanded Enforcement
+          ↓
+Additional Moderation Action
+
+Important:
+
+Expansion creates new governance actions.
+
+Expansion does not overwrite history.
+
+Architectural Rule GE-05
+Enforcement expansion creates additional governance decisions.
+History must remain immutable.
+
+---
+
+#### Enforcement Capabilities
+
+Governance may:
+
+- Restrict
+- Remove
+- Restore
+- Escalate
+- Expand Enforcement
+
+Governance may not:
+
+- Transfer Ownership
+- Become Resource Owner
+
+Resource Enforcement Matrix
+Profile
+Owning Domain
+Identity
+Enforcement Examples
+Restrict Profile
+Restore Profile
+Authority
+| Authority              | Allowed |
+| ---------------------- | ------- |
+| Shepherd               | No      |
+| Herd Owner             | No      |
+| Platform Administrator | Yes     |
+Override
+Platform Administrator only.
+
+Post
+Owning Domain
+Content
+Enforcement Examples
+Remove Post
+Restore Post
+Authority
+| Authority              | Allowed    |
+| ---------------------- | ---------- |
+| Shepherd               | Herd Scope |
+| Herd Owner             | Herd Scope |
+| Platform Administrator | Global     |
+
+Comment
+Owning Domain
+Content
+Enforcement Examples
+Remove Comment
+Restore Comment
+Authority
+| Authority              | Allowed    |
+| ---------------------- | ---------- |
+| Shepherd               | Herd Scope |
+| Herd Owner             | Herd Scope |
+| Platform Administrator | Global     |
+
+Image
+Owning Domain
+Media
+Enforcement Examples
+Restrict Image
+Restore Image
+Authority
+| Authority              | Allowed    |
+| ---------------------- | ---------- |
+| Shepherd               | Herd Scope |
+| Herd Owner             | Herd Scope |
+| Platform Administrator | Global     |
+
+Herd
+Owning Domain
+Community
+Enforcement Examples
+Restrict Herd
+Restore Herd
+Authority
+| Authority              | Allowed       |
+| ---------------------- | ------------- |
+| Shepherd               | No            |
+| Herd Owner             | Own Herd Only |
+| Platform Administrator | Global        |
+
+Membership
+Owning Domain
+Community
+Enforcement Examples
+Remove Membership
+Restore Membership
+Authority
+| Authority              | Allowed       |
+| ---------------------- | ------------- |
+| Shepherd               | Assigned Herd |
+| Herd Owner             | Own Herd      |
+| Platform Administrator | Global        |
+
+Shepherd Assignment
+Owning Domain
+Community
+Enforcement Examples
+Remove Shepherd
+Reinstate Shepherd
+Authority
+| Authority              | Allowed  |
+| ---------------------- | -------- |
+| Shepherd               | No       |
+| Herd Owner             | Own Herd |
+| Platform Administrator | Global   |
+
+Architectural Rule GE-06
+Enforcement authority must never exceed governance authority hierarchy.
+
+
+---
+
+#### Ownership Preservation
+
+Governance actions never transfer ownership.
+
+Ownership remains authoritative regardless of enforcement state.
+
+Ownership Boundary Proof
+Governance may:
+Restrict
+Restore
+Remove
+Escalate
+Expand
+
+Governance may not:
+Reassign ownership
+Become owner
+Change aggregate ownership
+Change domain ownership
+
+Therefore:
+FD-08 satisfied
+Ownership remains authoritative.
+
+Governance Authority Boundary Proof
+Governance owns:
+Reports
+Moderation Actions
+Enforcement Workflows
+
+Governance does not own:
+
+Profiles
+Posts
+Comments
+Herds
+Memberships
+Images
+
+Consistent with approved Governance Domain architecture.
+
+---
+
+### Governance Audit Architecture
+
+#### Audit Principles
+
+All governance outcomes must be auditable.
+
+Audit history is immutable.
+
+Overrides never erase history.
+
+Governance Audit Principles
+GAP-01 — Governance Decisions Must Be Traceable
+
+Every governance outcome must be attributable to:
+
+An actor
+A workflow
+A decision
+
+GAP-02 — Governance History Is Immutable
+
+Historical governance records are never rewritten.
+
+New events extend history.
+
+They do not replace history.
+
+GAP-03 — Authority Must Be Visible
+
+Audit records must reveal:
+
+Who acted
+What authority they possessed
+Why action was permitted
+
+GAP-04 — Escalations Must Be Visible
+
+Escalation history must remain visible.
+
+The system must show:
+
+Shepherd
+    ↓
+Herd Owner
+    ↓
+Platform Administrator
+
+when applicable.
+
+GAP-05 — Overrides Must Never Erase Prior Decisions
+
+Override history remains visible.
+
+Example:
+
+Decision A
+      ↓
+Override
+      ↓
+Decision B
+
+Both remain auditable.
+
+GAP-06 — Enforcement Must Be Auditable
+
+Every enforcement action must be traceable to:
+
+Report
+Review
+Decision
+
+Architectural Rule GAU-01
+Every governance outcome must be explainable through audit history.
+
+---
+
+#### Mandatory Governance Events
+
+- Report Created
+- Report Assigned
+- Report Dismissed
+- Report Escalated
+- Moderation Action Applied
+- Enforcement Applied
+- Enforcement Reversed
+- Platform Override Executed
+- Enforcement Expanded
+- Governance Actor Reviewed
+
+Mandatory Governance Events
+Report Created
+
+Trigger:
+
+User submits report
+
+Purpose:
+
+Establish governance entry point.
+
+Report Assigned
+
+Trigger:
+
+Review authority determined
+
+Purpose:
+
+Track review ownership.
+
+Report Dismissed
+
+Trigger:
+
+No action required
+
+Purpose:
+
+Record moderation outcome.
+
+Report Escalated
+
+Trigger:
+
+Authority transferred upward
+
+Purpose:
+
+Record escalation path.
+
+Moderation Action Applied
+
+Trigger:
+
+Moderation decision executed
+
+Purpose:
+
+Record governance outcome.
+
+Enforcement Applied
+
+Trigger:
+
+Restriction becomes active
+
+Purpose:
+
+Record enforcement history.
+
+Enforcement Reversed
+
+Trigger:
+
+Restoration
+
+Purpose:
+
+Record rollback history.
+
+Platform Override Executed
+
+Trigger:
+
+Higher authority overrides lower authority
+
+Purpose:
+
+Record authority exercise.
+
+Enforcement Expanded
+
+Trigger:
+
+Additional enforcement added
+
+Purpose:
+
+Record escalation severity.
+
+Governance Actor Reviewed
+
+Trigger:
+
+Shepherd review
+Herd Owner review
+
+Purpose:
+
+Support oversight workflows.
+
+Architectural Rule GAU-02
+Every governance state transition must produce an auditable governance event.
+
+Optional Governance Events
+These support future governance evolution.
+
+Not mandatory for MVP.
+
+Examples:
+
+Internal review notes
+Governance workload metrics
+Queue assignment changes
+
+Architectural Rule GAU-03
+Optional audit records must never replace mandatory governance records.
+
+Governance-Owned Audit History
+Audit Ownership Model
+Governance Owns
+Governance event history
+Governance review history
+Enforcement history
+Escalation history
+Override history
+
+Other Domains Own
+Business resources.
+Not governance history.
+
+Architectural Rule GAU-04
+
+Governance is the authoritative owner of governance history.
+
+Audit Retention Ownership
+Governance Domain Responsible For
+
+Retention of:
+
+Reports
+Moderation Actions
+Governance Events
+
+Other Domains Responsible For
+
+Retention of:
+
+Profiles
+Posts
+Herds
+Memberships
+Images
+Architectural Rule GAU-05
+Governance history remains independent from governed resource ownership.
+
+Audit Access Boundaries
+Shepherd
+
+May view:
+
+Relevant herd governance history
+
+Cannot view:
+
+Platform-wide governance history
+
+Herd Owner
+
+May view:
+
+Herd governance history
+Shepherd governance actions
+
+Cannot view:
+
+Platform-wide governance history
+
+Platform Administrator
+
+May view:
+
+Entire governance history
+
+Architectural Rule GAU-06
+Audit visibility follows governance authority hierarchy.
+
+---
+
+#### Traceability Chain
+
+Report
+↓
+Reviewer
+↓
+Decision
+↓
+Moderation Action
+↓
+Enforcement
+↓
+Current Outcome
+
+Architectural Rule GAU-07
+Every enforcement outcome must be traceable back to an originating report.
+
+Governance History Review Architecture
+Perspective 1 — Resource History
+
+Questions:
+
+What happened to this post?
+
+Review:
+
+Resource
+    ↓
+Governance Events
+    ↓
+Current Status
+Perspective 2 — Governance Actor History
+
+Questions:
+
+What actions has this Shepherd performed?
+
+Review:
+
+Actor
+    ↓
+Governance Actions
+    ↓
+Outcomes
+Perspective 3 — Governance Workflow History
+
+Questions:
+
+How did this report progress?
+
+Review:
+
+Report
+    ↓
+Review Path
+    ↓
+Decision Path
+
+Architectural Rule GAU-08
+Governance history must be reviewable by resource, actor, and workflow.
+
+Oversight Review Architecture
+Recommended Oversight Flow
+Governance Actor
+         ↓
+Governance Activity Review
+         ↓
+Oversight Evaluation
+         ↓
+Outcome
+Oversight Targets
+
+Shepherd
+
+Review:
+
+Dismissal patterns
+Enforcement patterns
+Escalation patterns
+
+Herd Owner
+
+Review:
+
+Override patterns
+Enforcement patterns
+Escalation patterns
+
+Platform Administrator
+
+External review only.
+
+Not governed by lower authorities.
+
+Consistent with hierarchy.
+
+Architectural Rule GAU-09
+Governance actors are auditable participants in governance workflows.
+
+---
+
+### Governance Integration Architecture
+Governance Integration Principles
+GIP-01 — Governance Is An Authority Consumer
+
+Governance consumes domain information.
+
+Governance does not own domain information.
+
+GIP-02 — Governance Owns Governance Workflows
+
+Domains never execute:
+
+Reporting
+Moderation
+Escalation
+Oversight
+
+These remain Governance responsibilities.
+
+GIP-03 — Domains Own Resource State
+
+Governance may request outcomes.
+
+Domains apply changes to resources they own.
+
+GIP-04 — Governance Is Workflow-Centric
+
+Governance integrates through workflow execution.
+
+Not through direct resource ownership.
+
+GIP-05 — Authorization Remains Separate
+
+Governance never performs authorization decisions.
+
+Authorization Architecture remains authoritative.
+
+Architectural Rule GI-01
+Governance may govern resources.
+Governance may not become resource owner.
+
+#### Identity Integration
+
+Identity owns profiles.
+
+Governance governs profiles.
+
+Identity remains authoritative.
+
+Governance consumes Identity capabilities.
+
+Integration Responsibilities
+Identity Provides
+User identity resolution
+Profile information
+Participation eligibility
+Governance actor information
+Governance Consumes
+Profile targets
+Actor identities
+Profile enforcement outcomes
+Integration Flow
+Governance Workflow
+        ↓
+Identity Capability
+        ↓
+Profile Information
+        ↓
+Governance Decision
+        ↓
+Identity Applies Restriction
+
+Architectural Rule GI-02
+Identity owns profile state.
+Governance owns profile governance.
+
+---
+
+#### Content Integration
+
+Content owns posts, comments, and votes.
+
+Governance governs content.
+
+Content remains authoritative.
+
+Governance remains moderation authority.
+
+Integration Responsibilities
+Content Provides
+Post information
+Comment information
+Vote information
+Ownership information
+Governance Provides
+Moderation decisions
+Enforcement decisions
+Restoration decisions
+Integration Flow
+Report
+   ↓
+Governance Review
+   ↓
+Moderation Outcome
+   ↓
+Content Module
+   ↓
+Content Visibility Updated
+Ownership Validation
+
+Post ownership remains:
+
+Author
+
+even after moderation.
+
+Consistent with approved ownership architecture.
+
+Architectural Rule GI-03
+Governance may affect content visibility.
+Governance may not own content.
+
+---
+
+#### Community Integration
+
+Community owns:
+
+- Herds
+- Memberships
+- Shepherd Assignments
+
+Governance governs community resources.
+
+Community remains authoritative.
+
+Governance remains governing authority.
+
+Integration Responsibilities
+Community Provides
+Herd information
+Membership information
+Shepherd assignments
+Governance hierarchy context
+
+Governance Provides
+Moderation outcomes
+Enforcement outcomes
+Escalation outcomes
+
+Integration Flow
+Governance Decision
+        ↓
+Community Capability
+        ↓
+Membership Restricted
+
+or
+
+Governance Decision
+        ↓
+Community Capability
+        ↓
+Herd Restricted
+
+Herd Governance Context
+
+Community supplies:
+
+Shepherd
+      ↓
+Herd Owner
+
+relationship information.
+
+Governance uses that information.
+
+Governance does not own it.
+
+Architectural Rule GI-04
+Community owns governance structure.
+Governance owns governance execution.
+
+---
+
+#### Media Integration
+
+Media owns images.
+
+Governance governs images.
+
+Media remains authoritative.
+
+Governance remains moderation authority.
+
+Integration Responsibilities
+Media Provides
+Image information
+Ownership information
+Attachment information
+
+Governance Provides
+Restriction outcomes
+Restoration outcomes
+
+Integration Flow
+Image Report
+       ↓
+Governance Review
+       ↓
+Moderation Outcome
+       ↓
+Media Module
+       ↓
+Image Restricted
+
+Architectural Rule GI-05
+Governance may restrict media.
+Governance may not own media.
+
+---
+
+#### Feed Integration
+
+Feed consumes governance outcomes.
+
+Feed never executes governance decisions.
+
+Feed consumes governance outcomes.
+
+Integration Responsibilities
+Governance Provides
+Visibility eligibility
+Restriction outcomes
+Restoration outcomes
+
+Feed Provides
+Feed composition
+Feed retrieval
+
+Integration Flow
+Post Restricted
+        ↓
+Governance Outcome
+        ↓
+Feed Composition
+        ↓
+Excluded From Feed
+
+Important Clarification
+Feed does not determine:
+
+Should this post be restricted?
+
+Governance determines that.
+
+Feed only determines:
+
+Should restricted content appear?
+
+The answer is derived from Governance state.
+
+Architectural Rule GI-06
+Feed never performs governance decisions.
+Feed consumes governance decisions.
+
+---
+
+#### Authorization Integration
+
+Authorization determines:
+
+- Whether action is permitted.
+
+Governance determines:
+
+- What governance action occurs.
+
+Responsibilities remain separate.
+
+Authorization remains authoritative.
+
+Governance consumes authorization outcomes.
+
+Responsibility Matrix
+| Responsibility        | Authorization | Governance |
+| --------------------- | ------------- | ---------- |
+| Actor Validation      | Yes           | No         |
+| Scope Validation      | Yes           | No         |
+| Hierarchy Validation  | Yes           | No         |
+| Workflow Execution    | No            | Yes        |
+| Moderation Decisions  | No            | Yes        |
+| Escalation Decisions  | No            | Yes        |
+| Enforcement Decisions | No            | Yes        |
+| Audit Recording       | No            | Yes        |
+
+Governance Execution Flow
+Governance Request
+        ↓
+Authorization Service
+        ↓
+Authority Verified
+        ↓
+Governance Workflow
+        ↓
+Decision
+        ↓
+Audit
+
+Architectural Rule GI-07
+Authorization determines whether an actor may act.
+Governance determines what action occurs.
+
+#### Governance Capability Contract Architecture
+Recommended Decision
+
+Governance consumes module capabilities.
+
+Never module internals.
+
+Example
+
+Governance should consume:
+
+ContentCapability
+
+Not:
+
+Content Repository
+
+Governance should consume:
+
+CommunityCapability
+
+Not:
+
+Community Aggregate Internals
+
+Why
+This preserves:
+
+Modular Monolith boundaries
+Future extraction readiness
+Independent evolvability
+
+Consistent with Module Boundary principles.
+
+Architectural Rule GI-08
+Governance integrates through capability contracts.
+Never through internal module implementation.
+
+---
+
+### Governance Validation
+
+Validated Against:
+
+- ADR-001
+- Domain Architecture
+- Module Boundaries
+- Application Layer Architecture
+- Authorization Architecture
+- Functional Drivers
+- Quality Drivers
+- Architectural Principles
+
+Result:
+
+Backend Governance Architecture Approved.
+
+---
+
+## 

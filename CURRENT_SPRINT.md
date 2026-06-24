@@ -3,10 +3,10 @@ Current Goal:
 MVP Architecture Design
 
 Active Task:
-Define Backend Governance Architecture
+Define Backend Data Access Architecture
 
 Next Task:
-Define Backend Data Access Architecture
+Define Backend Feed Architecture
 
 Blocked By:
 Nothing
