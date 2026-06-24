@@ -3,10 +3,10 @@ Current Goal:
 MVP Architecture Design
 
 Active Task:
-Define Backend Media Architecture
+Define Backend Error Handling Architecture
 
 Next Task:
-Define Backend Error Handling Architecture
+Define Backend Validation Architecture
 
 Blocked By:
 Nothing

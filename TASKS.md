@@ -2,12 +2,11 @@
 - MVP Architecture Design
     - Architecture Refinement
         - Backend Architecture Definition
-            - Define Backend Media Architecture
+            - Define Backend Error Handling Architecture
             
 
 
 # Pending
-Define Backend Error Handling Architecture
 Define Backend Validation Architecture
 Define Backend Background Processing Strategy
 Define Backend Observability Architecture
@@ -110,3 +109,4 @@ Define Backend Authorization Architecture
 Define Backend Governance Architecture
 Define Backend Data Access Architecture
 Define Backend Feed Architecture
+Define Backend Media Architecture

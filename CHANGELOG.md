@@ -114,6 +114,57 @@ Ownership boundaries remain preserved.
   - CHANGELOG.md
   - TASKS.md
 
+- Completed Backend Media Architecture.
+
+- Defined:
+  - Media Responsibility Architecture
+  - Media Ownership Architecture
+  - Media Contract Architecture
+  - Media Visibility Architecture
+  - Media Execution Architecture
+  - Media Governance Architecture
+
+- Established authoritative architecture for:
+  - Image Upload
+  - Image Retrieval
+  - Image Attachment
+  - Image Deletion
+  - Image Visibility
+  - Image Governance
+
+- Adopted:
+  - Media Capability Contract Architecture
+  - Centralized Media Visibility Evaluation
+  - Governance-Aware Media Lifecycle Model
+
+- Confirmed:
+  - Media owns Image resources.
+  - Media owns Image lifecycle.
+  - Governance governs but does not own images.
+  - Feed consumes Media visibility outcomes.
+  - Storage implementation remains infrastructure-owned.
+
+- Validated against:
+  - Architecture Drivers
+  - Backend Architectural Style
+  - Backend Domain Architecture
+  - Backend Module Boundaries
+  - Backend Application Layer Architecture
+  - Backend Authorization Architecture
+  - Backend Governance Architecture
+  - Backend Data Access Architecture
+  - Backend Feed Architecture
+  - ADR-001
+
+- Approved Backend Media Architecture.
+
+- Updated:
+  - ARCHITECTURE.md
+  - LEARNINGS.md
+  - CHANGELOG.md
+  - TASKS.md
+
+  
 
 
 ## 2026-06-23

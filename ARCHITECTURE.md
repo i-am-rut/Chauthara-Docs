@@ -12145,4 +12145,1424 @@ Backend Feed Architecture approved.
 
 --- 
 
-## 
+## Backend Media Architecture
+Approved responsibilities:
+Image Upload
+Image Ownership
+Image Lifecycle Management
+Media Attachment Support
+External Media Storage Integration
+
+Media is currently consumed by:
+Identity (Profile Images)
+Community (Herd Images)
+Content (Post Images)
+
+Media exists because image lifecycle differs from content lifecycle, profile lifecycle, and community lifecycle.
+
+### Media Responsibility Architecture
+Architectural Purpose
+Media is responsible for:
+Image creation
+Image ownership
+Image lifecycle
+Image attachment references
+Image visibility state
+Storage coordination
+Media governance integration
+
+Media is NOT responsible for:
+Profiles
+Herds
+Posts
+Feed composition
+Governance workflows
+
+### Media Ownership Architecture
+#### Media Ownership Model
+Authoritative Resource
+
+The authoritative resource is:
+Image
+Media owns:
+Image identity
+Image metadata
+Image owner
+Image lifecycle state
+Image governance state
+Image attachment references
+Approved API resource model already classifies Image as an independent primary resource.
+
+#### Should Media Own Files Or References?
+Decision
+
+Media owns:
+
+Image resource
+Image metadata
+Storage location reference
+
+Media does NOT own:
+
+Physical storage implementation
+Rationale
+
+The platform business resource is:
+
+Image
+
+not:
+
+Cloudinary File
+or
+Storage Object
+
+Storage systems are infrastructure concerns.
+
+Media owns the business representation.
+
+Infrastructure owns storage mechanics.
+
+This remains consistent with Application Layer and Infrastructure separation.
+
+#### Media Ownership Definition
+
+An image is owned by:
+
+The user that uploaded it.
+
+Ownership includes:
+
+Deletion authority
+Attachment authority
+Reuse authority
+
+unless governance restrictions apply.
+
+#### Authority Boundary Model
+Media Owns
+
+Media exclusively owns:
+
+Image lifecycle
+Image ownership
+Image attachment records
+Image visibility state
+Image metadata
+
+Only Media may modify those concerns.
+
+Media References
+
+Media may reference:
+
+User Profile
+Herd
+Post
+
+for attachment purposes.
+
+Reference does not imply ownership.
+
+Media Does NOT Own
+
+Media does not own:
+
+Identity Resources
+User Profile
+
+Owned by Identity.
+
+Community Resources
+Herd
+Membership
+Shepherd Assignment
+
+Owned by Community.
+
+Content Resources
+Post
+Comment
+Vote
+
+Owned by Content.
+
+Governance Resources
+Report
+Moderation Action
+
+Owned by Governance.
+
+Does Attaching An Image Transfer Ownership?
+Decision
+
+No.
+
+Attachment never transfers ownership.
+
+Can Content Own Images?
+Decision
+
+No.
+
+Content may reference images.
+
+Content never owns images.
+
+Can Community Own Images?
+Decision
+
+No.
+
+Community may reference images.
+
+Community never owns images.
+
+Can Identity Own Images?
+Decision
+
+No.
+
+Identity may reference images.
+
+Identity never owns images.
+
+#### Reusability Model
+Core Architectural Rule
+
+Media must remain reusable across domains.
+
+Therefore:
+
+Identity
+Community
+Content
+
+must all consume the same Media capability model.
+
+Approved Pattern
+
+Identity
+↓
+Media Reference
+
+Community
+↓
+Media Reference
+
+Content
+↓
+Media Reference
+
+Forbidden Pattern
+
+ProfileImage
+HerdImage
+PostImage
+
+as separate resource types.
+
+Rationale
+
+Separate image resources would:
+
+Duplicate lifecycle logic
+Duplicate ownership logic
+Duplicate governance integration
+Increase maintenance burden
+
+Violates:
+
+Simplicity First
+Independent Evolvability
+Domain-Oriented Modularity
+
+#### Media Lifecycle Ownership
+Lifecycle Owner
+
+Media owns:
+
+Entire Image Lifecycle
+
+No other module may change image lifecycle state.
+
+This follows the approved domain rule:
+
+A domain may modify only resources it owns. architecture. (Governance placement section)
+
+#### Media Governance Position
+Architectural Position
+
+Media is:
+
+Supporting Business Domain
+
+Consistent with approved module inventory. may govern. Governance may not own.**
+
+Approved ownership boundaries
+Governance separation
+Feed read-only architecture
+Future extensibility (additional media types later)
+Simplicity First
+
+without introducing new domains or ownership ambiguity.
+
+### Media Contract Architecture
+#### Image Lifecycle Model
+Design Principle
+
+The Image lifecycle should represent:
+
+Business state
+Visibility state
+Attachment state
+
+It should not model:
+
+Storage implementation details
+Upload processing details
+CDN details
+Infrastructure states
+
+#### Candidate States Evaluation
+
+Proposed states:
+
+Uploaded
+Attached
+Detached
+Restricted
+Deleted
+
+Evaluate each.
+
+Uploaded
+Meaning
+
+Image exists.
+
+Owned by a user.
+
+Not attached to any resource.
+
+Example
+
+User uploads image.
+
+Has not yet attached it anywhere.
+
+Decision
+
+Required
+
+Attached
+Meaning
+
+Image is actively referenced by at least one resource.
+
+Examples:
+
+Profile image
+Herd image
+Post image
+Decision
+
+Required
+
+Detached
+Meaning
+
+Image exists.
+
+No active attachments remain.
+
+Example
+
+User replaces profile image.
+
+Old image still exists.
+
+No resources reference it.
+
+Decision
+
+Required
+
+Restricted
+Meaning
+
+Governance has restricted image visibility.
+
+Ownership remains unchanged.
+
+Image remains stored.
+
+Image remains recoverable.
+
+Decision
+
+Required
+
+Consistent with Governance architecture.
+
+Governance restricts visibility.
+
+Governance does not destroy ownership.
+
+Deleted
+Meaning
+
+Image lifecycle terminated.
+
+Image no longer available for normal use.
+
+Decision
+
+Required
+
+#### Approved Lifecycle States
+The authoritative Image lifecycle becomes:
+Uploaded
+   ↓
+Attached
+   ↓
+Detached
+   ↓
+Deleted
+
+Restricted may occur from:
+Uploaded
+Attached
+Detached
+
+Restricted
+   ↓
+Restored
+
+#### Forbidden States
+
+The following states are rejected.
+
+Draft
+
+No business requirement.
+
+Image upload is already explicit.
+
+Pending Moderation
+
+Governance architecture does not require pre-approval moderation.
+
+Rejected.
+
+Archived
+
+No approved retention requirement.
+
+Rejected.
+
+Processing
+
+Infrastructure concern.
+
+Not business state.
+
+Rejected.
+
+Hidden
+
+Already represented by Restricted.
+
+Rejected.
+
+#### Lifecycle Authority Model
+Media Owns
+
+Media exclusively owns:
+
+Uploaded
+Attached
+Detached
+Deleted
+
+transitions.
+
+Governance Owns
+
+Governance owns:
+
+Restriction decisions
+Restoration decisions
+
+through Moderation Actions.
+
+Governance does not own Image lifecycle.
+
+This remains consistent with approved Governance architecture. Resource Ownership Model and Modular Monolith boundaries.
+
+#### Media Module Position
+Module Classification
+
+Media remains:
+
+Supporting Business Module
+
+Not:
+
+Core Business Module
+
+because platform participation can exist without media.
+
+Users can:
+
+Register
+Follow
+Post
+Comment
+Vote
+Join Herds
+
+without uploading images.
+
+Architectural Role
+
+Media provides:
+
+Reusable Media Asset Management
+
+for:
+
+Identity
+Community
+Content
+
+Media does not own:
+
+Profiles
+Herds
+Posts
+
+It owns only:
+
+Image
+
+resources.
+
+#### Media Module Responsibilities
+Approved Responsibilities
+Responsibility 1
+
+Image Upload
+
+Responsibility 2
+
+Image Retrieval
+
+Responsibility 3
+
+Image Ownership Enforcement
+
+Responsibility 4
+
+Attachment Management
+
+Responsibility 5
+
+Image Lifecycle Management
+
+Responsibility 6
+
+Media Visibility State
+
+(Governance outcomes applied)
+
+Responsibility 7
+
+Media Metadata Management
+
+#### Explicit Non-Responsibilities
+
+Media must NOT own:
+
+Profile Management
+
+Identity owns this.
+
+Herd Management
+
+Community owns this.
+
+Post Management
+
+Content owns this.
+
+Feed Composition
+
+Feed owns this.
+
+Moderation Decisions
+
+Governance owns this.
+
+Membership Validation
+
+Community owns this.
+
+Content Visibility Decisions
+
+Governance owns this.
+
+#### Media Resource Inventory
+MVP Resource Inventory
+Image
+
+Authoritative Media resource.
+
+Owns:
+
+Identity
+Ownership
+Lifecycle
+Attachment Relationships
+Visibility State
+Storage Metadata
+No Additional Resources
+
+Rejected for MVP:
+
+Album
+
+No requirement.
+
+Folder
+
+No requirement.
+
+Gallery
+
+No requirement.
+
+Collection
+
+No requirement.
+
+Media Library
+
+No business requirement.
+
+#### Media Aggregate Architecture
+Aggregate Evaluation
+
+Question:
+
+Should Media own multiple aggregates?
+
+Candidate
+
+Image Aggregate
+
+Contains:
+
+Image
+Attachment References
+Ownership
+Lifecycle State
+Visibility State
+Decision
+
+Approved.
+
+Single aggregate.
+
+Aggregate Boundary
+Image Aggregate
+ ├── Image
+ ├── Ownership
+ ├── Lifecycle
+ ├── Visibility State
+ └── Attachment References
+
+Simple.
+
+Consistent with MVP scope.
+
+#### Media Capability Architecture
+
+Following approved module interaction rules, modules expose capabilities rather than repositories or entities.
+
+Capability Group 1
+Upload Capabilities
+CreateImage()
+
+Purpose:
+
+Create Media resource.
+
+Capability Group 2
+Ownership Capabilities
+IsImageOwner()
+GetImageOwner()
+
+Purpose:
+
+Ownership validation.
+
+Capability Group 3
+Attachment Capabilities
+AttachImage()
+DetachImage()
+
+Purpose:
+
+Relationship management.
+
+Capability Group 4
+Retrieval Capabilities
+GetImage()
+ImageExists()
+
+Purpose:
+
+Reference validation.
+
+Capability Group 5
+Visibility Capabilities
+IsImageVisible()
+IsImageRestricted()
+
+Purpose:
+
+Feed and consumer visibility.
+
+Capability Group 6
+Lifecycle Capabilities
+DeleteImage()
+
+Purpose:
+
+Lifecycle transition.
+
+#### Public Contract Architecture
+Rule
+
+Consumers may access Media only through Media Contract.
+
+Never through:
+
+Media Repository
+Media Collection
+Media Models
+Approved Public Contract
+MediaContract
+
+CreateImage()
+
+GetImage()
+
+ImageExists()
+
+IsImageOwner()
+
+GetImageOwner()
+
+AttachImage()
+
+DetachImage()
+
+DeleteImage()
+
+IsImageVisible()
+
+IsImageRestricted()
+
+#### Media Dependency Graph
+Identity
+    ↑
+    |
+  Media
+
+Consumers:
+
+Identity
+Community
+Content
+Governance
+Feed
+
+Meaning:
+
+Media depends on Identity
+
+Everyone else consumes Media
+
+#### Media Workflow Boundaries
+Identity Workflow Example
+Change Profile Image
+
+Identity owns:
+
+Profile Update
+
+Media owns:
+
+Attachment Transition
+Community Workflow Example
+Change Herd Cover
+
+Community owns:
+
+Herd Update
+
+Media owns:
+
+Attachment Transition
+Content Workflow Example
+Create Post With Image
+
+Content owns:
+
+Post Creation
+
+Media owns:
+
+Image Attachment
+
+#### Media Repository Ownership
+
+Consistent with approved Data Access Architecture:
+
+Media owns:
+
+Image Repository
+Image Queries
+Image Persistence
+
+No external module may:
+
+Read Image Collection Directly
+Write Image Collection Directly
+
+Ownership remains local.
+
+### Media Visibility Architecture
+#### Visibility Architecture
+Visibility Inputs
+
+Visibility evaluation consumes:
+
+Image State
+Active
+Deleted
+Restricted
+Governance State
+Restricted
+Restored
+Ownership State
+Owner
+Viewer
+Anonymous
+
+where applicable.
+
+#### Authoritative Visibility Flow
+Image Request
+    ↓
+Load Image
+    ↓
+Evaluate Lifecycle
+    ↓
+Evaluate Governance State
+    ↓
+Determine Visibility
+    ↓
+Result
+Visibility Outcomes
+Visible
+
+Allowed.
+
+Hidden
+
+Governance restriction.
+
+Not Found
+
+Deleted lifecycle.
+
+#### Feed Visibility Integration
+
+Feed consumes:
+
+IsImageVisible()
+
+from Media.
+
+Feed Flow
+Feed Service
+    ↓
+Media Contract
+    ↓
+Visibility Result
+
+Feed never evaluates:
+
+Restriction Rules
+Deletion Rules
+
+itself.
+
+Media remains authority.
+
+
+### Media Execution Architecture
+#### Media Execution Principles
+MEP-01 — Media Owns Media Workflows
+
+Only Media may execute:
+
+Upload Image
+Delete Image
+Attach Image
+Detach Image
+Restore Image
+
+No external module may execute Media lifecycle transitions.
+
+MEP-02 — Application Services Own Execution
+Media workflows execute through:
+
+Controller
+    ↓
+Media Application Service
+    ↓
+Domain Validation
+    ↓
+Repository
+
+Never:
+
+Controller
+    ↓
+Repository
+
+This remains consistent with the approved Application Layer Architecture.
+
+MEP-03 — Ownership Before Mutation
+Ownership validation must occur before:
+
+deletion
+attachment changes
+visibility changes initiated by owner actions
+
+MEP-04 — Governance Before Visibility
+Governance outcomes must always participate in visibility evaluation.
+
+Visibility cannot ignore governance state.
+
+MEP-05 — Media Remains Storage-Agnostic
+Execution architecture must not depend on:
+
+Cloudinary
+S3
+Local Storage
+
+Media owns business workflows.
+
+Infrastructure owns storage implementation.
+
+#### Upload Execution Architecture
+Use Case
+
+User uploads image.
+
+Examples:
+
+Profile image
+Profile cover
+Herd image
+Herd cover
+Post image
+Execution Flow
+Request
+    ↓
+Authentication
+    ↓
+Media Controller
+    ↓
+Request Validation
+    ↓
+UploadImageApplicationService
+    ↓
+Ownership Context Validation
+    ↓
+Media Domain Rules
+    ↓
+Storage Upload
+    ↓
+Create Image Resource
+    ↓
+Persist Image
+    ↓
+Response
+Ownership Context Validation
+
+Validate:
+
+Actor Exists
+Actor Eligible
+
+via Identity Contract.
+
+Media does not validate passwords.
+
+Media does not authenticate.
+
+Identity remains root authority.
+
+#### Delete Image Execution Architecture
+Use Case
+
+Owner deletes image.
+
+Execution Flow
+Request
+    ↓
+Authentication
+    ↓
+Media Controller
+    ↓
+DeleteImageApplicationService
+    ↓
+Authorization
+    ↓
+Ownership Validation
+    ↓
+Governance Validation
+    ↓
+Delete Image
+    ↓
+Persist
+    ↓
+Response
+Required Validations
+Ownership
+IsImageOwner()
+
+must pass.
+
+Governance
+
+Image cannot bypass:
+
+Restriction State
+Removal State
+
+rules.
+
+Governance remains authoritative.
+
+#### Attachment Execution Architecture
+Purpose
+
+Associate Image with:
+
+Profile
+Herd
+Post
+Architectural Principle
+
+Attachment ownership belongs to Media.
+
+Business ownership belongs elsewhere.
+
+Example
+
+Profile Image Update
+
+Identity
+    ↓
+Media Contract
+    ↓
+AttachImage()
+
+Identity owns:
+
+Profile Lifecycle
+
+Media owns:
+
+Attachment Relationship
+
+#### Attachment Workflow Execution
+Example
+
+Create Post With Image
+
+Content Controller
+    ↓
+CreatePostApplicationService
+    ↓
+Media Contract
+        ↓
+        AttachImage()
+    ↓
+Persist Post
+
+Media validates:
+
+Image Exists
+Image Visible
+Image Available
+
+Content validates:
+
+Post Rules
+Membership Rules
+
+Ownership remains preserved.
+
+#### Retrieval Execution Architecture
+Use Case
+
+Display image.
+
+Execution Flow
+Request
+    ↓
+Media Controller
+    ↓
+GetImageApplicationService
+    ↓
+Visibility Evaluation
+    ↓
+Return Metadata
+
+Important:
+
+Media evaluates visibility.
+
+Consumers do not reimplement visibility rules.
+
+#### Cross-Module Execution Rules
+Identity
+
+Allowed:
+
+Upload Profile Image
+Attach Profile Image
+
+via Media Contract.
+
+Community
+
+Allowed:
+
+Upload Herd Image
+Attach Herd Image
+
+via Media Contract.
+
+Content
+
+Allowed:
+
+Upload Post Image
+Attach Post Image
+
+via Media Contract.
+
+Governance
+
+Allowed:
+
+Restrict Image
+Restore Image
+
+via Media Contract.
+
+Feed
+
+Allowed:
+
+Check Visibility
+Retrieve Metadata
+
+via Media Contract.
+
+#### Media Audit Architecture
+Audit Requirement
+
+Media itself does not own moderation audit history.
+
+Governance owns moderation audit history.
+
+Consistent with Governance Architecture.
+
+Media Audit Events
+
+Media should emit audit-worthy events:
+
+Image Uploaded
+Image Deleted
+Image Restricted
+Image Restored
+Attachment Created
+Attachment Removed
+
+Governance may consume:
+
+Restriction
+Restoration
+
+events.
+
+#### Failure Handling Architecture
+Storage Failure
+
+Example:
+
+Upload succeeds partially
+
+Rule:
+
+Image resource must not be persisted if storage upload fails.
+
+Persistence Failure
+
+Example:
+
+Storage upload succeeds
+Database save fails
+
+Rule:
+
+Compensating cleanup must execute.
+
+Remove orphaned storage asset.
+
+Governance Failure
+
+Example:
+
+Moderation action creation fails
+
+Rule:
+
+Governance transaction fails.
+
+Restriction not committed.
+
+#### Transaction Architecture
+Media-Owned Transactions
+
+Media workflows own:
+
+Upload
+Delete
+Attach
+Detach
+
+transactions.
+
+Governance Transactions
+
+Governance owns:
+
+Moderation Action Creation
+Restriction Workflow
+Restoration Workflow
+
+transactions.
+
+Rule
+
+Single workflow owner.
+
+Single transaction owner.
+
+Consistent with Application Layer Architecture.
+
+#### Media Execution Rules
+MER-01
+Media Application Services own Media workflow execution.
+
+MER-02
+Ownership validation executes before mutation.
+
+MER-03
+Governance validation executes before visibility decisions.
+
+MER-04
+Only Media may modify Image lifecycle state.
+
+MER-05
+Governance may govern Image state without owning Image resources.
+
+MER-06
+Cross-module interactions occur through Media Contracts only.
+
+MER-07
+Feed consumes Media visibility outcomes.
+
+MER-08
+Media remains storage-provider agnostic.
+
+MER-09
+Storage failures must not create orphaned Image resources.
+
+MER-10
+Media visibility evaluation remains centralized.
+
+### Media Governance Architecture
+#### Governance Integration Architecture
+
+Governance owns:
+
+Restriction
+Restoration
+
+workflows.
+
+Media owns:
+
+Image Lifecycle
+
+workflows.
+
+These remain separate.
+
+#### Governance Restriction Flow
+Example
+
+Platform Administrator restricts image.
+
+Execution:
+
+Governance Controller
+    ↓
+Governance Application Service
+    ↓
+Authority Validation
+    ↓
+Target Validation
+    ↓
+Media Contract
+        ↓
+        Restrict Image
+    ↓
+Create Moderation Action
+    ↓
+Response
+
+Important:
+
+Governance does not directly modify repositories.
+
+Only Media modifies Image state.
+
+This preserves module ownership boundaries.
+
+#### Governance Restoration Flow
+Example
+
+Administrator restores image.
+
+Execution:
+
+Governance Service
+    ↓
+Media Contract
+        ↓
+        Restore Image
+
+Media remains owner.
+
+Governance remains authority.
+
+#### Governance Boundary Rules
+GBR-M-01
+Governance may restrict images.
+
+GBR-M-02
+Governance may restore images.
+
+GBR-M-03
+Governance may audit images.
+
+GBR-M-04
+Governance never owns images.
+
+GBR-M-05
+Governance never accesses Media repositories directly.
+
+GBR-M-06
+Governance actions must create moderation records.
+
+### Media Evolution Strategy
+#### Future Evolution Compatibility
+
+Current architecture supports:
+
+Video
+Video Visibility
+Video Governance
+Video Attachments
+Audio
+Audio Visibility
+Audio Governance
+File Attachments
+File Visibility
+File Governance
+
+No redesign required.
+
+Execution model remains reusable.
+
+#### Future Evolution Boundaries
+
+Potential future additions:
+
+Video
+Media Resource
+Audio
+Media Resource
+File Attachments
+Media Resource
+Processing Pipelines
+Media Workflow
+
+None require:
+
+Module split
+Domain split
+Architecture redesign
+
+The current boundary remains extensible and aligned with Evolutionary Architecture. -Oriented Modular Monolith.
+
+Against Module Boundary Rules
+
+Compliant.
+
+Ownership, lifecycle, and repository boundaries remain preserved.
+
+Against Governance Architecture
+
+Compliant.
+
+Governance governs images without acquiring ownership.
+
+Against Feed Architecture
+
+Compliant.
+
+Feed consumes image information but remains read-only.
+
+Against Data Access Architecture
+
+Compliant.
+
+Media repositories remain private to the module.
+
+---
+
+##
