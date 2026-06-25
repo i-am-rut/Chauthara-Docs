@@ -1,3 +1,18 @@
+## Architecture vs Implementation
+
+Architecture approval and implementation sequencing are independent concerns.
+
+Certain architectural areas may be approved before implementation.
+
+Implementation may occur through phased delivery:
+
+- Phase 1 — Core Platform
+- Phase 2 — Governance & Operations
+
+Deferred implementation does not invalidate approved architecture.
+
+Approved architecture remains authoritative regardless of implementation phase.
+
 # Architecture Drivers
 
 ## Functional Drivers

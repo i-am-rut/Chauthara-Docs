@@ -500,6 +500,47 @@ The project serves as a learning vehicle for:
 
 ---
 
+# Delivery Strategy
+
+The approved MVP remains the complete target scope of the platform.
+
+Implementation may occur through multiple delivery phases.
+
+## Phase 1 — Core Platform
+
+Focus:
+
+- Core platform participation
+- Identity
+- Communities
+- Content creation
+- Discussion
+- Voting
+- Feed consumption
+
+The goal of Phase 1 — Core Platform is to achieve a usable social platform and gain practical implementation experience.
+
+## Phase 2 — Governance & Operations
+
+Focus:
+
+- Reporting
+- Moderation
+- Governance workflows
+- Enforcement
+- Escalation
+- Remaining MVP governance capabilities
+
+## Architectural Principle
+
+Architectural design may be completed before implementation.
+
+Implementation order does not redefine approved architecture or MVP scope.
+
+Approved architectural decisions remain authoritative even if implementation is deferred.
+
+---
+
 ## Current Status
 
 MVP Product Design Consolidation Phase

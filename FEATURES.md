@@ -21,6 +21,9 @@ Long-term platform expansion.
 ## Core Platform
 
 ### Feature: User Accounts
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Allow users to register, authenticate, and manage their accounts.
 
@@ -221,6 +224,9 @@ Moderation Systems
 Require user identity.
 
 ### Feature: User Profiles
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Public user identity page containing profile information and contributions.
 
@@ -396,6 +402,9 @@ Moderation Systems
 Profiles support investigation and enforcement.
 
 ### Feature: Personal Posting
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Users create posts outside of Herds.
 
@@ -655,6 +664,9 @@ Ephemeral content.
 Creator monetization integrations.
 
 ### Feature: Following Feed
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Display content from followed users.
 
@@ -855,6 +867,9 @@ Personalized feed intelligence.
 Reputation-aware feed ranking.
 
 ### Feature: Follow System
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Users follow other users.
 
@@ -1031,6 +1046,9 @@ Creator audience analytics
 Reputation-influenced discovery
 
 ### Feature: Comments & Replies
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Users discuss posts through threaded conversations.
 
@@ -1308,6 +1326,9 @@ Rich media comments.
 Anonymous discussion modes (if ever adopted).
 
 ### Feature: HypeUp / HypeDown Voting
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Voting mechanism for posts and comments.
 
@@ -1519,6 +1540,9 @@ Advanced vote abuse detection systems.
 Community notes integration with voting.
 
 ### Feature: Herd Creation
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Users create topic-based communities.
 
@@ -1765,6 +1789,9 @@ Community elections.
 Community reputation systems.
 
 ### Feature: Herd Membership
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Users join and leave Herds.
 
@@ -1968,6 +1995,9 @@ Membership badges.
 Membership analytics.
 
 ### Feature: Herd Posting
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Users create posts inside Herds.
 
@@ -2419,6 +2449,9 @@ Anonymous community posting.
 Reputation-based posting permissions.
 
 ### Feature: Herd Feed
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Display content from Herds that a user has joined.
 
@@ -2745,6 +2778,9 @@ Reputation-aware feed ranking.
 Cross-feed blending.
 
 ### Feature: Reporting System
+Release Stage: MVP
+Implementation Phase: Phase 2 — Governance & Operations
+
 Description
 Users report content and behavior.
 
@@ -3083,6 +3119,9 @@ Community notes integration.
 Transparency reports.
 
 ### Feature: Platform Moderation
+Release Stage: MVP
+Implementation Phase: Phase 2 — Governance & Operations
+
 Description
 Administrative moderation tools.
 
@@ -3455,6 +3494,9 @@ Advanced moderation analytics.
 AI-assisted moderation systems.
 
 ### Feature: Shepherd Moderation
+Release Stage: MVP
+Implementation Phase: Phase 2 — Governance & Operations
+
 Description
 Community moderation tools.
 
@@ -3736,6 +3778,9 @@ Advanced moderation analytics.
 Automated moderation assistance.
 
 ### Feature: Image Uploads
+Release Stage: MVP
+Implementation Phase: Phase 1 — Core Platform
+
 Description
 Images.
 

@@ -1,16 +1,92 @@
+# Delivery Roadmap
+
+## Phase 1 — Core Platform
+
+- Backend Security Architecture
+- Frontend Architecture (Phase 1 — Core Platform)
+- Database Design
+- Infrastructure Definition (Phase 1 — Core Platform)
+- Development Planning
+- Backend Development
+- Frontend Development
+- Phase 1 — Core Platform Release
+
+## Phase 2 — Governance & Operations
+
+- Governance Implementation
+- Reporting System
+- Shepherd Moderation
+- Platform Moderation
+
+## Post-Phase 1 — Core Platform Architecture Expansion
+
+- Backend Background Processing Strategy
+- Backend Observability Architecture
+- Backend Configuration Architecture
+- Advanced Infrastructure Architecture
+
+
+
 # Ongoing
 - MVP Architecture Design
     - Architecture Refinement
         - Backend Architecture Definition
-            - Define Backend Background Processing Strategy
-            
+            - Define Backend Security Architecture
+
 
 
 # Pending
+
+## Phase 1 — Core Platform
+
+### Architecture
+- Define Frontend Architecture
+- Define Database Design
+- Define Infrastructure Definition
+- Architecture Validation
+
+### Development Planning
+- Define Backend API Layer Architecture
+- Backend Development Planning
+- Frontend Development Planning
+- Development Sprint Planning
+
+### Implementation
+- Backend Development
+- Frontend Development
+
+### Validation & Release
+- Integration Testing
+- Phase 1 — Core Platform Release
+
+### Learning & Feedback
+- Real Usage Review
+
+## Phase 2 — Governance & Operations
+
+### Architecture
+- Define Governance Architecture Refinements
+
+### Implementation
+- Governance Implementation
+- Reporting System
+- Shepherd Moderation
+- Platform Moderation
+
+### Backend Expansion
+- Define Backend Background Processing Strategy
+- Define Backend Observability Architecture
+- Define Backend Operations Strategy
+
+### Validation & Release
+- Phase 2 Validation
+- Phase 2 Release
+
+
+<!-- Define Backend Background Processing Strategy
 Define Backend Observability Architecture
 Define Backend Configuration Architecture
 Define Backend API Layer Architecture
-Define Backend Security Architecture
 Backend Architecture Validation
 Frontend Architecture Definition
 Database Design
@@ -26,7 +102,7 @@ Implementation / Development
 Testing
 Deployment
 MVP Release
-Operations
+Operations -->
 
 <!-- At the time of definition of:
 Account Deletion Behavior
