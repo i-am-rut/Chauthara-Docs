@@ -28771,4 +28771,1744 @@ EVOLVE-07 — No Premature Routing Complexity
 
 Advanced routing capabilities should be introduced only when justified by approved requirements.
 
-## 
+## Frontend UI System Architecture
+### UI System Philosophy
+Domain-Independent Internal UI System built around reusable presentation components, shared design rules, and consistent interaction patterns.
+
+The UI system becomes a presentation architecture, not a business architecture.
+
+Business behavior continues to reside within:
+
+Server Components
+Client Components (where required)
+Domain modules
+API interactions
+State management architecture
+
+The UI layer remains responsible only for visual presentation and user interaction.
+
+#### UI System Goals
+
+The frontend UI system shall provide:
+
+Consistent visual identity.
+Predictable interaction behavior.
+Reusable presentation primitives.
+Accessibility by default.
+Responsive layouts.
+Domain-independent UI composition.
+Maintainable styling conventions.
+Long-term design evolution without structural redesign.
+
+The UI system is shared infrastructure for the frontend rather than a business domain.
+
+#### UI Architecture Principles
+
+The following principles become authoritative.
+
+UI-01 — Presentation First
+
+UI components represent presentation.
+
+They do not own business workflows.
+
+Business execution remains within the approved frontend architecture.
+
+UI-02 — Backend Remains Authoritative
+
+The UI never becomes the source of truth for business state.
+
+Visual representation reflects backend-confirmed data through the approved rendering and state management architecture.
+
+UI-03 — Domain Independence
+
+Reusable UI components must remain independent of business domains whenever practical.
+
+Examples include:
+
+Buttons
+Inputs
+Cards
+Dialogs
+Navigation primitives
+Badges
+Avatars
+Typography elements
+
+These components must not depend on:
+
+Content
+Community
+Governance
+Feed
+Identity
+
+This preserves frontend module boundaries.
+
+UI-04 — Composition Over Specialization
+
+Complex interfaces should be composed from smaller reusable components.
+
+Avoid creating highly specialized components that cannot be reused.
+
+Example philosophy:
+
+Button
+    ↓
+Icon Button
+    ↓
+Toolbar
+    ↓
+Post Actions
+
+rather than a single monolithic component.
+
+UI-05 — Predictable Behavior
+
+Equivalent UI elements should behave consistently throughout the application.
+
+Examples include:
+
+Button interactions
+Form controls
+Navigation behavior
+Loading indicators
+Error presentation
+Empty states
+
+Users should not learn different interaction models for different domains.
+
+UI-06 — Accessibility by Default
+
+Accessibility is a foundational architectural requirement.
+
+Accessibility support is built into shared UI components rather than delegated to individual feature implementations.
+
+This reduces duplication and promotes consistent compliance.
+
+UI-07 — Styling Is Shared Infrastructure
+
+Styling is part of the shared frontend infrastructure.
+
+Domain modules consume the design system rather than defining independent visual languages.
+
+Visual consistency takes precedence over local customization.
+
+#### Design Consistency Philosophy
+
+The platform should present a unified interface regardless of business domain.
+
+Identity pages, Herd pages, feeds, moderation interfaces, and profile views should feel like parts of the same application.
+
+Consistency applies to:
+
+Layout spacing.
+Typography hierarchy.
+Color usage.
+Component sizing.
+Motion behavior.
+Interactive feedback.
+Navigation elements.
+Status presentation.
+
+Feature modules may introduce domain-specific content, but not independent design systems.
+
+#### Reusable Component Philosophy
+
+Reusable components should maximize reuse while minimizing knowledge of application behavior.
+
+Reusable components should:
+
+Accept data.
+Render UI.
+Expose events.
+Remain stateless where practical.
+Avoid direct API interaction.
+Avoid direct routing logic.
+Avoid business validation.
+
+This enables reuse across all approved frontend domains.
+
+#### Separation of Presentation and Business Logic
+
+Presentation and business logic remain separate architectural concerns.
+
+Presentation Layer Responsibilities
+Rendering UI.
+Visual composition.
+Styling.
+Layout.
+Accessibility.
+Interaction primitives.
+Business Layer Responsibilities
+API communication.
+Domain workflows.
+State synchronization.
+Authorization.
+Navigation decisions.
+Business validation.
+Server interactions.
+
+This separation preserves the approved frontend architecture and Backend Authority principle.
+
+#### Domain-Independent UI Components
+
+Shared UI components must not assume:
+
+User identity.
+Herd membership.
+Moderation authority.
+Feed context.
+Authentication state.
+
+Instead, domain modules provide the required data through composition.
+
+Example:
+
+Shared Card
+↓
+
+Post Card
+↓
+
+Feed Item
+
+rather than embedding feed-specific behavior into the shared component.
+
+This supports Domain-Oriented Frontend organization.
+
+#### Accessibility Philosophy
+
+Accessibility is treated as an architectural quality attribute rather than a feature-level enhancement.
+
+The UI architecture should consistently support:
+
+Semantic HTML.
+Keyboard accessibility.
+Screen reader compatibility.
+Visible focus indicators.
+Sufficient visual contrast.
+Accessible form controls.
+Meaningful interaction states.
+
+Accessibility requirements apply uniformly across shared components.
+
+#### Styling Philosophy
+
+The styling architecture shall prioritize:
+
+Utility-first styling.
+Centralized design tokens.
+Predictable spacing.
+Consistent typography.
+Minimal custom CSS.
+Shared visual language.
+
+Styling decisions should remain implementation-independent from business modules.
+
+Feature modules consume styling conventions instead of redefining them.
+
+Detailed styling architecture is defined in Part 3.
+
+#### UI Architectural Rules
+
+The following rules become authoritative.
+
+UI-RULE-01
+
+Reusable UI components must remain domain-independent.
+
+UI-RULE-02
+
+Business logic must not be implemented inside shared UI components.
+
+UI-RULE-03
+
+The UI layer must never become the authoritative owner of business state.
+
+UI-RULE-04
+
+Shared components communicate through props and composition, not direct backend interaction.
+
+UI-RULE-05
+
+Visual consistency is governed centrally through the UI system.
+
+UI-RULE-06
+
+Accessibility requirements apply to every shared component by default.
+
+UI-RULE-07
+
+Styling conventions remain centralized and shared across frontend modules.
+
+UI-RULE-08
+
+UI architecture evolves incrementally without requiring feature-module redesign.
+
+### Component Architecture
+Layered Component Architecture where components are organized by architectural responsibility rather than by visual complexity alone.
+
+The component hierarchy becomes:
+
+Shared UI Primitives
+        ↓
+Shared Infrastructure Components
+        ↓
+Domain Components
+        ↓
+Page Sections
+        ↓
+Pages
+
+Each level has explicit ownership, dependency rules, and reuse expectations.
+
+This preserves both Domain-Oriented Frontend organization and the shared UI philosophy established in Part 1.
+
+#### Component Classification
+
+The frontend component system shall consist of five architectural categories.
+
+Category 1 — Shared UI Components
+
+Purpose:
+
+Provide reusable presentation primitives used throughout the application.
+
+Characteristics:
+
+Domain-independent.
+Stateless where practical.
+No API interaction.
+No routing responsibility.
+No business workflows.
+Highly reusable.
+
+Typical responsibilities include:
+
+Buttons
+Inputs
+Typography
+Cards
+Avatars
+Badges
+Icons
+Dialog primitives
+Loading indicators
+
+These form the foundation of the UI system.
+
+Category 2 — Shared Infrastructure Components
+
+Purpose:
+
+Provide reusable application-level UI behaviors without owning business logic.
+
+Examples include:
+
+Navigation shell
+Modal infrastructure
+Toast container
+Theme provider
+Error boundary UI
+Loading boundary UI
+
+Characteristics:
+
+Shared across domains.
+Infrastructure-oriented.
+Independent of business resources.
+Consumed by multiple modules.
+Category 3 — Domain Components
+
+Purpose:
+
+Render domain-specific business data.
+
+Examples:
+
+Post Card
+Comment Thread
+Herd Header
+Profile Summary
+Feed Item
+Membership Badge
+
+Characteristics:
+
+Domain-aware.
+Consume domain models.
+Compose shared UI primitives.
+Do not own backend workflows.
+May coordinate client-side interaction appropriate to the domain.
+
+Domain components belong to their owning frontend module.
+
+Category 4 — Section Components
+
+Purpose:
+
+Compose multiple domain components into meaningful page sections.
+
+Examples:
+
+Feed Section
+Comment Section
+Herd Overview Section
+Profile Information Section
+
+Characteristics:
+
+Organize related domain components.
+Define page-level composition.
+Minimize duplication between pages.
+
+Sections remain presentation-focused.
+
+Category 5 — Page Components
+
+Purpose:
+
+Represent complete route-level UI.
+
+Responsibilities include:
+
+Page composition.
+Rendering orchestration.
+Layout integration.
+Route-level loading and error boundaries.
+Delegation to lower-level components.
+
+Pages should contain minimal presentation logic beyond composition.
+
+#### Shared Components
+
+Shared components represent the stable visual language of the application.
+
+Shared components should:
+
+Remain business-agnostic.
+Expose configurable interfaces.
+Avoid assumptions about application state.
+Avoid API dependencies.
+Avoid feature-specific styling.
+Support accessibility requirements.
+
+Shared components form the reusable foundation consumed by every frontend module.
+
+#### Domain-Specific Components
+
+Domain components encapsulate presentation specific to an approved frontend domain.
+
+Each domain owns its own presentation components.
+
+Examples:
+
+Identity
+
+Profile Card
+Profile Header
+Profile Statistics
+
+Content
+
+Post Card
+Comment Item
+Vote Display
+
+Community
+
+Herd Card
+Herd Banner
+Membership Panel
+
+Feed
+
+Feed List
+Feed Item
+Feed Filters
+
+Governance
+
+Report Summary
+Moderation Action Card
+Restriction Banner
+
+This mirrors the approved backend domain inventory and frontend module structure.
+
+#### Layout Components
+
+Layout components define reusable structural composition rather than business presentation.
+
+Examples include:
+
+Application Layout
+Auth Layout
+Feed Layout
+Profile Layout
+Herd Layout
+Dashboard Layout (future)
+
+Layout components should:
+
+Organize page structure.
+Provide consistent spacing.
+Host navigation regions.
+Define responsive containers.
+
+Layouts must not own business workflows.
+
+#### Component Composition Philosophy
+
+Component composition follows a bottom-up architecture.
+
+Authoritative hierarchy:
+
+Primitive UI
+      ↓
+Shared Component
+      ↓
+Domain Component
+      ↓
+Section Component
+      ↓
+Page Component
+      ↓
+Route
+
+Higher-level components compose lower-level components.
+
+Lower-level components never depend on higher-level components.
+
+This maintains an acyclic component hierarchy.
+
+#### Component Ownership Model
+
+Ownership aligns with frontend architectural boundaries.
+
+Shared UI
+
+Owns:
+
+Visual primitives.
+Common interaction patterns.
+Accessibility defaults.
+
+Does not own:
+
+Business models.
+API communication.
+Domain workflows.
+Domain Modules
+
+Own:
+
+Domain presentation.
+Resource visualization.
+Domain-specific composition.
+
+Do not own:
+
+Shared UI primitives.
+Shared infrastructure.
+Pages
+
+Own:
+
+Route composition.
+Page assembly.
+Integration of layouts and sections.
+
+Do not own:
+
+Reusable UI.
+Shared styling rules.
+Domain-independent presentation.
+
+Ownership remains singular at every architectural level.
+
+#### Component Boundary Rules
+
+The following boundaries become authoritative.
+
+CB-01 — Shared Components Are Domain Independent
+
+Shared UI components must not import domain modules.
+
+CB-02 — Domain Components Compose Shared Components
+
+Domain components consume shared UI but never modify shared infrastructure.
+
+CB-03 — Page Components Compose Domains
+
+Pages orchestrate domain components rather than duplicating their presentation logic.
+
+CB-04 — Layouts Remain Structural
+
+Layouts define application structure only.
+
+Business behavior belongs elsewhere.
+
+CB-05 — Business Logic Remains Outside Shared UI
+
+Shared components must not:
+
+Fetch data.
+Execute API calls.
+Perform authorization.
+Execute domain workflows.
+
+#### Component Dependency Rules
+
+Dependency direction follows the approved frontend architecture.
+
+Allowed dependency flow:
+
+Page
+   ↓
+Section
+   ↓
+Domain Component
+   ↓
+Shared Infrastructure
+   ↓
+Shared UI Primitive
+
+Dependencies are one-directional.
+
+Higher abstraction depends on lower abstraction.
+
+Reverse dependencies are prohibited.
+
+Forbidden Dependencies
+
+The following become architectural rules.
+
+COMP-01
+
+Shared UI → Domain Component
+
+Forbidden.
+
+COMP-02
+
+Shared UI → API Layer
+
+Forbidden.
+
+COMP-03
+
+Shared UI → Backend Models
+
+Forbidden.
+
+COMP-04
+
+Domain Component → Unrelated Domain Component
+
+Avoid unless promoted into shared infrastructure.
+
+Cross-domain presentation reuse should occur through shared components rather than direct feature coupling.
+
+COMP-05
+
+Primitive Components → Layout Components
+
+Forbidden.
+
+COMP-06
+
+Component dependency cycles are prohibited.
+
+#### Reusability Principles
+
+Component reuse should prioritize:
+
+Predictable interfaces.
+Composition over inheritance.
+Configuration over duplication.
+Small focused responsibilities.
+Stable public APIs.
+
+A reusable component should solve one presentation concern well rather than several unrelated concerns.
+
+Promotion to shared infrastructure should occur only after repeated reuse across domains.
+
+This prevents premature abstraction while supporting the project's Evolutionary Architecture principle.
+
+#### Component Organization
+
+The component inventory should reflect architectural responsibility.
+
+Conceptually:
+
+Shared
+├── UI
+├── Infrastructure
+
+Domains
+├── Identity
+├── Content
+├── Community
+├── Feed
+├── Governance
+
+Layouts
+
+Pages
+
+This organization mirrors the approved frontend module architecture while keeping presentation infrastructure independent from business domains.
+
+### Design System & Styling Architecture
+Design Token Driven Styling Architecture built on Tailwind CSS.
+
+The architecture shall consist of:
+
+Centralized design tokens.
+Utility-first styling.
+Shared visual language.
+Responsive design standards.
+Theme abstraction.
+Domain-independent styling rules.
+
+Feature modules consume the design system rather than creating independent visual identities.
+
+#### Design Token Philosophy
+
+Design tokens become the authoritative representation of visual decisions.
+
+Tokens represent design intent rather than implementation details.
+
+Examples include:
+
+Colors.
+Typography.
+Spacing.
+Border radius.
+Shadows.
+Breakpoints.
+Layer ordering.
+Motion values.
+
+UI components consume tokens rather than defining raw visual values.
+
+This establishes a single source of truth for visual consistency.
+
+#### Color System
+
+The color system shall define semantic roles rather than feature-specific colors.
+
+Examples of semantic categories:
+
+Primary
+Secondary
+Surface
+Background
+Border
+Success
+Warning
+Error
+Information
+Text
+Muted
+
+Components reference semantic colors instead of hardcoded values.
+
+Example philosophy:
+
+Primary Action
+↓
+
+Primary Color Token
+
+↓
+
+Resolved Color Value
+
+This allows branding evolution without modifying component implementations.
+
+#### Typography System
+
+Typography shall be governed through centralized typography tokens.
+
+The typography system defines:
+
+Font families.
+Font sizes.
+Font weights.
+Line heights.
+Text hierarchy.
+Heading hierarchy.
+
+Typography should communicate information hierarchy rather than individual page styling.
+
+Equivalent content should use equivalent typography throughout the application.
+
+#### Spacing System
+
+Spacing shall be standardized through a predefined spacing scale.
+
+The spacing system governs:
+
+Margins.
+Padding.
+Gaps.
+Section spacing.
+Component spacing.
+Layout spacing.
+
+Components must consume the shared spacing scale rather than introducing arbitrary values.
+
+Consistent spacing contributes directly to perceived application quality and maintainability.
+
+#### Responsive Design Principles
+
+Responsive behavior is a system-level concern rather than an individual component concern.
+
+The UI architecture should prioritize:
+
+Mobile-first layouts.
+Progressive enhancement.
+Fluid content adaptation.
+Consistent breakpoints.
+Predictable layout transitions.
+
+Components should adapt to available space without introducing alternate component implementations for different screen sizes.
+
+Responsive behavior remains declarative and reusable.
+
+#### Theme Architecture
+
+The styling architecture shall separate visual identity from component implementation.
+
+Theme responsibilities include:
+
+Color palette.
+Surface colors.
+Typography mappings.
+Elevation values.
+Border appearance.
+Status colors.
+
+Components consume semantic theme values rather than implementation-specific colors.
+
+This allows future branding updates with minimal component changes.
+
+#### Tailwind CSS Usage Philosophy
+
+Tailwind CSS becomes the authoritative styling mechanism for Phase 1.
+
+Tailwind is selected because it:
+
+Encourages consistency.
+Reduces custom CSS.
+Supports Server Components naturally.
+Promotes utility-first composition.
+Simplifies maintenance.
+
+Custom CSS should be limited to shared global concerns that cannot be effectively represented through utilities.
+
+Styling should remain colocated with components while visual decisions remain centralized through design tokens.
+
+#### Styling Ownership Model
+
+Styling ownership follows the approved frontend ownership model.
+
+Design System
+
+Owns:
+
+Design tokens.
+Visual language.
+Typography standards.
+Color definitions.
+Spacing scale.
+Responsive conventions.
+Shared UI Components
+
+Own:
+
+Token consumption.
+Component appearance.
+Visual interaction states.
+
+Do not own:
+
+Brand definitions.
+Domain-specific styling.
+Domain Components
+
+Own:
+
+Domain-specific composition.
+Layout arrangement.
+Presentation of business content.
+
+Do not redefine:
+
+Core typography.
+Core spacing.
+Color semantics.
+Shared interaction patterns.
+Pages
+
+Own:
+
+Overall visual composition.
+Section arrangement.
+
+Pages consume established styling conventions rather than creating new ones.
+
+#### Styling Consistency Rules
+
+The following rules become authoritative.
+
+STYLE-01
+
+Visual values shall originate from centralized design tokens.
+
+STYLE-02
+
+Components must consume semantic styling values rather than hardcoded visual values.
+
+STYLE-03
+
+Equivalent UI elements must share equivalent visual treatment.
+
+STYLE-04
+
+Feature modules shall not define independent visual systems.
+
+STYLE-05
+
+Utility-first styling is the default styling approach.
+
+STYLE-06
+
+Custom CSS should remain limited to shared infrastructure concerns.
+
+STYLE-07
+
+Responsive behavior shall follow centralized breakpoint standards.
+
+STYLE-08
+
+Theme definitions remain independent from component implementations.
+
+#### Future Theming Strategy
+
+The styling architecture intentionally separates design tokens from component structure.
+
+Future enhancements may include:
+
+Light mode.
+Dark mode.
+Brand customization.
+Seasonal branding.
+Accessibility themes.
+Community branding (future consideration).
+
+These enhancements should be implemented through theme evolution rather than component redesign.
+
+The component architecture established in Part 2 remains unchanged regardless of future themes.
+
+This supports the Evolutionary Architecture principle.
+
+### Layout & Page Composition Architecture
+Hierarchical Layout & Page Composition Architecture.
+
+The composition hierarchy becomes:
+
+Application Layout
+        ↓
+Route Layout
+        ↓
+Page
+        ↓
+Section
+        ↓
+Domain Component
+        ↓
+Shared UI Component
+
+Each level contributes progressively more specific presentation while remaining within its architectural responsibility.
+
+#### Layout Philosophy
+
+
+Layouts define application structure, not application behavior.
+
+Layouts provide:
+
+Persistent UI regions.
+Visual structure.
+Responsive containers.
+Navigation placement.
+Shared spacing.
+Consistent page framing.
+
+Layouts must remain independent of:
+
+Business workflows.
+Domain rules.
+API orchestration.
+Backend interactions.
+Resource ownership.
+
+Layouts are shared presentation infrastructure.
+
+#### Shared Layouts
+
+Shared layouts provide structural consistency across related routes.
+
+Typical layout responsibilities include:
+
+Header placement.
+Navigation placement.
+Sidebar placement.
+Main content container.
+Footer placement.
+Responsive spacing.
+
+Layouts should expose composition slots rather than contain domain-specific presentation.
+
+Example philosophy:
+
+Application Layout
+
+├── Header
+├── Navigation
+├── Main Content
+└── Footer
+
+The layout defines where content appears.
+
+Pages define what content appears.
+
+#### Page Composition
+
+Pages represent route-level composition.
+
+Page responsibilities include:
+
+Assemble sections.
+Consume layouts.
+Integrate route-level data.
+Coordinate rendering boundaries.
+Delegate presentation to lower-level components.
+
+Pages should avoid directly rendering large amounts of business presentation.
+
+Instead:
+
+Page
+
+↓
+
+Sections
+
+↓
+
+Domain Components
+
+↓
+
+Shared Components
+
+This maintains consistency with the approved Component Architecture.
+
+#### Section Composition
+
+Sections organize logically related UI within a page.
+
+Examples include:
+
+Feed Section.
+Profile Information Section.
+Comment Section.
+Herd Overview Section.
+Moderation Queue Section.
+
+Sections:
+
+Improve readability.
+Reduce duplication.
+Enable reuse across pages.
+Preserve page simplicity.
+
+Sections remain presentation-oriented.
+
+They do not become domain owners.
+
+#### Component Composition Hierarchy
+
+The following hierarchy becomes authoritative.
+
+Shared UI Primitive
+        ↓
+Shared Infrastructure Component
+        ↓
+Domain Component
+        ↓
+Section Component
+        ↓
+Page
+        ↓
+Route Layout
+        ↓
+Application Layout
+
+Composition always flows upward.
+
+Lower layers remain reusable.
+
+Higher layers become increasingly application-specific.
+
+This hierarchy aligns directly with the approved Component Architecture.
+
+#### Responsive Layout Principles
+
+Responsive behavior belongs primarily to layouts and structural containers rather than individual business components.
+
+The layout architecture should provide:
+
+Mobile-first structure.
+Adaptive content regions.
+Flexible spacing.
+Consistent breakpoints.
+Predictable content flow.
+
+Domain components adapt within the layout rather than defining independent responsive strategies.
+
+This creates consistent behavior across all frontend modules.
+
+#### Layout Ownership Model
+
+Ownership follows architectural responsibility.
+
+Application Layout
+
+Owns:
+
+Global application shell.
+Shared navigation regions.
+Global spacing.
+Persistent structural elements.
+
+Does not own:
+
+Feature presentation.
+Domain workflows.
+Business state.
+Route Layout
+
+Owns:
+
+Route family structure.
+Shared contextual framing.
+Nested route organization.
+
+Does not own:
+
+Page-specific presentation.
+Pages
+
+Own:
+
+Route composition.
+Section ordering.
+Integration of layouts and sections.
+
+Do not own:
+
+Shared layout behavior.
+Shared UI primitives.
+Sections
+
+Own:
+
+Local page organization.
+Composition of domain components.
+
+Do not own:
+
+Application structure.
+Route structure.
+
+Ownership remains singular throughout the composition hierarchy.
+
+#### Loading UI Composition
+
+Loading UI is treated as a first-class architectural concern.
+
+Loading presentation should exist at the appropriate composition level.
+
+Application-Level Loading
+
+Represents application initialization.
+
+Examples:
+
+Initial shell loading.
+Global loading fallback.
+Route-Level Loading
+
+Represents loading of route-specific content.
+
+Examples:
+
+Feed loading.
+Herd loading.
+Profile loading.
+Section-Level Loading
+
+Represents localized loading without blocking the entire page.
+
+Examples:
+
+Comments loading.
+Related Herds loading.
+Sidebar loading.
+
+This layered approach minimizes unnecessary loading interruption while remaining compatible with the approved rendering architecture.
+
+#### Error UI Composition
+
+Error presentation follows the same composition hierarchy.
+
+Errors should be isolated whenever practical.
+
+Application Errors
+
+Represent unrecoverable application failures.
+
+Route Errors
+
+Represent failures affecting an entire route.
+
+Section Errors
+
+Represent failures affecting only a portion of the page.
+
+Localized error presentation preserves the usability of unaffected content.
+
+This aligns with the approved rendering and navigation architecture.
+
+#### Empty State Philosophy
+
+Empty states are considered part of the UI architecture rather than exceptional cases.
+
+Empty states should:
+
+Explain the current situation.
+Maintain layout consistency.
+Preserve navigation context.
+Encourage meaningful next actions where appropriate.
+
+Examples include:
+
+Empty feed.
+No comments.
+No Herd memberships.
+No search results.
+No moderation reports.
+
+Equivalent empty states should follow shared presentation patterns throughout the application.
+
+#### Layout Architectural Rules
+
+The following rules become authoritative.
+
+LAYOUT-01
+
+Layouts own application structure only.
+
+LAYOUT-02
+
+Pages compose sections rather than directly implementing large presentation blocks.
+
+LAYOUT-03
+
+Sections compose domain components rather than duplicating business presentation.
+
+LAYOUT-04
+
+Composition follows the approved component hierarchy.
+
+LAYOUT-05
+
+Responsive behavior is governed by layouts before domain components.
+
+LAYOUT-06
+
+Loading, error, and empty states follow the same composition hierarchy as normal UI.
+
+LAYOUT-07
+
+Layouts must remain independent of business workflows and backend interactions.
+
+LAYOUT-08
+
+Structural composition must remain reusable across multiple routes whenever practical.
+
+### Interaction & Accessibility Architecture
+Shared Interaction & Accessibility Architecture.
+
+The architecture establishes common interaction standards for all frontend modules while keeping business workflows within their owning domains.
+
+Shared infrastructure owns interaction behavior.
+
+Feature modules provide business context.
+
+#### Interaction Philosophy
+
+User interactions should be:
+
+Predictable.
+Consistent.
+Immediate.
+Reversible where appropriate.
+Accessible.
+Context-aware.
+
+Equivalent user actions should produce equivalent interaction behavior regardless of domain.
+
+Examples:
+
+Submitting a form.
+Creating a post.
+Joining a Herd.
+Updating a profile.
+
+Although the underlying business workflows differ, interaction patterns should remain consistent.
+
+#### Feedback Patterns
+
+The frontend shall provide timely feedback for user actions.
+
+Interaction feedback falls into four categories.
+
+Informational Feedback
+
+Communicates neutral application status.
+
+Examples:
+
+Processing request.
+Saved draft.
+Feature unavailable.
+Success Feedback
+
+Confirms successful completion of a user action.
+
+Examples:
+
+Post published.
+Profile updated.
+Herd created.
+
+Success feedback should confirm completion without unnecessarily interrupting user flow.
+
+Warning Feedback
+
+Highlights recoverable situations requiring user attention.
+
+Examples:
+
+Unsaved changes.
+Leaving a form.
+Pending moderation action.
+Error Feedback
+
+Communicates failure while preserving user context whenever possible.
+
+Examples:
+
+Network failure.
+Validation failure.
+Authorization failure.
+Unexpected server error.
+
+Feedback presentation should remain visually consistent across the application.
+
+#### Loading State Architecture
+
+Loading interactions represent temporary system activity.
+
+Loading presentation should follow the composition hierarchy defined in Part 4.
+
+Loading states should:
+
+Preserve layout stability.
+Indicate ongoing work.
+Prevent duplicate actions where appropriate.
+Avoid unnecessary blocking of unrelated UI.
+
+Loading feedback should reflect the scope of the operation rather than blocking the entire application.
+
+#### Error Presentation Architecture
+
+Errors should be presented at the smallest practical scope.
+
+The architecture distinguishes:
+
+Field-Level Errors
+
+Associated with a specific input.
+
+Component-Level Errors
+
+Limited to a single reusable component.
+
+Section-Level Errors
+
+Limited to one page section.
+
+Route-Level Errors
+
+Limited to one route.
+
+Application-Level Errors
+
+Reserved for unrecoverable application failures.
+
+This layered presentation minimizes disruption while remaining consistent with the approved rendering architecture.
+
+#### Success Feedback
+
+Success presentation should be:
+
+Brief.
+Clear.
+Non-disruptive.
+Consistent.
+
+Success feedback should confirm the outcome without requiring unnecessary user acknowledgement.
+
+Long-running workflows should communicate progress independently from completion.
+
+#### Confirmation Patterns
+
+Confirmation dialogs should be reserved for actions that are:
+
+Destructive.
+Irreversible.
+Security-sensitive.
+Governance-related.
+
+Examples include:
+
+Delete content.
+Leave Herd.
+Remove membership.
+Execute moderation action.
+Sign out (optional, product decision).
+
+Routine actions should not require confirmation.
+
+This minimizes unnecessary interaction friction.
+
+#### Accessibility Philosophy
+
+Accessibility is a system-level architectural requirement, not a feature-level enhancement.
+
+Accessibility responsibilities belong primarily to:
+
+Shared UI components.
+Shared interaction infrastructure.
+Shared layouts.
+
+Domain modules inherit accessibility behavior through composition rather than implementing independent accessibility solutions.
+
+This promotes consistent accessibility across the application.
+
+#### Keyboard Navigation
+
+Keyboard interaction must be supported throughout the application.
+
+The UI architecture should provide:
+
+Logical tab order.
+Keyboard-operable interactive controls.
+Accessible dialogs.
+Accessible menus.
+Accessible navigation.
+Keyboard shortcuts only where they provide clear value.
+
+Interactive elements should not require pointer devices for normal operation.
+
+#### Focus Management
+
+Focus behavior shall be intentional and predictable.
+
+The architecture should ensure:
+
+Visible focus indicators.
+Focus moves into newly opened dialogs.
+Focus returns appropriately after dialog closure.
+Navigation changes establish meaningful focus.
+Error states direct focus toward actionable elements when appropriate.
+
+Shared infrastructure should manage common focus behavior so that feature modules do not duplicate implementation.
+
+#### Interaction Consistency Rules
+
+The following rules become authoritative.
+
+INTERACT-01
+
+Equivalent user actions shall produce equivalent interaction behavior.
+
+INTERACT-02
+
+User feedback shall be presented at the smallest practical scope.
+
+INTERACT-03
+
+Loading states shall preserve layout stability whenever possible.
+
+INTERACT-04
+
+Success feedback should confirm completion without unnecessarily interrupting workflow.
+
+INTERACT-05
+
+Confirmation dialogs shall be reserved for destructive, irreversible, or security-sensitive actions.
+
+INTERACT-06
+
+Accessibility requirements apply to all shared UI components by default.
+
+INTERACT-07
+
+Keyboard interaction shall be supported for all interactive functionality.
+
+INTERACT-08
+
+Focus management shall be governed by shared interaction infrastructure rather than feature-specific implementations.
+
+INTERACT-09
+
+Interaction patterns remain presentation concerns and must not contain business workflow logic.
+
+INTERACT-10
+
+Business modules provide interaction content while shared infrastructure governs interaction behavior.
+
+### Future Evolution Strategy
+Evolution Through Extension strategy.
+
+Future UI capabilities shall be introduced by extending the existing architecture rather than redesigning it.
+
+The following architectural layers remain stable:
+
+UI System
+Component Architecture
+Design System
+Layout Architecture
+Interaction Architecture
+
+Future capabilities extend these layers without changing their responsibilities.
+
+#### Design System Evolution
+
+The design system shall remain the authoritative source for the application's visual language.
+
+Future additions may include:
+
+Additional semantic color roles.
+Expanded typography scale.
+Additional spacing tokens.
+Motion tokens.
+Elevation tokens.
+Additional status tokens.
+
+Existing components should consume new tokens through the established design system rather than introducing parallel styling systems.
+
+The token model established in Part 3 remains unchanged.
+
+#### Component Library Evolution
+
+The shared component library shall evolve incrementally.
+
+New components should be introduced when they satisfy one or more of the following:
+
+Repeated use across multiple domains.
+Repeated composition patterns.
+Shared interaction behavior.
+Shared accessibility behavior.
+
+Components should not enter the shared library after a single feature implementation.
+
+Promotion into shared infrastructure should occur only after reuse has been demonstrated.
+
+This prevents premature abstraction while preserving long-term maintainability.
+
+#### Accessibility Evolution
+
+Accessibility requirements should evolve independently of feature development.
+
+Future improvements may include:
+
+Expanded keyboard shortcuts.
+Improved screen reader support.
+Enhanced focus management.
+Additional accessibility testing.
+Higher accessibility compliance targets.
+
+Accessibility improvements should primarily occur within shared UI infrastructure so that all feature modules benefit without modification.
+
+The architectural ownership established in Part 5 remains unchanged.
+
+#### Theme Evolution
+
+The approved theme architecture intentionally separates theme definition from component implementation.
+
+Future enhancements may include:
+
+Light theme.
+Dark theme.
+High-contrast theme.
+Seasonal branding.
+Event-specific themes.
+User-selectable appearance preferences.
+
+Theme evolution should occur through design tokens rather than component redesign.
+
+Component interfaces remain stable regardless of theme expansion.
+
+#### Future Branding Support
+
+The UI architecture shall support future visual identity changes without affecting component ownership or application structure.
+
+Brand evolution may include:
+
+Updated color palettes.
+New typography.
+Revised iconography.
+Updated illustrations.
+Refined spacing scale.
+
+Brand changes should primarily affect:
+
+Design tokens.
+Shared assets.
+Theme configuration.
+
+Feature modules should require minimal or no modification.
+
+#### Mobile Adaptation Readiness
+
+The current architecture targets responsive web delivery.
+
+The UI architecture should remain adaptable to future mobile experiences by preserving:
+
+Presentation and business separation.
+Reusable domain components.
+Shared design tokens.
+Consistent interaction standards.
+Layout composition hierarchy.
+
+If a dedicated mobile client is introduced in the future, existing backend APIs and domain boundaries remain reusable while platform-specific UI implementations consume the same business capabilities.
+
+No mobile-specific architectural abstraction is introduced during Phase 1.
+
+#### Future Animation Architecture
+
+Animation is considered a presentation concern.
+
+Future animation capabilities may include:
+
+Page transitions.
+Component transitions.
+Loading animations.
+Gesture feedback.
+Micro-interactions.
+
+Animation should remain:
+
+Optional.
+Non-essential for workflow completion.
+Consistent with accessibility preferences.
+Independent from business logic.
+
+Shared UI infrastructure should own reusable animation patterns rather than individual feature modules.
+
+#### Evolution Without Structural Redesign
+
+The Frontend UI System has been intentionally organized around stable architectural layers.
+
+Future capabilities should be introduced by extending existing layers.
+
+Illustrative evolution path:
+
+Shared UI System
+        │
+        ├── Additional Components
+        ├── Additional Design Tokens
+        ├── Additional Themes
+        ├── Additional Accessibility Support
+        ├── Additional Interaction Patterns
+        └── Additional Layout Variants
+
+The following should remain unchanged:
+
+Domain ownership.
+Component hierarchy.
+Layout hierarchy.
+Backend authority.
+State ownership.
+Rendering architecture.
+Navigation architecture.
+
+This preserves architectural stability while allowing controlled growth.
+
+#### Long-Term Maintainability Principles
+
+Long-term maintainability is achieved through stable architectural boundaries.
+
+The following principles remain authoritative.
+
+EVOLVE-01
+
+Extend existing shared infrastructure before introducing new architectural layers.
+
+EVOLVE-02
+
+Promote reuse only after repeated implementation across multiple domains.
+
+EVOLVE-03
+
+Preserve domain ownership regardless of UI expansion.
+
+EVOLVE-04
+
+Theme evolution shall occur through design tokens rather than component redesign.
+
+EVOLVE-05
+
+Accessibility improvements should primarily occur within shared infrastructure.
+
+EVOLVE-06
+
+Presentation enhancements shall remain independent of backend workflows.
+
+EVOLVE-07
+
+Future platform support shall reuse approved backend APIs and frontend architectural boundaries.
+
+EVOLVE-08
+
+Architectural evolution should preserve backward compatibility for existing shared components whenever practical.
+
+EVOLVE-09
+
+New UI capabilities should integrate into the existing component hierarchy rather than introducing parallel hierarchies.
+
+EVOLVE-10
+
+Structural redesign shall occur only when existing architectural boundaries demonstrably fail to satisfy validated requirements.
+
+---
+
+##
