@@ -25348,5 +25348,2170 @@ Rendering evolution should prioritize maintainability over novelty.
 
 ---
 
-## 
+## Frontend State Management Architecture
+### State Management Philosophy
+#### State Management Goals
+Frontend state management shall prioritize:
 
+Single source of truth.
+Predictable ownership.
+Minimal duplication.
+Explicit state boundaries.
+Deterministic updates.
+Simple synchronization.
+Localized state whenever possible.
+Domain isolation.
+Future evolution without redesign.
+
+State management exists to support rendering and interaction—not to replicate backend business logic.
+
+#### State Ownership Principles
+
+The following ownership hierarchy becomes authoritative.
+
+SM-01 — Backend Owns Business State
+
+All business entities originate from backend domains.
+
+Examples:
+
+User Profiles
+Posts
+Comments
+Herds
+Memberships
+Votes
+Reports
+
+The frontend may consume this state but never becomes its authoritative owner.
+
+SM-02 — Frontend Owns Presentation State
+
+The frontend owns only presentation-specific state.
+
+Examples:
+
+Modal visibility
+Dropdown state
+Selected tab
+Expanded sections
+Theme preference
+Temporary interaction state
+
+This state has no backend representation.
+
+SM-03 — State Ownership Is Singular
+
+Every piece of state shall have exactly one authoritative owner.
+
+No state may have multiple writable owners.
+
+Examples:
+
+Correct:
+
+Backend
+↓
+Server State Cache
+↓
+UI Rendering
+
+Incorrect:
+
+Backend
+↓
+Global Store
+↓
+Local Component Copy
+↓
+Manual Synchronization
+
+Duplicated writable state is prohibited.
+
+#### Backend Authority Over State
+
+Backend services remain the authoritative source for:
+
+Business rules
+Resource ownership
+Authorization outcomes
+Governance outcomes
+Lifecycle transitions
+Validation
+Derived business values
+
+The frontend shall never independently determine:
+
+Resource ownership
+Governance status
+Membership eligibility
+Authorization decisions
+Reputation (Aura)
+Feed composition rules
+
+These values must always originate from approved APIs, consistent with the backend architecture.
+
+#### State Classification Philosophy
+
+Frontend state shall be classified according to ownership rather than implementation mechanism.
+
+Primary classifications:
+
+Server State
+UI State
+Form State
+Session State
+Navigation State
+URL State
+Derived State
+Temporary State
+
+Each category has distinct ownership, lifecycle, and synchronization rules.
+
+Detailed definitions are established in Part 2.
+
+#### Minimal State Philosophy
+
+The frontend shall store only information that is required for:
+
+User interaction
+Rendering optimization
+Navigation continuity
+Temporary workflows
+
+State shall not be retained merely because it can be.
+
+Architectural preference:
+
+Compute
+>
+Cache
+>
+Persist
+
+Whenever information can be:
+
+derived,
+fetched,
+or recomputed inexpensively,
+
+it should not become persistent client state.
+
+#### Server State vs Client State
+
+The frontend distinguishes two fundamentally different classes of state.
+
+Server State
+
+Characteristics:
+
+Originates from backend APIs.
+Subject to backend lifecycle rules.
+May become stale.
+Requires synchronization.
+May be cached.
+Never becomes frontend-owned.
+Client State
+
+Characteristics:
+
+Exists only in the browser.
+Supports interaction.
+Has no backend authority.
+Usually short-lived.
+Can be discarded without affecting business correctness.
+
+The architecture intentionally minimizes Client State.
+
+#### Derived State Philosophy
+
+Derived state shall not be stored unless recomputation is demonstrably expensive or required for interaction continuity.
+
+Examples of acceptable derived state:
+
+Filtered collections
+Sorted views
+Pagination calculations
+Display formatting
+Selection counts
+
+Examples of prohibited derived state:
+
+Cached ownership decisions
+Cached authorization decisions
+Cached governance decisions
+Independently maintained business totals
+
+Business-derived values remain backend responsibilities.
+
+#### State Consistency Principles
+
+Frontend consistency shall be achieved through clear ownership rather than aggressive synchronization.
+
+The following principles become authoritative.
+
+SC-01
+
+One authoritative owner per state.
+
+SC-02
+
+Business state is refreshed rather than manually reconciled whenever practical.
+
+SC-03
+
+Client interaction must never permanently diverge from backend state.
+
+SC-04
+
+Derived state must always be recomputable from authoritative state.
+
+SC-05
+
+Presentation state must not influence business correctness.
+
+SC-06
+
+Business state updates flow from backend responses rather than local assumptions.
+
+#### Architectural State Rules
+
+The following rules become part of the frontend architecture.
+
+FSM-01
+
+Backend is the authoritative owner of all business state.
+
+FSM-02
+
+Frontend owns only presentation and interaction state.
+
+FSM-03
+
+Server state shall never become permanently duplicated across multiple writable stores.
+
+FSM-04
+
+Business state shall be requested through approved API contracts only.
+
+FSM-05
+
+State ownership boundaries shall follow approved frontend module boundaries.
+
+FSM-06
+
+Derived state should be computed rather than persisted whenever practical.
+
+FSM-07
+
+State architecture shall remain compatible with Server Components.
+
+FSM-08
+
+State synchronization shall preserve Backend Authority at all times.
+
+### State Categories & Ownership
+#### State Category Model
+The frontend shall recognize the following architectural state categories:
+| State Category   | Authoritative Owner  | Backend Synchronization | Primary Scope       |
+| ---------------- | -------------------- | ----------------------- | ------------------- |
+| Server State     | Backend              | Required                | Feature / Route     |
+| UI State         | Frontend             | None                    | Component / Route   |
+| Form State       | Frontend             | Submit Only             | Form                |
+| Session State    | Backend + Auth Layer | Required                | Application         |
+| Navigation State | Router               | Automatic               | Route               |
+| URL State        | URL                  | Automatic               | Route               |
+| Derived State    | Source State         | Indirect                | Component / Feature |
+| Temporary State  | Frontend             | None                    | Component           |
+This classification becomes the authoritative frontend state taxonomy.
+
+#### Server State
+Definition
+
+Server State represents business data retrieved from approved backend APIs.
+
+Examples:
+
+Current user profile
+Posts
+Comments
+Herd information
+Memberships
+Feed items
+Notifications (future)
+Governance visibility outcomes
+Ownership
+
+Authoritative Owner:
+
+Backend
+
+Frontend Responsibility:
+
+Request
+Cache
+Display
+Refresh
+
+The frontend shall never become the authoritative owner of Server State.
+
+Lifecycle
+
+Server State lifecycle is controlled exclusively by backend domains.
+
+Frontend lifecycle consists only of:
+
+Fetch
+↓
+Render
+↓
+Refresh
+↓
+Discard
+
+The frontend must not introduce independent lifecycle transitions.
+
+Visibility
+
+Server State visibility follows:
+
+Route boundaries
+Feature boundaries
+Rendering boundaries
+
+Visibility does not imply ownership.
+
+#### UI State
+Definition
+
+UI State represents presentation-only information.
+
+Examples:
+
+Dialog visibility
+Drawer open/closed
+Active tab
+Hover state
+Expanded comments
+Toast visibility
+Loading indicator
+Theme preference
+Ownership
+
+Authoritative Owner:
+
+Frontend
+
+UI State never has backend representation.
+
+Lifecycle
+
+Typical lifecycle:
+
+Create
+↓
+Update
+↓
+Dispose
+
+Usually bounded by component or route lifetime.
+
+Synchronization
+
+No backend synchronization.
+
+No persistence unless explicitly required by UX.
+
+#### Form State
+Definition
+
+Form State represents user input before submission.
+
+Examples:
+
+Login form
+Registration form
+Create Post
+Edit Profile
+Create Herd
+Search input
+Ownership
+
+Authoritative Owner:
+
+Frontend
+
+Backend becomes authoritative only after successful submission.
+
+Lifecycle
+Initialize
+↓
+Edit
+↓
+Validate
+↓
+Submit
+↓
+Reset / Dispose
+
+The submitted resource is not Form State.
+
+It becomes Server State.
+
+Architectural Rule
+
+Form State must never become long-lived application state.
+
+#### Session State
+Definition
+
+Session State represents the authenticated user session required for application participation.
+
+Examples:
+
+Authentication status
+Current authenticated user identity
+Session validity
+Session expiration status
+Ownership
+
+Backend remains authoritative.
+
+Frontend maintains a synchronized representation required for application behavior.
+
+This aligns with the approved authentication architecture, where session validity is determined by the backend.
+
+Lifecycle
+Authenticate
+↓
+Active
+↓
+Refresh
+↓
+Expire
+↓
+Logout
+
+Frontend does not independently extend session lifetime.
+
+#### Navigation State
+Definition
+
+Navigation State represents the current application navigation context.
+
+Examples:
+
+Current route
+Active layout
+Nested route hierarchy
+Navigation history
+Ownership
+
+Authoritative Owner:
+
+Next.js App Router
+
+Frontend components consume Navigation State but do not own routing behavior.
+
+Synchronization
+
+Navigation State changes automatically through routing.
+
+No manual synchronization is required.
+
+#### URL State
+Definition
+
+URL State represents information intentionally encoded within the URL.
+
+Examples:
+
+Search query
+Pagination
+Sort order
+Selected filters
+Active Herd
+Username
+Post identifier
+Ownership
+
+Authoritative Owner:
+
+Browser URL
+
+The URL becomes the shareable representation of application state.
+
+Architectural Rules
+
+URL State should contain only information that benefits from:
+
+Deep linking
+Refresh persistence
+Bookmarking
+Sharing
+
+Temporary interaction state should not be encoded in URLs.
+
+#### Derived State
+Definition
+
+Derived State is computed from existing authoritative state.
+
+Examples:
+
+Filtered posts
+Sorted comments
+Vote totals prepared for display
+Selected item count
+Feed grouping
+Relative timestamps
+Ownership
+
+Derived State has no independent owner.
+
+Ownership always belongs to its source state.
+
+Lifecycle
+Source Changes
+↓
+Recompute
+↓
+Render
+
+Derived State should be recreated rather than manually synchronized.
+
+Architectural Rules
+
+Derived State must never become a competing source of truth.
+
+#### Temporary State
+Definition
+
+Temporary State represents short-lived interaction data that has no long-term significance.
+
+Examples:
+
+Drag position
+Mouse selection
+Text selection
+Image preview
+Context menu coordinates
+Animation state
+Ownership
+
+Frontend
+
+Lifecycle
+
+Usually measured in seconds.
+
+Temporary State should disappear immediately after interaction completes.
+
+Architectural Rules
+
+Temporary State must never be elevated to shared application state without explicit architectural justification.
+
+#### Ownership Boundaries
+Every state category shall have exactly one authoritative owner.
+| Category         | Owner                                             |
+| ---------------- | ------------------------------------------------- |
+| Server State     | Backend                                           |
+| UI State         | Frontend                                          |
+| Form State       | Frontend                                          |
+| Session State    | Backend (synchronized representation in frontend) |
+| Navigation State | Router                                            |
+| URL State        | URL                                               |
+| Derived State    | Source State                                      |
+| Temporary State  | Frontend                                          |
+
+Ownership remains independent of storage location.
+
+Caching does not imply ownership.
+
+Rendering does not imply ownership.
+
+Reading does not imply ownership.
+
+This mirrors the ownership philosophy established across the backend architecture.
+
+#### State Lifecycle Rules
+Each state category shall follow its own lifecycle.
+
+General lifecycle model:
+
+Creation
+↓
+Consumption
+↓
+Update
+↓
+Disposal
+
+The owning authority determines when lifecycle transitions occur.
+
+Examples:
+
+Backend:
+
+Post creation
+Membership removal
+Profile update
+
+Frontend:
+
+Open dialog
+Edit form
+Select tab
+
+These lifecycle responsibilities shall never overlap.
+
+#### State Visibility Rules
+
+Visibility scope shall remain proportional to the required consumers.
+
+The following visibility hierarchy becomes authoritative.
+
+Component Scope
+
+Default visibility.
+
+Preferred for:
+
+UI State
+Temporary State
+Form State
+Feature Scope
+
+Used when multiple components within the same feature require shared access.
+
+Examples:
+
+Multi-step form
+Feed interaction state
+Profile editing workflow
+Route Scope
+
+Used for state shared across a route tree.
+
+Examples:
+
+Route-level filters
+Shared page interaction
+Layout coordination
+Application Scope
+
+Reserved for globally relevant state.
+
+Examples:
+
+Session representation
+Theme preference
+Global notifications (future)
+
+Application-wide state must remain minimal.
+
+#### State Classification Rules
+
+The following architectural rules become authoritative.
+
+SCR-01
+
+Every state object shall belong to exactly one architectural category.
+
+SCR-02
+
+Every state object shall have exactly one authoritative owner.
+
+SCR-03
+
+Server State shall never become frontend-owned.
+
+SCR-04
+
+UI State shall never contain business authority.
+
+SCR-05
+
+Form State shall transition into Server State only through approved APIs.
+
+SCR-06
+
+Derived State shall remain recomputable.
+
+SCR-07
+
+Temporary State shall remain localized whenever possible.
+
+SCR-08
+
+Application-wide state requires explicit architectural justification.
+
+SCR-09
+
+State visibility shall remain as narrow as practical.
+
+SCR-10
+
+Ownership boundaries shall remain independent of rendering boundaries.
+
+
+
+
+### Shared State Architecture
+#### Global State Philosophy
+The frontend shall adopt a Local-First Shared State Architecture.
+
+Architectural preference:
+
+Component State
+        ↓
+Feature State
+        ↓
+Route State
+        ↓
+Application State
+
+State should move upward only when required by additional consumers.
+
+Application-wide state is the architectural exception rather than the default.
+
+#### Local State vs Shared State
+
+The following promotion hierarchy becomes authoritative.
+
+Local State
+
+Default choice.
+
+Suitable when state is consumed by a single component.
+
+Examples:
+
+Modal visibility
+Input focus
+Expanded reply
+Tooltip state
+Image preview
+Feature State
+
+Used when multiple components inside one feature require shared access.
+
+Examples:
+
+Create Post workflow
+Profile editing workflow
+Feed interaction state
+
+Feature State remains confined to its owning frontend module.
+
+Route State
+
+Used when multiple feature modules within the same route require shared coordination.
+
+Examples:
+
+Shared search filters
+Current tab
+Active sidebar selection
+
+Route State shall not become application-wide by default.
+
+Application State
+
+Reserved only for information required across unrelated routes.
+
+This category must remain intentionally small.
+
+
+#### Authentication State
+
+Authentication State represents whether a user currently has an authenticated session.
+
+Examples:
+
+Authenticated
+Unauthenticated
+Session restoring
+Session expired
+Ownership
+
+Backend remains authoritative.
+
+Frontend maintains only the current authentication representation required for rendering decisions.
+
+Authentication State shall never independently determine session validity.
+
+Architectural Rules
+
+AUTHSTATE-01
+
+Authentication State originates from backend authentication workflows.
+
+AUTHSTATE-02
+
+Authentication State must be refreshed using approved session mechanisms.
+
+AUTHSTATE-03
+
+Authentication State shall not duplicate user profile data.
+
+AUTHSTATE-04
+
+Authentication State shall remain independent from feature-specific state.
+
+
+#### User Session State
+
+User Session State represents application-wide information about the currently authenticated participant.
+
+Examples:
+
+User identifier
+Username
+Display name
+Avatar reference
+Authentication status
+
+This information supports application composition rather than business ownership.
+
+Ownership
+
+Authoritative owner:
+
+Backend
+
+Frontend maintains a synchronized representation for rendering.
+
+Business updates continue to originate from backend responses.
+
+Architectural Rule
+
+Session State shall expose only information required globally.
+
+Detailed profile information remains Server State.
+
+
+#### Cross-Module Shared State
+
+Cross-module shared state shall be exceptional.
+
+Sharing is permitted only when:
+
+Multiple independent modules require identical information.
+Duplication would increase inconsistency.
+State ownership remains explicit.
+
+Examples:
+
+Acceptable:
+
+Authentication representation
+Theme preference
+Active user session
+
+Not acceptable:
+
+Posts
+Comments
+Herd collections
+Membership lists
+Feed collections
+
+Business resources remain module-owned Server State.
+
+
+#### Module State Isolation
+
+Every frontend module owns its own interaction state.
+
+Examples:
+
+Content Module owns:
+
+Post composer interaction
+Comment interaction
+Voting interaction state
+
+Community Module owns:
+
+Herd creation interaction
+Membership workflow interaction
+
+Identity Module owns:
+
+Profile editing interaction
+Account settings interaction
+
+Feed Module owns:
+
+Feed presentation preferences
+Feed interaction state
+
+State ownership shall follow approved frontend module boundaries.
+
+Cross-module mutation is prohibited.
+
+
+#### State Dependency Rules
+
+Shared State must never become an implicit dependency graph.
+
+The following rules become authoritative.
+
+SSD-01
+
+Shared State shall expose information.
+
+It shall not execute business workflows.
+
+SSD-02
+
+Feature modules shall consume shared state.
+
+They shall not modify another module's local state.
+
+SSD-03
+
+Shared State shall not replace API communication.
+
+Business operations continue to execute through approved APIs.
+
+SSD-04
+
+Business state shall never be transferred between modules through shared state.
+
+SSD-05
+
+Module ownership remains authoritative regardless of state visibility.
+
+
+#### Context Usage Philosophy
+
+Context remains an infrastructure mechanism rather than an application architecture.
+
+Context is appropriate for stable, infrequently changing application-wide concerns.
+
+Examples:
+
+Appropriate:
+
+Authentication representation
+Theme
+User preferences
+Feature flags (future)
+
+Inappropriate:
+
+Feed items
+Comments
+Posts
+Membership lists
+Search results
+
+Context shall not become a replacement for Server State management.
+
+
+#### Store Organization
+
+The frontend architecture intentionally avoids a monolithic application store.
+
+Store organization follows ownership boundaries.
+
+Preferred organization:
+
+Application
+│
+├── Session State
+├── Theme State
+├── Shared Infrastructure State
+│
+├── Identity Module
+├── Content Module
+├── Community Module
+├── Feed Module
+├── Media Module
+└── Governance Module
+
+Business modules remain responsible for consuming their own Server State rather than contributing mutable data into a centralized store.
+
+This preserves alignment with the approved domain-oriented module structure.
+
+
+#### Shared State Boundaries
+
+Shared state shall satisfy all of the following:
+
+Has multiple independent consumers.
+Represents application-level information.
+Has stable ownership.
+Has clearly defined lifecycle.
+Does not duplicate backend business entities.
+
+State failing any of these conditions should remain local.
+
+#### Shared State Architectural Rules
+
+The following rules become authoritative.
+
+SSA-01
+
+Local State is the default.
+
+SSA-02
+
+Shared State requires explicit architectural justification.
+
+SSA-03
+
+Application-wide mutable state shall remain minimal.
+
+SSA-04
+
+Business resources shall never become globally owned frontend state.
+
+SSA-05
+
+Shared State shall preserve frontend module isolation.
+
+SSA-06
+
+Authentication representation shall remain separate from business resources.
+
+SSA-07
+
+Session representation shall remain synchronized with backend authority.
+
+SSA-08
+
+Context shall be used only for stable application-wide concerns.
+
+SSA-09
+
+Shared State shall expose information rather than business behavior.
+
+SSA-10
+
+State sharing shall never bypass approved API contracts or backend ownership boundaries.
+
+### Server State Synchronization
+#### Backend as Source of Truth
+The backend remains the authoritative owner of all Server State.
+
+Frontend responsibilities are limited to:
+
+Requesting data
+Temporarily caching responses
+Rendering data
+Refreshing stale information
+Discarding obsolete data
+
+The frontend shall never independently establish business truth.
+
+Synchronization Flow
+Backend
+      │
+      ▼
+Approved API
+      │
+      ▼
+Server State Cache
+      │
+      ▼
+UI Rendering
+
+Every synchronization cycle begins with backend data.
+
+Architectural Rules
+
+SYNC-01
+
+Backend responses replace frontend assumptions.
+
+SYNC-02
+
+Server State synchronization shall preserve backend ownership.
+
+SYNC-03
+
+Frontend synchronization shall never introduce competing business state.
+
+#### Synchronization Philosophy
+
+Synchronization exists to keep frontend representations aligned with backend state.
+
+The architecture favors:
+
+Refresh over manual reconciliation.
+Backend confirmation over client assumptions.
+Predictable synchronization over aggressive optimization.
+
+Synchronization is a presentation concern, not a business ownership concern.
+
+
+#### Read Synchronization
+
+Read operations follow the approved rendering architecture.
+
+General lifecycle:
+
+Request
+↓
+Backend Response
+↓
+Cache
+↓
+Render
+↓
+Refresh When Necessary
+
+Read synchronization does not modify business state.
+
+It updates only the frontend representation.
+
+Architectural Principles
+
+Read synchronization shall:
+
+Respect cache freshness.
+Reuse existing cached data when valid.
+Request backend data when stale.
+Avoid duplicate requests whenever practical.
+
+
+#### Mutation Lifecycle
+
+Write operations follow a standardized synchronization lifecycle.
+
+Authoritative flow:
+
+User Action
+↓
+API Request
+↓
+Backend Validation
+↓
+Backend Mutation
+↓
+Backend Response
+↓
+Cache Update
+↓
+UI Refresh
+
+Business state changes occur only after backend acceptance.
+
+The frontend representation is updated from the resulting backend state.
+
+Architectural Rule
+
+Successful mutations always synchronize using backend responses rather than locally reconstructed state.
+
+
+#### Optimistic Updates
+
+Optimistic updates are permitted but remain an implementation optimization rather than the architectural default.
+
+Suitable candidates include:
+
+Follow / Unfollow
+Vote interactions
+Simple preference toggles
+Lightweight UI acknowledgements
+
+Unsuitable candidates include:
+
+Authentication
+Governance actions
+Membership changes
+Authorization-sensitive operations
+Resource ownership changes
+Requirements
+
+If optimistic updates are used:
+
+Backend remains authoritative.
+Rollback capability is mandatory.
+Backend response always reconciles local state.
+Architectural Rules
+
+OPT-01
+
+Optimistic updates must be reversible.
+
+OPT-02
+
+Backend responses supersede optimistic assumptions.
+
+OPT-03
+
+Authorization or governance decisions shall never rely on optimistic state.
+
+
+#### State Reconciliation
+
+Whenever frontend state differs from backend responses:
+
+Backend state always wins.
+
+Reconciliation model:
+
+Local Representation
+        │
+        ▼
+Backend Response
+        │
+        ▼
+Replace Local Representation
+
+Manual merge strategies are discouraged unless explicitly required by future features.
+
+Architectural Principles
+
+Reconciliation shall:
+
+Prefer replacement over manual merging.
+Preserve backend authority.
+Avoid maintaining parallel business histories.
+
+#### Refresh Strategy
+
+Refresh behavior should remain predictable.
+
+Server State should refresh after:
+
+Successful mutations.
+Explicit user refresh actions.
+Cache expiration.
+Route transitions when required.
+Session restoration.
+Browser refocus where appropriate.
+
+The refresh strategy should remain conservative to avoid unnecessary network traffic.
+
+Refresh Philosophy
+
+The architecture favors:
+
+Event-driven refresh.
+Cache-aware refresh.
+Explicit refresh boundaries.
+
+Continuous polling is not part of the MVP architecture.
+
+
+#### Error Recovery
+
+Synchronization failures shall not permanently corrupt frontend state.
+
+Error recovery model:
+
+Mutation
+↓
+Failure
+↓
+Preserve Previous Valid State
+↓
+Surface Error
+↓
+Retry or Refresh
+
+The frontend shall never fabricate successful business outcomes after failed synchronization.
+
+Recovery Principles
+
+Recovery should:
+
+Preserve the last confirmed backend state.
+Roll back optimistic changes if necessary.
+Allow retry through approved workflows.
+Avoid partial business state.
+
+#### State Consistency
+
+Frontend consistency is measured against backend confirmation rather than local interaction.
+
+The following guarantees become authoritative.
+
+SSC-01
+
+Backend-confirmed state is always authoritative.
+
+SSC-02
+
+Successful mutations produce synchronized frontend state.
+
+SSC-03
+
+Failed mutations shall not permanently alter Server State representation.
+
+SSC-04
+
+Synchronization shall preserve ownership boundaries.
+
+SSC-05
+
+No business resource shall exist in multiple conflicting frontend representations.
+
+
+#### Interaction with Rendering Architecture
+
+The synchronization model complements the approved rendering architecture.
+
+Server Components
+
+Server Components receive synchronized backend data directly during rendering.
+
+No client-side synchronization responsibility exists inside Server Components.
+
+Client Components
+
+Client Components consume synchronized Server State and manage interaction state.
+
+Client Components must not become independent business authorities.
+
+Rendering Consistency
+
+Rendering and synchronization remain independent concerns.
+
+Rendering determines:
+
+Where data is rendered.
+
+Synchronization determines:
+
+How data remains current.
+
+This separation preserves architectural clarity.
+
+
+#### Interaction with Caching
+
+Caching supports synchronization.
+
+Caching does not replace synchronization.
+
+The cache acts as a temporary representation of backend state.
+
+It does not become an independent business owner.
+
+Cache Principles
+
+Cache entries:
+
+May expire.
+May refresh.
+May be discarded.
+May be replaced.
+
+They shall never become authoritative business records.
+
+Cache Synchronization Rules
+
+CACHE-01
+
+Caching preserves backend ownership.
+
+CACHE-02
+
+Cache invalidation follows successful mutations.
+
+CACHE-03
+
+Stale cache entries shall be refreshed before becoming business assumptions.
+
+CACHE-04
+
+Cache replacement is preferred over manual mutation whenever practical.
+
+
+#### Server State Synchronization Rules
+
+The following rules become authoritative.
+
+SST-01
+
+Backend is the single source of truth.
+
+SST-02
+
+Synchronization shall update frontend representations rather than business ownership.
+
+SST-03
+
+Mutations synchronize through backend responses.
+
+SST-04
+
+Reconciliation favors backend-confirmed state.
+
+SST-05
+
+Synchronization shall preserve module ownership boundaries.
+
+SST-06
+
+Caching is an optimization, not an authority.
+
+SST-07
+
+Optimistic updates remain optional and reversible.
+
+SST-08
+
+Synchronization behavior shall remain consistent across frontend modules.
+
+SST-09
+
+Rendering architecture and synchronization architecture remain independent concerns.
+
+SST-10
+
+Synchronization shall remain compatible with future real-time capabilities without architectural redesign.
+
+### State Management Boundaries
+#### State Ownership Hierarchy
+State ownership shall follow the frontend composition hierarchy.
+
+Application
+    │
+    ├── Shared Infrastructure
+    │
+    ├── Route
+    │
+    ├── Frontend Module
+    │
+    ├── Feature
+    │
+    └── Component
+
+Each level owns only the state necessary for its responsibilities.
+
+State shall never be elevated beyond the lowest level that satisfies its consumers.
+
+#### Module State Ownership
+
+Each frontend module owns all interaction state directly related to its business responsibilities.
+
+State ownership follows the approved frontend module inventory.
+| Frontend Module | Owns                                                                       |
+| --------------- | -------------------------------------------------------------------------- |
+| Identity        | Authentication interaction, profile editing workflows, account preferences |
+| Social Graph    | Follow interaction state                                                   |
+| Content         | Post creation, comment interaction, voting interaction                     |
+| Community       | Herd creation, membership workflows, shepherd management interaction       |
+| Feed            | Feed presentation preferences, feed interaction state                      |
+| Media           | Upload interaction, image selection, preview state                         |
+| Governance      | Reporting workflows, moderation interaction state                          |
+Module ownership concerns frontend interaction, not backend business ownership.
+
+Business entities remain Server State.
+
+Module Ownership Rules
+
+MSO-01
+
+Every module owns its interaction state.
+
+MSO-02
+
+Modules may consume shared infrastructure state.
+
+MSO-03
+
+Modules shall not directly modify another module's local state.
+
+MSO-04
+
+Module state boundaries mirror approved business domain boundaries.
+
+#### Component State Ownership
+
+Component State is the default ownership level.
+
+Components own:
+
+Visibility
+Animation
+Input focus
+Temporary selections
+Local interaction state
+
+Examples:
+
+Expanded comment
+Dropdown state
+Modal visibility
+Active accordion
+Image hover state
+
+Component State should not be promoted unless multiple consumers require synchronization.
+
+Component Ownership Rules
+
+COMP-01
+
+Component State is the preferred ownership level.
+
+COMP-02
+
+Component State shall remain private by default.
+
+COMP-03
+
+Component State shall not become globally accessible without architectural justification.
+
+
+#### Route State
+
+Route State exists when multiple features within a single route require coordinated interaction.
+
+Examples:
+
+Route-level filters
+Shared pagination
+Current tab
+Layout coordination
+Search parameters not represented in the URL
+
+Route State belongs to the route composition layer.
+
+It is discarded when the route is exited unless explicitly preserved through URL or Session State.
+
+Route Ownership Rules
+
+ROUTE-01
+
+Route State remains confined to a single route tree.
+
+ROUTE-02
+
+Route State shall not become application state by default.
+
+ROUTE-03
+
+Route transitions dispose Route State unless another architecture explicitly preserves it.
+
+
+#### Layout State
+
+Layouts coordinate shared presentation behavior across nested routes.
+
+Examples:
+
+Sidebar collapse
+Navigation drawer
+Responsive layout state
+Header interaction
+Global search visibility
+
+Layouts do not own business workflows.
+
+Layouts coordinate presentation only.
+
+Layout Rules
+
+LAYOUT-01
+
+Layouts own presentation coordination.
+
+LAYOUT-02
+
+Layouts shall not own feature-specific business interaction.
+
+LAYOUT-03
+
+Layout State remains independent of module state.
+
+
+#### Shared Infrastructure State
+
+Shared Infrastructure State contains stable application-wide concerns.
+
+Examples:
+
+Authentication representation
+Current session representation
+Theme preference
+Global notification queue
+Feature configuration (future)
+
+Shared Infrastructure State does not own business entities.
+
+Ownership
+
+Application infrastructure owns this state.
+
+Feature modules consume it.
+
+Feature modules do not own it.
+
+Infrastructure Rules
+
+INFRA-01
+
+Infrastructure State exists independently of business modules.
+
+INFRA-02
+
+Infrastructure State shall expose infrastructure information only.
+
+INFRA-03
+
+Infrastructure State shall remain minimal.
+
+
+#### Cross-Module Communication
+
+Frontend modules shall communicate through established architectural boundaries.
+
+The preferred interaction model is:
+
+Module
+      │
+      ▼
+Shared Infrastructure
+      │
+      ▼
+Approved API
+      │
+      ▼
+Target Module Server State
+
+Modules should not exchange mutable business state directly.
+
+Instead:
+
+Backend APIs coordinate business workflows.
+Shared Infrastructure provides stable application-wide information.
+Server State synchronization keeps modules aligned.
+
+This mirrors the capability-based communication model established in the backend architecture.
+
+Examples
+
+Acceptable:
+
+Identity Module
+
+↓
+
+Authentication representation
+
+↓
+
+Content Module consumes authenticated identity.
+
+Not acceptable:
+
+Content Module
+
+↓
+
+Directly modifies Community Module interaction state.
+
+Not acceptable:
+
+Feed Module
+
+↓
+
+Stores copies of Post collections owned by Content.
+
+
+#### State Dependency Rules
+
+State dependencies shall follow frontend ownership boundaries.
+
+Approved dependency direction:
+
+Shared Infrastructure
+        ↓
+Route
+        ↓
+Module
+        ↓
+Feature
+        ↓
+Component
+
+Lower-level state may consume higher-level state.
+
+Higher-level state must not depend on implementation details of lower levels.
+
+Dependency Rules
+
+DEP-01
+
+Dependencies flow downward.
+
+DEP-02
+
+Lower-level ownership remains independent.
+
+DEP-03
+
+State dependencies shall never introduce circular ownership.
+
+DEP-04
+
+Module boundaries remain authoritative regardless of dependency direction.
+
+DEP-05
+
+Business workflows continue through approved APIs rather than shared mutable state.
+
+
+#### State Isolation
+
+Isolation protects module independence.
+
+Every ownership boundary isolates:
+
+Lifecycle
+Interaction logic
+Update behavior
+Disposal
+Internal implementation
+
+Isolation prevents unrelated modules from becoming coupled through frontend state.
+
+Isolation Principles
+
+Modules remain independently evolvable.
+
+Interaction changes inside one module should not require state changes in unrelated modules.
+
+This preserves the Evolutionary Architecture principle.
+
+Isolation Rules
+
+ISO-01
+
+State ownership shall remain localized.
+
+ISO-02
+
+State mutations occur only within the owning boundary.
+
+ISO-03
+
+State exposure shall be read-oriented whenever practical.
+
+ISO-04
+
+Cross-boundary mutations require explicit architectural mechanisms.
+
+
+#### State Composition
+
+Complex application behavior emerges through state composition rather than shared ownership.
+
+Composition hierarchy:
+
+Shared Infrastructure
+        │
+        ▼
+Route
+        │
+        ▼
+Module
+        │
+        ▼
+Feature
+        │
+        ▼
+Component
+
+Each layer contributes only the state required for its responsibility.
+
+No layer becomes a universal owner.
+
+Composition Principles
+
+Composition should:
+
+Preserve ownership.
+Avoid duplication.
+Maintain isolation.
+Minimize coupling.
+Support incremental evolution.
+
+#### Architectural State Rules
+
+The following rules become authoritative.
+
+SMB-01
+
+Component State is the default ownership level.
+
+SMB-02
+
+Modules own interaction state related to their business responsibilities.
+
+SMB-03
+
+Routes own coordination state confined to a route hierarchy.
+
+SMB-04
+
+Layouts own presentation coordination only.
+
+SMB-05
+
+Shared Infrastructure owns stable application-wide concerns.
+
+SMB-06
+
+Cross-module mutable state is prohibited.
+
+SMB-07
+
+Business workflows shall continue through approved APIs.
+
+SMB-08
+
+State ownership boundaries shall align with approved frontend module boundaries.
+
+SMB-09
+
+State dependencies shall remain acyclic.
+
+SMB-10
+
+State architecture shall preserve module independence.
+
+### Future Evolution Strategy
+#### Evolution Principles
+The state architecture shall evolve by extending existing ownership boundaries rather than replacing them.
+
+Future capabilities shall:
+
+Preserve Backend Authority.
+Preserve module ownership.
+Preserve synchronization architecture.
+Preserve rendering architecture.
+Preserve API contracts.
+
+Evolution should introduce new implementation capabilities, not new ownership models.
+
+Evolution Rules
+
+EVOL-01
+
+State ownership remains stable across future releases.
+
+EVOL-02
+
+Future capabilities extend existing architecture rather than replace it.
+
+EVOL-03
+
+Evolution shall preserve backward compatibility whenever practical.
+
+#### Future Shared State Evolution
+
+The approved shared state architecture intentionally minimizes application-wide mutable state.
+
+Future requirements may justify expanding Shared Infrastructure State.
+
+Potential future additions include:
+
+User preference synchronization
+Notification state
+Accessibility preferences
+Platform configuration
+Feature flag management
+
+Business resources remain excluded from globally owned frontend state.
+
+The Local-First philosophy established in Part 3 remains authoritative.
+
+#### Offline Readiness Considerations
+
+Offline support is not part of the MVP architecture.
+
+However, the approved ownership model intentionally keeps this future path open.
+
+Future offline capabilities may include:
+
+Temporary mutation queues
+Deferred synchronization
+Offline drafts
+Read-only cached content
+
+Offline functionality shall not alter ownership boundaries.
+
+Backend remains the authoritative owner once connectivity is restored.
+
+Architectural Requirements
+
+Offline behavior must:
+
+Preserve Backend Authority.
+Reconcile with backend confirmation.
+Avoid permanent client-owned business state.
+
+Conflict resolution strategies are intentionally deferred until offline functionality becomes a product requirement.
+
+#### Real-Time Synchronization Readiness
+
+Real-time synchronization is outside MVP scope.
+
+The current synchronization architecture remains compatible with future technologies such as:
+
+WebSockets
+Server-Sent Events
+Push-based cache invalidation
+
+The synchronization model established in Part 4 already separates:
+
+Ownership
+Synchronization
+Rendering
+
+This separation allows real-time updates to replace refresh triggers without changing architectural boundaries.
+
+Future Synchronization Model
+
+Current:
+
+Backend
+↓
+API Request
+↓
+Cache Refresh
+↓
+Render
+
+Future:
+
+Backend
+↓
+Real-Time Event
+↓
+Cache Update
+↓
+Render
+
+The synchronization mechanism changes.
+
+Ownership does not.
+
+#### Multi-Tab Synchronization Considerations
+
+The MVP architecture treats browser tabs as independent clients.
+
+Future requirements may synchronize:
+
+Authentication state
+Session expiration
+Theme preference
+User preferences
+Notification state
+
+Cross-tab synchronization shall remain an infrastructure concern.
+
+Frontend modules shall remain unaware of synchronization mechanisms.
+
+Architectural Rules
+
+Multi-tab synchronization must:
+
+Preserve Shared Infrastructure ownership.
+Avoid direct module-to-module communication.
+Continue respecting Backend Authority.
+
+#### Future React Capabilities
+
+The architecture intentionally avoids coupling to specific React capabilities.
+
+Future React improvements may influence implementation without changing architectural principles.
+
+Examples include:
+
+Improved Server Components
+Enhanced caching primitives
+Improved asynchronous rendering
+New state management primitives
+
+The architectural model remains stable because ownership is independent of implementation technology.
+
+#### Scaling State Management
+
+Future application growth should scale through ownership refinement rather than centralization.
+
+Preferred evolution:
+
+More Modules
+        ✓
+
+Better Module Isolation
+        ✓
+
+Improved Synchronization
+        ✓
+
+Expanded Shared Infrastructure
+        ✓
+
+Single Massive Global Store
+        ✗
+
+Growth should preserve domain-oriented ownership rather than increasing application-wide mutable state.
+
+Scaling Principles
+
+Scaling shall prioritize:
+
+Module independence.
+Stable ownership.
+Explicit synchronization.
+API-driven communication.
+
+#### Migration Principles
+
+Future implementation changes shall not require architectural redesign.
+
+Acceptable migrations include:
+
+Different cache implementations
+Different synchronization libraries
+Improved state tooling
+Alternative Context implementations
+Additional infrastructure providers
+
+The following must remain stable:
+
+Ownership hierarchy
+State categories
+Synchronization principles
+Module boundaries
+API-first communication
+
+This separation minimizes migration risk.
+
+#### Evolution Without Structural Redesign
+
+The architecture intentionally separates:
+
+Ownership
+Synchronization
+Rendering
+Storage
+Communication
+
+Because these responsibilities remain independent, future implementation improvements can occur incrementally.
+
+Examples:
+
+Replace synchronization mechanism
+
+↓
+
+No ownership changes
+
+Improve caching strategy
+
+↓
+
+No module redesign
+
+Introduce real-time updates
+
+↓
+
+No rendering redesign
+
+Support offline drafts
+
+↓
+
+No ownership redesign
+
+This separation is the primary long-term maintainability objective.
+
+#### Long-Term Maintainability
+
+Long-term maintainability depends on preserving architectural discipline rather than introducing additional abstractions.
+
+The following principles remain authoritative.
+
+LTM-01
+
+Ownership remains explicit.
+
+LTM-02
+
+State categories remain stable.
+
+LTM-03
+
+Shared state remains minimal.
+
+LTM-04
+
+Business authority remains backend-owned.
+
+LTM-05
+
+Module boundaries remain authoritative.
+
+LTM-06
+
+Synchronization evolves independently of rendering.
+
+LTM-07
+
+Infrastructure improvements shall not require ownership changes.
+
+LTM-08
+
+Architectural evolution shall remain incremental.
+
+#### Future Evolution Rules
+
+The following rules become authoritative.
+
+FUT-01
+
+Evolution shall preserve Backend Authority.
+
+FUT-02
+
+Future capabilities extend existing ownership boundaries.
+
+FUT-03
+
+Offline capabilities shall not introduce client-owned business entities.
+
+FUT-04
+
+Real-time synchronization changes synchronization mechanisms, not ownership.
+
+FUT-05
+
+Multi-tab synchronization remains infrastructure-owned.
+
+FUT-06
+
+State architecture shall remain independent of React implementation details.
+
+FUT-07
+
+Scaling favors module refinement over global state expansion.
+
+FUT-08
+
+Implementation migrations shall preserve architectural principles.
+
+FUT-09
+
+Future enhancements shall remain compatible with approved API contracts.
+
+FUT-10
+
+Evolution shall follow the project's Evolutionary Architecture principle.
+
+---
+
+## 
