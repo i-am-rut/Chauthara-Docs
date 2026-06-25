@@ -31,7 +31,7 @@
 - MVP Architecture Design
     - Phase 1
         - Define Frontend Architecture
-            - Define Frontend Module & Application Structure 
+            -  Define Frontend Rendering & Data Fetching Architecture
 
 
 
@@ -40,7 +40,6 @@
 ## Phase 1 — Core Platform
 
 ### Architecture
-- Define Frontend Rendering & Data Fetching Architecture
 - Define Frontend State Management Architecture
 - Define Frontend Navigation & User Flow Architecture
 - Define Frontend UI System Architecture
@@ -198,3 +197,4 @@ Define Backend Validation Architecture
 ## Phase 1 scope
 Define Backend Security Architecture
 Define Frontend Architectural Style
+Define Frontend Module & Application Structure

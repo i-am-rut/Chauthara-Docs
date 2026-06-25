@@ -20878,5 +20878,2804 @@ rather than introducing competing architectural models.
 
 ---
 
+## Frontend Module & Application Structure
+### Frontend Module Architecture
+
+
+#### Module Architecture Goals
+The module architecture shall:
+
+Preserve approved business boundaries.
+Mirror backend architecture.
+Reduce coupling.
+Improve discoverability.
+Support API-first development.
+Support independent evolution.
+Avoid technical-centric organization.
+Keep responsibilities explicit.
+Remain understandable for a solo developer.
+
+#### One Domain = One Frontend Module
+This principle should become authoritative.
+Every approved backend domain receives one corresponding frontend module.
+| Backend Domain | Frontend Module |
+| -------------- | --------------- |
+| Identity       | Identity        |
+| Social Graph   | Social Graph    |
+| Content        | Content         |
+| Community      | Community       |
+| Feed           | Feed            |
+| Media          | Media           |
+| Governance     | Governance      |
+No additional business modules should be introduced unless a new business domain is approved.
+This preserves long-term consistency with the backend module inventory.
+
+#### Frontend Module Inventory
+1. Identity Module
+Responsibilities
+
+Owns frontend functionality related to:
+
+authentication UI
+registration
+login
+logout
+password recovery
+email verification
+profile viewing
+profile editing
+account settings
+
+Consumes Identity APIs.
+
+Owns Identity-specific presentation.
+
+2. Social Graph Module
+
+Responsibilities:
+
+follow
+unfollow
+follower lists
+following lists
+follow buttons
+relationship presentation
+
+Consumes Social Graph APIs.
+
+3. Content Module
+
+Responsibilities:
+
+posts
+comments
+replies
+voting
+content editing
+content deletion
+
+Consumes Content APIs.
+
+4. Community Module
+
+Responsibilities:
+
+Herds
+memberships
+shepherd management
+herd settings
+herd participation
+
+Consumes Community APIs.
+
+5. Feed Module
+
+Responsibilities:
+
+Following Feed
+Herd Feed
+feed presentation
+pagination UI
+feed composition at the presentation layer
+
+Consumes Feed APIs.
+
+Feed never owns Posts.
+
+Feed only presents them.
+
+This mirrors the backend where Feed is a derived domain rather than an ownership domain.
+
+6. Media Module
+
+Responsibilities:
+
+image upload UI
+image preview
+image attachment
+media selection
+
+Consumes Media APIs.
+
+7. Governance Module
+
+Responsibilities:
+
+reporting UI
+moderation interfaces
+governance dashboards
+enforcement presentation
+
+Present in architecture from Phase 1 but primarily implemented during Phase 2, consistent with the delivery roadmap.
+
+#### Domain Ownership
+Each module owns only its own business presentation.
+
+Example
+
+Identity owns
+
+Profile Page
+Edit Profile
+Login
+Register
+
+Content never owns profile editing.
+
+Community never owns authentication.
+
+Feed never owns post editing.
+
+#### Authority Boundaries
+Each module may:
+
+render its own UI
+own its own business components
+own its own forms
+own its own domain hooks (implementation to be defined later)
+own its own API interaction abstractions (structure only)
+
+A module may consume another module's public capabilities but must not modify or directly depend on another module's internal implementation.
+
+#### Root Application Composition
+
+The application root owns only application composition.
+
+Responsibilities include:
+
+application bootstrap
+global providers
+route composition
+shared layouts
+application initialization
+
+Business functionality remains inside domain modules.
+
+#### Feature Ownership
+Every feature belongs to exactly one module.
+| Feature        | Owner        |
+| -------------- | ------------ |
+| Login          | Identity     |
+| Profile        | Identity     |
+| Follow User    | Social Graph |
+| Create Post    | Content      |
+| Comment        | Content      |
+| Vote           | Content      |
+| Herd Creation  | Community    |
+| Join Herd      | Community    |
+| Following Feed | Feed         |
+| Herd Feed      | Feed         |
+| Upload Image   | Media        |
+| Report Content | Governance   |
+No feature has multiple owners.
+
+#### Public Interface Principles
+Each module exposes only what the rest of the application requires.
+
+Examples:
+
+Identity
+
+ProfileCard
+ProfileHeader
+LoginForm
+
+Content
+
+PostCard
+CommentTree
+CreatePostForm
+
+Consumers should interact with these public exports rather than internal files.
+
+#### Module Classification
+| Module       | Classification                |
+| ------------ | ----------------------------- |
+| Identity     | Core Business Module          |
+| Social Graph | Core Business Module          |
+| Content      | Core Business Module          |
+| Community    | Core Business Module          |
+| Feed         | Derived Presentation Module   |
+| Media        | Supporting Business Module    |
+| Governance   | Authority Presentation Module |
+
+#### Internal Implementation Hiding
+Everything else remains private.
+
+Examples:
+
+identity/
+
+internal/
+validation/
+helpers/
+mappers/
+components/private/
+
+These are implementation details.
+
+Other modules must not import them directly.
+
+#### Module Relationships
+Identity
+      │
+      ├─────────────┐
+      │             │
+Social Graph   Community
+      │             │
+      └──────┬──────┘
+             │
+         Content
+             │
+      ┌──────┴──────┐
+      │             │
+    Media        Governance
+      │             │
+      └──────┬──────┘
+             │
+            Feed
+
+Unlike the backend, this diagram represents presentation dependencies, not authority or lifecycle ownership. Backend ownership boundaries remain authoritative.
+
+#### Backend Alignment
+This module architecture deliberately mirrors the approved backend architecture:
+
+Same domain inventory
+Same vocabulary
+Same ownership boundaries
+Same authority model
+Same API boundaries
+Same evolutionary path
+
+The frontend therefore becomes a presentation counterpart to the backend rather than an independently organized application.
+
+#### Evolution Readiness
+The architecture remains stable if future domains are introduced.
+
+Evolution rule:
+
+New Business Domain
+        ↓
+New Backend Module
+        ↓
+New API Contract
+        ↓
+New Frontend Module
+
+Existing modules should not absorb unrelated responsibilities simply to avoid creating a new module.
+
+This preserves independent evolvability and aligns with the project's Evolutionary Architecture principle.
+
+### Application Folder Structure and Organization
+The physical project structure should mirror the approved module architecture instead of becoming route-centric or component-centric.
+
+#### Frontend Physical Project Structure
+Domain-Oriented Physical Project Structure.
+
+The App Router should own routing.
+
+Domain modules should own business functionality.
+
+Shared infrastructure should own reusable technical assets.
+
+##### Application Folder Organization Goals
+
+The folder structure shall:
+
+Reflect approved domain boundaries.
+Keep business code inside domain modules.
+Keep shared code intentionally small.
+Prevent technical folders from becoming business folders.
+Improve discoverability.
+Support future growth without restructuring.
+
+##### Authoritative Project Structure Philosophy
+
+The project is organized into three major areas:
+
+src/
+│
+├── app/
+├── features/
+└── shared/
+
+Each has a single responsibility.
+
+1. App Router
+
+Purpose:
+
+Application composition.
+
+Responsibilities:
+
+Routes
+Layouts
+Route groups
+Error boundaries
+Loading boundaries
+Metadata
+Route composition
+
+The App Router does not own business logic.
+
+2. Features
+
+Purpose:
+
+Own business functionality.
+
+Contains:
+
+features/
+
+identity/
+social-graph/
+content/
+community/
+feed/
+media/
+governance/
+
+These are the same modules approved in Part 1.
+
+Every business feature belongs inside exactly one of these folders.
+
+3. Shared
+
+Purpose:
+
+Technical infrastructure shared across multiple domains.
+
+Contains only reusable technical code.
+
+Never owns business rules.
+
+#### App Router Folder Strategy
+The App Router should remain intentionally thin.
+
+Example philosophy:
+
+app/
+
+(layouts)
+
+(route groups)
+
+page.tsx
+
+layout.tsx
+
+loading.tsx
+
+error.tsx
+
+not-found.tsx
+
+Routes assemble modules.
+
+Routes do not implement modules.
+
+#### Route Group Strategy
+Route Groups should organize application sections without affecting URLs.
+
+Example philosophy
+
+app/
+
+(public)/
+
+(auth)/
+
+(app)/
+
+Benefits
+
+Cleaner layouts
+Better composition
+Future scalability
+No URL pollution
+
+These are organizational boundaries—not business boundaries.
+
+#### Layout Hierarchy
+Layouts should exist only where shared presentation is required.
+
+Hierarchy:
+
+Root Layout
+
+↓
+
+Route Group Layout
+
+↓
+
+Route Layout (if needed)
+
+↓
+
+Page
+
+Avoid deeply nested layouts unless they represent meaningful UI composition.
+
+#### Domain Folder Organization
+Each frontend module follows the same internal philosophy.
+
+Example
+
+features/
+
+content/
+
+components/
+
+api/
+
+types/
+
+utils/
+
+constants/
+
+validation/
+
+lib/
+
+Not every module must contain every folder.
+
+Folders should appear only when needed.
+
+This avoids empty-directory architecture.
+
+#### Shared Folder Organization
+Authoritative structure:
+
+shared/
+
+components/
+
+hooks/
+
+lib/
+
+utils/
+
+types/
+
+constants/
+
+config/
+
+styles/
+
+providers/
+
+assets/
+
+Only reusable technical infrastructure belongs here.
+
+#### Sub-structure Conventions
+Components Organization
+
+Business components
+
+↓
+
+Remain inside domain modules.
+
+Shared components
+
+↓
+
+Remain inside shared/components.
+
+Example
+
+features/content/components/PostCard
+
+shared/components/Button
+
+PostCard belongs to Content.
+
+Button belongs to Shared.
+
+Hooks Organization
+
+Business hooks
+
+↓
+
+Domain module.
+
+Example
+
+features/community/hooks
+
+Reusable hooks
+
+↓
+
+shared/hooks
+
+Never place business-specific hooks inside shared.
+
+Utilities Organization
+
+Business utilities
+
+↓
+
+Stay inside the owning domain.
+
+Example
+
+features/content/utils
+
+Generic utilities
+
+↓
+
+shared/utils
+
+Rule:
+
+If a utility understands Posts, Herds, Profiles, or Votes—
+
+it is not generic.
+
+Libraries
+
+Shared integrations belong here.
+
+Example
+
+shared/lib/
+
+Examples
+
+API client configuration
+helper wrappers
+common adapters
+
+Libraries should remain implementation-focused.
+
+Configuration
+
+Application-wide configuration
+
+↓
+
+shared/config/
+
+Examples
+
+environment helpers
+application configuration
+feature flags (future)
+Types
+
+Domain types
+
+↓
+
+Stay inside domain modules.
+
+Shared generic types
+
+↓
+
+shared/types
+
+Never centralize every interface into one enormous types folder.
+
+Ownership matters.
+
+Constants
+
+Domain constants
+
+↓
+
+Inside domain.
+
+Shared constants
+
+↓
+
+shared/constants
+
+Example
+
+Good
+
+content/constants
+
+Bad
+
+shared/constants/PostConstants
+
+because Posts belong to Content.
+
+Assets
+
+Application-wide assets
+
+↓
+
+shared/assets
+
+Examples
+
+logos
+illustrations
+placeholder images
+
+Business media belongs to the backend Media system—not the frontend assets folder.
+
+Feature-Local Code
+
+Every business implementation remains local.
+
+Example
+
+features/content
+
+components
+
+hooks
+
+types
+
+validation
+
+utils
+
+Nothing leaks into shared until it proves reusable across multiple domains.
+
+Shared Code Philosophy
+
+Move code into Shared only when:
+
+genuinely reusable
+implementation-independent
+no business ownership
+stable across multiple domains
+
+Sharing is earned—not assumed.
+
+Route Ownership
+
+Routes do not own business behavior.
+
+Routes own:
+
+URL mapping
+composition
+metadata
+layout selection
+
+Business modules own:
+
+UI
+behavior
+business presentation
+
+Example
+
+app/profile/[username]
+
+↓
+
+imports
+
+Identity Module
+
+The route does not become the Profile implementation.
+
+#### Co-location Philosophy
+Co-location is the default philosophy.
+
+Everything stays close to the feature that owns it.
+
+Example
+
+content/
+
+components/
+
+hooks/
+
+validation/
+
+types/
+
+utils/
+
+Rather than
+
+hooks/
+
+components/
+
+validators/
+
+types/
+
+spread across the project.
+
+Ownership is visible immediately.
+
+#### Import Conventions
+Always prefer absolute imports.
+
+Example
+
+@/features/content
+
+@/shared/components
+
+Avoid:
+
+../../../../components
+
+Absolute imports improve maintainability as the application grows.
+
+#### Naming Conventions
+##### Folder Naming Conventions
+
+Use:
+
+lowercase
+kebab-case
+
+Examples
+
+social-graph
+
+shared
+
+user-settings
+
+Avoid
+
+SocialGraph
+
+Social_Graph
+
+socialGraph
+
+Consistency improves navigation.
+
+##### File Naming Conventions
+Components
+
+PostCard.tsx
+
+Hooks
+
+usePost.ts
+
+Utilities
+
+formatDate.ts
+
+Constants
+
+postLimits.ts
+
+Types
+
+post.ts
+
+Keep names descriptive rather than abbreviated.
+
+#### Barrel Export Philosophy
+Public module entry points should expose stable interfaces.
+
+Example
+
+features/content/index.ts
+
+Consumers import through the module root.
+
+Internal files remain hidden.
+
+Avoid deeply nested imports into another module's internals.
+
+#### Project Structure Philosophy
+The frontend should follow the following philosophy:
+
+src/
+
+├── app/                     # Route composition only
+│
+├── features/                # Business modules
+│   ├── identity/
+│   ├── social-graph/
+│   ├── content/
+│   ├── community/
+│   ├── feed/
+│   ├── media/
+│   └── governance/
+│
+├── shared/                  # Shared technical infrastructure
+│   ├── assets/
+│   ├── components/
+│   ├── config/
+│   ├── constants/
+│   ├── hooks/
+│   ├── lib/
+│   ├── providers/
+│   ├── styles/
+│   ├── types/
+│   └── utils/
+│
+└── middleware.ts
+
+This is intentionally a philosophical structure, not an exhaustive implementation tree. Future architectural decisions (rendering, state, UI system, data fetching) will populate these directories without requiring structural changes.
+
+### Modular Dependency and Communication Model
+Explicit Module Dependency & Communication Model.
+Each module communicates through stable public interfaces while hiding internal implementation details.
+The frontend mirrors the backend dependency philosophy without duplicating backend business authority.
+
+#### Dependency Principles
+The following become authoritative.
+
+FMD-01 — Domain Ownership First
+
+Every module owns its own business implementation.
+
+Ownership determines where code lives.
+
+Dependencies never transfer ownership.
+
+Example
+
+Identity owns:
+
+Profile UI
+Authentication UI
+
+Content may display profile information.
+
+Content never owns profile implementation.
+
+FMD-02 — Public Interface Only
+
+Modules communicate only through their public entry point.
+
+Example
+
+Good
+
+@/features/content
+
+Avoid
+
+@/features/content/components/PostCard/internal
+
+Internal folders remain inaccessible outside the owning module.
+
+FMD-03 — Internal Implementation Is Private
+
+Everything beneath a module belongs exclusively to that module.
+
+Examples
+
+features/content
+
+validation/
+
+internal/
+
+utils/
+
+hooks/
+
+Other modules must never import these directly.
+
+FMD-04 — Dependencies Follow Business Relationships
+
+Dependencies exist only when a real business relationship exists.
+
+Never create dependencies solely because code can be reused.
+
+Business boundaries determine dependency direction.
+
+FMD-05 — Shared Infrastructure Owns Technical Reuse
+
+Shared infrastructure provides reusable technical capabilities.
+
+It never becomes another business module.
+
+FMD-06 — Modules Remain Independently Evolvable
+
+Changes inside one module should have minimal impact on unrelated modules.
+
+Consumers depend on contracts rather than implementation.
+
+This aligns directly with the project's Evolutionary Architecture principle.
+
+#### Allowed Dependencies
+The dependency direction mirrors the approved backend architecture while recognizing frontend presentation needs.
+| Consumer     | Allowed Dependencies                                                  |
+| ------------ | --------------------------------------------------------------------- |
+| Identity     | Shared                                                                |
+| Social Graph | Identity, Shared                                                      |
+| Community    | Identity, Shared                                                      |
+| Media        | Identity, Shared                                                      |
+| Content      | Identity, Community, Media, Shared                                    |
+| Governance   | Identity, Community, Content, Media, Shared                           |
+| Feed         | Identity, Social Graph, Community, Content, Media, Governance, Shared |
+Notice:
+
+Feed remains the largest consumer.
+
+Exactly like the backend.
+
+#### Forbidden Dependencies
+The following become hard architectural rules.
+
+Identity → Other Business Modules
+
+Forbidden.
+
+Identity remains foundational.
+
+Identity should never depend upon:
+
+Content
+Community
+Feed
+Governance
+Social Graph
+Social Graph → Content
+
+Forbidden.
+
+Following relationships do not own discussion.
+
+Social Graph → Community
+
+Forbidden.
+
+User relationships remain independent of Herd participation.
+
+Community → Content
+
+Forbidden.
+
+Communities host discussion.
+
+They do not implement discussion.
+
+Community → Governance
+
+Forbidden.
+
+Governance remains an independent authority module.
+
+Media → Content
+
+Forbidden.
+
+Media remains reusable infrastructure for business domains.
+
+Governance → Feed
+
+Forbidden.
+
+Governance influences visibility.
+
+Feed presents visibility.
+
+Governance never consumes Feed.
+
+Feed → Any Mutation API
+
+Forbidden.
+
+Feed is a derived presentation module.
+
+Feed never becomes an ownership module.
+
+#### Module Communication Rules
+The approved communication pattern becomes:
+
+Module
+
+↓
+
+Public Interface
+
+↓
+
+Consumer Module
+
+Never
+
+Module
+
+↓
+
+Internal Folder
+
+↓
+
+Consumer
+
+#### Public Interface Model
+Each module exposes exactly one stable entry point.
+
+Example
+
+features/content
+
+index.ts
+
+Everything exported from this file becomes the official module contract.
+
+Everything else remains private.
+
+#### Shared Component Usage
+Reusable presentation components belong to Shared.
+
+Example
+
+shared/components
+
+Button
+
+Modal
+
+Avatar
+
+Dialog
+
+Business-specific components remain inside domains.
+
+Example
+
+features/content
+
+PostCard
+
+PostCard is not shared simply because it is used multiple times inside Content.
+
+Ownership matters more than reuse.
+
+##### Shared Utilities
+
+Generic utilities
+
+↓
+
+Shared.
+
+Business-aware utilities
+
+↓
+
+Domain.
+
+Example
+
+Good
+
+shared/utils
+
+formatDate
+
+Good
+
+content/utils
+
+buildPostPreview
+
+Bad
+
+shared/utils
+
+buildPostPreview
+
+because Posts belong to Content.
+
+#### Cross-Module Import Rules
+The following import hierarchy becomes authoritative.
+
+Allowed
+
+Module
+
+↓
+
+Other Module Root
+
+Example
+
+import { ProfileAvatar } from "@/features/identity";
+
+Forbidden
+
+import ProfileAvatar from "@/features/identity/components/ProfileAvatar";
+
+This prevents consumers from depending upon implementation details.
+
+##### Dependency Direction
+
+Dependency direction follows approved business relationships.
+
+Authoritative graph:
+
+                  Shared
+                     ▲
+                     │
+                Identity
+              ↗    │     ↖
+     Social Graph  │   Community
+              \    │      /
+               \   │     /
+                 Media
+                    │
+                 Content
+                    │
+               Governance
+                    │
+                  Feed
+
+Unlike the backend, Shared is not a business module. It is technical infrastructure that may be consumed by all modules but owns no business functionality.
+
+#### Circular Dependency Rules
+Circular dependencies are prohibited.
+
+Example
+
+Forbidden
+
+Content
+
+↓
+
+Community
+
+↓
+
+Content
+
+Forbidden
+
+Identity
+
+↓
+
+Content
+
+↓
+
+Identity
+
+Every dependency graph must remain acyclic.
+
+This keeps modules independently evolvable and easier to test.
+
+#### Composition Patterns
+
+Modules compose functionality rather than inherit it.
+
+Preferred pattern
+
+Page
+
+↓
+
+Feature Module
+
+↓
+
+Shared Components
+
+Avoid
+
+Feature
+
+↓
+
+Copies another Feature
+
+↓
+
+Modifies behavior
+
+Composition is preferred over duplication of ownership.
+
+#### Backend Interaction Boundaries
+
+Frontend modules never communicate directly with backend domains.
+
+They communicate exclusively through approved API contracts.
+
+Example
+
+Content Module
+
+↓
+
+Content API
+
+↓
+
+Backend Content Module
+
+Never
+
+Content Module
+
+↓
+
+Community Backend Endpoint
+
+↓
+
+Implements Community Rules
+
+Backend authority remains preserved.
+
+#### API Client Ownership
+A single shared HTTP client belongs to technical infrastructure.
+
+Business API logic belongs to the owning module.
+
+Example
+
+Good
+
+shared/lib
+
+httpClient
+features/content/api
+
+posts.ts
+
+Bad
+
+shared/api
+
+posts.ts
+
+community.ts
+
+identity.ts
+
+That would centralize business ownership into technical infrastructure.
+
+The shared layer owns transport.
+
+Domains own business endpoints.
+
+#### Domain Isolation
+
+Each module should be understandable independently.
+
+A developer should be able to work on:
+
+features/community
+
+without navigating unrelated modules.
+
+This improves:
+
+maintainability
+debugging
+onboarding
+testing
+future extraction
+
+#### Future Extraction Readiness
+Although Chauthara will remain a modular monolith, the dependency model should not prevent future extraction.
+
+If a module eventually becomes an independent package or service:
+
+Current
+
+Consumer
+
+↓
+
+Module Contract
+
+Future
+
+Consumer
+
+↓
+
+Published Package
+
+or
+
+↓
+
+Remote Service
+
+No architectural redesign should be required.
+
+This directly supports the project's Evolutionary Architecture goals.
+
+### Shared Infrastructure Architecture
+Minimal Shared Infrastructure Architecture.
+
+Shared infrastructure exists to support business modules—not replace them.
+
+Business ownership always takes precedence over reuse.
+#### Shared Infrastructure Principles
+The following become authoritative.
+
+SI-01 — Technical Ownership Only
+
+Shared infrastructure owns:
+
+technical abstractions
+reusable presentation primitives
+generic utilities
+application-wide configuration
+
+It never owns:
+
+Posts
+Herds
+Profiles
+Votes
+Reports
+Feed behavior
+
+Business behavior always belongs to domain modules.
+
+SI-02 — Domain Ownership Has Priority
+
+If code belongs naturally to a business domain:
+
+it remains inside that domain.
+
+Even if reused multiple times within that domain.
+
+Example
+
+Good
+
+features/content/components/PostCard
+
+Bad
+
+shared/components/PostCard
+
+because Post is a Content concept.
+
+SI-03 — Sharing Is Earned
+
+Code is promoted into Shared only when all of the following are true:
+
+used across multiple domains
+technically generic
+business-independent
+stable
+unlikely to diverge
+
+Reuse alone is insufficient.
+
+SI-04 — Shared Infrastructure Never Becomes Another Business Module
+
+The Shared directory must never become:
+
+shared/
+
+posts/
+
+comments/
+
+profiles/
+
+communities/
+
+Business concepts remain inside domain modules.
+
+#### Shared UI Components
+Purpose
+
+Reusable presentation primitives.
+
+Examples
+
+shared/components/
+
+Button
+
+Modal
+
+Dialog
+
+Dropdown
+
+Avatar
+
+Tooltip
+
+Spinner
+
+Skeleton
+
+Characteristics
+
+presentation only
+no business rules
+configurable
+reusable
+
+Business-specific components remain inside domain modules.
+
+#### Shared Layouts
+Shared layouts belong to application composition rather than business ownership.
+
+Examples
+
+shared/layouts/
+
+AppShell
+
+AuthLayout
+
+CenteredLayout
+
+Responsibilities
+
+page framing
+common structure
+layout composition
+
+They do not own routes or business workflows.
+
+#### Shared Hooks
+Shared hooks provide reusable technical behavior.
+
+Examples
+
+shared/hooks/
+
+useDebounce
+
+useMediaQuery
+
+useClickOutside
+
+useLocalStorage
+
+Business-aware hooks remain inside their owning module.
+
+Example
+
+Good
+
+features/community/hooks/useJoinHerd
+
+Bad
+
+shared/hooks/useJoinHerd
+
+#### Shared Utilities
+Shared utilities solve generic problems.
+
+Examples
+
+shared/utils/
+
+formatDate
+
+generateSlug
+
+truncateText
+
+copyToClipboard
+
+Utilities understanding Posts, Profiles, or Herds belong inside the respective domain.
+
+#### Shared Libraries
+Libraries provide integration with technical infrastructure.
+
+Examples
+
+shared/lib/
+
+httpClient
+
+logger
+
+storage
+
+cookies
+
+env
+
+These expose infrastructure capabilities.
+
+They do not expose business APIs.
+
+Business endpoints remain inside domain modules.
+
+#### Shared API Helper Architecture
+The architecture separates transport from business operations.
+
+Shared Infrastructure Owns
+shared/lib/httpClient
+
+Responsibilities
+
+request execution
+headers
+interceptors
+serialization
+authentication transport
+error normalization
+Domain Modules Own
+features/content/api/
+
+features/community/api/
+
+Responsibilities
+
+endpoint definitions
+request builders
+domain-specific API calls
+
+This mirrors the backend principle of separating infrastructure from business workflows.
+
+#### Shared Configuration
+Application-wide configuration belongs here.
+
+Examples
+
+shared/config/
+
+env
+
+application
+
+featureFlags
+
+Configuration should remain technical.
+
+Business configuration belongs to the owning module.
+
+#### Shared Types
+Shared types represent generic technical concepts.
+
+Examples
+
+ApiResponse
+
+Pagination
+
+Nullable
+
+DeepPartial
+
+Business entities remain local.
+
+Good
+
+features/content/types/Post
+
+Bad
+
+shared/types/Post
+
+Ownership remains visible.
+
+#### Shared Validation
+Shared validation owns reusable technical validation.
+
+Examples
+
+email
+
+url
+
+password strength
+
+file size
+
+mime type
+
+Business validation remains inside domain modules.
+
+Example
+
+Content
+
+Maximum Post Length
+
+Allowed Vote Transition
+
+Community
+
+Membership Rules
+
+These are business rules.
+
+They are not shared.
+
+#### Shared Constants
+Shared constants represent application-wide technical values.
+
+Examples
+
+HTTP_TIMEOUT
+
+DEFAULT_PAGE_SIZE
+
+DATE_FORMAT
+
+Business constants remain inside domain modules.
+
+Example
+
+Good
+
+content/constants/postLimits
+
+Bad
+
+shared/constants/postLimits
+
+#### Shared Providers
+Application-wide providers belong to shared infrastructure.
+
+Examples
+
+shared/providers/
+
+ThemeProvider
+
+QueryProvider
+
+SessionProvider
+
+ToastProvider
+
+Providers establish application context.
+
+They do not implement business workflows.
+
+The specific providers adopted will be defined in later architectural decisions (e.g., state management and data fetching).
+
+#### Global Styling
+Application-wide styling belongs to Shared.
+
+Examples
+
+shared/styles/
+
+globals.css
+
+tokens.css
+
+utilities.css
+
+Global styling defines application-wide visual foundations.
+
+Business-specific styling remains co-located with the owning feature.
+
+#### Assets, Fonts, and Icons
+Shared assets contain application-owned static resources.
+
+Examples
+
+shared/assets/
+
+logo
+
+icons
+
+illustrations
+
+empty states
+
+User-uploaded media never belongs here.
+
+User media belongs to the backend Media domain.
+
+Fonts
+
+Fonts are application infrastructure.
+
+Example
+
+shared/assets/fonts
+
+Font loading remains centralized.
+
+Icons
+
+Application-wide icons belong here.
+
+Example
+
+shared/assets/icons
+
+Icons remain presentation assets.
+
+They do not represent business ownership.
+
+#### Infrastructure Ownership Matrix
+| Infrastructure      | Owner          |
+| ------------------- | -------------- |
+| UI Primitives       | Shared         |
+| Generic Hooks       | Shared         |
+| Generic Utilities   | Shared         |
+| HTTP Client         | Shared         |
+| Configuration       | Shared         |
+| Providers           | Shared         |
+| Global Styling      | Shared         |
+| Assets              | Shared         |
+| Fonts               | Shared         |
+| Icons               | Shared         |
+| Business APIs       | Domain Modules |
+| Business Components | Domain Modules |
+| Business Hooks      | Domain Modules |
+| Business Validation | Domain Modules |
+| Business Types      | Domain Modules |
+This ownership model becomes authoritative.
+
+#### Promotion Rules
+A component or utility should be promoted only if all conditions are satisfied.
+
+Rule 1
+
+Used by at least two independent domain modules.
+
+Rule 2
+
+Contains no business concepts.
+
+Rule 3
+
+Stable API.
+
+Rule 4
+
+Future divergence is unlikely.
+
+Rule 5
+
+Extraction reduces duplication without hiding ownership.
+
+Only after satisfying all five conditions should code move into Shared.
+
+#### Premature Abstraction Prevention
+The project follows Evolutionary Architecture.
+
+Therefore:
+
+Small duplication is preferable to premature abstraction.
+
+Example
+
+Two nearly identical buttons inside different modules do not justify a shared abstraction if their responsibilities are expected to diverge.
+
+The architecture intentionally optimizes for clarity before reuse.
+
+#### Shared Infrastructure Evolution
+Expected progression:
+
+Domain Module
+
+↓
+
+Repeated Stable Technical Pattern
+
+↓
+
+Shared Infrastructure
+
+↓
+
+Application Standard
+
+Not
+
+Idea
+
+↓
+
+Immediate Shared Folder
+
+The latter introduces unnecessary coupling and speculative abstractions.
+
+### Route Composition & Application Composition
+Composition-First Application Architecture.
+
+The application is assembled through composition rather than implementation.
+
+Each architectural layer has a single responsibility:
+| Layer                 | Responsibility         |
+| --------------------- | ---------------------- |
+| App Router            | Route composition      |
+| Layouts               | UI composition         |
+| Domain Modules        | Business functionality |
+| Shared Infrastructure | Technical capabilities |
+| Backend               | Business authority     |
+
+
+#### Application Composition Model
+The application is assembled hierarchically.
+
+Next.js Application
+
+        │
+        ▼
+Root App Router
+
+        │
+        ▼
+Route Groups
+
+        │
+        ▼
+Layouts
+
+        │
+        ▼
+Routes
+
+        │
+        ▼
+Domain Modules
+
+        │
+        ▼
+Shared Infrastructure
+
+        │
+        ▼
+Backend APIs
+
+Each level composes the level beneath it.
+
+None of these layers replace domain ownership.
+
+#### App Router Composition Model
+The App Router owns:
+
+URL mapping
+Route hierarchy
+Route groups
+Layout selection
+Error boundaries
+Loading boundaries
+Metadata registration
+
+The App Router does not own:
+
+business workflows
+feature implementation
+business validation
+business API definitions
+domain state
+
+Its responsibility is application composition.
+
+#### Nested Layout Strategy
+Layouts provide reusable presentation composition.
+
+Recommended hierarchy:
+
+Root Layout
+
+↓
+
+Public Layout
+
+↓
+
+Authenticated Layout
+
+↓
+
+Feature Layout (only if justified)
+
+↓
+
+Page
+
+Every additional layout should have a clear compositional purpose.
+
+Avoid creating layouts merely for organizational convenience.
+
+#### Route Ownership
+Routes own:
+
+URL
+metadata
+composition
+layout selection
+
+Routes do not own:
+
+business behavior
+reusable UI
+domain workflows
+
+Example:
+
+app/herds/[slug]/page.tsx
+
+↓
+
+imports Community module
+
+↓
+
+renders HerdPage
+
+The Community module owns the Herd experience.
+
+The route only exposes it.
+
+#### Domain Route Organization
+Every route maps to a single primary domain owner.
+| Route                 | Primary Owner |
+| --------------------- | ------------- |
+| `/login`              | Identity      |
+| `/register`           | Identity      |
+| `/profile/[username]` | Identity      |
+| `/feed`               | Feed          |
+| `/herds`              | Community     |
+| `/herds/[slug]`       | Community     |
+| `/posts/[id]`         | Content       |
+| `/settings`           | Identity      |
+Cross-domain participation is permitted through composition, but ownership remains singular.
+
+#### Public vs Protected Route Philosophy
+##### Public Routes
+
+Public routes are accessible without authentication.
+
+Typical examples:
+
+Landing page
+Login
+Register
+Public profile
+Public Herd pages (subject to visibility rules)
+
+The exact access policies will be defined in the Security Architecture and Rendering & Data Fetching Architecture.
+
+##### Protected Routes
+
+Protected routes represent authenticated application areas.
+
+Typical examples:
+
+Following Feed
+Create Post
+Account Settings
+Herd Management
+Moderation Dashboard
+
+Protection is a composition concern.
+
+Authorization remains a backend concern.
+
+This preserves the project's Backend Authority principle.
+
+#### Shared Layout Composition
+Shared layouts compose common presentation across multiple routes.
+
+Examples:
+
+Application shell
+Authentication shell
+Settings shell
+Moderation shell (future)
+
+Layouts provide consistent presentation while remaining independent of business ownership.
+
+#### Error & Loading Route Composition
+##### Error Routes
+
+Error boundaries belong to route composition.
+
+Responsibilities:
+
+graceful failure presentation
+user-friendly recovery
+route-level isolation
+
+Error routes do not implement business-specific error handling.
+
+Business error interpretation remains inside domain modules.
+
+##### Loading Routes
+
+Loading boundaries provide route-level loading composition.
+
+Responsibilities:
+
+loading UI
+transition presentation
+progressive rendering support
+
+Loading boundaries do not own data fetching.
+
+Fetching architecture will define how loading states are produced.
+
+#### Composition Hierarchy
+The authoritative composition hierarchy becomes:
+
+Application
+
+↓
+
+Route Group
+
+↓
+
+Layout
+
+↓
+
+Route
+
+↓
+
+Domain Module
+
+↓
+
+Business Components
+
+↓
+
+Shared Components
+
+Every layer has one clearly defined responsibility.
+
+#### Module Composition Model
+Modules compose other modules only through approved public interfaces.
+
+Example:
+
+Feed Module
+
+↓
+
+ProfileCard (Identity)
+
+↓
+
+PostCard (Content)
+
+↓
+
+VoteButton (Content)
+
+↓
+
+Avatar (Shared)
+
+Ownership remains:
+
+Feed owns feed presentation.
+Identity owns profile presentation.
+Content owns post presentation.
+Shared owns UI primitives.
+
+Composition does not transfer ownership.
+
+#### Domain Entry Points
+Every domain module exposes one primary application entry point.
+
+Example:
+
+features/
+
+content/
+
+index.ts
+
+or
+
+features/
+
+content/
+
+pages/
+
+The specific export structure may evolve, but the principle remains:
+
+The application enters a domain through its public interface.
+
+It never enters through internal folders.
+
+#### Route Boundary Rules
+The following rules become authoritative.
+
+RC-01
+
+One primary domain owner per route.
+
+RC-02
+
+Routes compose.
+
+They do not implement.
+
+RC-03
+
+Layouts compose presentation.
+
+They do not own business workflows.
+
+RC-04
+
+Domain modules remain reusable outside their originating route.
+
+Example:
+
+A PostCard may appear in:
+
+Feed
+Profile
+Herd
+Search (future)
+
+without belonging to any of those routes.
+
+RC-05
+
+Route groups organize the application.
+
+They do not become business boundaries.
+
+RC-06
+
+Business ownership always overrides route ownership.
+
+Routes expose business functionality.
+
+They do not define it.
+
+#### Cross-Domain Navigation Principles
+Navigation between routes must not create hidden module dependencies.
+
+Example:
+
+Profile
+
+↓
+
+Post
+
+↓
+
+Herd
+
+↓
+
+Feed
+
+This navigation sequence does not imply:
+
+Identity
+
+↓
+
+Content
+
+↓
+
+Community
+
+↓
+
+Feed
+
+Navigation relationships and module dependencies are independent architectural concerns.
+
+This distinction prevents accidental coupling based solely on user journeys.
+
+#### Future Route Evolution
+As new capabilities are introduced:
+
+New Business Capability
+
+↓
+
+Approved Domain
+
+↓
+
+Domain Module
+
+↓
+
+Public Entry Point
+
+↓
+
+Route Composition
+
+New routes should rarely require structural changes to existing modules.
+
+The routing layer evolves by composing modules rather than restructuring them.
+
+This supports the project's Evolutionary Architecture philosophy.
+
+### Frontend Architectural Rules & Validation
+Documented Architectural Governance Model.
+
+The architecture is governed by explicit rules, validated through architectural review, and supported by documentation. Automated enforcement (ESLint boundaries, dependency analysis, etc.) remains a future enhancement rather than a Phase 1 requirement.
+
+#### Architectural Rules (AR-01 to AR-20)
+The following become authoritative.
+
+AR-01 — One Domain = One Frontend Module
+
+Every business capability belongs to exactly one approved frontend domain module.
+
+No feature may have multiple business owners.
+
+AR-02 — Business Ownership Is Explicit
+
+Every file must have a clear owning module.
+
+If ownership cannot be determined, the file is likely misplaced.
+
+AR-03 — Modules Own Business Behavior
+
+Business behavior never belongs to:
+
+app/
+shared/
+layouts
+providers
+
+Business behavior always belongs to its owning domain module.
+
+AR-04 — Modules Expose Public Interfaces Only
+
+Every module exposes a stable public interface.
+
+Consumers must never depend on internal implementation.
+
+AR-05 — Public Interface Imports Only
+
+Allowed
+
+features/content
+
+Forbidden
+
+features/content/internal/*
+features/content/components/*
+features/content/utils/*
+
+Deep imports across modules are prohibited.
+
+AR-06 — Dependency Direction Must Be Preserved
+
+Dependencies follow approved architectural relationships.
+
+Developers must not introduce new dependency directions without architectural review.
+
+AR-07 — Circular Dependencies Are Prohibited
+
+No module dependency graph may contain cycles.
+
+This applies to:
+
+business modules
+shared infrastructure
+route composition
+AR-08 — Backend Authority Is Preserved
+
+Frontend modules consume backend capabilities.
+
+They never redefine business authority.
+
+AR-09 — Folder Structure Reflects Ownership
+
+Folders exist to express ownership.
+
+They are not organizational convenience.
+
+AR-10 — Business Code Stays Inside Domain Modules
+
+Business code must not migrate into:
+
+shared
+app
+configuration
+providers
+AR-11 — Co-location Is the Default
+
+Business implementation remains close to its owning feature.
+
+Centralization requires architectural justification.
+
+AR-12 — Shared Owns Technical Infrastructure Only
+
+Shared infrastructure owns:
+
+UI primitives
+generic utilities
+transport
+configuration
+providers
+
+It never owns business workflows.
+
+AR-13 — Promotion to Shared Requires Evidence
+
+Promotion requires:
+
+cross-domain reuse
+domain independence
+API stability
+demonstrated maintenance benefit
+
+Reuse alone is insufficient.
+
+AR-14 — Premature Abstraction Is Discouraged
+
+Small, localized duplication is preferred over speculative shared abstractions.
+
+This is a direct application of the project's Evolutionary Architecture principle.
+
+AR-15 — Routes Compose
+
+Routes own:
+
+URLs
+metadata
+composition
+
+Routes do not implement business workflows.
+
+AR-16 — Layouts Compose Presentation
+
+Layouts provide structure.
+
+They do not implement business behavior.
+
+AR-17 — One Primary Domain Owner Per Route
+
+Every route has one primary business owner.
+
+Cross-domain composition is permitted.
+
+Cross-domain ownership is not.
+
+AR-18 — Consistent Naming
+
+Directories:
+
+lowercase
+kebab-case
+
+Components:
+
+PascalCase
+
+Hooks:
+
+useXxx
+
+Utilities:
+
+camelCase
+
+Constants:
+
+descriptive camelCase
+
+Types:
+
+singular nouns
+
+Naming conventions should communicate ownership and intent consistently.
+
+AR-19 — Business Ownership Overrides Reuse
+
+Business ownership determines placement.
+
+Reuse never overrides ownership.
+
+AR-20 — Technical Ownership Overrides Convenience
+
+Infrastructure exists to support architecture, not to reduce folder count.
+
+#### Boundary Enforcement
+The following architectural boundaries are considered stable.
+| Boundary            | Rule                        |
+| ------------------- | --------------------------- |
+| App ↔ Features      | Composition only            |
+| Features ↔ Features | Public interfaces only      |
+| Features ↔ Shared   | Technical reuse only        |
+| Features ↔ Backend  | Approved API contracts only |
+| Shared ↔ Backend    | Infrastructure only         |
+Crossing these boundaries requires explicit architectural justification.
+
+#### Architectural Consistency Rules
+
+Every new feature should satisfy all of the following:
+
+belongs to one domain
+follows dependency rules
+uses shared infrastructure appropriately
+exposes a public interface
+preserves backend authority
+follows folder conventions
+maintains composition-first architecture
+
+#### Anti-Patterns
+The following are explicitly prohibited.
+
+AP-01 — Business Logic in Route Files
+app/posts/page.tsx
+
+↓
+
+contains post workflow
+AP-02 — Business Logic in Shared
+shared/utils/createPost.ts
+AP-03 — Deep Cross-Module Imports
+features/content/internal/*
+AP-04 — Shared Becoming a Business Layer
+shared/posts
+shared/profile
+shared/herds
+AP-05 — Route Ownership Becoming Business Ownership
+
+Routes expose features.
+
+They never become feature implementations.
+
+AP-06 — Layouts Owning Business State
+
+Layouts remain presentation composition.
+
+Business state belongs to domain modules.
+
+AP-07 — Creating Modules Around Technical Concerns
+
+Avoid modules such as:
+
+Components
+Hooks
+Utilities
+Services
+
+Business domains remain the organizing principle.
+
+#### Validation Checklist
+Before approving any significant frontend change, verify:
+
+ Business owner identified.
+ Module ownership preserved.
+ Public interface used.
+ No deep imports.
+ No circular dependencies.
+ Shared infrastructure remains technical.
+ Route composition preserved.
+ Layout responsibilities preserved.
+ Backend authority maintained.
+ Folder conventions followed.
+ Naming conventions followed.
+ No premature abstractions introduced.
+
+#### Architecture Review Checklist
+For architectural reviews:
+
+Ownership
+Does the feature belong to the correct domain?
+Boundaries
+Are module boundaries preserved?
+Dependencies
+Does the dependency graph remain acyclic?
+Shared Infrastructure
+Is the code genuinely domain-independent?
+Composition
+Does App Router remain a composition layer?
+Evolution
+Can the feature evolve without restructuring unrelated modules?
+Simplicity
+Is this the simplest architecture that satisfies current requirements?
+
+#### Conformance Rules
+A frontend change is considered architecturally conformant if it:
+
+Preserves approved domain boundaries.
+Uses approved dependency directions.
+Maintains backend authority.
+Uses public module interfaces.
+Keeps business ownership explicit.
+Avoids prohibited anti-patterns.
+
+Failure in any of these areas requires architectural review before acceptance.
+
+#### Evolution Constraints
+Future architectural work must not invalidate the following foundations without an explicit ADR or architecture review:
+
+Domain-oriented module inventory.
+One Domain = One Frontend Module.
+Shared infrastructure ownership.
+Composition-first application architecture.
+Public interface communication model.
+Backend Authority.
+API-first integration.
+
+Subsequent architecture tasks (Rendering, State Management, UI System, etc.) must build on these foundations rather than redefine them.
+
+#### Architecture Validation Summary
+The Architectural Rules & Validation framework strengthens the existing architecture without altering any previously approved decision.
+
+
+### Frontend Module & Application Structure
+
+#### Future Evolution Strategy
+Evolutionary Frontend Architecture Strategy.
+
+The approved architectural foundations remain stable while implementation details evolve through future architectural decisions and feature growth.
+
+#### Stable Architectural Foundations
+The following architectural decisions are considered foundational.
+
+These should remain stable throughout Phase 1 and beyond unless an Architectural Decision Record (ADR) explicitly supersedes them.
+
+Stable Domain Foundations
+Domain-Oriented Frontend Architecture
+One Domain = One Frontend Module
+Backend-aligned domain inventory
+Explicit module ownership
+Public module interfaces
+
+Stable Physical Organization
+app/ for composition
+features/ for business modules
+shared/ for technical infrastructure
+Co-location philosophy
+Domain-first folder organization
+
+Stable Dependency Model
+Public interface communication
+Acyclic dependency graph
+Domain ownership
+Shared technical infrastructure
+API-first interaction
+
+Stable Composition Model
+Composition-first architecture
+Route ownership
+Layout ownership
+Shared infrastructure ownership
+Backend authority
+
+These foundations become the baseline for all future frontend work.
+
+#### Module Growth Strategy
+The architecture supports growth in two ways.
+
+1. Existing Domain Expansion
+
+Most future work should expand existing modules.
+
+Examples:
+
+Content
+
+├── Rich Text
+├── Drafts
+├── Polls
+└── Bookmarks
+
+No structural reorganization is required.
+
+2. New Domain Introduction
+
+Only when a genuinely new business capability emerges.
+
+Evolution path:
+
+Business Capability
+
+↓
+
+Domain Analysis
+
+↓
+
+Backend Domain
+
+↓
+
+API Contracts
+
+↓
+
+Frontend Module
+
+↓
+
+Route Composition
+
+A new frontend module should never be introduced without a corresponding approved business domain.
+
+#### Route Evolution
+Future routes should evolve through composition.
+
+Example:
+
+Search
+
+↓
+
+Search Domain (future)
+
+↓
+
+Route
+
+↓
+
+Composition
+
+Existing routes should not absorb unrelated business capabilities simply to avoid creating a new module.
+
+#### Shared Infrastructure Evolution
+Shared infrastructure grows horizontally, not vertically.
+
+Expected additions include:
+
+UI primitives
+reusable technical hooks
+infrastructure libraries
+configuration
+providers
+
+It should not evolve into a business layer.
+
+Business functionality remains within domain modules regardless of project size.
+
+#### Large-Scale Organization
+As the application grows:
+
+More routes are added.
+More components are added.
+More API capabilities are added.
+
+The organizational principles remain unchanged.
+
+Growth occurs by expanding modules rather than restructuring the application.
+
+This significantly reduces architectural churn.
+
+#### Plugin Readiness Evaluation
+The approved architecture is plugin-compatible.
+
+Future capabilities can be added as self-contained domain modules provided they:
+
+own a distinct business capability
+expose a public interface
+follow dependency rules
+integrate through composition
+
+However, plugin architecture is not a Phase 1 objective and should not influence current implementation decisions.
+
+#### Package Extraction Readiness
+The architecture intentionally supports future package extraction.
+
+Potential candidates include:
+
+shared UI library
+shared utilities
+design system
+reusable infrastructure libraries
+
+Business modules should not be extracted until there is a clear operational or organizational benefit.
+
+Extraction readiness is a consequence of preserving boundaries—not an immediate goal.
+
+#### Monorepo Readiness
+The current architecture assumes a single frontend application.
+
+If future requirements justify a monorepo:
+
+apps/
+
+web
+
+admin
+
+packages/
+
+shared-ui
+
+shared-config
+
+shared-utils
+
+The approved module boundaries remain valid.
+
+Only the deployment structure changes.
+
+This demonstrates that the architecture is deployment-independent.
+
+#### Architectural Stability Principles
+The following principles govern future evolution.
+
+ES-01
+
+Change implementation before changing architecture.
+
+ES-02
+
+Expand domains before creating new domains.
+
+ES-03
+
+Preserve ownership before maximizing reuse.
+
+ES-04
+
+Composition before inheritance.
+
+ES-05
+
+Stable public interfaces enable evolution.
+
+ES-06
+
+Prefer incremental architectural evolution over structural rewrites.
+
+ES-07
+
+New architecture must justify replacing existing architecture through an ADR.
+
+#### Long-Term Maintainability Strategy
+The approved architecture remains maintainable because:
+
+business ownership is explicit
+dependencies are controlled
+infrastructure is separated
+composition is predictable
+routes remain thin
+modules evolve independently
+backend and frontend share a common vocabulary
+
+The architecture is optimized for years of incremental development rather than short-term implementation speed.
+
+---
+
 ##
 
