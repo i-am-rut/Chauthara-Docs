@@ -17514,4 +17514,1872 @@ This is an important architecture quality indicator.
 
 ---
 
-## 
+## Backend Security Architecture
+### Security Principles
+SEC-01 — Secure by Default
+
+Every architectural decision should default toward the safest behavior.
+
+Examples:
+
+Protected endpoints require authentication.
+Deny unless explicitly permitted.
+Sensitive fields excluded by default.
+Private resources never exposed accidentally.
+
+SEC-02 — Defense in Depth
+
+Security should exist at multiple independent layers.
+
+Example:
+
+Request
+      ↓
+Transport Security
+      ↓
+Authentication
+      ↓
+Validation
+      ↓
+Authorization
+      ↓
+Governance
+      ↓
+Domain Rules
+      ↓
+Persistence
+
+No single layer should be trusted to provide complete protection.
+
+SEC-03 — Least Privilege
+
+Every actor receives only the minimum authority required.
+
+Applies to:
+
+Users
+Shepherds
+Herd Owners
+Platform Administrators
+Internal modules
+
+SEC-04 — Explicit Trust
+
+Trust must never be inferred.
+
+Every request must explicitly establish:
+
+Identity
+Authority
+Ownership
+Scope
+
+before mutation occurs.
+
+SEC-05 — Boundary Preservation
+
+Security enforcement must respect approved ownership boundaries.
+
+Security must never:
+
+Transfer ownership
+Collapse module boundaries
+Introduce hidden authority
+
+This aligns directly with ADR-001 and Module Boundary Architecture.
+
+SEC-06 — Security Supports Architecture
+
+Security enhances architecture.
+
+It never redesigns:
+
+domains
+ownership
+module responsibilities
+governance hierarchy
+
+Security integrates into architecture.
+
+It does not replace architecture.
+
+### Layered Security Architecture
+Layered Backend Security Architecture.
+
+Security responsibilities are distributed across existing architectural layers instead of introducing new architectural layers.
+
+Security becomes an architectural concern rather than an isolated subsystem.
+
+This aligns with:
+
+Domain-Oriented Modular Monolith
+Security by Default
+Explicit Authority Boundaries
+Ownership Preservation
+Evolutionary Architecture
+Solo developer maintainability
+
+### Backend Trust Model
+The backend adopts a Zero Implicit Trust model.
+
+Every incoming request is considered untrusted until explicitly verified.
+
+Authoritative trust progression:
+
+Internet Client
+        ↓
+Untrusted Request
+        ↓
+Authentication
+        ↓
+Authenticated Identity
+        ↓
+Authorization
+        ↓
+Governance Validation
+        ↓
+Domain Validation
+        ↓
+Trusted Business Execution
+
+Trust is earned progressively.
+
+It is never assumed.
+
+### Trust Boundaries
+Boundary 1 — External Client → Backend
+
+Everything arriving from clients is untrusted.
+
+Includes:
+
+Headers
+Cookies
+JWTs
+JSON body
+Query parameters
+Uploaded files
+
+Validation is mandatory.
+
+Boundary 2 — API Layer → Application Layer
+
+Controllers may trust only:
+
+successfully validated request format
+authenticated principal
+
+Controllers must never trust:
+
+ownership
+permissions
+governance eligibility
+Boundary 3 — Application Layer → Domain Layer
+
+Application Services must verify:
+
+authorization
+ownership
+governance
+
+before invoking domain behavior.
+
+The Domain Layer assumes workflow prerequisites have already been enforced while still protecting business invariants.
+
+Boundary 4 — Application → Repository
+
+Repositories trust only valid application requests.
+
+Repositories never perform:
+
+authentication
+authorization
+governance
+
+This preserves Repository responsibilities.
+
+Boundary 5 — Backend → External Infrastructure
+
+External systems remain partially trusted.
+
+Examples:
+
+Cloudinary
+Email provider
+MongoDB driver
+
+Failures must be treated defensively.
+
+No external response should be blindly trusted.
+
+### Phase 1 Threat Model
+The architecture targets realistic MVP threats rather than enterprise adversaries.
+
+Identity Threats
+
+Protect against:
+
+credential stuffing
+brute-force login attempts
+stolen sessions
+session fixation
+token theft
+account takeover
+Authorization Threats
+
+Protect against:
+
+privilege escalation
+insecure direct object references (IDOR)
+ownership bypass
+governance bypass
+Input Threats
+
+Protect against:
+
+malformed requests
+malicious payloads
+oversized payloads
+injection attacks through validated input
+unsafe file uploads
+Media Threats
+
+Protect against:
+
+malicious image uploads
+unsupported file types
+oversized uploads
+unauthorized media access
+Abuse Threats
+
+Protect against:
+
+automated account creation
+spam
+excessive API requests
+feed scraping
+abusive voting
+resource exhaustion
+Information Disclosure
+
+Prevent exposure of:
+
+passwords
+password hashes
+refresh tokens
+internal IDs where unnecessary
+moderation metadata
+secrets
+infrastructure details
+
+#### Out of Scope (Phase 1)
+
+The following are intentionally excluded to satisfy the MVP scope constraint:
+
+Zero Trust enterprise networking
+Hardware Security Modules (HSM)
+Web Application Firewalls (WAF)
+Intrusion Detection Systems
+Behavioral anomaly detection
+SIEM integration
+Multi-region disaster recovery
+End-to-end encryption
+Multi-factor authentication (future enhancement)
+Device fingerprinting
+Adaptive authentication
+OAuth/OpenID federation
+Passwordless authentication
+
+These remain future evolution paths consistent with Evolutionary Architecture.
+
+### Security Responsibilities by Layer
+| Layer                | Security Responsibility                                                                              |
+| -------------------- | ---------------------------------------------------------------------------------------------------- |
+| API Layer            | Input validation, authentication entry, request normalization                                        |
+| Application Layer    | Workflow security orchestration, authorization invocation, governance invocation, session validation |
+| Domain Layer         | Business invariants, ownership invariants, lifecycle integrity                                       |
+| Repository Layer     | No security decision ownership; persistence only                                                     |
+| Infrastructure Layer | Secret access, encryption support, cookie signing, external integrations, TLS assumptions            |
+
+This integrates cleanly with the previously approved Application Layer Architecture and Validation Architecture without changing their responsibilities.
+
+### Domain Security Responsibilities
+Security responsibilities follow existing domain ownership.
+| Domain       | Security Responsibility                                         |
+| ------------ | --------------------------------------------------------------- |
+| Identity     | Identity establishment, credential ownership, session lifecycle |
+| Social Graph | Protect follow relationship ownership                           |
+| Content      | Protect content ownership and editing authority                 |
+| Community    | Protect community membership and delegated authority            |
+| Media        | Secure media lifecycle and ownership                            |
+| Governance   | Enforce moderation authority and security overrides             |
+| Feed         | Consume only already-authorized and visible content             |
+Security ownership never crosses domain ownership boundaries.
+
+### Security Ownership Model
+Security responsibilities are intentionally decentralized.
+| Responsibility          | Owner                       |
+| ----------------------- | --------------------------- |
+| Authentication          | Identity Module             |
+| Authorization           | Authorization Service       |
+| Governance Restrictions | Governance Module           |
+| Ownership Rules         | Owning Domain               |
+| Input Validation        | Validation Layer            |
+| Business Validation     | Domain Layer                |
+| Persistence Security    | Repository + Infrastructure |
+| Secret Management       | Infrastructure              |
+| Auditability            | Governance + Logging        |
+This mirrors the existing ownership model rather than introducing a dedicated "Security Module."
+
+### Security Assumptions
+The architecture assumes:
+
+HTTPS is enforced in production.
+Express runs behind a trusted reverse proxy when deployed publicly.
+Environment secrets are securely managed outside source control.
+MongoDB authentication is enabled.
+JWT signing keys remain confidential.
+Users access the application through modern browsers supporting secure cookies.
+
+### Authentication Principles
+AUTHSEC-01 — Authentication Before Authorization
+
+Every protected request must establish identity before any authorization evaluation.
+
+Execution order:
+
+Request
+    ↓
+Authentication
+    ↓
+Authenticated Principal
+    ↓
+Authorization
+    ↓
+Governance
+    ↓
+Business Execution
+AUTHSEC-02 — Stateless Access Authentication
+
+Application requests should authenticate using short-lived signed access tokens.
+
+Backend business modules never store access-session state.
+
+This preserves the stateless nature of the application layer.
+
+AUTHSEC-03 — Stateful Refresh Control
+
+Long-lived sessions require server-controlled refresh state.
+
+Access remains stateless.
+
+Refresh remains stateful.
+
+This provides controlled session revocation without sacrificing API simplicity.
+
+AUTHSEC-04 — Secure by Default
+
+Authentication mechanisms should default to:
+
+secure cookies
+HttpOnly cookies
+SameSite protection
+short-lived access tokens
+rotated refresh tokens
+
+No insecure alternatives should exist.
+
+AUTHSEC-05 — Explicit Session Ownership
+
+Every authenticated session belongs to exactly one account.
+
+Sessions are Identity-owned resources.
+
+Other domains never own sessions.
+
+Backend Identity Trust Flow
+Authoritative authentication flow:
+
+Browser
+      ↓
+Secure Cookie
+      ↓
+Authentication Middleware
+      ↓
+Identity Module
+      ↓
+Authenticated Principal
+      ↓
+Application Service
+      ↓
+Authorization
+      ↓
+Business Workflow
+
+Identity establishment completes before any module interaction.
+
+### Authentication Architecture
+Hybrid JWT Authentication Architecture.
+
+Characteristics:
+
+Short-lived Access JWT
+Long-lived Refresh Token
+Refresh Token Rotation
+Refresh Token persistence
+Secure Cookies
+Stateless API execution
+Stateful session management
+
+This balances:
+
+Security
+Simplicity
+Maintainability
+Evolutionary Architecture
+
+without introducing enterprise complexity.
+
+The Identity module becomes the exclusive owner of authentication.
+
+Authentication responsibilities include:
+
+Registration
+Login
+Session establishment
+Session renewal
+Logout
+Email verification
+Password reset
+Session invalidation
+
+No other module participates in authentication.
+
+This preserves Identity as the root authority.
+
+#### Authentication Execution Flow
+
+Authoritative login workflow:
+
+Login Request
+      ↓
+Input Validation
+      ↓
+Identity Application Service
+      ↓
+Credential Verification
+      ↓
+Account State Validation
+      ↓
+Generate Access Token
+      ↓
+Generate Refresh Token
+      ↓
+Persist Refresh Session
+      ↓
+Issue Secure Cookies
+      ↓
+Authenticated Response
+
+Authentication completes before Authorization Architecture becomes active.
+
+### JWT Strategy
+Access Token
+
+Purpose
+
+Authenticate API requests.
+
+Characteristics
+
+Signed JWT
+Short expiration
+Stateless
+Contains minimal claims
+Never stored server-side
+
+Recommended contents:
+
+userId
+sessionId
+tokenVersion
+issuedAt
+expiration
+
+Avoid embedding:
+
+permissions
+moderation state
+profile data
+follower counts
+business state
+
+These belong to authoritative domains and may change independently.
+
+Access Token Lifetime
+
+Recommended MVP duration:
+
+10–15 minutes
+
+Reasons:
+
+Limits damage if stolen.
+Low operational complexity.
+Excellent browser UX with refresh tokens.
+
+### Refresh Token Strategy
+Refresh tokens represent authenticated sessions.
+
+Unlike access tokens:
+
+refresh tokens are persisted
+refresh tokens are revocable
+refresh tokens are rotated
+
+Refresh workflow:
+
+Expired Access Token
+        ↓
+Refresh Endpoint
+        ↓
+Validate Refresh Token
+        ↓
+Rotate Refresh Token
+        ↓
+Issue New Access Token
+        ↓
+Invalidate Previous Refresh Token
+
+#### Refresh Token Storage
+
+Refresh tokens should never be stored in plaintext.
+
+Recommended:
+
+Store:
+
+token hash
+session identifier
+account identifier
+expiration
+device metadata (future optional)
+
+This minimizes damage if the database is compromised.
+
+### Cookie Strategy
+Both tokens should be transmitted using cookies.
+
+Recommended cookie attributes:
+| Property                 | Access                                            | Refresh    |
+| ------------------------ | ------------------------------------------------- | ---------- |
+| HttpOnly                 | Yes                                               | Yes        |
+| Secure                   | Production                                        | Production |
+| SameSite                 | Strict (or Lax if cross-site requirements evolve) | Strict     |
+| Accessible by JavaScript | No                                                | No         |
+
+No tokens should be stored in:
+
+localStorage
+sessionStorage
+
+This significantly reduces XSS exposure.
+
+### Credential Security
+Credentials exist only inside the Identity module.
+
+Rules:
+
+Passwords:
+
+never logged
+never cached
+never returned
+never persisted in plaintext
+
+Credential verification occurs entirely inside Identity.
+
+Other modules never access password information.
+
+### Password Storage
+Passwords must be:
+
+one-way hashed
+individually salted
+computationally expensive to verify
+
+Recommended algorithm:
+
+Argon2id (preferred)
+bcrypt (acceptable if Argon2 is unavailable)
+
+The architecture specifies the required characteristics rather than binding to a single implementation.
+
+### Password Reset Architecture
+Password reset should be token-based.
+
+Workflow:
+
+Forgot Password
+        ↓
+Generate Reset Token
+        ↓
+Persist Hashed Token
+        ↓
+Email User
+        ↓
+Token Verification
+        ↓
+Reset Password
+        ↓
+Invalidate Existing Sessions
+        ↓
+Issue New Login
+
+Important rule:
+
+Changing password invalidates every active refresh session.
+
+This limits damage from credential compromise.
+
+### Email Verification Architecture
+Email Verification Security
+
+Verification architecture:
+
+Registration
+      ↓
+Create Verification Token
+      ↓
+Persist Token Hash
+      ↓
+Send Email
+      ↓
+Verify Token
+      ↓
+Activate Account
+
+Unverified accounts remain in:
+
+Pending Verification
+
+until verification succeeds.
+
+This aligns with the approved account lifecycle defined in the feature specification.
+
+### Session Lifecycle
+Logout Architecture
+Logout does not merely remove cookies.
+
+Logout performs:
+
+refresh session invalidation
+cookie deletion
+session termination
+
+Authoritative flow:
+
+Logout
+      ↓
+Authentication
+      ↓
+Invalidate Refresh Session
+      ↓
+Delete Cookies
+      ↓
+Success
+
+Authoritative lifecycle:
+
+Login
+      ↓
+Authenticated Session
+      ↓
+Access Token Renewal
+      ↓
+Refresh Rotation
+      ↓
+Logout
+or
+Expiration
+or
+Password Change
+      ↓
+Session Invalidated
+
+Only Identity owns session lifecycle.
+
+### Session Invalidation
+Sessions become invalid when:
+
+logout
+password change
+account suspension
+account deletion
+refresh expiration
+administrator invalidation
+
+Future additions may include:
+
+device-specific logout
+logout-all-devices
+
+without redesign.
+
+### Token Rotation
+Refresh tokens must rotate on successful refresh.
+
+Old refresh token:
+
+→ invalid
+
+New refresh token:
+
+→ active
+
+Benefits:
+
+reduces replay window
+enables theft detection
+simplifies revocation
+
+### Replay Protection
+Replay attacks are mitigated through:
+
+short-lived access tokens
+refresh token rotation
+server-side refresh validation
+refresh invalidation after use
+Secure + HttpOnly cookies
+
+Future improvements:
+
+device fingerprint validation
+IP anomaly detection
+
+remain outside MVP.
+
+### CSRF Protection
+Because authentication uses cookies, CSRF protection is required.
+
+Recommended MVP approach:
+
+SameSite cookies
+CSRF token for state-changing requests
+Origin / Referer validation where appropriate
+
+This provides strong protection without unnecessary complexity.
+
+### Authentication Middleware Placement
+Authentication belongs immediately after transport concerns.
+
+Authoritative request pipeline:
+
+HTTP Request
+      ↓
+Security Headers
+      ↓
+Cookie Parsing
+      ↓
+Authentication Middleware
+      ↓
+Controller
+      ↓
+Validation
+      ↓
+Application Service
+      ↓
+Authorization
+      ↓
+Governance
+      ↓
+Business Logic
+
+Authentication middleware responsibilities:
+
+validate JWT
+resolve principal
+reject invalid tokens
+attach authenticated identity
+
+It must not:
+
+authorize
+check ownership
+evaluate governance
+perform business validation
+
+### Authentication–Authorization Integration
+Authentication output:
+
+Authenticated Principal
+
+Authorization input:
+
+Actor
+Action
+Resource
+Context
+
+Relationship:
+
+Authentication
+        ↓
+Produces Identity
+        ↓
+Authorization
+        ↓
+Produces Permission Decision
+
+This preserves the separation established in the Authorization Architecture.
+
+### Resource Protection Principles
+The following principles become authoritative.
+
+SEC-RP-01 — Protection Follows Ownership
+
+Every resource inherits its primary security boundary from its owning module.
+
+Examples:
+
+Identity protects:
+
+User Account
+User Profile
+
+Content protects:
+
+Posts
+Comments
+Votes
+
+Community protects:
+
+Herds
+Memberships
+
+Media protects:
+
+Images
+
+Governance protects:
+
+Reports
+Moderation Actions
+
+Security ownership never overrides architectural ownership.
+
+SEC-RP-02 — Every Mutation Requires Security Evaluation
+
+Every write operation follows the same protection pipeline.
+
+Request
+      ↓
+Authentication
+      ↓
+Authorization
+      ↓
+Ownership Validation
+      ↓
+Governance Validation
+      ↓
+Domain Rules
+      ↓
+Persistence
+
+Repositories never bypass this sequence.
+
+SEC-RP-03 — Capability Contracts Are Security Boundaries
+
+Module capability contracts are not merely communication mechanisms.
+
+They are also security boundaries.
+
+Every capability request must expose only the minimum information required.
+
+Capabilities should return decisions rather than internal state whenever possible.
+
+Preferred:
+
+CanUserPostInHerd()
+
+Avoid:
+
+GetEntireMembershipDocument()
+
+This preserves encapsulation and reduces accidental information exposure.
+
+SEC-RP-04 — Sensitive Data Is Private by Default
+
+Unless explicitly required by an approved API contract:
+
+Sensitive information must never leave the owning module.
+
+### Security Enforcement Boundaries
+#### Workflow-Centric Resource Protection.
+
+Security enforcement remains centered in:
+
+Application Services
+Authorization Service
+Governance Service
+Domain Rules
+
+Repositories remain intentionally security-neutral.
+
+This directly aligns with the approved Application Layer Architecture and Data Access Architecture.
+
+--- 
+
+Security exists at multiple architectural boundaries.
+
+| Boundary       | Security Responsibility                  |
+| -------------- | ---------------------------------------- |
+| API            | Authentication entry                     |
+| Application    | Authorization orchestration              |
+| Module         | Capability protection                    |
+| Domain         | Ownership and business invariants        |
+| Repository     | Persistence only                         |
+| Infrastructure | Secret protection and transport security |
+
+
+No single boundary provides complete protection.
+
+### Resource Access Security Pipeline
+Every resource follows the same evaluation model.
+
+Authenticated Principal
+        ↓
+Authorization
+        ↓
+Ownership Validation
+        ↓
+Governance Validation
+        ↓
+Visibility Evaluation
+        ↓
+Domain Rules
+        ↓
+Resource Access
+
+This becomes the authoritative resource access pipeline.
+
+### Ownership Protection Model
+Ownership protection already exists architecturally.
+
+Security architecture formalizes its enforcement.
+
+Every mutable resource has:
+
+one owner
+one ownership rule
+one modification authority
+| Resource | Owner          |
+| -------- | -------------- |
+| Profile  | Profile Owner  |
+| Post     | Post Author    |
+| Comment  | Comment Author |
+| Herd     | Herd Owner     |
+| Image    | Image Owner    |
+| Report   | Governance     |
+No security mechanism may transfer ownership.
+
+### Governance Protection Integration
+Governance remains the only architectural authority capable of overriding ownership.
+
+Security responsibilities:
+
+validate governance authority
+validate moderation scope
+validate hierarchy
+validate escalation
+
+Governance never bypasses ownership.
+
+Instead it executes approved governance workflows that instruct the owning module to perform the state transition.
+
+This remains consistent with the Governance Architecture.
+
+### Module-to-Module Security
+Cross-module requests remain capability-based.
+
+Security rules:
+
+Modules may expose:
+
+decisions
+validation capabilities
+resource existence
+visibility status
+
+Modules should avoid exposing:
+
+internal persistence structures
+database identifiers unnecessarily
+implementation details
+
+Authoritative interaction:
+
+Content Module
+      ↓
+Community Contract
+      ↓
+Community Application Service
+      ↓
+Decision
+
+Not:
+
+Content
+      ↓
+Membership Collection
+
+This preserves module isolation while reducing the attack surface.
+
+### Capability Contract Security
+Capability contracts become explicit security contracts.
+
+Every capability should define:
+
+required actor
+required context
+expected response
+failure conditions
+
+Capabilities should return:
+
+Authorized
+Denied
+Exists
+Not Found
+Restricted
+
+instead of raw persistence data whenever practical.
+
+This minimizes unnecessary data disclosure.
+
+### Database Security Principles
+The database is considered an implementation detail.
+
+Security architecture establishes the following rules.
+
+DBSEC-01 — Database Never Authorizes
+
+MongoDB never becomes the authorization engine.
+
+Business authorization remains above persistence.
+
+DBSEC-02 — Repositories Own Queries
+
+Only repositories interact with MongoDB collections.
+
+Controllers
+
+❌ Never
+
+Application Services
+
+❌ Never
+
+Domains
+
+❌ Never
+
+DBSEC-03 — Least Data Retrieval
+
+Queries should retrieve only fields required by the workflow.
+
+Avoid retrieving entire documents when only a subset is needed.
+
+Benefits:
+
+lower exposure
+better performance
+smaller attack surface
+DBSEC-04 — No Cross-Module Collection Access
+
+Repositories never query another module's collections directly.
+
+Cross-module information is obtained through capability contracts.
+
+This preserves the Data Access Architecture.
+
+### Input Trust Boundaries
+Every client input remains untrusted.
+
+Includes:
+
+request body
+cookies
+query parameters
+uploaded files
+path parameters
+headers
+
+Trust is established only after:
+
+validation
+authentication
+authorization
+
+No business layer should trust raw client input.
+
+### Output Data Exposure Rules
+Response contracts should follow:
+
+Minimum Required Exposure
+
+Sensitive fields should never appear unless explicitly required.
+
+Examples:
+
+Never expose:
+
+password hash
+refresh token
+verification token
+reset token
+moderation notes
+internal enforcement metadata
+infrastructure identifiers
+environment values
+secret configuration
+
+Derived values remain acceptable when already defined by approved API contracts.
+
+### Sensitive Data Handling
+Sensitive information includes:
+
+Identity:
+
+password hashes
+email verification tokens
+password reset tokens
+refresh token hashes
+
+Governance:
+
+internal moderation reasoning
+administrator-only notes
+
+Infrastructure:
+
+signing keys
+environment variables
+third-party credentials
+
+Rules:
+
+Sensitive data
+
+never logged
+never returned
+never cached unnecessarily
+never serialized into JWTs
+
+### Secrets Management Principles
+Secrets belong exclusively to infrastructure.
+
+Examples:
+
+JWT signing keys
+database credentials
+Cloudinary credentials
+email provider credentials
+
+Business modules must never hardcode secrets.
+
+Application Services receive required capabilities through infrastructure configuration.
+
+Future secret managers (e.g., Vault or cloud secret services) can replace environment variables without changing business modules.
+
+### Media Access Security
+Media protection follows Media Architecture.
+
+Rules:
+
+Image ownership:
+
+Identity
+
+Profile image
+
+Content
+
+Post image
+
+Community
+
+Herd image
+
+Media validates:
+
+upload ownership
+attachment eligibility
+visibility
+deletion authority
+
+Media never evaluates governance.
+
+Governance provides restriction decisions.
+
+Media applies them through approved workflows.
+
+This preserves the Media Architecture.
+
+### File Upload Security
+Every upload follows the same security pipeline.
+
+Upload Request
+        ↓
+Authentication
+        ↓
+Authorization
+        ↓
+Ownership Validation
+        ↓
+File Validation
+        ↓
+Media Validation
+        ↓
+Storage
+
+File validation includes:
+
+permitted MIME type
+file size limits
+supported formats
+attachment eligibility
+
+Future malware scanning may be added through background processing without redesign.
+
+### API Protection Strategy
+API security follows a layered model.
+
+Every protected endpoint should receive:
+
+HTTPS
+Authentication
+Validation
+Authorization
+Governance evaluation
+Error standardization
+Rate limiting
+
+Public endpoints remain limited to:
+
+registration
+login
+password reset initiation
+email verification
+selected public resource retrieval
+
+Everything else is protected by default.
+
+### Rate Limiting Strategy
+Rate limiting should be capability-driven rather than globally uniform.
+
+Recommended MVP categories:
+| Endpoint Category  | Suggested Policy |
+| ------------------ | ---------------- |
+| Login              | Strict           |
+| Registration       | Strict           |
+| Password Reset     | Strict           |
+| Email Verification | Moderate         |
+| Feed Retrieval     | Moderate         |
+| Search             | Moderate         |
+| Content Creation   | Moderate         |
+| Voting             | Moderate         |
+| Public Read APIs   | Relaxed          |
+This provides protection where abuse is most likely while avoiding unnecessary restrictions on normal usage.
+
+Implementation details (algorithm, storage backend, distributed coordination) remain infrastructure concerns and should be defined later.
+
+### Abuse Prevention Architecture
+Abuse prevention should exist in multiple layers.
+
+Identity
+
+account verification
+session controls
+
+Application
+
+rate limiting
+workflow validation
+
+Domain
+
+duplicate vote prevention
+duplicate membership prevention
+ownership validation
+
+Governance
+
+reporting
+moderation
+enforcement
+
+Infrastructure
+
+request limits
+upload constraints
+
+No single mechanism should be expected to prevent all abuse.
+
+### Resource Protection Principles
+
+### Operational Security Principles
+The following principles become authoritative.
+
+OPS-SEC-01 — Operational Simplicity
+
+Operational security should remain proportional to MVP scale.
+
+Avoid:
+
+SIEM platforms
+Security orchestration platforms
+Enterprise monitoring stacks
+Distributed security infrastructure
+
+Security operations should remain manageable by a solo developer.
+
+OPS-SEC-02 — Observability Without Data Exposure
+
+Logs should maximize operational usefulness while minimizing sensitive information.
+
+Logs exist to explain system behavior.
+
+Not to reproduce user data.
+
+OPS-SEC-03 — Security Configuration Is Infrastructure
+
+Security configuration belongs to Infrastructure.
+
+Business modules must never:
+
+read secrets directly
+manage credentials
+own security configuration
+
+OPS-SEC-04 — Secure Evolution
+
+Security enhancements should be additive.
+
+New security capabilities should integrate with existing architecture instead of replacing it.
+
+### Secure Logging Principles
+#### Layered Operational Security Architecture.
+
+Operational security becomes another architectural concern distributed across existing layers instead of introducing dedicated security infrastructure.
+
+The architecture remains:
+
+modular
+observable
+auditable
+evolution-ready
+
+while preserving simplicity.
+
+---
+
+Logs are operational assets.
+
+Not business resources.
+
+Logging should provide enough information to:
+
+diagnose failures
+investigate abuse
+support governance
+trace workflows
+
+without exposing sensitive information.
+
+#### Logging Classification
+The following categories become authoritative.
+| Category            | Purpose                               |
+| ------------------- | ------------------------------------- |
+| Application Logs    | Workflow execution                    |
+| Error Logs          | Failures                              |
+| Security Logs       | Authentication & authorization events |
+| Governance Logs     | Moderation activities                 |
+| Infrastructure Logs | External integrations                 |
+
+Information That Must Never Be Logged
+
+The following become prohibited:
+
+Passwords
+
+Password hashes
+
+JWTs
+
+Refresh tokens
+
+Verification tokens
+
+Password reset tokens
+
+Session cookies
+
+Secret keys
+
+Environment variables
+
+Cloud credentials
+
+Database credentials
+
+Personally sensitive request bodies unless explicitly required for debugging.
+
+#### Structured Logging
+
+Every log entry should contain standardized metadata.
+
+Recommended fields:
+
+timestamp
+severity
+requestId
+actorId (if authenticated)
+module
+workflow
+result
+correlation identifier
+
+This improves debugging without increasing architectural complexity.
+
+### Audit Trail Requirements
+Audit trails differ from logs.
+
+Logs describe:
+
+"What happened technically?"
+
+Audit trails describe:
+
+"What decision was made?"
+
+#### Audit Ownership
+
+Governance owns audit records for governance workflows.
+
+Business modules own business history where required.
+
+Infrastructure never owns business audit information.
+
+#### Audit Events
+
+The following should be auditable.
+
+Authentication
+
+login
+logout
+password reset
+email verification
+
+Governance
+
+report review
+enforcement
+restoration
+escalation
+
+Identity
+
+account restriction
+profile restriction
+
+Community
+
+shepherd assignment
+herd ownership changes
+
+Security
+
+refresh token invalidation
+session termination
+
+#### Audit Principles
+
+Audit records should be:
+
+immutable
+chronological
+attributable
+queryable
+
+Audit records should explain:
+
+Actor
+
+↓
+
+Action
+
+↓
+
+Target
+
+↓
+
+Outcome
+
+### Security Event Architecture
+Security events represent meaningful security-relevant actions.
+
+Examples
+
+Authentication
+
+Successful login
+
+Failed login
+
+Expired token
+
+Refresh rotation
+
+Authorization
+
+Permission denied
+
+Governance
+
+Restriction applied
+
+Restriction removed
+
+Infrastructure
+
+Secret configuration failure
+
+External provider failure
+
+Security events should be generated centrally through existing application workflows.
+
+Dedicated event infrastructure is unnecessary for MVP.
+
+### Incident Support Considerations
+The architecture should support future incident investigation.
+
+Every major workflow should be traceable through:
+
+Request
+
+↓
+
+Request ID
+
+↓
+
+Application Service
+
+↓
+
+Module
+
+↓
+
+Result
+
+↓
+
+Audit Record
+
+↓
+
+Log Entry
+
+This enables reconstruction of security incidents without requiring enterprise observability tooling.
+
+### Security Configuration
+Configuration remains an Infrastructure responsibility.
+
+Configuration categories include:
+
+Authentication
+
+JWT signing keys
+token lifetime
+cookie configuration
+
+Infrastructure
+
+database URI
+Cloudinary
+email provider
+
+Operational
+
+log level
+rate limits
+upload limits
+
+Application code should consume configuration.
+
+It must never define configuration.
+
+### Environment Separation
+The architecture recognizes independent environments.
+
+Development
+
+Testing
+
+Production
+
+Each environment should maintain independent:
+
+Secrets
+
+Database
+
+Storage
+
+Email configuration
+
+Security keys
+
+Configuration must never be shared between production and non-production environments.
+
+### Production Hardening Principles
+The production deployment should enforce:
+
+HTTPS
+
+Secure cookies
+
+Production secrets
+
+Minimal environment exposure
+
+Security headers
+
+Restricted CORS
+
+Disabled development diagnostics
+
+Appropriate upload limits
+
+Production hardening should remain infrastructure-driven rather than embedded in business modules.
+
+### Dependency Security
+Dependencies represent part of the platform's attack surface.
+
+The architecture establishes the following principles.
+
+DEP-SEC-01 — Trusted Dependencies
+
+Use mature, actively maintained libraries.
+
+Avoid abandoned packages.
+
+DEP-SEC-02 — Minimal Dependencies
+
+Prefer fewer dependencies.
+
+Every dependency introduces:
+
+security risk
+maintenance burden
+upgrade responsibility
+DEP-SEC-03 — Regular Updates
+
+Dependencies should be reviewed regularly.
+
+Security updates receive priority over feature updates.
+
+DEP-SEC-04 — Dependency Isolation
+
+Third-party libraries remain infrastructure concerns.
+
+Business rules should never depend on vendor-specific APIs unless encapsulated.
+
+### Security Testing Strategy
+Security verification becomes part of backend quality assurance.
+
+#### Authentication Testing
+
+Verify:
+
+Registration
+
+Login
+
+Logout
+
+Refresh
+
+Password reset
+
+Email verification
+
+Session invalidation
+
+#### Authorization Testing
+
+Verify:
+
+Ownership
+
+Role hierarchy
+
+Governance override
+
+Scope restrictions
+
+#### Input Validation Testing
+
+Verify:
+
+Invalid payloads
+
+Oversized payloads
+
+Malformed input
+
+Boundary values
+
+#### File Upload Testing
+
+Verify:
+
+Unsupported MIME types
+
+Oversized files
+
+Unauthorized uploads
+
+Attachment restrictions
+
+#### Governance Testing
+
+Verify:
+
+Hierarchy enforcement
+
+Escalation
+
+Restriction
+
+Restoration
+
+Audit creation
+
+#### Abuse Prevention Testing
+
+Verify:
+
+Rate limiting
+
+Duplicate actions
+
+Replay prevention
+
+Session invalidation
+
+### Security Review Checklist
+Every new backend feature should be reviewed against the following checklist.
+
+#### Identity
+Does the feature require authentication?
+Does it create or modify sessions?
+
+#### Authorization
+Is authorization evaluated?
+Is ownership evaluated?
+Is governance evaluated?
+
+#### Validation
+Is all client input validated?
+Are trust boundaries respected?
+
+#### Data
+Is sensitive data exposed?
+Is least-data retrieval followed?
+Are secrets isolated?
+
+#### Operations
+Is logging appropriate?
+Is auditing required?
+Are errors standardized?
+
+#### Architecture
+Does the feature preserve module boundaries?
+Does it preserve ownership?
+Does it preserve governance?
+Does it preserve application-layer responsibilities?
+
+This checklist becomes the standard architectural review process for future backend features.
+
+### Security Evolution Strategy
+Security should evolve alongside platform requirements.
+
+Phase 1
+
+Current architecture includes:
+
+Authentication
+
+Authorization
+
+Governance integration
+
+Rate limiting
+
+Structured logging
+
+Audit support
+
+Secure configuration
+
+Cookie security
+
+Secrets management
+
+Phase 2
+
+Potential additions:
+
+MFA
+
+Device management
+
+Advanced moderation protections
+
+Media malware scanning
+
+Expanded audit tooling
+
+Background security jobs
+
+Future
+
+Possible future evolution:
+
+OAuth
+
+Passwordless authentication
+
+Risk-based authentication
+
+Secret managers
+
+Hardware-backed keys
+
+Security monitoring
+
+Threat analytics
+
+These enhancements extend the current architecture rather than replacing it.
+
+### Backend Security Architecture Validation
+he Backend Security Architecture is now validated against every approved backend architecture.
+
+# 

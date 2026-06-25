@@ -29,9 +29,9 @@
 
 # Ongoing
 - MVP Architecture Design
-    - Architecture Refinement
-        - Backend Architecture Definition
-            - Define Backend Security Architecture
+    - Phase 1
+        - Define Frontend Architecture
+            - Define Frontend Architectural Style
 
 
 
@@ -40,7 +40,16 @@
 ## Phase 1 — Core Platform
 
 ### Architecture
-- Define Frontend Architecture
+- Define Frontend Module & Application Structure
+- Define Frontend Rendering & Data Fetching Architecture
+- Define Frontend State Management Architecture
+- Define Frontend Navigation & User Flow Architecture
+- Define Frontend UI System Architecture
+- Define Frontend Forms & User Interaction Architecture
+- Define Frontend Security Architecture
+- Define Frontend Performance Architecture
+- Define Frontend Error Handling Architecture
+- Define Frontend Architecture Validation & Evolution Strategy
 - Define Database Design
 - Define Infrastructure Definition
 - Architecture Validation
@@ -186,3 +195,6 @@ Define Backend Feed Architecture
 Define Backend Media Architecture
 Define Backend Error Handling Architecture
 Define Backend Validation Architecture
+
+## Phase 1 scope
+Define Backend Security Architecture
