@@ -19382,4 +19382,1501 @@ These enhancements extend the current architecture rather than replacing it.
 ### Backend Security Architecture Validation
 he Backend Security Architecture is now validated against every approved backend architecture.
 
-# 
+# Frontend Architecture Definition
+## Frontend Architecture Style
+### Frontend Architectural Goals
+#### Observations
+A purely UI-centric architecture is attractive for its simplicity but provides little guidance for long-term growth.
+A rich client architecture duplicates responsibilities already owned by the backend, conflicting with the project's ownership and authority principles.
+A traditional SPA architecture underutilizes the capabilities of Next.js App Router and React Server Components.
+A domain-oriented frontend preserves conceptual alignment with the backend while still allowing the frontend to own presentation, navigation, interaction state, and user experience.
+
+#### Domain-Oriented Frontend Architecture with a Backend-Authoritative Responsibility Model.
+The frontend should be treated as an application layer dedicated to:
+
+Presentation
+User interaction
+Navigation
+Rendering
+Client-side interaction state
+API consumption
+User experience orchestration
+
+The backend remains authoritative for:
+
+Business rules
+Authorization
+Authentication
+Ownership
+Governance
+Lifecycle enforcement
+Data integrity
+
+#### Core Architectural Principles
+
+The frontend should optimize for:
+
+Presentation over business ownership – it renders and interacts with data but does not own business invariants.
+Backend authority – server responses are the source of truth for security, permissions, and lifecycle.
+Domain alignment – frontend concepts mirror approved backend domains to preserve a shared ubiquitous language.
+Minimal client state – only interaction state, UI state, and transient state should be owned by the client.
+Rendering as an architectural concern – rendering strategy should be chosen based on data characteristics, personalization, and performance, not by habit.
+Evolutionary simplicity – introduce abstractions only when current requirements justify them, preserving a clear path for future expansion.
+
+This recommendation aligns directly with the project's architectural principles of Simplicity First, Evolutionary Architecture, Domain-Driven Boundaries, API-First Thinking, Security by Default, and Operational Simplicity.
+
+The frontend becomes responsible for:
+
+Rendering UI
+Managing navigation
+Managing local interaction state
+Consuming backend APIs
+Coordinating user workflows
+Presenting backend outcomes consistently
+
+It intentionally avoids becoming a second business layer.
+
+### Next.js App Router Philosophy
+#### Observations
+The Pages Router is stable but represents an older architectural model and does not align with the project's long-term direction.
+A client-side SPA approach underutilizes Next.js and shifts unnecessary responsibility to the browser.
+The App Router provides architectural capabilities—not merely routing features—that align with Chauthara's principles of simplicity, evolutionary architecture, and performance.
+
+#### Next.js App Router as the authoritative frontend architectural foundation.
+
+This decision is not based on popularity or framework trends.
+
+It is based on architectural alignment with Chauthara's approved principles.
+
+The App Router naturally supports:
+
+Domain-oriented organization
+Server-first rendering
+Progressive enhancement
+Layout persistence
+Performance optimization
+Evolutionary growth
+
+without introducing additional architectural layers.
+
+The App Router should therefore be viewed as the structural architecture of the frontend, not merely its navigation system.
+
+#### Architectural Philosophy
+
+The App Router should organize the frontend around application capabilities, not around technical implementation.
+
+A route represents a user-accessible capability.
+
+Examples include:
+
+viewing a profile
+reading a post
+browsing a Herd
+editing settings
+creating content
+
+Routes should never exist merely because an API exists.
+
+Likewise, APIs should never exist merely because a route exists.
+
+Both are independent expressions of the same business capability.
+
+#### Layout Philosophy
+
+Layouts are architectural composition boundaries, not reusable UI containers.
+
+Their purpose is to define shared application structure for related capabilities.
+
+Examples of architectural responsibilities include:
+
+persistent navigation
+authenticated application shell
+shared page composition
+shared context providers (when justified)
+consistent visual structure
+
+Layouts should not become:
+
+business logic containers
+data orchestration layers
+global state managers
+permission evaluators
+
+Those concerns belong elsewhere in the architecture.
+
+#### Nested Layout Philosophy
+
+Nested layouts represent hierarchical capability composition.
+
+Each additional layout should introduce a meaningful architectural boundary.
+
+Examples include:
+
+Platform Layout
+
+↓
+
+Authenticated Application Layout
+
+↓
+
+Settings Area
+
+↓
+
+Specific Settings Capability
+
+Each level should exist because it represents a distinct structural concern—not merely to reduce duplicated JSX.
+
+This reinforces maintainability by making shared responsibilities explicit.
+
+#### Architectural Responsibilities of Layouts
+
+Layouts may own:
+
+persistent UI structure
+navigation composition
+consistent page framing
+shared visual hierarchy
+capability-specific shells
+loading and error boundaries for their subtree
+
+Layouts should avoid owning:
+
+business workflows
+API orchestration
+domain state
+authorization rules
+lifecycle enforcement
+resource ownership
+
+These remain backend responsibilities or belong to lower-level frontend architectural layers.
+
+#### Architectural Responsibilities of Pages
+
+Pages represent entry points into business capabilities.
+
+Their responsibility is to compose the experience for a specific route.
+
+Pages should:
+
+coordinate rendering
+compose components
+initiate data requirements
+present capability-specific UI
+
+Pages should avoid becoming:
+
+service layers
+reusable business abstractions
+global state containers
+
+A page is a composition boundary—not a business boundary.
+
+#### Route Group Philosophy
+
+Route groups exist to improve architectural organization, not user navigation.
+
+They should separate:
+
+public capabilities
+authenticated capabilities
+settings
+administrative experiences
+future governance interfaces
+
+without affecting URL design.
+
+This keeps URLs user-centric while allowing the internal architecture to evolve independently.
+
+Route groups therefore support maintainability rather than functionality.
+
+#### Routing and Domain Alignment
+
+Although routes are user-facing rather than domain-facing, the routing architecture should remain conceptually aligned with approved business domains.
+
+This does not mean every domain maps directly to a URL.
+
+Instead, it means that related capabilities remain grouped around the same business concepts used throughout the platform.
+
+For example:
+
+Identity capabilities remain conceptually together.
+Community capabilities remain conceptually together.
+Feed capabilities remain conceptually together.
+
+This shared ubiquitous language reduces cognitive overhead across frontend, backend, documentation, APIs, and future development.
+
+#### Evolution Strategy
+
+As the platform grows, the App Router should expand by introducing new capability areas rather than restructuring existing ones.
+
+Future additions such as:
+
+governance interfaces
+moderation dashboards
+notifications
+analytics
+messaging
+
+should integrate as additional architectural capability areas, preserving the established routing philosophy.
+
+The guiding principle is extension over reorganization, consistent with the project's Evolutionary Architecture principle.
+
+---
+
+The App Router becomes the structural framework for the frontend.
+
+Future architectural work—including rendering, state management, navigation, and UI system design—should assume the App Router's layout hierarchy as the primary composition mechanism.
+
+### Rendering Strategy
+Analysis
+
+Client-Side Rendering introduces unnecessary client responsibility.
+
+Static Rendering alone cannot support a social platform whose primary data changes continuously.
+
+Pure Server-Side Rendering treats every page as equally dynamic, increasing server work without corresponding benefit.
+
+A Hybrid Rendering Architecture provides the greatest alignment with:
+
+Simplicity First
+Evolutionary Architecture
+Performance
+Maintainability
+
+while fully utilizing the capabilities of the App Router.
+
+#### Frontend Rendering Strategy
+Rendering Architecture
+
+The frontend shall adopt a Hybrid Rendering Architecture.
+
+Rendering strategy shall be determined by the characteristics of the data being rendered rather than by framework defaults or developer preference.
+
+Rendering becomes an architectural decision.
+
+Not an implementation convenience.
+
+#### Rendering Principles
+The following become authoritative.
+
+RND-01 — Server Rendering First
+
+Server rendering becomes the default rendering strategy.
+
+The frontend should prefer rendering on the server unless clear architectural reasons require client rendering.
+
+Server rendering reduces:
+
+Client JavaScript.
+Hydration.
+Duplicate requests.
+
+while preserving backend authority.
+
+RND-02 — Client Rendering By Exception
+
+Client rendering should be introduced only when interaction requires browser execution.
+
+Examples include:
+
+User interaction.
+Browser APIs.
+Local interaction state.
+Immediate UI feedback.
+
+Client rendering shall not become the default simply because React components support it.
+
+RND-03 — Static Rendering When Data Is Stable
+
+Static rendering should be reserved for resources whose lifecycle does not require request-time personalization.
+
+Static rendering should improve performance rather than define application architecture.
+
+RND-04 — Rendering Does Not Determine Authority
+
+Rendering location does not change authority.
+
+Whether rendered:
+
+on the server,
+in the browser,
+or statically,
+
+the backend remains authoritative for:
+
+Authentication.
+Authorization.
+Ownership.
+Governance.
+Business Rules.
+Lifecycle Enforcement.
+
+This preserves Security By Default.
+
+RND-05 — Rendering Follows Data Characteristics
+
+Rendering strategy should be selected according to:
+
+Personalization.
+Freshness requirements.
+Visibility requirements.
+Interaction requirements.
+
+Rendering should never be selected solely because a feature belongs to a particular page.
+
+#### Rendering Responsibility Model
+Rendering responsibilities become explicitly separated.
+
+Server Responsibilities
+
+The server is responsible for:
+
+Initial rendering.
+Secure data retrieval.
+Personalization.
+Visibility-aware rendering.
+Composition of server-rendered UI.
+Client Responsibilities
+
+The client is responsible for:
+
+User interaction.
+Local UI state.
+Browser capabilities.
+Immediate interface responsiveness.
+Progressive enhancement.
+
+The client is not responsible for:
+
+Business validation.
+Authorization.
+Ownership evaluation.
+Governance decisions.
+Backend Responsibilities
+
+The backend remains responsible for:
+
+Data ownership.
+Business rules.
+Lifecycle management.
+Authorization.
+Governance.
+Resource visibility.
+
+Rendering consumes backend outcomes.
+
+Rendering never produces them.
+
+#### Rendering Decision Model
+Rendering decisions shall follow the following evaluation order.
+
+Is browser execution required?
+        │
+       Yes
+        │
+Client Rendering
+        │
+       No
+        │
+Is request-time personalization required?
+        │
+       Yes
+        │
+Server Rendering
+        │
+       No
+        │
+Is data sufficiently stable?
+        │
+       Yes
+        │
+Static Rendering
+        │
+       No
+        │
+Server Rendering
+
+This becomes the authoritative rendering decision model.
+
+#### Personalization Philosophy
+Rendering strategy shall recognize two categories of application data.
+
+##### Public Data
+
+Public data may benefit from:
+
+Static Rendering.
+Cached Server Rendering.
+
+depending on freshness requirements.
+
+##### Personalized Data
+
+Personalized data shall prefer Server Rendering.
+
+Examples include:
+
+Authenticated experiences.
+User-specific visibility.
+Personalized feeds.
+User settings.
+
+Personalization should not rely upon client-side reconstruction whenever server rendering can provide the initial experience.
+
+##### Caching Philosophy
+
+Caching supports rendering.
+
+Caching does not determine rendering.
+
+Rendering decisions should remain independent of caching implementation.
+
+Caching strategy will be defined separately in the Performance Architecture.
+
+This preserves separation of concerns.
+
+#### Rendering Evolution Strategy
+Future rendering capabilities may introduce:
+
+Partial Prerendering.
+Improved streaming.
+Edge rendering where justified.
+More granular cache control.
+
+These enhancements should extend the Hybrid Rendering Architecture rather than replace it.
+
+No future evolution should require changing the Rendering Principles established above.
+
+---
+
+Rendering becomes a first-class architectural concern.
+
+Future architectural work shall assume:
+
+Server Rendering as the preferred default.
+Client Rendering by exception.
+Static Rendering where appropriate.
+Hybrid Rendering overall.
+
+### Client Component vs Server Component Philosophy
+Analysis
+A Client Component First architecture duplicates responsibilities already addressed by the Rendering Strategy.
+A Mixed approach creates inconsistent execution models and increases long-term maintenance costs.
+A Server Component First architecture complements the approved Hybrid Rendering Architecture by making server execution the architectural default while allowing Client Components where browser execution is genuinely required.
+
+#### Client Component vs Server Component Philosophy.
+Component Architecture
+
+The frontend shall adopt a Server Component First Architecture.
+
+Server Components become the default component model.
+
+Client Components become specialized execution units introduced only when browser execution is required.
+
+#### Component Architecture Principles.
+The following become authoritative.
+
+CMP-01 — Server Components By Default
+
+All components shall be assumed to be Server Components unless browser execution is required.
+
+Client Components require explicit architectural justification.
+
+This becomes the default component selection principle.
+
+CMP-02 — Client Components By Capability
+
+A Client Component shall exist only when one or more browser capabilities are required.
+
+Examples include:
+
+User interaction.
+Browser APIs.
+Local interaction state.
+Client-side event handling.
+Immediate visual feedback.
+
+Client Components shall not exist solely because a component displays data.
+
+CMP-03 — Server Components Own Data Composition
+
+Server Components become the primary location for:
+
+Data retrieval.
+UI composition.
+Rendering orchestration.
+Passing prepared data to Client Components.
+
+Server Components should prepare complete view models whenever practical.
+
+CMP-04 — Client Components Own Interaction
+
+Client Components own interface behavior.
+
+Examples include:
+
+Form interaction.
+Menu behavior.
+Dialog visibility.
+Drag interactions.
+Optimistic interface feedback.
+Local component state.
+
+They do not own business rules.
+
+CMP-05 — Business Authority Remains External
+
+Neither Server Components nor Client Components own:
+
+Business validation.
+Authorization.
+Ownership.
+Governance.
+Lifecycle enforcement.
+
+Both consume backend capability contracts.
+
+This preserves the approved Backend Authority Model.
+
+CMP-06 — Component Type Does Not Determine Business Responsibility
+
+Server Components are not backend business logic.
+
+Client Components are not frontend business logic.
+
+Component type determines execution environment.
+
+Business responsibility remains defined by the approved domain architecture.
+
+#### Component Responsibility Model.
+Server Components
+
+Server Components own:
+
+Initial UI composition.
+Secure data retrieval.
+Presentation assembly.
+Rendering coordination.
+Preparing data for interactive components.
+
+Server Components should remain free of browser-specific behavior.
+
+Client Components
+
+Client Components own:
+
+User interaction.
+Browser execution.
+Local component state.
+Interface responsiveness.
+Progressive enhancement.
+
+Client Components should avoid performing initial application composition.
+
+Shared Responsibilities
+
+Both Server Components and Client Components participate in:
+
+Consistent UI composition.
+Presentation.
+API contract consumption.
+Domain-oriented frontend organization.
+
+Neither component type owns application authority.
+
+#### Data Ownership Model.
+The following data ownership boundaries become authoritative.
+
+Server Components
+
+Server Components become the preferred owners of:
+
+Initial application data.
+Personalized data.
+Request-time data.
+Server-rendered content.
+
+This aligns with the Rendering Responsibility Model.
+
+Client Components
+
+Client Components become the preferred owners of:
+
+Temporary interaction state.
+Local visual state.
+Unsaved form state.
+Immediate UI feedback.
+
+Persistent application data should not migrate to the browser unnecessarily.
+
+#### State Ownership Model.
+The architecture distinguishes between application state and interaction state.
+
+Application State
+
+Application state remains derived from backend resources.
+
+Examples include:
+
+Profile information.
+Herd information.
+Feed data.
+Posts.
+Comments.
+Memberships.
+
+Application state should remain server-oriented.
+
+Interaction State
+
+Interaction state belongs to Client Components.
+
+Examples include:
+
+Modal visibility.
+Dropdown state.
+Form editing.
+Selected tabs.
+Input focus.
+Animation state.
+
+Interaction state should remain localized whenever practical.
+
+This separation reduces unnecessary client-side state management.
+
+#### Component Composition Model.
+The following composition philosophy becomes authoritative.
+
+Server Components compose the application.
+
+Client Components enhance the application.
+
+Composition should generally follow the pattern:
+
+Server Component
+        │
+        ▼
+Server Component
+        │
+        ▼
+Client Component
+        │
+        ▼
+Interactive UI
+
+The preferred direction of composition is from server toward client.
+
+This minimizes hydration while preserving interactive capabilities.
+
+#### Component Communication Principles
+
+The following become authoritative.
+
+CMP-07 — Downward Composition
+
+Server Components may compose Client Components.
+
+This becomes the preferred composition model.
+
+CMP-08 — Prepared Data Transfer
+
+Client Components should receive prepared data rather than performing duplicate application queries whenever practical.
+
+This reduces unnecessary client-side fetching.
+
+CMP-09 — Localized Client Execution
+
+Client execution should remain localized.
+
+Interactive behavior should not unnecessarily propagate client execution throughout the component tree.
+
+CMP-10 — Progressive Enhancement
+
+Interactive capabilities should enhance the rendered application.
+
+The application should not depend upon client execution for its primary rendering whenever server rendering satisfies the requirement.
+
+#### Evolution Strategy
+
+Future platform capabilities may increase the number of Client Components.
+
+Examples include:
+
+Rich editors.
+Real-time collaboration.
+Interactive moderation tools.
+Advanced media editing.
+
+These capabilities should extend the Server Component First Architecture.
+
+The architecture should not evolve toward a Client Component First model.
+
+---
+
+Future frontend architecture shall assume:
+
+Server Components as the default.
+Client Components introduced only for browser execution.
+Clear separation between application composition and interaction.
+
+### Domain-Oriented Frontend Organization
+Analysis
+
+A Layer-Oriented organization is appropriate for smaller applications but becomes increasingly difficult to maintain as business capabilities expand.
+
+A Feature-Oriented organization improves locality but may introduce unstable boundaries because features evolve with user experience rather than business capabilities.
+
+A pure Domain-Oriented organization aligns closely with the approved backend architecture but benefits from limited technical organization within each domain.
+
+A Hybrid Domain-Oriented organization combines stable business ownership with practical implementation flexibility while preserving the architectural principles established throughout the project.
+
+#### Domain-Oriented Frontend Organization.
+Frontend Organization Model
+
+The frontend shall adopt a Domain-Oriented Organizational Model.
+
+Business domains become the primary organizational boundary.
+
+Technical organization exists only within the scope of a domain and shall never become the primary organizational principle.
+
+This aligns the frontend with the approved Backend Domain-Oriented Modular Monolith while preserving frontend independence.
+
+#### Organizational Principles.
+The following become authoritative.
+
+DOM-01 — Domains Represent Business Capabilities
+
+A frontend domain represents a stable business capability rather than a technical implementation.
+
+Domains shall reflect the same ubiquitous language established by the backend architecture.
+
+DOM-02 — Domain Ownership Is Independent
+
+Each frontend domain owns the UI capabilities that represent its business responsibility.
+
+A domain should be understandable, maintainable, and evolvable without requiring knowledge of unrelated domains.
+
+DOM-03 — Frontend Domains Mirror Business Boundaries
+
+Frontend domains shall mirror the approved backend business domains.
+
+This alignment is conceptual rather than structural.
+
+The frontend is not required to replicate backend modules, directory structures, or implementation patterns.
+
+Instead, both architectures share a common business language and ownership model.
+
+DOM-04 — UI Ownership Follows Domain Ownership
+
+UI capabilities belong to the domain responsible for the underlying business capability.
+
+Ownership includes:
+
+Screens.
+Domain-specific components.
+Interaction workflows.
+Domain-specific presentation logic.
+API consumption related to that capability.
+
+Ownership does not include backend business rules.
+
+DOM-05 — Shared Functionality Shall Remain Domain-Neutral
+
+Only capabilities that are genuinely reusable across multiple domains should become shared frontend resources.
+
+Examples include:
+
+Design system components.
+Generic UI primitives.
+Utility functions.
+Cross-cutting infrastructure.
+
+Business-specific functionality shall not migrate into shared areas simply because it is used by multiple domains.
+
+This preserves domain cohesion.
+
+#### Domain Ownership Model.
+The frontend shall recognize the same business domains established by the backend architecture.
+
+Each domain owns its presentation and interaction responsibilities.
+
+Illustrative examples include:
+| Domain       | Primary Frontend Responsibility                                        |
+| ------------ | ---------------------------------------------------------------------- |
+| Identity     | Authentication flows, profile presentation, account settings           |
+| Social Graph | Follow relationships and social interactions                           |
+| Content      | Posts, comments, voting, content presentation                          |
+| Community    | Herd discovery, membership, community interaction                      |
+| Feed         | Feed presentation and navigation                                       |
+| Media        | Media selection, upload workflows, media presentation                  |
+| Governance   | User-facing reporting and governance interactions within Phase 1 scope |
+These represent conceptual ownership boundaries rather than implementation requirements.
+
+#### Cross-Domain Interaction Principles.
+The following principles become authoritative.
+
+DOM-06 — Domains Communicate Through Stable Interfaces
+
+Domains shall interact through approved frontend interfaces and backend API contracts.
+
+A domain should not depend upon another domain's internal implementation.
+
+DOM-07 — Cross-Domain Dependencies Shall Be Directional
+
+Cross-domain interaction should occur only where required by business workflows.
+
+Dependencies should remain intentional, explicit, and limited.
+
+Circular dependencies between domains should be avoided.
+
+DOM-08 — Business Authority Remains Backend-Owned
+
+Frontend domains own presentation and interaction.
+
+Backend domains continue to own:
+
+Business rules.
+Authorization.
+Governance.
+Ownership.
+Lifecycle enforcement.
+
+Domain alignment shall not be interpreted as duplication of backend responsibilities.
+
+#### Relationship with Backend Domains.
+The frontend organization is aligned with the backend architecture but is not coupled to backend implementation.
+
+Alignment means:
+
+Shared terminology.
+Shared business boundaries.
+Shared capability ownership.
+Stable API relationships.
+
+Alignment does not mean:
+
+Matching directory structures.
+Mirroring backend module internals.
+Creating one-to-one implementation dependencies.
+
+The frontend and backend evolve independently while remaining synchronized through approved domain boundaries and API contracts.
+
+#### Relationship with API Contracts.
+API Contracts become the integration boundary between frontend domains and backend domains.
+
+Each frontend domain consumes the APIs that correspond to its business capability.
+
+Frontend domains shall not consume backend implementation details.
+
+Changes within backend modules should not require frontend reorganization provided API contracts remain stable.
+
+#### Evolution Strategy
+
+Future platform capabilities shall extend the organizational model by:
+
+expanding existing domains where appropriate, or
+introducing new business domains when justified.
+
+The organizational model shall not evolve by introducing additional technical layers as primary organizational boundaries.
+
+This preserves long-term architectural consistency and minimizes large-scale refactoring.
+
+---
+
+Future module organization shall derive from the approved Domain-Oriented Organizational Model.
+Technical organization decisions should reinforce domain ownership rather than replace it.
+
+### Hybrid Domain-Based Organization
+Analysis
+
+A Layer-Based organization is well suited to small applications but gradually weakens domain cohesion by scattering related functionality across technical categories.
+
+A Feature-Based organization improves locality but uses boundaries that are driven by product experience rather than business architecture. As features evolve, organizational boundaries may also change.
+
+A Domain-Based organization aligns with the approved backend architecture and provides stable ownership, but benefits from lightweight technical organization within each domain.
+
+A Hybrid Domain-Based organization preserves stable business boundaries while providing practical implementation organization. It complements the Domain-Oriented Frontend Organization established in the previous section without introducing competing organizational principles.
+
+The frontend shall adopt a Hybrid Domain-Based Organization.
+
+Business domains become the primary organizational boundary.
+
+Technical organization exists only within the scope of an individual domain.
+
+The application shall not be organized around global technical layers or transient product features.
+
+#### Organizational Principles.
+The following become authoritative.
+
+ORG-01 — Domains Are the Primary Organizational Unit
+
+Business domains become the highest-level organizational boundary.
+
+Every implementation artifact shall belong to a domain unless it satisfies the requirements for a shared capability.
+
+ORG-02 — Technical Layers Are Domain-Local
+
+Technical implementation patterns may exist within a domain where they improve maintainability.
+
+They shall not become application-wide organizational structures.
+
+For example, organizing components or hooks within a domain is acceptable.
+
+Organizing the entire application into global components, hooks, or services areas is not.
+
+This preserves domain cohesion.
+
+ORG-03 — Features Are Domain Capabilities
+
+A feature is considered a capability of a domain rather than an independent organizational boundary.
+
+Features belong to domains.
+
+Domains do not belong to features.
+
+This distinction ensures that product evolution does not destabilize the architectural organization.
+
+ORG-04 — Shared Code Shall Be Intentionally Shared
+
+Implementation shall become shared only when it is:
+
+Domain-neutral.
+Reusable across multiple domains.
+Free of business-specific behavior.
+
+Sharing implementation prematurely increases coupling and reduces domain autonomy.
+
+ORG-05 — Business Logic Shall Not Become Shared Infrastructure
+
+Presentation helpers and generic UI primitives may become shared.
+
+Business-specific implementation shall remain within its owning domain even when reused by multiple capabilities.
+
+Domain cohesion takes precedence over reducing duplication.
+
+#### Organizational Responsibility Model.
+The organizational strategy establishes three implementation categories.
+
+##### Domain Implementation
+
+Domain implementation contains:
+
+Domain-specific UI.
+Domain-specific interaction.
+Domain-specific API integration.
+Domain-specific presentation.
+Domain-specific workflows.
+
+Ownership remains entirely within the domain.
+
+##### Shared Infrastructure
+
+Shared infrastructure contains only implementation that is independent of any business domain.
+
+Examples include:
+
+Design system primitives.
+Generic utilities.
+Cross-cutting infrastructure.
+Framework integration.
+Application configuration.
+
+Shared infrastructure shall not contain business capabilities.
+
+##### Application Composition
+
+Application composition integrates domain capabilities into a cohesive application.
+
+Examples include:
+
+Routing.
+Layout composition.
+Global providers.
+Application shell.
+Navigation composition.
+
+Application composition coordinates domains without owning their business responsibilities.
+
+#### Organizational Dependency Principles.
+The following become authoritative.
+
+ORG-06 — Dependencies Flow Toward Shared Infrastructure
+
+Domains may depend upon shared infrastructure.
+
+Shared infrastructure shall not depend upon domains.
+
+This prevents circular architectural dependencies.
+
+ORG-07 — Domain Independence
+
+Domains should remain independently understandable and evolvable.
+
+Changes within one domain should have minimal impact on unrelated domains.
+
+ORG-08 — Cross-Domain Collaboration Through Stable Boundaries
+
+When business workflows require collaboration between domains, interaction should occur through:
+
+Approved frontend interfaces.
+Stable API contracts.
+Shared application composition.
+
+Domains should not directly consume each other's internal implementation.
+
+ORG-09 — Organization Reflects Business Architecture
+
+The organizational model should communicate the business architecture of the platform.
+
+A developer should understand the application's business capabilities before understanding its technical implementation.
+
+This reinforces the shared ubiquitous language across frontend, backend, documentation, and API contracts.
+
+#### Evolution Strategy
+
+The organizational model shall evolve by:
+
+introducing new domains,
+extending existing domains,
+refining domain-local implementation,
+
+rather than reorganizing the application around new technical layers.
+
+Future implementation patterns should reinforce domain ownership rather than replace it.
+
+This preserves architectural continuity as the platform grows.
+
+---
+
+The forthcoming Frontend Module & Application Structure shall implement the Hybrid Domain-Based Organization defined in this section.
+Directory structure, module boundaries, and implementation patterns shall derive from these organizational principles.
+
+### Phase 1 Architectural Boundaries
+Analysis
+
+A Future-Oriented Architecture introduces abstractions that are not justified by the approved Phase 1 scope.
+
+A Strict MVP Architecture minimizes complexity but may require unnecessary architectural restructuring as the platform evolves.
+
+An Evolutionary Architecture provides the best balance by:
+
+solving current requirements,
+preserving architectural consistency,
+documenting future evolution without implementing speculative infrastructure.
+
+This approach remains fully aligned with the project's approved architectural principles.
+
+##### Phase 1 Architectural Scope
+
+The frontend architecture shall implement only the capabilities required to support the approved Core Platform MVP.
+
+Architectural decisions shall optimize for current business capabilities while preserving natural extension points for future phases.
+
+Deferred capabilities shall influence documentation through identified evolution paths only.
+
+They shall not influence implementation architecture.
+
+##### The following become authoritative.
+
+BND-01 — Architecture Follows Approved Scope
+
+Only approved Phase 1 capabilities shall influence architectural decisions.
+
+Future roadmap items shall not introduce additional architectural abstractions until they become active project requirements.
+
+BND-02 — Deferred Capabilities Shall Not Drive Design
+
+The possibility of future functionality shall not justify introducing:
+
+new abstraction layers,
+additional state infrastructure,
+routing complexity,
+rendering strategies,
+provider hierarchies,
+communication mechanisms.
+
+Architecture should remain proportional to current requirements.
+
+BND-03 — Extension Over Anticipation
+
+Future capabilities should extend the existing architecture.
+
+They should not require the current architecture to anticipate them.
+
+Extension points are preferred over speculative infrastructure.
+
+BND-04 — Stable Architectural Foundations
+
+Core architectural decisions established in previous sections remain authoritative regardless of future platform evolution.
+
+Examples include:
+
+Domain-Oriented Organization.
+Hybrid Rendering Architecture.
+Server Component First Architecture.
+Hybrid Domain-Based Organization.
+
+Future work should build upon these foundations rather than replace them.
+
+#### Included Capabilities.
+The following capabilities are considered within the architectural scope of Phase 1.
+
+Identity
+Authentication.
+User profiles.
+Account settings.
+Session-aware navigation.
+
+Social Graph
+Following relationships.
+Follower and following interactions.
+
+Content
+Personal posts.
+Herd posts.
+Comments.
+Voting.
+Content presentation.
+
+Community
+Herd discovery.
+Herd membership.
+Herd interaction.
+
+Feed
+Following feed.
+Herd feed.
+Feed presentation.
+
+Media
+Image upload workflows.
+Image presentation.
+
+Governance
+Only user-facing governance workflows required by the approved MVP.
+
+Examples include:
+
+Reporting content.
+Reporting users.
+Reporting communities.
+
+Administrative governance interfaces remain outside the Phase 1 scope.
+
+#### Deferred Capabilities.
+The following capabilities are intentionally excluded from Phase 1 architecture.
+
+##### Advanced Governance Interfaces
+
+Examples include:
+
+Moderation dashboards.
+Administrative review consoles.
+Governance analytics.
+Bulk moderation workflows.
+
+##### Notifications
+
+Including:
+
+Push notifications.
+In-app notification centers.
+Notification preferences.
+Background notification processing.
+
+##### Real-Time Capabilities
+
+Including:
+
+Live feeds.
+Presence indicators.
+Typing indicators.
+Live collaboration.
+WebSocket infrastructure.
+
+##### Offline Support
+
+Including:
+
+Offline synchronization.
+Local persistence.
+Conflict resolution.
+Background synchronization.
+
+##### Progressive Web Application Features
+
+Including:
+
+Service workers.
+Offline installation.
+Background caching.
+Native application integration.
+
+##### Analytics
+
+Including:
+
+User analytics.
+Platform metrics.
+Event tracking dashboards.
+Behavioral analysis.
+
+##### Internationalization
+
+Including:
+
+Multi-language routing.
+Translation infrastructure.
+Locale management.
+
+##### Plugin Architecture
+
+Including:
+
+Third-party extensions.
+Modular feature loading.
+Runtime capability injection.
+
+##### Micro-Frontend Architecture
+
+The platform shall remain a single integrated frontend application.
+
+Distributed frontend architectures are outside the scope of Phase 1.
+
+##### Advanced Rendering Infrastructure
+
+Examples include:
+
+Partial Prerendering optimization.
+Edge-specific rendering strategies.
+Advanced cache orchestration.
+Multi-region rendering optimization.
+
+The approved Hybrid Rendering Architecture remains sufficient for Phase 1.
+
+##### Architectural Rationale
+
+These capabilities are deferred because they introduce additional architectural complexity without supporting approved MVP requirements.
+
+Their implementation would increase:
+
+architectural surface area,
+testing effort,
+operational complexity,
+maintenance cost,
+
+while providing no immediate value to the current implementation roadmap.
+
+Documenting these capabilities as future evolution paths preserves flexibility without compromising the simplicity of the Phase 1 architecture.
+
+#### Evolution Constraints.
+Future architectural work shall extend Phase 1 through:
+
+additional domains,
+additional capabilities,
+additional workflows,
+additional rendering strategies where justified,
+
+without replacing the foundational architectural decisions established throughout this document.
+
+
+### Future Evolution Strategy
+Analysis
+
+Periodic architectural redesign increases implementation risk and weakens long-term architectural consistency.
+
+A completely fixed architecture limits adaptability as platform requirements evolve.
+
+An Evolutionary Architecture preserves stable architectural foundations while allowing controlled expansion through incremental change.
+
+This approach directly aligns with the project's approved architectural philosophy.
+
+Evolution Strategy
+
+The frontend architecture shall evolve through incremental architectural extension.
+
+Future capabilities shall extend existing architectural foundations.
+
+They shall not replace them.
+
+The architectural decisions established throughout this document become long-term architectural foundations.
+
+#### Evolution Principles
+
+The following become authoritative.
+
+EVO-01 — Stable Foundations
+
+The following architectural decisions shall remain stable unless formally superseded through the ADR process:
+
+Frontend Architectural Goals.
+App Router Philosophy.
+Hybrid Rendering Architecture.
+Server Component First Architecture.
+Domain-Oriented Frontend Organization.
+Hybrid Domain-Based Organization.
+
+These decisions form the permanent architectural baseline.
+
+EVO-02 — Domains Evolve Before Infrastructure
+
+New business capabilities should first be evaluated as:
+
+Extensions to existing domains, or
+New business domains.
+
+New cross-cutting infrastructure should be introduced only when multiple domains demonstrate a common requirement.
+
+This prevents premature abstraction.
+
+EVO-03 — Shared Infrastructure Evolves Conservatively
+
+Shared infrastructure should expand only when:
+
+Proven reusable.
+Domain-neutral.
+Required by multiple domains.
+
+Business-specific implementation shall remain within its owning domain.
+
+EVO-04 — Rendering Evolves Incrementally
+
+The approved Hybrid Rendering Architecture remains authoritative.
+
+Future rendering improvements may include:
+
+Partial Prerendering.
+Improved streaming.
+Edge rendering.
+More granular caching.
+
+These enhancements refine rendering implementation rather than altering rendering philosophy.
+
+EVO-05 — Component Architecture Remains Stable
+
+The Server Component First Architecture remains authoritative.
+
+Future interactive capabilities may increase the number of Client Components where justified.
+
+However, Server Components remain the default execution model.
+
+EVO-06 — Application Composition Remains Stable
+
+Future platform capabilities shall integrate through the approved:
+
+App Router hierarchy.
+Domain organization.
+Layout composition.
+Rendering principles.
+
+Application composition should grow by extension rather than restructuring.
+
+EVO-07 — Backend Authority Is Permanent
+
+Regardless of future frontend capabilities, backend ownership remains authoritative for:
+
+Authentication.
+Authorization.
+Ownership.
+Governance.
+Business Rules.
+Lifecycle Management.
+
+Frontend evolution shall not introduce duplicate business authority.
+
+#### Expected Evolution Paths
+
+The architecture anticipates several categories of future growth.
+
+These represent architectural extension paths rather than implementation commitments.
+
+Richer Client Interaction
+
+Future capabilities may include:
+
+Rich text editing.
+Advanced media editing.
+Interactive moderation interfaces.
+Enhanced user interaction.
+
+These capabilities extend the Client Component Architecture without altering its underlying principles.
+
+Real-Time Platform Features
+
+Future capabilities may include:
+
+Live feeds.
+Presence indicators.
+Notifications.
+Real-time collaboration.
+
+These features should integrate through existing domain boundaries rather than introducing parallel application architecture.
+
+Additional Business Domains
+
+Future platform growth may introduce new domains.
+
+Examples include:
+
+Messaging.
+Notifications.
+Analytics.
+Search.
+Recommendations.
+
+Each new domain should integrate using the organizational principles established in this document.
+
+Platform Scale
+
+As the platform grows, future improvements may include:
+
+More sophisticated caching.
+Improved rendering optimization.
+Infrastructure scaling.
+Performance tuning.
+
+These improvements should refine implementation without altering architectural direction.
+
+#### Architectural Evolution Constraints
+
+The following constraints become authoritative.
+
+Architectural principles shall evolve more slowly than implementation.
+Domain boundaries shall remain more stable than product features.
+Rendering philosophy shall remain more stable than rendering implementation.
+Organizational philosophy shall remain more stable than directory structure.
+Business ownership shall remain more stable than application workflows.
+
+These stability layers preserve long-term architectural consistency.
+
+#### Architectural Decision Model
+
+Future architectural decisions should follow the following evaluation order.
+
+Does the new capability fit an existing business domain?
+Can the capability reuse the existing architectural foundations?
+Does it require additional shared infrastructure?
+Is an ADR required?
+Does the change alter an approved architectural principle?
+
+Only if the final question is answered "Yes" should the existing architectural foundations be reconsidered.
+
+This minimizes unnecessary architectural change.
+
+---
+ 
+Future implementation should extend:
+
+existing domains,
+existing routing hierarchy,
+existing rendering strategy,
+existing component philosophy,
+
+rather than introducing competing architectural models.
+
+---
+
+##
+

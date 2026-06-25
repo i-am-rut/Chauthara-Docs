@@ -4,10 +4,10 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Define Frontend Architectural Style
+Define Frontend Module & Application Structure
 
 Next Task:
-Define Frontend Module & Application Structure
+Define Frontend Rendering & Data Fetching Architecture
 
 Blocked By:
 Nothing
