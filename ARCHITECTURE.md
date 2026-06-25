@@ -27514,4 +27514,1261 @@ Evolution shall follow the project's Evolutionary Architecture principle.
 
 ---
 
+## Frontend Navigation & User Flow Architecture
+
+### Navigation Philosophy & Application Navigation Model
+#### Navigation Philosophy
+
+Navigation is an application-level architectural concern.
+
+Its responsibility is to:
+
+expose application capabilities,
+connect approved user journeys,
+preserve module boundaries,
+represent application state through URLs,
+coordinate movement between application areas.
+
+Navigation does not:
+
+own business state,
+perform authorization,
+execute business workflows,
+replace backend validation.
+
+#### Navigation Principles
+
+The following become authoritative.
+
+NAV-01 — Navigation Reflects Application Structure
+
+Navigation mirrors approved application domains rather than implementation folders or UI components.
+
+NAV-02 — Navigation Does Not Own Business Logic
+
+Navigation determines where users move.
+
+Business workflows determine what users may do.
+
+NAV-03 — URLs Represent Navigation State
+
+The current URL represents the current navigation context.
+
+Application navigation remains reproducible from the URL whenever practical.
+
+NAV-04 — Navigation Preserves Backend Authority
+
+Navigation visibility never grants authority.
+
+Every backend request remains independently authenticated and authorized.
+
+Navigation must never assume access because a route is reachable.
+
+This remains consistent with the approved Backend Security Architecture.
+
+NAV-05 — Navigation Is Declarative By Default
+
+Navigation should primarily be expressed through declarative routing.
+
+Imperative navigation is reserved for workflow-driven transitions such as:
+
+successful authentication,
+logout,
+completed creation workflows,
+explicit redirects.
+NAV-06 — Navigation Respects Domain Boundaries
+
+Navigation may connect domains.
+
+It must not merge domain responsibilities.
+
+Example:
+
+Profile
+    ↓
+Post
+    ↓
+Comments
+
+represents navigation,
+
+not ownership.
+
+NAV-07 — Navigation Must Remain Predictable
+
+Equivalent navigation actions should always produce equivalent destinations.
+
+Navigation behavior must not depend on hidden frontend state.
+
+Navigation as an Application Concern
+
+Navigation belongs to the application shell rather than individual business modules.
+
+Responsibilities include:
+
+route resolution,
+layout composition,
+transition coordination,
+URL interpretation,
+navigation history integration.
+
+Business modules expose destinations.
+
+The application owns navigation between them.
+
+#### App Router Philosophy
+
+The approved Next.js App Router becomes the authoritative navigation system.
+
+Architectural responsibilities:
+
+filesystem routing defines application structure,
+layouts preserve shared navigation context,
+nested routes preserve hierarchy,
+Server Components determine initial route rendering,
+Client Components enhance interaction where required.
+
+Routing architecture must remain implementation-independent from business logic.
+
+URL as Part of Application State
+
+URLs become part of the application's navigational state.
+
+URLs represent:
+
+current destination,
+active resource,
+navigation context,
+shareable application location.
+
+URLs must not become storage for transient UI state.
+
+Persistent navigation context belongs in the URL.
+
+Ephemeral interaction state remains local.
+
+This remains consistent with the approved Local-First State Management Architecture.
+
+#### Navigation Ownership Boundaries
+
+Navigation owns:
+
+route resolution,
+destination selection,
+navigation transitions,
+layout hierarchy,
+browser history integration.
+
+Navigation does not own:
+
+authentication,
+authorization,
+permissions,
+business state,
+API execution,
+workflow execution.
+
+These remain owned by the backend and corresponding frontend modules.
+
+Navigation Consistency Principles
+
+Navigation must remain consistent across all application areas.
+
+Consistency includes:
+
+identical navigation behavior,
+stable URL conventions,
+predictable hierarchy,
+consistent back navigation,
+reusable layout composition,
+uniform transition rules.
+
+Module-specific behavior must not redefine global navigation principles.
+
+#### Declarative vs Imperative Navigation
+##### Declarative Navigation (Preferred)
+
+Used for:
+
+menus,
+links,
+breadcrumbs,
+profile links,
+herd links,
+feed navigation.
+
+Reason:
+
+predictable,
+easier to reason about,
+naturally aligned with App Router.
+
+##### Imperative Navigation (Limited)
+
+Permitted only when navigation depends on runtime workflow outcomes.
+
+Examples:
+
+login success,
+logout,
+registration completion,
+create post completion,
+create herd completion,
+authorization redirects.
+
+Imperative navigation must not become the default navigation model.
+
+#### Domain-Oriented Navigation Organization
+
+Navigation groups align with approved frontend domains.
+
+Example conceptual organization:
+
+Identity
+    Profiles
+    Authentication
+
+Feed
+    Following
+    Herd
+
+Content
+    Posts
+    Comments
+
+Community
+    Herds
+    Membership
+
+Media
+    Image Views
+
+Governance
+    Reports
+    Moderation
+
+This mirrors the approved Domain-Oriented frontend organization without coupling navigation to backend ownership.
+
+#### Navigation Hierarchy
+
+Navigation hierarchy follows application intent rather than folder depth.
+
+Authoritative hierarchy:
+
+Application
+    ↓
+Public Areas
+Authenticated Areas
+    ↓
+Domain Areas
+    ↓
+Resources
+    ↓
+Resource Details
+
+This hierarchy provides:
+
+predictable routing,
+reusable layouts,
+stable future expansion.
+
+#### Future Evolution Principles
+
+Navigation architecture shall evolve by:
+
+extending existing route groups,
+introducing new domains without restructuring existing ones,
+preserving URL stability,
+maintaining layout reuse,
+avoiding breaking navigation contracts.
+
+Future additions such as notifications, discovery, messaging, or Aura should integrate through new domain routes rather than redesigning the navigation model.
+
+This remains consistent with the project's Evolutionary Architecture principle.
+
+### Route Architecture
+#### Route Hierarchy
+Routes represent navigation destinations rather than application modules.
+
+The application hierarchy becomes:
+
+Application
+    ↓
+Public Routes
+Authenticated Routes
+    ↓
+Domain Routes
+    ↓
+Resource Routes
+    ↓
+Nested Resources
+
+This hierarchy remains independent of implementation folders.
+
+#### Public vs Authenticated Routes
+
+The routing architecture distinguishes access requirements rather than creating separate applications.
+
+Public Routes
+
+Accessible without authentication.
+
+Examples include:
+
+Landing page
+Authentication pages
+Public profiles
+Public Herd pages
+Public post pages
+
+Public routes may still render different content depending on authentication state, but authentication is never required merely to access the route.
+
+Authenticated Routes
+
+Require an authenticated session before accessing protected functionality.
+
+Examples include:
+
+Following Feed
+Personal settings
+Account management
+Create content
+Herd management
+Moderation interfaces
+
+Access enforcement belongs to the authentication architecture, not the routing architecture.
+
+#### Route Grouping Strategy
+
+Routes are grouped by business capability.
+
+Conceptually:
+
+Identity
+Feed
+Content
+Community
+Governance
+
+Grouping exists to:
+
+improve maintainability,
+preserve module boundaries,
+simplify layout composition.
+
+Grouping must never redefine ownership boundaries established by backend domains.
+
+#### Nested Layout Strategy
+
+Nested layouts become the primary composition mechanism.
+
+Responsibilities include:
+
+preserving persistent navigation,
+sharing application chrome,
+reducing layout duplication,
+maintaining navigation continuity between related routes.
+
+Layouts own presentation structure.
+
+They do not own business workflows.
+
+#### Shared Layout Strategy
+
+Shared layouts should contain reusable application infrastructure such as:
+
+navigation shell,
+headers,
+side navigation,
+authenticated application frame,
+common loading boundaries,
+common error boundaries.
+
+Business-specific UI remains inside the owning domain.
+
+#### Route Composition Philosophy
+
+Route composition follows the existing rendering architecture.
+
+Composition order:
+
+Application Layout
+        ↓
+Domain Layout
+        ↓
+Route
+        ↓
+Server Components
+        ↓
+Client Components (when required)
+
+This preserves:
+
+Server Component First philosophy,
+rendering consistency,
+reusable layouts.
+
+#### Domain-Oriented Routing
+
+Every major route belongs to exactly one frontend domain.
+
+Examples:
+
+Identity routes belong to Identity.
+
+Community routes belong to Community.
+
+Feed routes belong to Feed.
+
+Cross-domain navigation is allowed.
+
+Cross-domain ownership is not.
+
+#### Dynamic Route Philosophy
+
+Dynamic routes represent business resources.
+
+Examples include:
+
+profile identifiers,
+Herd identifiers,
+post identifiers.
+
+Dynamic routes identify resources.
+
+They do not perform resource authorization.
+
+Resource validation remains the responsibility of backend APIs.
+
+#### Route Parameter Philosophy
+
+Route parameters should identify resources only.
+
+Appropriate uses:
+
+resource identity,
+hierarchical relationships.
+
+Route parameters must not encode:
+
+permissions,
+workflow state,
+frontend-only state.
+
+Resource interpretation belongs to the backend.
+
+#### Route Organization Rules
+
+The following become authoritative.
+
+ROUTE-01 — Domain Ownership
+
+Every route belongs to one frontend domain.
+
+ROUTE-02 — Layout Reuse
+
+Reusable layouts should be preferred over duplicated page structures.
+
+ROUTE-03 — Routing Does Not Perform Authorization
+
+Routes expose destinations.
+
+Authorization determines access.
+
+ROUTE-04 — Resource-Oriented URLs
+
+Dynamic routes identify business resources rather than UI implementations.
+
+ROUTE-05 — Layouts Remain Presentation Infrastructure
+
+Layouts coordinate presentation.
+
+They never execute business workflows.
+
+ROUTE-06 — Route Groups Follow Domain Boundaries
+
+Route organization mirrors approved frontend module boundaries.
+
+ROUTE-07 — Server Components Remain Default
+
+Route composition follows the approved rendering architecture.
+
+Client Components are introduced only where interaction requires them.
+
+#### Future Route Evolution Strategy
+
+The routing architecture should evolve by:
+
+adding new domain route groups,
+introducing additional nested layouts,
+expanding resource hierarchies,
+preserving existing URLs whenever practical.
+
+Future capabilities such as:
+
+Discovery
+Notifications
+Messaging
+Aura
+
+should be introduced as additional route groups rather than restructuring existing routes.
+
+This preserves URL stability and minimizes navigation disruption.
+
+### Navigation Flows & User Journey Architecture
+#### Navigation Flow Principles
+Navigation provides movement between application destinations.
+
+Business workflows determine:
+
+available actions,
+validation,
+authorization,
+state transitions.
+
+Navigation must never determine business outcomes.
+
+#### User Journey Integration
+
+Navigation is responsible for connecting the destinations required by approved user journeys.
+
+User journeys remain the authoritative source for workflow sequencing.
+
+Navigation provides:
+
+entry points,
+transitions,
+return paths,
+contextual movement.
+
+It does not redefine journey logic.
+
+#### Visitor Navigation Architecture
+
+Visitor navigation focuses on discovery and public resources.
+
+Primary navigation paths include:
+
+Landing → Authentication
+Landing → Public Feed (if applicable)
+Landing → Public Profile
+Landing → Public Herd
+Landing → Public Post
+
+Visitors may navigate freely among publicly accessible resources without acquiring additional navigation context.
+
+#### Authenticated User Navigation Architecture
+
+
+Authenticated navigation expands available destinations while preserving a consistent navigation model.
+
+Primary navigation areas include:
+
+Following Feed
+Herd Feed
+Profile
+Content Creation
+Herd Management
+Settings
+Governance interfaces (role-dependent)
+
+Authentication enables additional destinations but does not alter the underlying navigation architecture.
+
+#### Community Navigation Architecture
+
+Community navigation centers on Herd resources.
+
+Typical navigation paths include:
+
+Feed
+    ↓
+Herd
+    ↓
+Herd Feed
+    ↓
+Post
+    ↓
+Comments
+
+Navigation between Herd-related resources should preserve community context whenever practical.
+
+Community membership decisions remain backend-owned.
+
+#### Content Navigation Architecture
+
+Content serves as a shared navigation endpoint across multiple domains.
+
+Content may be reached from:
+
+Following Feed
+Herd Feed
+User Profile
+Notifications (future)
+Search (future)
+Shared URLs
+
+Regardless of the entry point, content navigation resolves to a single authoritative destination.
+
+#### Profile Navigation Architecture
+
+Profiles function as a central navigation hub for user-related resources.
+
+Typical navigation paths include:
+
+Feed
+    ↓
+Profile
+    ↓
+Posts
+    ↓
+Individual Post
+
+or
+
+Comment
+    ↓
+Author Profile
+
+Profile navigation should preserve resource identity regardless of the originating module.
+
+#### Feed Navigation Architecture
+
+Feeds act as navigation entry points rather than ownership boundaries.
+
+Feed navigation directs users toward:
+
+content,
+profiles,
+Herds.
+
+The Feed module remains a read-only navigation origin and does not own the destinations it references.
+
+This preserves the approved Feed architecture.
+
+#### Deep-Link Navigation Strategy
+
+Every major business resource should support direct navigation.
+
+Examples include:
+
+User Profile
+Herd
+Post
+Comment (when applicable)
+
+A deep link must resolve the same resource regardless of how it is accessed.
+
+Deep links must not rely on prior navigation history or frontend state.
+
+#### Navigation Continuity Principles
+
+Navigation should preserve user orientation across related destinations.
+
+Continuity includes:
+
+consistent layout composition,
+predictable route hierarchy,
+stable navigation controls,
+preserved contextual navigation where appropriate.
+
+Navigation continuity should improve user experience without introducing hidden application state.
+
+#### Cross-Module Navigation Rules
+
+Cross-module navigation is expected and encouraged.
+
+However, it must preserve module ownership.
+
+The following rules become authoritative.
+
+FLOW-01 — Navigation Crosses Domains
+
+Navigation may move between frontend domains without transferring ownership.
+
+FLOW-02 — Destination Owns Presentation
+
+Once navigation reaches a destination, the owning domain controls presentation and interaction.
+
+FLOW-03 — Navigation Never Shares Business State
+
+Navigation transfers route context only.
+
+Business state is resolved independently by the destination.
+
+FLOW-04 — Deep Links Are First-Class Navigation
+
+Every shareable business resource should resolve correctly when accessed directly.
+
+FLOW-05 — Navigation Remains Context Independent
+
+Routes should be navigable regardless of the originating page whenever authorization permits.
+
+FLOW-06 — Feed Is a Navigation Origin
+
+Feed routes provide discovery.
+
+Destination modules own the resources reached through feed navigation.
+
+### Navigation Guards & Access Control
+#### Route Protection Philosophy
+Navigation guards improve navigation behavior.
+
+They do not enforce security.
+
+Their responsibilities include:
+
+preventing unnecessary navigation,
+directing users toward appropriate destinations,
+improving application flow,
+reducing avoidable API requests.
+
+All access decisions remain backend-owned.
+
+#### Public Route Architecture
+
+Public routes are accessible without authentication.
+
+Examples include:
+
+Landing page
+Login
+Registration
+Public profiles
+Public Herds
+Public posts
+
+Public routes may render different content depending on authentication state, but authentication is never required merely to resolve the route.
+
+#### Protected Route Architecture
+
+Protected routes require an authenticated session before navigation completes.
+
+Examples include:
+
+Following Feed
+Create Post
+Create Herd
+User Settings
+Account Management
+Herd Administration
+Moderation Interfaces
+
+Frontend protection improves navigation.
+
+Backend validation determines whether access is actually granted.
+
+#### Authentication-Aware Navigation
+
+Navigation should be aware of authentication state.
+
+Authentication awareness is limited to:
+
+determining available navigation options,
+selecting appropriate redirects,
+rendering authenticated layouts.
+
+Authentication state must never be treated as proof of authorization.
+
+Authentication state originates from the approved session architecture and remains backend-controlled.
+
+#### Authorization-Aware Navigation
+
+Authorization affects available destinations but is never determined by the frontend.
+
+Examples include:
+
+Herd owner interfaces.
+Shepherd moderation pages.
+Platform administration areas.
+
+The frontend may conditionally expose navigation based on known capabilities, but every protected operation must still be validated by the backend.
+
+#### Governance-Aware Navigation
+
+Navigation respects governance outcomes.
+
+Examples include:
+
+restricted content,
+suspended accounts,
+inaccessible Herds,
+removed resources.
+
+The frontend consumes governance outcomes returned by the backend.
+
+It never evaluates governance policies independently.
+
+#### Redirect Architecture
+
+Redirects should standardize navigation behavior rather than implement business rules.
+
+Primary redirect scenarios include:
+
+successful login,
+successful logout,
+expired session,
+protected route access by unauthenticated users,
+authenticated users accessing authentication pages,
+unavailable resources.
+
+Redirect behavior should remain deterministic and consistent throughout the application.
+
+#### Session Expiration Behavior
+
+When a session expires:
+
+Protected API requests fail according to the approved authentication architecture.
+Frontend authentication state is updated.
+Protected navigation becomes unavailable.
+Users are redirected to the authentication flow when appropriate.
+
+Navigation does not attempt to recover expired sessions independently.
+
+Session lifecycle remains owned by the backend authentication architecture.
+
+#### Unauthorized Navigation Handling
+
+Unauthorized navigation should distinguish between authentication failures and authorization failures.
+
+Authentication Failure
+
+User is not authenticated.
+
+Navigation should redirect toward authentication.
+
+Authorization Failure
+
+User is authenticated but lacks permission.
+
+Navigation should present an appropriate access-denied experience rather than redirecting to authentication.
+
+Resource Visibility Failure
+
+Requested resource exists but is not visible.
+
+Navigation should resolve using the backend response.
+
+Frontend must not infer whether the resource exists.
+
+This avoids exposing protected resource information.
+
+#### Error Route Strategy
+
+Dedicated navigation outcomes should exist for common routing failures.
+
+Examples include:
+
+Resource not found.
+Access denied.
+Unexpected application error.
+
+These routes improve navigation consistency without introducing business logic.
+
+#### Navigation Access Boundary Rules
+
+The following become authoritative.
+
+ACCESS-01 — Backend Owns Access Decisions
+
+Navigation never determines whether access is permitted.
+
+ACCESS-02 — Frontend Guards Improve UX
+
+Navigation guards exist solely to improve user experience.
+
+They are not security boundaries.
+
+ACCESS-03 — Authentication Does Not Imply Authorization
+
+Authenticated users may still be denied access to protected resources.
+
+ACCESS-04 — Governance Outcomes Are Consumed
+
+Frontend navigation uses governance results returned by backend APIs.
+
+It never evaluates governance rules.
+
+ACCESS-05 — Redirects Remain Deterministic
+
+Equivalent navigation situations should always produce equivalent redirect behavior.
+
+ACCESS-06 — Hidden Resources Remain Hidden
+
+Navigation must not reveal resource existence through differing behavior.
+
+Visibility decisions remain backend-owned.
+
+ACCESS-07 — Protected Navigation Preserves Backend Authority
+
+Every protected destination must remain independently validated by backend APIs regardless of frontend navigation state.
+
+### Navigation State, History & URL Strategy
+#### URL Design Philosophy
+URLs are the canonical representation of navigation state.
+
+URLs should describe:
+
+application location,
+resource identity,
+persistent navigation context.
+
+URLs must remain:
+
+predictable,
+stable,
+human-readable where practical,
+independent of implementation details.
+
+URLs must not expose internal application architecture.
+
+#### URL Ownership Model
+
+Navigation owns URL structure.
+
+Business domains own the interpretation of resource identifiers contained within the URL.
+
+Examples:
+
+Profile module interprets profile identifiers.
+Community module interprets Herd identifiers.
+Content module interprets post identifiers.
+
+Navigation never interprets business meaning beyond route resolution.
+
+#### Query Parameter Strategy
+
+Query parameters represent optional navigation context.
+
+Appropriate uses include:
+
+sorting,
+filtering,
+pagination,
+view preferences.
+
+Query parameters must never determine:
+
+permissions,
+ownership,
+business state,
+workflow execution.
+
+Backend APIs remain responsible for interpreting supported query parameters according to the approved API contracts.
+
+#### Search Parameter Strategy
+
+Search parameters should represent navigation options that are:
+
+shareable,
+bookmarkable,
+reproducible.
+
+Changing search parameters should produce the same navigation context regardless of session or device.
+
+Search parameters should not be used for temporary UI interactions.
+
+#### Pagination URL Strategy
+
+Pagination is navigation state.
+
+Pagination position should be represented within the URL rather than local component state.
+
+Benefits include:
+
+browser history compatibility,
+bookmarkable pages,
+reproducible navigation,
+deep linking to specific result pages.
+
+Pagination values remain client-supplied navigation context and are validated by backend APIs.
+
+#### Filter State Strategy
+
+Persistent filters should be represented in the URL.
+
+Examples include:
+
+feed sorting,
+profile content filters,
+Herd post filters.
+
+Temporary UI controls should remain local state.
+
+A filter belongs in the URL when restoring the URL should reproduce the same application view.
+
+#### Browser History Strategy
+
+Browser history should accurately represent meaningful navigation.
+
+History entries should be created for:
+
+resource navigation,
+page transitions,
+significant navigation state changes.
+
+History should not be polluted by transient UI interactions such as:
+
+modal visibility,
+dropdown state,
+hover interactions.
+
+#### Back and Forward Navigation
+
+Browser navigation must remain predictable.
+
+Using Back or Forward should restore:
+
+route,
+URL parameters,
+navigation context,
+layout hierarchy.
+
+Restored business data is fetched according to the approved rendering and data-fetching architecture rather than restored from navigation history.
+
+#### Scroll Restoration Strategy
+
+Scroll position is part of the navigation experience rather than business state.
+
+The application should preserve or reset scroll position according to navigation intent.
+
+General principles:
+
+new destinations begin at an appropriate position,
+returning through browser history restores prior navigation context where supported,
+scroll state should not become application state.
+Navigation State vs Application State
+
+#### Navigation State vs Application State
+
+Navigation State
+
+Examples:
+
+current route,
+selected resource,
+pagination,
+filters,
+search parameters.
+
+Navigation state belongs to the URL.
+
+Application State
+
+Examples:
+
+authenticated user,
+UI interaction state,
+form inputs,
+loading state,
+optimistic updates,
+cached server data.
+
+Application state belongs to the approved state management architecture.
+
+Navigation must not duplicate application state.
+
+#### Shareable URL Strategy
+
+Every significant business resource should have a stable URL.
+
+Examples include:
+
+user profiles,
+Herds,
+posts,
+public content.
+
+Opening a shared URL should reproduce the same navigation destination without requiring previous navigation history.
+
+Backend authorization and visibility rules still determine accessible content.
+
+#### Deep Linking Strategy
+
+Deep links are first-class navigation entry points.
+
+A deep link should:
+
+resolve independently,
+reconstruct navigation context from the URL,
+request authoritative data from backend APIs,
+remain valid regardless of navigation origin.
+
+Deep links must never depend on frontend memory or previously visited routes.
+
+#### Navigation State Rules
+
+The following become authoritative.
+
+URL-01 — URL Owns Navigation State
+
+Persistent navigation context belongs in the URL.
+
+URL-02 — Application State Remains Separate
+
+Navigation state must not duplicate business or UI state.
+
+URL-03 — URLs Remain Stable
+
+Existing URLs should remain stable whenever practical as the application evolves.
+
+URL-04 — Query Parameters Represent Optional Context
+
+Query parameters describe navigation options, not business rules.
+
+URL-05 — Browser History Reflects Meaningful Navigation
+
+Only meaningful navigation changes should create history entries.
+
+URL-06 — Deep Links Are Independent
+
+Every deep link must resolve correctly without relying on prior navigation.
+
+URL-07 — Backend Owns Resource Interpretation
+
+URLs identify resources.
+
+Backend APIs determine resource validity, visibility, and accessibility.
+
+### Future Evolution Strategy
+#### Navigation Scalability Strategy
+Navigation should scale by extending existing architectural patterns rather than replacing them.
+
+Scalability should occur through:
+
+new route groups,
+additional layouts,
+new domain modules,
+expanded navigation destinations.
+
+Existing navigation contracts should remain stable whenever practical.
+
+#### Advanced Routing Evolution
+
+Future routing capabilities may include:
+
+dedicated notification routes,
+messaging routes,
+search routes,
+discovery routes,
+bookmark collections,
+user dashboards.
+
+These capabilities should be introduced as independent domain routes without modifying the established route hierarchy.
+
+#### Internationalization Readiness
+
+The navigation architecture should remain compatible with future internationalization requirements.
+
+Current architecture should therefore:
+
+avoid hardcoded language assumptions in route organization,
+keep navigation logic independent of localized content,
+preserve stable resource identifiers regardless of language.
+
+Internationalization should extend the navigation system rather than replace it.
+
+#### Progressive Enhancement Strategy
+
+Navigation should provide a functional experience without relying on client-side enhancements.
+
+Progressive enhancement principles include:
+
+server-rendered navigation as the baseline,
+client-side enhancements for improved responsiveness,
+graceful degradation when JavaScript capabilities are limited.
+
+This remains consistent with the approved Server Component First philosophy.
+
+#### Offline Readiness Considerations
+
+Offline capabilities are outside the Phase 1 scope.
+
+However, the navigation architecture should avoid preventing future offline support.
+
+Future offline enhancements may include:
+
+cached navigation shells,
+cached layouts,
+previously visited resource access,
+offline indicators.
+
+Offline behavior should remain an enhancement rather than an architectural dependency.
+
+#### Mobile Application Compatibility
+
+Navigation architecture should remain platform-independent.
+
+URLs and route structure define navigation concepts rather than web-specific implementations.
+
+Future native or hybrid mobile applications should reuse:
+
+navigation hierarchy,
+domain organization,
+resource identification,
+deep-link conventions.
+
+Only platform-specific navigation presentation should differ.
+
+#### Navigation Evolution Strategy
+
+Future application growth should be achieved through additive changes.
+
+Examples include:
+
+introducing new route groups,
+expanding existing domains,
+extending layouts,
+adding navigation destinations,
+introducing new resource types.
+
+Existing route organization should not require restructuring to accommodate future features.
+
+#### Long-Term Maintainability
+
+Navigation maintainability depends on preserving established architectural boundaries.
+
+The architecture should continue to emphasize:
+
+domain ownership,
+consistent URL strategy,
+reusable layouts,
+predictable navigation behavior,
+separation between navigation and business logic.
+
+Maintenance should primarily involve extending existing patterns rather than creating new navigation models.
+
+#### Navigation Evolution Rules
+
+The following become authoritative.
+
+EVOLVE-01 — Navigation Evolves Additively
+
+New capabilities extend the existing navigation hierarchy.
+
+Existing navigation contracts should remain stable whenever practical.
+
+EVOLVE-02 — Domain Boundaries Remain Stable
+
+Future navigation additions must respect approved frontend domain ownership.
+
+EVOLVE-03 — URL Stability Is Preferred
+
+Existing URLs should not change unless architectural or product requirements make it unavoidable.
+
+EVOLVE-04 — Navigation Remains Independent of UI
+
+Navigation architecture should remain valid regardless of future visual redesigns.
+
+EVOLVE-05 — Platform Independence
+
+Navigation concepts should be reusable across future client platforms.
+
+EVOLVE-06 — Progressive Enhancement by Default
+
+Core navigation should remain functional without relying on optional client-side enhancements.
+
+EVOLVE-07 — No Premature Routing Complexity
+
+Advanced routing capabilities should be introduced only when justified by approved requirements.
+
 ## 
