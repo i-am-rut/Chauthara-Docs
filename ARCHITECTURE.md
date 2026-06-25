@@ -23677,5 +23677,1676 @@ The architecture is optimized for years of incremental development rather than s
 
 ---
 
-##
+## Frontend Rendering & Data Fetching Architecture
+
+### Rendering Philosophy
+Hybrid Rendering with a Server Component First Philosophy
+
+The frontend shall use Next.js App Router as its rendering architecture.
+
+Rendering decisions shall prioritize:
+
+Server Components by default.
+Static rendering where appropriate.
+Dynamic rendering when backend data requires request-time evaluation.
+Client Components only for browser-specific interaction.
+
+Rendering becomes a presentation concern rather than a business concern.
+
+Business authority always remains within the backend.
+
+This decision aligns with:
+
+Simplicity First
+Evolutionary Architecture
+Backend Authority
+API-First Design
+Domain-Oriented Frontend
+Server Component First philosophy
+Hybrid Rendering Strategy
+
+#### Rendering Goals
+The rendering architecture shall optimize for:
+
+Fast initial page rendering.
+Minimal client-side JavaScript.
+Progressive delivery of UI.
+Clear separation between rendering and business logic.
+Backend-controlled data consistency.
+Predictable rendering behavior across modules.
+Future compatibility with additional Next.js rendering capabilities.
+
+Rendering itself is not responsible for:
+
+Business rule execution.
+Authorization.
+Data ownership.
+Lifecycle management.
+Governance evaluation.
+
+These remain backend responsibilities.
+
+#### Rendering Decision Principles
+The following principles become authoritative.
+
+RP-01 — Rendering Follows Data Characteristics
+
+Rendering strategy is selected based on:
+
+Data freshness.
+User personalization.
+Authentication requirements.
+Route behavior.
+
+Rendering strategy shall never be selected solely for implementation convenience.
+
+RP-02 — Server Rendering Before Client Rendering
+
+If a UI can be rendered on the server without losing required functionality, it shall be rendered on the server.
+
+Client rendering is introduced only when browser capabilities are required.
+
+RP-03 — Rendering Never Owns Business Logic
+
+Rendering is responsible only for presenting data.
+
+Business decisions remain inside backend APIs.
+
+Examples:
+
+Allowed:
+
+Formatting timestamps.
+Organizing layouts.
+Displaying state.
+
+Forbidden:
+
+Permission evaluation.
+Moderation decisions.
+Feed composition rules.
+Ownership validation.
+RP-04 — Rendering Consumes API Contracts
+
+Frontend rendering consumes responses defined in API_CONTRACTS.md.
+
+Rendering must never infer undocumented backend behavior or bypass approved contracts.
+
+RP-05 — Rendering Is Domain-Oriented
+Routes and rendering boundaries shall follow approved frontend module boundaries.
+Rendering must not merge unrelated business domains for implementation convenience.
+
+#### Server Component First Philosophy
+Server Components become the default rendering mechanism.
+
+The frontend architecture assumes:
+
+Server Component
+        ↓
+Backend API
+        ↓
+Render HTML
+        ↓
+Deliver UI
+
+Benefits include:
+
+Reduced client bundle size.
+Faster initial render.
+Improved SEO for public pages.
+Simpler data flow.
+Reduced client-side state requirements.
+
+Client Components are treated as opt-in rather than the default.
+
+#### Why Next.js App Router Fits Chauthara
+The App Router aligns with the approved architecture because it provides:
+
+Native Server Components.
+Nested layouts.
+Route-level rendering control.
+Streaming support.
+Flexible caching.
+Server-side data fetching.
+Clear client/server boundaries.
+
+These capabilities directly support the platform's hybrid rendering strategy without requiring custom rendering infrastructure.
+
+#### Rendering Strategy Evaluation
+##### Static Rendering
+Recommended for resources whose content changes infrequently or is effectively immutable during a deployment.
+
+Examples:
+
+Platform policies.
+Help pages.
+Informational documentation.
+Landing pages.
+
+##### Dynamic Rendering
+Recommended for routes whose output depends on:
+
+Authentication.
+Personalized identity.
+Frequently changing content.
+Authorization-aware visibility.
+
+Examples:
+
+Following Feed.
+Herd Feed.
+Notifications (future).
+User dashboard.
+
+##### Hybrid Rendering
+Most feature routes will combine static and dynamic elements.
+
+Examples include:
+
+Public profile layout rendered statically where feasible, with dynamic user activity fetched at request time.
+Herd pages combining relatively stable metadata with dynamic post listings.
+
+This enables performance optimization without sacrificing freshness.
+
+#### Rendering Ownership
+Rendering owns:
+
+HTML generation.
+UI composition.
+Layout composition.
+Visual presentation.
+User interaction entry points.
+
+Rendering does not own:
+
+Data.
+Authorization.
+Authentication.
+Business workflows.
+Resource lifecycles.
+Governance decisions.
+
+#### Backend Authority Over Data
+The backend remains the single source of truth.
+
+Frontend rendering may:
+
+Request data.
+Display data.
+Cache data according to approved rules.
+
+Frontend rendering must never:
+
+Reconstruct business state.
+Infer permissions.
+Modify authoritative business data outside approved API workflows.
+
+This preserves the Backend Authority principle.
+
+#### Route Rendering Strategy
+Route rendering shall follow these general classifications.
+| Route Type                 | Preferred Strategy                                           |
+| -------------------------- | ------------------------------------------------------------ |
+| Public informational pages | Static Rendering                                             |
+| Public content pages       | Dynamic Server Rendering (or static where freshness permits) |
+| Authenticated dashboards   | Dynamic Server Rendering                                     |
+| Personalized feeds         | Dynamic Server Rendering                                     |
+| Browser-only interactions  | Client Components within Server-rendered routes              |
+This provides a consistent rendering model while allowing future refinement without structural changes.
+
+#### Rendering Consistency Principles
+The frontend shall maintain consistent rendering behavior through the following rules.
+
+RC-01
+
+Rendering decisions are made at the route level before component implementation.
+
+RC-02
+
+Rendering responsibilities remain independent of business domain ownership.
+
+RC-03
+
+Server rendering is preferred whenever browser APIs are unnecessary.
+
+RC-04
+
+Client rendering shall remain localized to interactive UI boundaries.
+
+RC-05
+
+Rendering behavior shall remain predictable across all frontend modules.
+
+#### Architectural Rendering Rules
+The following rules become authoritative.
+
+FRR-01
+
+Server Components are the default component type.
+
+FRR-02
+
+Client Components require explicit justification.
+
+FRR-03
+
+Rendering never executes backend business logic.
+
+FRR-04
+
+Backend APIs remain the authoritative data source.
+
+FRR-05
+
+Rendering strategy is selected according to route requirements, not module ownership.
+
+FRR-06
+
+Rendering decisions must preserve approved frontend module boundaries.
+
+FRR-07
+
+Hybrid rendering is the standard architectural strategy for Phase 1.
+
+### Server Components & Client Components Architecture
+
+#### Server Component Philosophy
+Server Components represent the default rendering model for Chauthara.
+
+Their primary responsibility is to transform backend data into HTML before the page reaches the browser.
+
+Server Components should be responsible for:
+
+Route rendering.
+Layout rendering.
+Initial data retrieval.
+Page composition.
+Rendering authenticated and public content.
+Passing prepared data to interactive components.
+
+Server Components intentionally avoid browser-specific behavior.
+
+##### Architectural Responsibilities
+
+Server Components own:
+
+Initial UI generation.
+Data loading.
+Route-level composition.
+Nested layout composition.
+Conditional rendering based on backend responses.
+Delegation to Client Components where interaction is required.
+
+Server Components do not own:
+
+Browser events.
+Interactive UI state.
+DOM manipulation.
+Animation state.
+Browser storage.
+Real-time interaction management.
+
+#### Client Component Philosophy
+Client Components exist to provide interaction rather than data ownership.
+
+They should execute only when browser capabilities are necessary.
+
+Examples include:
+
+Forms.
+Search inputs.
+Dropdown menus.
+Modal dialogs.
+Image previews.
+Infinite scrolling.
+Optimistic interaction.
+Browser-only APIs.
+
+Client Components should enhance already-rendered UI rather than become the primary rendering mechanism.
+
+Architectural Responsibilities
+
+Client Components own:
+
+User interaction.
+Local UI state.
+Event handling.
+Browser APIs.
+Visual transitions.
+Input validation feedback.
+Progressive enhancement.
+
+Client Components do not own:
+
+Backend authority.
+Business rules.
+Authorization decisions.
+Governance evaluation.
+Resource ownership.
+API contract interpretation.
+
+#### Responsibility Boundaries
+The following responsibility model becomes authoritative.
+| Responsibility         | Server Component               | Client Component |
+| ---------------------- | ------------------------------ | ---------------- |
+| Initial rendering      | ✓                              | ✗                |
+| Backend data retrieval | ✓                              | Limited          |
+| Layout composition     | ✓                              | ✗                |
+| Browser interaction    | ✗                              | ✓                |
+| Local UI state         | ✗                              | ✓                |
+| Form interaction       | ✗                              | ✓                |
+| Business logic         | ✗                              | ✗ (Backend only) |
+| Authorization          | ✗ (Consumes backend decisions) | ✗                |
+| API authority          | ✗ (Consumes)                   | ✗ (Consumes)     |
+This boundary ensures that rendering, interaction, and business execution remain distinct architectural concerns.
+
+#### Component Ownership
+Every component belongs to one of two architectural categories.
+
+##### Server-Owned Components
+
+Responsible for:
+
+Rendering.
+Composition.
+Data preparation.
+Route structure.
+Layout hierarchy.
+
+They own no interactive browser state.
+
+##### Client-Owned Components
+
+Responsible for:
+
+Interaction.
+User experience.
+Browser execution.
+Temporary UI state.
+Event coordination.
+
+They own no business state.
+
+#### Business Logic Placement
+Business logic remains exclusively within the backend.
+
+The frontend may contain:
+
+Presentation logic.
+Display formatting.
+UI composition.
+Interaction coordination.
+
+The frontend must never become the authoritative location for:
+
+Permission evaluation.
+Feed composition.
+Moderation decisions.
+Ownership validation.
+Lifecycle enforcement.
+Business workflows.
+
+This preserves the Backend Authority principle established throughout the architecture.
+
+#### Data Ownership
+Data ownership remains unchanged by rendering architecture.
+
+The backend owns:
+
+Data generation.
+Validation.
+Authorization.
+Governance.
+State transitions.
+
+The frontend owns:
+
+Display.
+Temporary interaction state.
+Rendering lifecycle.
+
+Fetched data is considered a read-only projection of backend state.
+
+#### UI Interaction Ownership
+Interactive behavior belongs exclusively to Client Components.
+
+Examples include:
+
+Form submission.
+Button interactions.
+Dropdown state.
+Tab switching.
+Infinite scroll triggers.
+Modal visibility.
+Theme switching (future).
+Drag-and-drop (future).
+
+Rendering components should delegate these concerns rather than implement them directly.
+
+#### Component Communication Model
+The communication model follows a one-way composition hierarchy.
+
+Server Component
+        │
+        ▼
+Fetch Backend Data
+        │
+        ▼
+Prepare View Model
+        │
+        ▼
+Render UI
+        │
+        ▼
+Pass Serializable Props
+        │
+        ▼
+Client Component
+        │
+        ▼
+User Interaction
+
+Communication principles:
+
+Server Components pass serializable data downward.
+Client Components never invoke Server Components directly.
+Interaction requiring new backend data occurs through API requests followed by UI updates.
+Component communication remains unidirectional.
+
+#### Component Composition Strategy
+Composition follows a Server Outside, Client Inside model.
+
+Typical structure:
+
+Route
+ └── Server Component
+      ├── Server Section
+      ├── Server Section
+      ├── Client Form
+      ├── Client Vote Button
+      └── Client Comment Composer
+
+This approach minimizes hydration while keeping interactive regions isolated.
+
+#### Client Boundary Rules
+The following rules become authoritative.
+
+SCB-01
+
+A component becomes a Client Component only when browser execution is required.
+
+SCB-02
+
+Client boundaries should remain as small as reasonably possible.
+
+SCB-03
+
+Large page sections should not become Client Components solely because one child requires interaction.
+
+SCB-04
+
+Client Components should receive prepared data rather than perform initial data loading whenever practical.
+
+SCB-05
+
+Shared interactive behavior should be encapsulated into reusable Client Components.
+
+#### Server Boundary Rules
+The following rules become authoritative.
+
+SSR-01
+
+Server Components are the default component type.
+
+SSR-02
+
+Server Components may compose other Server Components and Client Components.
+
+SSR-03
+
+Server Components should perform initial data retrieval whenever route rendering requires backend data.
+
+SSR-04
+
+Server Components should remain free of browser-specific APIs.
+
+SSR-05
+
+Server Components should produce stable, deterministic output for the same backend response.
+
+#### Hydration Strategy
+Hydration shall be treated as a targeted optimization rather than a default behavior.
+
+The architecture adopts the following philosophy:
+
+Hydrate only interactive islands.
+Avoid hydrating purely presentational content.
+Keep hydration boundaries localized.
+Prevent unnecessary JavaScript execution.
+
+Hydration should occur because interaction is required—not because rendering was convenient.
+
+#### Progressive Enhancement Philosophy
+The frontend shall progressively enhance server-rendered content.
+
+The default user experience should begin with meaningful HTML generated by the server.
+
+Interactive capabilities then enhance that experience without replacing it.
+
+Examples include:
+
+Forms gaining client-side validation.
+Buttons providing optimistic feedback.
+Infinite scrolling replacing manual pagination.
+Dynamic interactions improving usability without becoming mandatory for understanding page content.
+
+This philosophy aligns with the project's emphasis on performance, accessibility, and maintainability.
+
+### Data Fetching Architecture
+
+#### Backend API as the Authoritative Source
+The backend remains the sole source of truth for all business data.
+
+The frontend shall never:
+
+Reconstruct business state.
+Infer authorization.
+Calculate governance outcomes.
+Execute ownership rules.
+Maintain duplicate authoritative models.
+
+All business information must originate from approved backend API contracts.
+
+The frontend consumes projections of backend state rather than maintaining independent business models.
+
+#### Server-Side Data Fetching
+Server-side data fetching becomes the preferred architectural pattern.
+
+Server Components should perform data retrieval for:
+
+Initial page rendering.
+Route layouts.
+Public content.
+Authenticated content.
+Feed rendering.
+Profile rendering.
+Herd rendering.
+
+Benefits include:
+
+Reduced client JavaScript.
+Faster first render.
+Improved SEO.
+Simplified state management.
+Better alignment with Backend Authority.
+
+##### Server Fetching Responsibilities
+
+Server Components may:
+
+Call backend APIs.
+Aggregate multiple API responses.
+Prepare presentation models.
+Handle loading boundaries.
+Pass serializable data to Client Components.
+
+Server Components must not:
+
+Modify business state outside approved APIs.
+Execute browser APIs.
+Persist client interaction state.
+
+#### Client-Side Data Fetching
+Client-side fetching is permitted only when interaction requires runtime updates after the initial render.
+
+Typical scenarios include:
+
+Infinite scrolling.
+Load More interactions.
+Search suggestions.
+Live filtering.
+Polling (future).
+Real-time updates (future).
+Optimistic UI reconciliation.
+User-triggered refreshes.
+
+Client fetching supplements server-rendered content rather than replacing it.
+
+##### Client Fetching Principles
+
+Client Components should:
+
+Request only incremental data.
+Avoid duplicating server-fetched requests.
+Respect backend API contracts.
+Remain isolated from unrelated modules.
+
+Client-side fetching should be intentional rather than the default behavior.
+
+#### Route-Level Fetching
+Route-level Server Components are responsible for obtaining data required to render the overall route.
+
+Typical responsibilities include:
+
+Route identity.
+User context.
+Primary resource.
+Page metadata.
+Initial content.
+
+Examples:
+
+Profile page loads profile information.
+Herd page loads herd information.
+Feed page loads initial feed entries.
+
+Route components establish the initial rendering context for their descendants.
+
+#### Nested Component Fetching
+Nested Server Components may independently fetch additional data when it aligns with their ownership responsibilities.
+
+Examples:
+
+Profile Route
+│
+├── Profile Header
+│      Fetch Profile
+│
+├── Profile Statistics
+│      Fetch Statistics
+│
+└── Profile Activity
+       Fetch Recent Activity
+
+This model promotes:
+
+Component independence.
+Better reuse.
+Natural parallelism.
+Reduced parent component complexity.
+
+Nested components should not duplicate requests already owned by ancestors.
+
+#### Data Ownership Boundaries
+Fetching responsibility follows rendering ownership.
+
+The following rules become authoritative.
+
+DFA-01
+
+A component owns retrieval only for the data required to render itself.
+
+DFA-02
+
+Components must not fetch unrelated domain data.
+
+DFA-03
+
+Business ownership remains within backend domains.
+
+DFA-04
+
+Rendering ownership does not imply business ownership.
+
+DFA-05
+
+Data retrieved by a component is treated as read-only.
+
+#### Fetch Orchestration
+Server Components coordinate data retrieval according to rendering composition.
+
+Preferred orchestration:
+
+Route
+        │
+        ▼
+Layout Fetch
+        │
+        ▼
+Parallel Nested Fetches
+        │
+        ▼
+Compose Page
+
+Whenever requests are independent, they should execute concurrently.
+
+Dependent requests should execute sequentially.
+
+This minimizes overall rendering latency while preserving logical dependencies.
+
+#### Request Lifecycle
+The standard request lifecycle becomes:
+
+Incoming Route Request
+        │
+        ▼
+Server Component
+        │
+        ▼
+Backend API Request
+        │
+        ▼
+Backend Validation
+        │
+        ▼
+API Response
+        │
+        ▼
+Prepare View Model
+        │
+        ▼
+Render HTML
+        │
+        ▼
+Hydrate Interactive Islands
+
+This reinforces that business execution occurs entirely within the backend before rendering begins.
+
+#### Parallel vs Sequential Fetching
+##### Parallel Fetching
+
+Preferred when requests are independent.
+
+Examples:
+
+User profile.
+User statistics.
+Suggested communities.
+Trending content.
+
+Benefits:
+
+Lower latency.
+Better utilization of server rendering.
+Faster page completion.
+
+##### Sequential Fetching
+
+Used only when one request depends on another.
+
+Examples:
+
+Resolve authenticated user.
+Then retrieve personalized feed.
+Resolve herd membership.
+Then load restricted herd content.
+
+Sequential fetching should be minimized to avoid unnecessary request waterfalls.
+
+#### Error Propagation
+Error handling follows the rendering hierarchy.
+
+The architecture adopts the following flow:
+
+Backend Error
+        │
+        ▼
+Server Component
+        │
+        ▼
+Nearest Error Boundary
+        │
+        ▼
+Fallback UI
+
+Principles:
+
+Components handle only presentation-level recovery.
+Backend remains responsible for business error generation.
+API error contracts remain authoritative.
+Rendering never transforms business failures into alternative business outcomes.
+
+#### Loading Strategy
+Loading behavior shall align with rendering boundaries.
+
+The architecture prefers:
+
+Route-level loading boundaries.
+Nested loading boundaries.
+Progressive rendering where appropriate.
+Server-first loading before client hydration.
+
+Loading indicators represent data availability rather than business execution.
+
+Client Components may display interaction-specific loading states after hydration.
+
+#### API Consumption Rules
+The following rules become authoritative.
+
+DFR-01
+
+All frontend data originates from approved backend APIs.
+
+DFR-02
+
+Frontend components must consume API contracts exactly as defined.
+
+DFR-03
+
+Frontend components must never access backend persistence directly.
+
+DFR-04
+
+API responses are treated as immutable snapshots of backend state.
+
+DFR-05
+
+Frontend modules may compose multiple API responses but may not reinterpret business rules.
+
+DFR-06
+
+State-changing operations must occur exclusively through approved mutation APIs.
+
+DFR-07
+
+Data fetching remains independent of business workflow execution.
+
+### Caching, Revalidation & Rendering Performance
+
+#### Next.js Caching Model
+The architecture adopts the native App Router caching model rather than implementing custom caching abstractions.
+
+The caching model consists of several complementary layers:
+
+Route-level rendering cache.
+Server-side fetch cache.
+Browser cache where applicable.
+CDN caching for static assets.
+
+Application modules should express caching intent rather than manage cache implementations directly.
+
+#### Cache Ownership
+Caching does not transfer ownership.
+
+The backend remains the authoritative owner of all business state.
+
+The frontend cache owns only:
+
+Temporary render optimization.
+Previously retrieved API responses.
+Rendering artifacts.
+
+Caches must never become the source of truth.
+
+#### Static Cache
+Static caching is appropriate for resources whose content changes infrequently.
+
+Typical examples include:
+
+Landing page.
+About pages.
+Help documentation.
+Terms and policies.
+Other informational content.
+
+These resources benefit from long-lived caching because freshness requirements are low.
+
+#### Dynamic Rendering
+Routes containing personalized or rapidly changing data should bypass long-lived caching.
+
+Typical examples include:
+
+Following Feed.
+Herd Feed.
+Authenticated dashboards.
+Profile editing.
+Governance interfaces.
+
+Dynamic rendering prioritizes correctness over cache efficiency.
+
+#### Revalidation Strategy
+Revalidation allows cached content to remain performant while preventing indefinite staleness.
+
+The architecture adopts the following principles.
+
+CR-01
+
+Revalidation should be explicit.
+
+CR-02
+
+Revalidation frequency should match business freshness requirements.
+
+CR-03
+
+Frequently changing social content should favor dynamic rendering over long-lived caches.
+
+CR-04
+
+Stable informational content may use longer revalidation intervals.
+
+CR-05
+
+Revalidation strategy should remain independent of business domains.
+
+It is determined by rendering characteristics rather than ownership.
+
+#### Route Cache
+Route caching applies to rendered page output.
+
+Route cache suitability depends upon:
+
+Personalization.
+Authentication.
+Frequency of updates.
+Visibility rules.
+
+General guidance:
+| Route Category           | Preferred Cache Behavior |
+| ------------------------ | ------------------------ |
+| Informational pages      | Static Cache             |
+| Public reference pages   | Revalidated Cache        |
+| Personalized pages       | Dynamic Rendering        |
+| Authenticated dashboards | Dynamic Rendering        |
+| Feed pages               | Dynamic Rendering        |
+This aligns rendering behavior with actual user expectations.
+
+#### Fetch Cache
+Server-side fetch requests may benefit from request-level caching where appropriate.
+
+Guiding principles:
+
+Stable backend responses may be reused.
+Frequently changing resources should avoid persistent fetch caching.
+Fetch caching should remain transparent to component architecture.
+
+The decision to cache a fetch depends on the characteristics of the requested resource, not on the component requesting it.
+
+#### Mutation Invalidation Philosophy
+Mutations create the greatest risk of stale UI.
+
+The architecture adopts the following philosophy:
+
+State-changing operations should invalidate affected cached content rather than relying on cache expiration alone.
+
+Examples include:
+
+Creating a post.
+Editing a profile.
+Joining a herd.
+Leaving a herd.
+Following a user.
+Updating herd information.
+
+Mutation workflows should trigger targeted revalidation of affected rendering outputs while avoiding unnecessary invalidation of unrelated content.
+
+This preserves rendering consistency without introducing global cache refreshes.
+
+#### Freshness Rules
+Freshness requirements depend on the type of data being rendered.
+
+The following guidance becomes authoritative.
+| Data Category              | Freshness Priority |
+| -------------------------- | ------------------ |
+| Personalized feeds         | Highest            |
+| Governance state           | Highest            |
+| Membership state           | High               |
+| User profiles              | High               |
+| Herd metadata              | Medium             |
+| Static informational pages | Low                |
+Rendering performance must never compromise business correctness.
+
+#### Cache Consistency
+The architecture prioritizes consistency over aggressive caching.
+
+The following principles become authoritative.
+
+CCP-01
+
+Cached data represents a temporary rendering optimization.
+
+CCP-02
+
+Backend APIs always determine authoritative state.
+
+CCP-03
+
+Frontend caches should converge toward backend state through revalidation.
+
+CCP-04
+
+Cache invalidation should remain targeted whenever possible.
+
+CCP-05
+
+Rendering consistency takes precedence over maximum cache utilization.
+
+#### Rendering Performance Strategy
+The approved architecture improves rendering performance through several complementary mechanisms.
+
+Rather than relying solely on caching, performance is achieved by combining:
+
+Server Components.
+Reduced client-side JavaScript.
+Native App Router rendering.
+Parallel data fetching.
+Localized hydration.
+Selective caching.
+Nested layouts.
+Progressive rendering.
+
+This layered approach aligns with the project's philosophy of solving performance through architecture before introducing additional infrastructure.
+
+#### Streaming Considerations
+Streaming should be treated as a rendering optimization rather than the default rendering model.
+
+Streaming is appropriate when:
+
+Independent page sections complete at different times.
+Large pages contain multiple asynchronous regions.
+Early content delivery improves perceived responsiveness.
+
+Streaming should:
+
+Preserve route composition.
+Respect component ownership boundaries.
+Remain transparent to business logic.
+
+Streaming changes when content is delivered, not how business rules execute.
+
+#### Suspense Usage Philosophy
+Suspense provides localized loading boundaries within the rendering hierarchy.
+
+The architecture adopts the following principles.
+
+SP-01
+
+Suspense boundaries should align with independently loading UI regions.
+
+SP-02
+
+Suspense should improve perceived responsiveness without altering rendering ownership.
+
+SP-03
+
+Suspense boundaries should remain localized rather than wrapping entire applications.
+
+SP-04
+
+Loading fallbacks should represent rendering progress rather than business execution.
+
+SP-05
+
+Suspense complements Server Components and streaming rather than replacing them.
+
+#### Architectural Performance Rules
+The following rules become authoritative.
+
+CPR-01
+
+Caching is a rendering optimization.
+
+It is never an authoritative data source.
+
+CPR-02
+
+Backend APIs remain the source of truth regardless of cached responses.
+
+CPR-03
+
+Dynamic user-specific content should prioritize correctness over cache longevity.
+
+CPR-04
+
+Static content should maximize native caching opportunities.
+
+CPR-05
+
+Mutation workflows should invalidate affected cached render output.
+
+CPR-06
+
+Performance optimizations must not violate rendering ownership boundaries.
+
+CPR-07
+
+Native Next.js caching mechanisms are preferred over custom caching infrastructure during Phase 1.
+
+### Rendering Boundaries & Route Composition
+
+#### Route Ownership
+Routes define the application's navigational structure.
+
+Each route is responsible for:
+
+URL mapping.
+Rendering entry point.
+Initial page composition.
+Route metadata.
+Route-level rendering strategy.
+Initial data boundary.
+
+Routes do not own business features.
+
+Instead, they compose feature modules responsible for rendering business capabilities.
+
+##### Route Ownership Principles
+RB-01
+
+Each route has a single rendering entry point.
+
+RB-02
+
+Routes coordinate rendering but do not implement unrelated business functionality.
+
+RB-03
+
+Routes compose module-owned features rather than embedding business UI directly.
+
+RB-04
+
+Route ownership follows application navigation rather than domain ownership.
+
+#### Layout Rendering
+Layouts provide shared rendering structure across related routes.
+
+Typical layout responsibilities include:
+
+Navigation.
+Global header.
+Sidebar.
+Footer.
+Shared authentication context.
+Route containers.
+Shared visual chrome.
+
+Layouts establish structural consistency without becoming feature owners.
+
+##### Layout Principles
+
+Layouts should remain:
+
+Reusable.
+Presentation-focused.
+Independent of individual business workflows.
+Compatible with nested rendering.
+
+Business-specific rendering belongs within feature modules.
+
+#### Nested Layouts
+Nested layouts enable progressive specialization of rendering structure.
+
+Example:
+
+Root Layout
+│
+├── Public Layout
+│      ├── Landing
+│      ├── Help
+│      └── Policies
+│
+└── Authenticated Layout
+       ├── Feed
+       ├── Profile
+       ├── Herd
+       └── Settings
+
+Benefits include:
+
+Shared rendering logic.
+Reduced duplication.
+Consistent user experience.
+Better rendering isolation.
+
+Nested layouts should introduce structural specialization rather than business behavior.
+
+#### Route Composition
+Route composition follows a hierarchical ownership model.
+
+Route
+        │
+        ▼
+Layout
+        │
+        ▼
+Module Features
+        │
+        ▼
+Shared UI
+
+Each layer owns a distinct responsibility.
+
+Routes should compose features rather than implement them.
+
+#### Feature Composition
+Each frontend module owns the rendering of its approved business capabilities.
+
+Examples:
+
+Identity Module
+
+Profile Header.
+Profile Information.
+Profile Editing.
+
+Content Module
+
+Post List.
+Comment Tree.
+Voting UI.
+
+Community Module
+
+Herd Information.
+Membership UI.
+Shepherd Management.
+
+Feed Module
+
+Feed Timeline.
+Feed Filters.
+Feed Pagination.
+
+Modules may compose shared UI components but remain responsible for their own business presentation.
+
+#### Module Rendering Boundaries
+Rendering boundaries follow the approved module architecture.
+
+Each module owns:
+
+Business presentation.
+Module-specific rendering.
+Module-specific Server Components.
+Module-specific Client Components.
+
+Modules do not render unrelated business capabilities.
+
+For example:
+
+The Community module may render Herd information.
+
+It must not render Post details owned by the Content module.
+
+This preserves module independence and simplifies future evolution.
+
+#### Shared UI Rendering
+Shared UI components belong to shared infrastructure rather than business modules.
+
+Examples include:
+
+Buttons.
+Inputs.
+Dialogs.
+Cards.
+Typography.
+Icons.
+Loaders.
+Empty states.
+
+Shared UI components:
+
+Contain no business logic.
+Contain no backend knowledge.
+Contain no module-specific assumptions.
+
+They remain reusable across all frontend modules.
+
+#### Rendering Isolation
+Rendering isolation prevents changes within one module from unintentionally affecting others.
+
+The architecture adopts the following principles.
+
+RI-01
+
+Modules render only their owned business capabilities.
+
+RI-02
+
+Rendering failures should remain localized whenever practical.
+
+RI-03
+
+Layout changes should not require feature modifications.
+
+RI-04
+
+Feature rendering should remain independent of sibling modules.
+
+RI-05
+
+Rendering isolation should mirror approved module boundaries.
+
+#### Cross-Module Rendering Rules
+Modules may compose rendering from other modules only through public rendering interfaces.
+
+Examples:
+
+Feed Module
+
+May compose:
+
+Content Cards.
+Author Summary.
+Herd Badge.
+
+The Feed module does not own these components.
+
+Ownership remains with their originating modules.
+
+This preserves rendering consistency while encouraging reuse.
+
+##### Cross-Module Composition Principles
+CRM-01
+
+Rendering reuse does not transfer ownership.
+
+CRM-02
+
+Shared presentation should be preferred over duplicated rendering.
+
+CRM-03
+
+Business modules expose reusable presentation components where appropriate.
+
+CRM-04
+
+Modules should depend on stable rendering contracts rather than internal implementations.
+
+#### Rendering Dependency Rules
+Rendering dependencies must remain consistent with the approved frontend dependency model.
+
+The following rules become authoritative.
+
+RDR-01
+
+Routes may compose layouts.
+
+RDR-02
+
+Layouts may compose module features.
+
+RDR-03
+
+Modules may compose shared UI.
+
+RDR-04
+
+Modules may compose reusable presentation components from other modules when ownership remains explicit.
+
+RDR-05
+
+Shared UI must never depend on business modules.
+
+RDR-06
+
+Circular rendering dependencies are prohibited.
+
+RDR-07
+
+Rendering dependencies should follow the same directional principles established for frontend module dependencies.
+
+#### Rendering Composition Hierarchy
+The following hierarchy becomes authoritative.
+
+Application
+        │
+        ▼
+Route
+        │
+        ▼
+Layout
+        │
+        ▼
+Module Feature
+        │
+        ▼
+Shared UI
+
+Each level has a single architectural responsibility.
+
+This keeps rendering predictable and preserves the separation between navigation, structure, business presentation, and reusable infrastructure.
+
+#### Rendering Boundary Rules
+The following rules become authoritative.
+
+RBND-01
+
+Routes own navigation boundaries.
+
+RBND-02
+
+Layouts own shared page structure.
+
+RBND-03
+
+Frontend modules own business rendering.
+
+RBND-04
+
+Shared infrastructure owns reusable presentation components.
+
+RBND-05
+
+Rendering ownership does not imply business ownership.
+
+RBND-06
+
+Cross-module rendering must preserve explicit ownership boundaries.
+
+RBND-07
+
+Rendering composition should remain hierarchical and acyclic.
+
+### Future Evolution Strategy
+#### Future Rendering Capabilities
+The architecture intentionally preserves compatibility with future rendering improvements while keeping Phase 1 implementation simple.
+
+Potential future enhancements include:
+
+Partial Prerendering.
+Enhanced streaming.
+React Server Actions.
+Edge runtime adoption.
+Advanced cache invalidation.
+Incremental rendering optimizations.
+
+These capabilities represent implementation evolution rather than architectural change.
+
+#### Partial Prerendering Readiness
+
+The approved rendering architecture is compatible with Partial Prerendering because it already separates:
+
+Static rendering.
+Dynamic rendering.
+Server Components.
+Client Components.
+Route composition.
+
+If adopted in the future:
+
+Static route sections may be prerendered.
+Dynamic islands remain server-rendered.
+Existing module boundaries remain unchanged.
+
+No redesign of frontend modules would be required.
+
+
+
+#### Edge Rendering Considerations
+
+Phase 1 does not require Edge Runtime deployment.
+
+However, the architecture intentionally avoids assumptions that prevent future adoption.
+
+Potential future candidates include:
+
+Public profile pages.
+Public herd pages.
+Landing pages.
+Search endpoints (future).
+Public discovery pages (future).
+
+Edge execution should be adopted only when measurable latency improvements justify the operational complexity.
+
+
+
+#### Streaming Evolution
+
+Phase 1 adopts streaming selectively.
+
+Future evolution may expand streaming to additional independently loading regions.
+
+Examples include:
+
+Feed sections.
+Sidebar recommendations.
+Profile activity.
+Community statistics.
+
+Streaming expansion should remain transparent to business modules.
+
+Streaming changes rendering delivery, not rendering ownership.
+
+
+
+#### React Server Actions Readiness
+
+Current architecture assumes:
+
+Backend APIs remain the authoritative execution boundary.
+
+Future versions of React and Next.js may provide Server Actions suitable for selected workflows.
+
+If adopted:
+
+Server Actions should remain adapters into existing backend workflows.
+They must not replace backend business services.
+They must preserve API contracts or provide equivalent internal abstractions.
+
+The Backend Authority principle remains unchanged.
+
+
+
+#### Future Caching Evolution
+
+Phase 1 relies exclusively on native Next.js caching.
+
+Future improvements may include:
+
+Cache tagging.
+More granular revalidation.
+Advanced route invalidation.
+Additional framework capabilities.
+
+Custom distributed cache infrastructure should only be introduced when supported by measurable performance requirements.
+
+
+
+#### Rendering Scalability
+
+Rendering scalability should be achieved through architectural decomposition rather than infrastructure expansion.
+
+The architecture already supports scaling through:
+
+Route decomposition.
+Nested layouts.
+Module rendering isolation.
+Server Components.
+Parallel data fetching.
+Localized hydration.
+Streaming.
+
+As the application grows, new rendering capabilities should be integrated into these existing structures rather than introducing parallel rendering systems.
+
+#### Migration Principles
+
+Future rendering evolution shall follow these principles.
+
+FE-01
+
+Prefer incremental adoption over architectural replacement.
+
+FE-02
+
+Preserve approved module boundaries during migration.
+
+FE-03
+
+Maintain Backend Authority throughout all rendering evolution.
+
+FE-04
+
+Adopt new framework capabilities only after they demonstrate long-term stability and clear architectural value.
+
+FE-05
+
+Avoid framework-specific abstractions that duplicate native Next.js capabilities.
+
+FE-06
+
+Rendering improvements must not require business module redesign.
+
+#### Evolution Without Structural Redesign
+
+The architecture intentionally separates stable architectural decisions from implementation techniques.
+
+The following elements are considered stable and should not change as rendering evolves:
+
+Domain-oriented frontend organization.
+Route hierarchy.
+Module ownership.
+Rendering ownership.
+API-first communication.
+Server Component First philosophy.
+Backend Authority.
+Rendering boundaries.
+Data ownership boundaries.
+
+Future rendering techniques should operate within these established boundaries.
+
+#### Long-Term Maintainability
+
+Long-term maintainability depends upon preserving architectural consistency rather than adopting every new framework capability.
+
+The architecture promotes maintainability through:
+
+Stable rendering responsibilities.
+Clear ownership boundaries.
+Minimal coupling.
+Native framework capabilities.
+Explicit rendering rules.
+Incremental evolution.
+
+Framework upgrades should improve implementation quality while leaving the architectural model intact.
+
+#### Future Evolution Rules
+The following rules become authoritative.
+
+FER-01
+
+Architectural boundaries are stable.
+
+Implementation techniques may evolve.
+
+FER-02
+
+Future rendering capabilities should extend existing architecture rather than replace it.
+
+FER-03
+
+Backend Authority remains unchanged regardless of rendering technology.
+
+FER-04
+
+Module ownership remains independent of rendering implementation.
+
+FER-05
+
+New Next.js capabilities should be adopted incrementally.
+
+FER-06
+
+Operational complexity must remain proportional to application requirements.
+
+FER-07
+
+Framework evolution must preserve the approved rendering composition hierarchy.
+
+FER-08
+
+Rendering evolution should prioritize maintainability over novelty.
+
+---
+
+## 
 
