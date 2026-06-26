@@ -4,10 +4,10 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Define Reference Strategy
+Define Index Strategy
 
 Next Task:
-Define Index Strategy
+Define Integrity Strategy
 
 Blocked By:
 Nothing

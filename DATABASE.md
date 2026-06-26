@@ -2195,3 +2195,407 @@ Auditability
 Administrative accountability
 Authority preservation
 
+---
+
+# Reference Strategy
+
+## Purpose of the Reference Strategy
+
+The Reference Strategy defines the architectural rules governing how persisted business resources relate to one another.
+
+Its objectives are to:
+
+Preserve ownership boundaries.
+Preserve aggregate independence.
+Preserve domain isolation.
+Enable navigation between related resources.
+Support future architectural evolution.
+Maintain consistency across the persistence model.
+
+References describe relationships.
+
+They do not establish authority.
+
+## Reference Design Philosophy
+
+The persistence model adopts an Ownership-Oriented Reference Strategy.
+
+Reference relationships shall:
+
+- Preserve domain ownership.
+- Preserve aggregate boundaries.
+- Preserve lifecycle independence.
+- Preserve stable resource identity.
+- Minimize coupling.
+
+Implementation details remain outside the scope of this architecture.
+
+## Reference Ownership Principles
+
+Reference relationships shall follow the following principles.
+
+RS-01
+
+Every referenced resource retains its original owner.
+
+RS-02
+
+References never transfer ownership.
+
+RS-03
+
+Owning domains remain solely responsible for:
+
+lifecycle,
+validation,
+consistency,
+governance integration.
+RS-04
+
+Consumers may reference resources.
+
+Consumers never become authoritative owners.
+
+RS-05
+
+Reference direction never determines business authority.
+
+Authority always follows ownership.
+
+## Aggregate Boundary Preservation
+
+References shall preserve approved aggregate boundaries.
+
+An aggregate may reference resources owned by another aggregate.
+
+It shall never absorb them into its own authoritative state.
+
+Aggregate boundaries remain responsible for protecting:
+
+invariants,
+lifecycle,
+ownership,
+consistency.
+
+References connect aggregates.
+
+They do not merge aggregates.
+
+## Reference Direction Rules
+
+Reference direction represents dependency rather than ownership.
+
+The following principles are authoritative.
+
+RR-01
+
+References flow toward authoritative resources.
+
+RR-02
+
+Referenced resources remain independently valid.
+
+RR-03
+
+Reference direction shall follow approved domain dependency rules.
+
+RR-04
+
+Reverse relationships shall never be required for ownership enforcement.
+
+RR-05
+
+Reference direction shall minimize coupling between domains.
+
+## Intra-Aggregate vs Cross-Aggregate References
+
+Intra-Aggregate References
+
+Resources sharing:
+
+owner,
+lifecycle,
+aggregate,
+
+may reference one another freely when required by the aggregate model.
+
+These references remain internal to aggregate consistency.
+
+Cross-Aggregate References
+
+Cross-aggregate references shall remain lightweight relationships.
+
+They shall preserve:
+
+aggregate independence,
+lifecycle independence,
+ownership separation.
+
+Cross-aggregate references shall never:
+
+synchronize lifecycle,
+duplicate authoritative state,
+redefine ownership.
+
+## Intra-Domain vs Cross-Domain References
+
+Intra-Domain References
+
+References inside the same domain remain governed by the owning domain.
+
+The domain controls:
+
+reference validity,
+lifecycle compatibility,
+consistency.
+
+Cross-Domain References
+
+Cross-domain references exist only where business relationships require them.
+
+Cross-domain references:
+
+preserve module boundaries,
+preserve ownership,
+preserve authority separation.
+
+Cross-domain references shall never allow one domain to modify another domain's authoritative state.
+
+## Business References vs Governance References
+
+Business References
+
+Business references describe normal platform relationships.
+
+Examples include relationships between:
+
+users,
+posts,
+comments,
+communities,
+memberships,
+media.
+
+Business references exist solely to support platform functionality.
+
+Governance References
+
+Governance references identify governance actors and governance targets.
+
+Governance references do not establish business ownership.
+
+Governance records remain independently owned by the Governance domain while referencing externally owned business resources.
+
+Governance authority remains independent from business ownership.
+
+## Bidirectional vs Unidirectional Reference Philosophy
+
+The persistence architecture adopts a Unidirectional-by-Default philosophy.
+
+Bidirectional references increase:
+
+coupling,
+synchronization requirements,
+consistency complexity.
+
+Unidirectional references preserve:
+
+ownership,
+simplicity,
+modularity,
+evolutionary flexibility.
+
+Bidirectional references may only be introduced when a future approved architectural requirement demonstrates a clear business need.
+
+Implementation convenience alone is insufficient justification.
+
+## Reference Stability Principles
+
+Every persisted reference shall target a stable resource identity.
+
+Reference targets shall remain:
+
+immutable,
+globally identifiable,
+independent of mutable business attributes.
+
+Business information may evolve.
+
+Reference identity remains stable.
+
+Stable references reduce migration complexity and preserve long-term compatibility.
+
+## Reference Lifecycle Considerations
+
+References shall not own lifecycle.
+
+Each referenced resource remains responsible for its own lifecycle progression.
+
+Lifecycle changes affecting referenced resources shall not automatically redefine referencing resource ownership.
+
+References must remain compatible with:
+
+soft deletion,
+governance restrictions,
+restoration,
+future retention policies.
+
+Reference architecture shall preserve lifecycle independence across all domains.
+
+## Reference Consistency Rules
+
+Reference consistency shall be maintained by the owning application workflows rather than by shared ownership.
+
+Consistency principles:
+
+RC-01
+
+Only authoritative resources may be referenced.
+
+RC-02
+
+References shall remain logically valid throughout the resource lifecycle.
+
+RC-03
+
+Reference validation belongs to the owning application workflows.
+
+RC-04
+
+Reference consistency shall never require shared ownership.
+
+RC-05
+
+Reference consistency shall preserve aggregate independence.
+
+## Circular Reference Prevention
+
+Circular references increase:
+
+coupling,
+dependency complexity,
+lifecycle synchronization,
+future migration difficulty.
+
+The persistence model therefore adopts the following rules.
+
+CR-01
+
+Circular ownership relationships are prohibited.
+
+CR-02
+
+Circular aggregate dependencies are prohibited.
+
+CR-03
+
+Reference graphs shall remain compatible with the approved acyclic module dependency model.
+
+CR-04
+
+Cross-domain references shall never introduce dependency cycles.
+
+CR-05
+
+Future schema evolution shall preserve acyclic architectural boundaries.
+
+## Cross-Domain Dependency Alignment
+
+Reference relationships shall align with the approved backend dependency model.
+
+References may exist only where domain dependencies are already architecturally permitted.
+
+Reference relationships shall never introduce new architectural dependencies.
+
+The persistence model therefore remains subordinate to:
+
+approved backend module boundaries,
+approved capability contracts,
+approved ownership model,
+approved governance boundaries.
+
+Persistence reflects architecture.
+
+It never defines architecture.
+
+## Domain Reference Strategy
+
+Identity
+
+Identity resources become the primary reference targets for participation and accountability.
+
+Identity remains the authoritative owner of identity information.
+
+Community
+
+Community references identify participation context while preserving Community ownership of Herds and memberships.
+
+Content
+
+Content references connect authors, discussions, communities, and media while preserving Content ownership.
+
+Media
+
+Business resources reference media assets.
+
+Media ownership remains independent of attachment.
+
+Governance
+
+Governance references identify governance actors and governed resources.
+
+Governance remains the owner of governance records only.
+
+## Feed Compatibility
+
+Feed remains a derived read-only domain.
+
+Feed consumes authoritative references from business domains.
+
+Feed owns no authoritative references or persisted business relationships.
+
+## Reference Stability Principles
+
+References target stable resource identities.
+
+Reference identity remains independent of mutable business attributes.
+
+## Reference Lifecycle Principles
+
+References preserve lifecycle independence.
+
+Lifecycle changes never transfer ownership.
+
+## Reference Consistency Rules
+
+Reference consistency remains the responsibility of approved application workflows.
+
+Shared ownership is prohibited.
+
+## Circular Reference Prevention
+
+Reference architecture shall remain acyclic.
+
+Circular ownership and circular domain dependency models are prohibited.
+
+## Future Evolution Strategy
+
+Reference evolution shall:
+
+- Preserve ownership boundaries.
+- Preserve aggregate independence.
+- Preserve identifier stability.
+- Preserve API compatibility whenever practical.
+- Extend rather than replace the approved persistence model.
+
+## Reference Strategy Validation
+
+The reference architecture confirms:
+
+- Ownership boundaries remain preserved.
+- Aggregate boundaries remain preserved.
+- Domain dependencies remain unchanged.
+- Governance authority remains independent.
+- Feed remains derived.
+- Future schema evolution remains compatible with the approved architecture.
+
