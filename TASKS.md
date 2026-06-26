@@ -31,7 +31,7 @@
 - MVP Architecture Design
     - Phase 1
         -  Database Design
-            - Define Collection Inventory
+            - Define Document Structures
 
 
 
@@ -39,7 +39,6 @@
 ## Phase 1 — Core Platform
 
 ### Architecture
-- Define Document Structures
 - Define Reference Strategy
 - Define Index Strategy
 - Define Integrity Strategy
@@ -204,3 +203,4 @@ Define Frontend Performance Architecture
 Define Frontend Error Handling Architecture
 Define Frontend Architecture Validation & Evolution Strategy
 Define Database Design Principles
+Define Collection Inventory

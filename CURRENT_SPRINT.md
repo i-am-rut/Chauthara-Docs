@@ -4,10 +4,10 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Define Collection Inventory
+Define Document Structures
 
 Next Task:
-Define Document Structures
+Define Reference Strategy
 
 Blocked By:
 Nothing
