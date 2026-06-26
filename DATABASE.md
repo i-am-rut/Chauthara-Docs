@@ -2693,3 +2693,154 @@ Database Design Principles
 
 The strategy preserves domain ownership, supports approved API access patterns, and remains consistent with the project's Simplicity First and Evolutionary Architecture principles.
 
+# Integrity Strategy
+## Integrity Principles
+
+The persistence layer exists to preserve the correctness of authoritative business data throughout its lifecycle.
+
+Integrity shall follow the approved ownership and aggregate boundaries. Persistence rules shall reinforce these boundaries rather than redefine them.
+
+The database shall guarantee only those integrity requirements that affect persisted state. Business workflows, authorization, and request validation remain application responsibilities.
+
+Database integrity complements application validation. It shall never replace workflow validation, authorization, or domain rule evaluation.
+
+Integrity mechanisms shall remain proportional to MVP complexity. Preference is given to simple, explicit approaches over infrastructure-heavy solutions.
+
+Only integrity requirements required by approved MVP capabilities shall be introduced. Future business constraints shall be added only when new architectural decisions require them.
+
+## Integrity Ownership
+
+Integrity responsibilities follow domain ownership.
+
+Every domain is responsible for preserving the integrity of the collections it owns.
+
+The owning domain shall maintain:
+
+Resource identity
+Aggregate consistency
+Reference validity
+Persistence invariants
+Lifecycle consistency
+
+Cross-domain integrity shall be coordinated through approved Application Services while preserving ownership boundaries.
+
+No domain may enforce persistence rules for collections owned by another domain.
+
+Governance maintains the integrity of governance records only. It does not assume responsibility for the integrity of business collections.
+
+Feed owns no persisted authoritative data and therefore defines no persistence integrity rules.
+
+## Referential Integrity Strategy
+
+References shall point only to authoritative resources owned by their respective domains.
+
+Application workflows shall verify that referenced resources exist and are eligible before new references are persisted.
+
+References shall remain stable throughout the lifetime of the referenced resource.
+
+Reference cleanup shall follow the approved lifecycle decisions for the owning domain. Resources that are soft-deleted continue to preserve referential integrity until their lifecycle permits permanent removal.
+
+The database shall not rely on foreign-key style enforcement.
+
+Broken references shall be prevented through coordinated application workflows executed before persistence.
+
+Reference creation, modification, and removal shall preserve approved ownership boundaries and shall never create implicit ownership across domains.
+
+## Business Constraint Strategy
+
+Only persistence-level business invariants are defined here.
+
+The following constraints are authoritative.
+
+INT-01
+
+A persisted relationship shall reference existing authoritative resources.
+
+INT-02
+
+Business relationships that are defined as unique shall remain unique through approved uniqueness constraints.
+
+Examples include:
+
+One follow relationship between two users.
+One membership per user per Herd.
+One vote per user per target.
+
+INT-03
+
+Updates shall preserve the internal consistency of the owned aggregate.
+
+Persistence operations shall never leave required aggregate information partially updated.
+
+INT-04
+
+Resource identity shall remain immutable after creation.
+
+Identifiers and ownership references shall not be modified through normal business operations.
+
+INT-05
+
+Soft-deleted resources shall preserve sufficient persisted state to maintain historical consistency and valid references until permanent removal is permitted.
+
+INT-06
+
+Derived or computed information shall never become the authoritative source of persisted business truth.
+
+## Consistency Strategy
+
+Consistency is maintained at the aggregate level.
+
+Each owning domain is responsible for ensuring that its aggregates remain internally consistent after every successful persistence operation.
+
+Single-owner aggregate updates are the default consistency model for the MVP.
+
+Cross-domain workflows shall coordinate validation through approved Application Services before the owning domain performs persistence.
+
+Where a workflow affects multiple domains, only the owning domain mutates its own authoritative data. Other domains participate through approved capability contracts.
+
+Distributed consistency mechanisms are outside the scope of the MVP architecture.
+
+## Failure & Recovery Principles
+
+Persistence failures shall preserve aggregate integrity.
+
+If a persistence operation cannot complete successfully, no partial aggregate state shall become authoritative.
+
+Failed operations shall not create orphaned business relationships or incomplete owned aggregates.
+
+When a workflow cannot preserve persistence integrity, the operation shall fail rather than persist partially correct business state.
+
+Integrity takes precedence over partial success.
+
+## Future Evolution
+
+Additional integrity mechanisms may be introduced only when:
+
+New approved business constraints require stronger persistence guarantees.
+Aggregate boundaries evolve through approved architectural decisions.
+The new mechanisms preserve existing ownership boundaries and domain responsibilities.
+
+Future evolution shall extend the approved integrity model rather than replace it.
+
+## Validation
+
+The Integrity Strategy is consistent with existing approved architecture.
+
+Validated against:
+
+PROJECT_CONTEXT.md
+Preserves the Evolutionary Architecture principle by introducing only integrity mechanisms required for the approved MVP.
+ADR-001
+Preserves the Domain-Oriented Modular Monolith by aligning integrity ownership with domain ownership.
+Backend Architecture
+Maintains approved ownership boundaries, aggregate consistency responsibilities, and Application Service coordination for cross-domain workflows.
+API Contracts
+Introduces no changes to API behavior, request contracts, or response contracts.
+Database Design
+Extends the approved persistence architecture without modifying collection ownership, document structure, reference strategy, or indexing strategy.
+
+No architectural conflicts were identified.
+
+
+
+

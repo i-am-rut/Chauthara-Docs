@@ -31,7 +31,7 @@
 - MVP Architecture Design
     - Phase 1
         -  Database Design
-            - Define Integrity Strategy
+            - Define Evolution Strategy
 
 
 
@@ -39,9 +39,8 @@
 ## Phase 1 — Core Platform
 
 ### Architecture
-- Define Evolution Strategy
 - Database Validation
-- Define Infrastructure Definition
+- Infrastructure Definition
 - Architecture Validation
 
 ### Development Planning
@@ -204,3 +203,4 @@ Define Collection Inventory
 Define Document Structures
 Define Reference Strategy
 Define Index Strategy
+Define Integrity Strategy

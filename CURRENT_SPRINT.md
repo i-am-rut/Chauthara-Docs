@@ -4,10 +4,10 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Define Integrity Strategy
+Define Evolution Strategy
 
 Next Task:
-Define Evolution Strategy
+Database Validation
 
 Blocked By:
 Nothing
