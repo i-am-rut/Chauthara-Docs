@@ -32432,4 +32432,1690 @@ New interaction capabilities must remain consistent with approved frontend archi
 
 ---
 
-## 
+## Frontend Security Architecture
+### Frontend Security Philosophy
+Security-Aware Frontend architecture.
+
+The frontend shall:
+
+Understand authentication state.
+Understand session availability.
+Understand high-level authorization outcomes.
+Adapt rendering based on backend-provided information.
+Protect navigation and interaction flow.
+Prevent accidental exposure of client-side information.
+
+The frontend shall not:
+
+Authenticate users independently.
+Issue authorization decisions.
+Store sensitive credentials.
+Evaluate governance rules.
+Execute business security logic.
+Become a security authority.
+
+This aligns with the approved Backend Security Architecture, where security enforcement remains server-owned and the frontend acts only as a secure consumer of backend capabilities.
+
+#### Frontend Security Goals
+
+The frontend security architecture shall satisfy the following goals:
+
+FSG-01 — Preserve Backend Authority
+
+All authoritative security decisions originate from the backend.
+
+FSG-02 — Minimize Client Trust
+
+The browser is considered an untrusted execution environment.
+
+No client-provided state shall be inherently trusted.
+
+FSG-03 — Reduce Sensitive Data Exposure
+
+Only the minimum information required for rendering shall exist on the client.
+
+FSG-04 — Protect User Sessions
+
+Session handling shall prioritize confidentiality and integrity over convenience.
+
+FSG-05 — Secure User Interaction
+
+User workflows shall not expose privileged operations through insecure UI behavior.
+
+FSG-06 — Support Progressive Security Evolution
+
+The architecture shall support future security enhancements without structural redesign.
+
+#### Frontend Security Architecture Principles
+
+The following become authoritative.
+
+FS-01 — Backend Authority
+
+The backend is the sole authority for:
+
+Authentication
+Authorization
+Governance
+Ownership validation
+Permission evaluation
+Business security rules
+Session validity
+
+Frontend decisions are advisory only.
+
+FS-02 — Security Awareness Without Authority
+
+The frontend may consume security information.
+
+It may never originate authoritative security decisions.
+
+FS-03 — Least Client Knowledge
+
+The frontend receives only information required for:
+
+rendering,
+navigation,
+interaction,
+user experience.
+
+Internal security implementation details remain backend-only.
+
+FS-04 — Fail Securely
+
+If security state cannot be determined:
+
+protected UI remains unavailable,
+protected workflows remain blocked,
+backend verification is required before continuing.
+FS-05 — Explicit Security Boundaries
+
+Security responsibilities shall remain clearly separated between:
+
+Browser
+Frontend Application
+Backend APIs
+Infrastructure
+
+No responsibility overlap should exist.
+
+FS-06 — Consistent Security Behavior
+
+Security-related UI shall behave consistently across all domains:
+
+Identity
+Social Graph
+Community
+Content
+Media
+Governance
+
+#### Frontend Trust Boundaries
+
+The architecture establishes four trust zones.
+
+Boundary 1 — Browser Runtime
+
+Trust Level:
+
+Untrusted
+
+Characteristics:
+
+User-controlled.
+JavaScript may be modified.
+DevTools available.
+Storage inspectable.
+Network observable.
+
+No browser state is trusted.
+
+Boundary 2 — Frontend Application
+
+Trust Level:
+
+Conditionally Trusted
+
+Responsibilities:
+
+UI composition.
+Session awareness.
+State synchronization.
+Secure API communication.
+Rendering.
+
+The application may consume security information but never authoritatively validate it.
+
+Boundary 3 — Backend API
+
+Trust Level:
+
+Trusted Authority
+
+Responsibilities:
+
+Identity validation.
+Session validation.
+Permission evaluation.
+Governance enforcement.
+Resource ownership.
+Business validation.
+
+This is the primary trust boundary.
+
+Boundary 4 — Infrastructure
+
+Trust Level:
+
+Trusted Platform
+
+Responsibilities include:
+
+HTTPS termination.
+Cookie transport.
+Security headers.
+Deployment security.
+Secret management.
+
+Infrastructure remains transparent to frontend architecture.
+
+#### Client vs Server Responsibility Model
+| Responsibility           | Frontend | Backend |
+| ------------------------ | -------- | ------- |
+| Render UI                | ✓        |         |
+| Authentication decisions |          | ✓       |
+| Session validation       |          | ✓       |
+| Authorization            |          | ✓       |
+| Governance enforcement   |          | ✓       |
+| Ownership validation     |          | ✓       |
+| Route awareness          | ✓        |         |
+| Interaction restrictions | ✓        |         |
+| Security enforcement     |          | ✓       |
+| API protection           |          | ✓       |
+This preserves Backend Authority while enabling responsive UI behavior.
+
+#### Backend Authority Preservation
+
+The following rules become authoritative.
+
+BA-01
+
+Frontend shall never treat local state as proof of authentication.
+
+BA-02
+
+Frontend shall never infer permissions without backend-provided information.
+
+BA-03
+
+Every protected operation requires backend validation.
+
+BA-04
+
+Hidden UI is never considered a security mechanism.
+
+BA-05
+
+Backend responses remain authoritative when frontend state becomes inconsistent.
+
+BA-06
+
+Frontend security decisions are advisory.
+
+Backend security decisions are final.
+
+#### Least Privilege Philosophy
+
+Frontend components shall receive only the minimum security context necessary for their responsibilities.
+
+Examples:
+
+Navigation:
+
+authentication status
+
+Profile page:
+
+ownership indicator
+
+Moderation UI:
+
+moderation capability indicators
+
+Administrative interfaces:
+
+explicit backend-confirmed authority
+
+No component receives unnecessary security information.
+
+#### Defense-in-Depth Philosophy
+
+Security shall exist across multiple architectural layers.
+
+Layer 1
+
+Browser protections.
+
+Layer 2
+
+Frontend architecture.
+
+Layer 3
+
+Secure communication.
+
+Layer 4
+
+Backend authentication.
+
+Layer 5
+
+Backend authorization.
+
+Layer 6
+
+Governance enforcement.
+
+Each layer assumes that earlier layers may be bypassed.
+
+#### Secure-by-Default Principles
+
+The frontend architecture adopts the following defaults.
+
+SD-01
+
+Protected functionality is inaccessible until authentication state is confirmed.
+
+SD-02
+
+Unknown authorization state defaults to denial.
+
+SD-03
+
+Sensitive data is not persisted unnecessarily.
+
+SD-04
+
+Security failures produce safe fallback behavior.
+
+SD-05
+
+Client-side optimizations never weaken backend security.
+
+SD-06
+
+Security-sensitive UI requires explicit backend confirmation.
+
+#### Frontend Security Architectural Rules
+
+These become authoritative.
+
+FSR-01
+
+Frontend security supports backend security.
+
+It never replaces it.
+
+FSR-02
+
+Browser state is never authoritative.
+
+FSR-03
+
+Authentication awareness and authentication enforcement remain separate concerns.
+
+FSR-04
+
+Authorization awareness and authorization enforcement remain separate concerns.
+
+FSR-05
+
+Security-related state shall remain minimal and transient whenever possible.
+
+FSR-06
+
+Security boundaries shall align with approved frontend module boundaries.
+
+FSR-07
+
+Security behavior shall remain consistent across Server Components and Client Components.
+
+FSR-08
+
+Every frontend security mechanism shall preserve Backend Authority.
+
+### Authentication & Session Architecture
+Backend-Validated Session Awareness architecture.
+
+The frontend shall:
+
+Observe authentication state.
+Consume backend-confirmed session information.
+Synchronize UI with backend session lifecycle.
+Never own authentication decisions.
+
+Authentication remains a backend capability.
+
+The frontend remains an authentication-aware consumer.
+
+#### Authentication Awareness Model
+
+Authentication awareness represents the frontend's understanding of the current authentication state.
+
+It is not authentication itself.
+
+The frontend recognizes three logical states.
+
+Unknown
+
+Authentication has not yet been determined.
+
+Characteristics:
+
+Initial application startup.
+Session verification pending.
+Protected UI unavailable.
+Authenticated
+
+Backend confirms an active session.
+
+Characteristics:
+
+Protected routes may render.
+User-specific UI becomes available.
+Session-aware navigation activates.
+Unauthenticated
+
+Backend confirms no valid session.
+
+Characteristics:
+
+Public application behavior.
+Protected content unavailable.
+Authentication-required flows redirect appropriately.
+
+Authentication awareness is always derived from backend responses.
+
+#### Session Ownership Philosophy
+
+The following principles become authoritative.
+
+SAP-01 — Backend Owns Sessions
+
+Session creation, validation, renewal, and termination belong exclusively to the backend.
+
+SAP-02 — Frontend Observes Sessions
+
+Frontend consumes session state.
+
+It never owns session lifecycle.
+
+SAP-03 — Browser Stores Session Transport Only
+
+Authentication cookies exist solely as transport mechanisms.
+
+The frontend does not inspect or manipulate authentication cookies.
+
+SAP-04 — Session Validity Remains Server-Owned
+
+The frontend never assumes that an existing cookie represents a valid session.
+
+Every session state originates from backend confirmation.
+
+#### Cookie-Based Authentication Architecture
+
+The frontend adopts the previously approved backend cookie strategy.
+
+Architectural characteristics:
+
+HTTP-only authentication cookies.
+Automatic browser credential transmission.
+JavaScript-inaccessible authentication credentials.
+Backend-controlled cookie lifecycle.
+
+The frontend interacts only through authenticated API requests.
+
+Authentication credentials remain inaccessible to frontend code.
+
+This architecture:
+
+Prevents token exposure.
+Reduces XSS impact.
+Aligns with Backend Security Architecture.
+Supports Security By Default.
+
+#### Authentication State Synchronization
+
+The frontend maintains an application-level authentication view synchronized with backend session state.
+
+Synchronization occurs through:
+
+Initial application load.
+Successful login.
+Successful logout.
+Explicit session validation.
+Backend authentication failure responses.
+
+The frontend never independently transitions to an authenticated state.
+
+Every authenticated state transition requires backend confirmation.
+
+#### Protected Application Initialization
+
+Protected application initialization follows a standardized sequence.
+
+Authoritative flow:
+
+Application Start
+        ↓
+Determine Authentication State
+        ↓
+Backend Session Validation
+        ↓
+Authentication Established?
+      ↓            ↓
+     Yes           No
+      ↓            ↓
+Render Protected   Render Public
+Application        Application
+
+During initialization:
+
+Authentication remains unknown.
+Protected UI remains unavailable.
+Backend determines final authentication state.
+
+This prevents unauthorized rendering during startup.
+
+#### Session Lifecycle Awareness
+
+The frontend recognizes the following session lifecycle stages.
+
+Session Unknown
+
+Application startup.
+
+Session Active
+
+Authenticated backend session.
+
+Session Refresh
+
+Backend-controlled session renewal.
+
+Frontend simply observes the updated session state.
+
+Session Expired
+
+Backend indicates authentication is no longer valid.
+
+Frontend immediately transitions to the unauthenticated state.
+
+Session Terminated
+
+Explicit logout or backend invalidation.
+
+Frontend removes authenticated UI.
+
+The backend remains responsible for every lifecycle transition.
+
+#### Login Architectural Flow
+
+Login follows a backend-confirmed workflow.
+
+Authoritative flow:
+
+Login Form
+        ↓
+Credential Submission
+        ↓
+Backend Authentication
+        ↓
+Session Created
+        ↓
+Cookie Issued
+        ↓
+Authentication Confirmation
+        ↓
+Frontend Updates Session Awareness
+        ↓
+Protected Navigation
+
+Important rules:
+
+Login success occurs only after backend confirmation.
+Cookie creation remains backend-owned.
+Frontend never creates authentication state independently.
+
+#### Logout Architectural Flow
+
+Logout follows an explicit backend workflow.
+
+Authoritative flow:
+
+Logout Request
+        ↓
+Backend Session Invalidation
+        ↓
+Cookie Removal
+        ↓
+Logout Confirmation
+        ↓
+Frontend Clears Authentication State
+        ↓
+Public Navigation
+
+Frontend logout is considered complete only after backend confirmation.
+
+#### Session Expiration Handling
+
+Session expiration is treated as a normal architectural event.
+
+When the backend reports session expiration:
+
+The frontend shall:
+
+Transition to the unauthenticated state.
+Remove protected UI.
+Prevent additional protected operations.
+Redirect according to Navigation Architecture.
+Preserve non-sensitive application context when appropriate.
+
+The frontend shall not:
+
+Attempt local session repair.
+Assume temporary backend failure.
+Continue protected interaction.
+
+#### Authentication Boundaries
+
+The following responsibilities become authoritative.
+
+Frontend Responsibilities
+Authentication awareness.
+Session-aware rendering.
+Protected navigation.
+Session synchronization.
+Login/logout interaction.
+Session expiration handling.
+User experience.
+Backend Responsibilities
+Identity verification.
+Password validation.
+Cookie issuance.
+Cookie invalidation.
+Session creation.
+Session validation.
+Session expiration.
+Session renewal.
+Authentication enforcement.
+Browser Responsibilities
+Secure cookie transport.
+HTTPS communication.
+Automatic credential inclusion.
+
+#### Authentication Consistency Rules
+
+The following become authoritative.
+
+AUTH-FE-01
+
+Authentication state originates only from backend confirmation.
+
+AUTH-FE-02
+
+Frontend shall never read authentication credentials directly.
+
+AUTH-FE-03
+
+Protected rendering requires confirmed authentication state.
+
+AUTH-FE-04
+
+Authentication awareness shall remain synchronized with backend session state.
+
+AUTH-FE-05
+
+Session expiration immediately invalidates frontend authenticated state.
+
+AUTH-FE-06
+
+Logout completes only after backend confirmation.
+
+AUTH-FE-07
+
+Authentication state remains independent from authorization state.
+
+Authentication answers:
+
+"Is the user authenticated?"
+
+Authorization answers:
+
+"What may the user do?"
+
+AUTH-FE-08
+
+Frontend authentication architecture shall remain compatible with future authentication enhancements without structural redesign.
+
+### Authorization & Route Protection Architecture
+Authorization-Aware Frontend architecture.
+
+The frontend shall:
+
+Consume backend-confirmed authorization information.
+Adapt navigation and UI.
+Prevent obviously unavailable workflows.
+Improve user experience.
+
+The frontend shall never:
+
+Determine permissions independently.
+Evaluate ownership rules.
+Execute governance policies.
+Replace backend authorization.
+
+Every state-changing request remains subject to backend authorization.
+
+#### Authorization Awareness Philosophy
+
+Authorization awareness represents the frontend's understanding of backend-confirmed capabilities.
+
+It does not represent independent permission evaluation.
+
+The frontend may know:
+
+Whether a feature should be shown.
+Whether an action appears available.
+Whether a page should be entered.
+
+The backend always determines whether the action is actually permitted.
+
+#### Route Protection Architecture
+
+Route protection exists to improve navigation flow rather than enforce security.
+
+The frontend classifies routes into three categories.
+
+Public Routes
+
+Accessible regardless of authentication.
+
+Examples:
+
+Landing page
+Login
+Register
+Public profiles (where applicable)
+Authenticated Routes
+
+Require an authenticated session.
+
+Examples:
+
+Following Feed
+Joined Herds
+Account Settings
+Notifications
+
+Authentication status is verified before rendering protected application areas.
+
+Context-Protected Routes
+
+Require backend-confirmed eligibility beyond authentication.
+
+Examples:
+
+Herd management
+Shepherd tools
+Platform administration
+Moderation dashboard
+
+The frontend may prevent navigation when sufficient backend-confirmed context exists.
+
+The backend always performs final authorization.
+
+#### Route Protection Flow
+
+Authoritative flow:
+
+Navigation Request
+        ↓
+Authentication Awareness
+        ↓
+Route Classification
+        ↓
+Context Available?
+      ↓            ↓
+     Yes           No
+      ↓            ↓
+Render Route   Request Backend Context
+      ↓
+Backend Authorization
+      ↓
+Continue / Redirect
+
+Route protection improves navigation consistency but never replaces backend authorization.
+
+#### UI-Level Authorization
+
+The frontend may adapt visible UI according to backend-confirmed capabilities.
+
+Examples:
+
+Show:
+
+Edit button
+Delete button
+Moderate button
+Assign Shepherd button
+
+Hide:
+
+Administrative controls
+Community management actions
+Moderation workflows
+
+This behavior improves usability.
+
+Hidden UI must never be considered a security mechanism.
+
+#### Role-Aware UI Rendering
+
+The frontend supports role-aware rendering using backend-confirmed role information.
+
+Examples include:
+
+Member
+
+Standard participation UI.
+
+Shepherd
+
+Herd moderation tools.
+
+Herd Owner
+
+Community management interface.
+Shepherd management.
+
+Platform Administrator
+
+Platform governance interface.
+
+Role-aware rendering remains presentation logic.
+
+Role validation remains backend-owned.
+
+#### Ownership-Aware UI Behavior
+
+The frontend may render ownership-specific controls.
+
+Examples:
+
+Post owner:
+
+Edit
+Delete
+
+Comment owner:
+
+Edit
+Delete
+
+Profile owner:
+
+Profile settings
+
+Image owner:
+
+Remove image
+
+Ownership indicators originate from backend responses.
+
+The frontend never compares ownership independently using business rules.
+
+If ownership information becomes stale, backend responses remain authoritative.
+
+#### Governance-Aware UI Behavior
+
+Governance state influences frontend presentation.
+
+Examples:
+
+Restricted profile
+
+Limited interaction.
+Restriction messaging.
+
+Restricted post
+
+Read-only presentation.
+Hidden interaction controls.
+
+Restricted herd
+
+Membership restrictions.
+Posting disabled.
+
+Governance outcomes originate exclusively from backend responses.
+
+The frontend never evaluates governance rules.
+
+#### Permission Evaluation Boundaries
+
+Permission evaluation is intentionally divided.
+
+Frontend Responsibilities
+Display capability-aware UI.
+Adapt navigation.
+Prevent obviously unavailable interactions.
+Present backend authorization outcomes.
+Backend Responsibilities
+Role evaluation.
+Ownership evaluation.
+Governance evaluation.
+Scope validation.
+Hierarchy validation.
+Permission enforcement.
+
+This separation preserves Backend Authority.
+
+
+#### Backend vs Frontend Authorization Responsibilities
+| Responsibility             | Frontend | Backend |
+| -------------------------- | -------- | ------- |
+| Render capability-aware UI | ✓        |         |
+| Hide unavailable actions   | ✓        |         |
+| Navigation adaptation      | ✓        |         |
+| Role evaluation            |          | ✓       |
+| Ownership validation       |          | ✓       |
+| Governance evaluation      |          | ✓       |
+| Scope validation           |          | ✓       |
+| Hierarchy validation       |          | ✓       |
+| Authorization enforcement  |          | ✓       |
+| Business rule enforcement  |          | ✓       |
+
+#### Authorization Consistency Rules
+
+The following become authoritative.
+
+AUTHZ-FE-01
+
+Authorization awareness never replaces authorization enforcement.
+
+AUTHZ-FE-02
+
+Backend authorization remains authoritative for every protected operation.
+
+AUTHZ-FE-03
+
+Hidden UI shall never be treated as a security boundary.
+
+AUTHZ-FE-04
+
+Frontend shall consume backend-confirmed capability information only.
+
+AUTHZ-FE-05
+
+Ownership-aware rendering shall use backend-provided ownership indicators.
+
+AUTHZ-FE-06
+
+Governance-aware rendering shall use backend-provided governance outcomes.
+
+AUTHZ-FE-07
+
+Protected routes improve user experience but do not enforce authorization.
+
+AUTHZ-FE-08
+
+Authorization state and authentication state remain separate architectural concerns.
+
+Authentication determines:
+
+"Who is the current user?"
+
+Authorization determines:
+
+"What may this user do?"
+
+AUTHZ-FE-09
+
+Authorization-aware rendering shall remain consistent across Server Components and Client Components.
+
+AUTHZ-FE-10
+
+Authorization architecture shall support future capability expansion without structural redesign.
+
+### Secure Communication & Client Data Protection
+Secure Cookie-Based Communication architecture.
+
+The frontend shall:
+
+Use authenticated API requests.
+Rely on browser-managed secure cookies.
+Minimize client-side sensitive data.
+Standardize API interaction behavior.
+Treat backend responses as authoritative.
+
+The frontend shall never:
+
+Store authentication tokens.
+Manage session credentials.
+Duplicate backend security checks.
+Persist confidential security information.
+
+#### API Communication Security Philosophy
+
+Frontend communication shall follow a Backend-Authoritative Communication Model.
+
+Every request assumes:
+
+Backend validates authentication.
+Backend validates authorization.
+Backend validates governance.
+Backend validates ownership.
+Backend validates request integrity.
+
+Frontend communication exists solely to transport user intent.
+
+#### HTTPS Assumptions
+
+The frontend architecture assumes:
+
+All production communication occurs over HTTPS.
+Secure cookies require encrypted transport.
+Authentication credentials are never transmitted over insecure channels.
+API endpoints are always accessed through secure connections.
+
+Development environments may use local HTTP where explicitly supported by backend configuration.
+
+Production architecture assumes HTTPS exclusively.
+
+#### Credential Transmission Strategy
+
+Credential transmission follows the approved cookie-based authentication model.
+
+Authoritative flow:
+
+Frontend Request
+        ↓
+Browser Automatically Includes Secure Cookies
+        ↓
+HTTPS Request
+        ↓
+Backend Authentication
+        ↓
+Backend Authorization
+        ↓
+Response
+
+Frontend code never:
+
+Reads authentication cookies.
+Writes authentication cookies.
+Modifies authentication cookies.
+Copies authentication credentials.
+
+Credential transport remains entirely browser-managed.
+
+#### CSRF Protection Awareness
+
+CSRF protection remains primarily a backend responsibility.
+
+The frontend architecture shall:
+
+Support backend CSRF mechanisms.
+Preserve browser credential integrity.
+Avoid insecure request patterns.
+Respect backend CSRF validation requirements.
+
+The frontend does not implement independent CSRF protection logic.
+
+It participates in the backend protection model.
+
+#### Sensitive Data Handling
+
+Sensitive information shall remain minimal within frontend memory.
+
+Examples of sensitive information include:
+
+Authentication credentials.
+Session identifiers.
+Passwords.
+Verification tokens.
+Password reset tokens.
+Security secrets.
+
+Frontend responsibilities:
+
+Never persist sensitive credentials.
+Remove temporary sensitive input after workflow completion.
+Avoid unnecessary duplication.
+Limit lifetime of sensitive information in memory.
+
+#### Client-Side Storage Philosophy
+
+Client storage shall follow the principle of Minimum Persistent Data.
+
+Suitable client storage includes:
+
+UI preferences.
+Theme settings.
+Non-sensitive user preferences.
+Temporary interaction state.
+
+Unsuitable client storage includes:
+
+Authentication tokens.
+Session identifiers.
+Passwords.
+Security credentials.
+Authorization information intended for enforcement.
+
+The backend remains the authoritative owner of security-related state.
+
+#### Token Exposure Prevention
+
+The approved architecture intentionally minimizes token exposure.
+
+The frontend shall never store authentication tokens in:
+
+localStorage
+sessionStorage
+IndexedDB
+URL parameters
+Global application state
+Component state
+
+Authentication credentials remain inaccessible through JavaScript.
+
+This significantly reduces the impact of successful XSS attacks.
+
+#### Error Message Exposure Rules
+
+Security-related API responses shall expose only information necessary for user interaction.
+
+Frontend error presentation shall:
+
+Display:
+
+Authentication required.
+Permission denied.
+Session expired.
+Validation failure.
+Operation failed.
+
+Avoid exposing:
+
+Internal authorization rules.
+Security implementation details.
+Session identifiers.
+Stack traces.
+Infrastructure details.
+Internal backend exceptions.
+
+Detailed diagnostics remain backend-owned.
+
+#### Secure API Interaction Principles
+
+The frontend adopts the following principles.
+
+SCI-01 — Backend Is Always Authoritative
+
+API responses become the final security decision.
+
+SCI-02 — Standardized Communication
+
+All frontend modules use a consistent API communication model.
+
+SCI-03 — Credential Isolation
+
+Frontend never directly accesses authentication credentials.
+
+SCI-04 — Minimal Data Exposure
+
+Only required response data shall enter frontend state.
+
+SCI-05 — Defensive Failure Handling
+
+Unexpected security responses transition the frontend to a safe application state.
+
+SCI-06 — Consistent Error Processing
+
+Security-related API failures are processed consistently throughout the application.
+
+SCI-07 — No Client Trust
+
+Requests originating from the frontend are treated as untrusted until validated by the backend.
+
+SCI-08 — Stateless Communication
+
+Each API request remains independently verifiable by the backend.
+
+The frontend never assumes previous authorization guarantees future authorization.
+
+#### Client Data Protection Rules
+
+The following become authoritative.
+
+CDP-01
+
+Sensitive credentials shall never be persisted in client storage.
+
+CDP-02
+
+Authentication cookies remain inaccessible to frontend code.
+
+CDP-03
+
+Frontend state shall contain only information required for rendering and interaction.
+
+CDP-04
+
+Security-sensitive data shall have the shortest practical lifetime within application memory.
+
+CDP-05
+
+Frontend components shall avoid propagating sensitive information across unrelated modules.
+
+CDP-06
+
+API responses become the authoritative source of client-visible security state.
+
+CDP-07
+
+Client-side storage shall be limited to non-sensitive application data.
+
+CDP-08
+
+Secure communication patterns shall remain consistent across all frontend domains.
+
+### Browser Security & Client Runtime Protection
+Secure Runtime by Default architecture.
+
+The frontend shall:
+
+Prefer safe rendering mechanisms.
+Minimize execution of untrusted content.
+Restrict browser persistence.
+Treat external content as untrusted.
+Limit runtime attack surface.
+
+The frontend shall never:
+
+Trust user-provided HTML.
+Execute arbitrary client content.
+Persist security-sensitive information.
+Circumvent browser security protections.
+
+#### XSS Mitigation Philosophy
+
+Cross-Site Scripting (XSS) mitigation begins with the assumption that all externally supplied content is untrusted.
+
+The frontend architecture shall:
+
+Prefer automatic output escaping.
+Avoid manual HTML rendering.
+Prevent execution of user-controlled scripts.
+Keep authentication credentials inaccessible to JavaScript.
+
+Backend sanitization and frontend safe rendering work together as complementary layers.
+
+#### Safe Rendering Principles
+
+Rendering shall default to framework-provided safe mechanisms.
+
+The frontend shall:
+
+Render user content as plain text unless explicitly designed otherwise.
+Prefer declarative rendering.
+Preserve automatic escaping behavior.
+Isolate rendering concerns from user-generated content.
+
+Unsafe rendering mechanisms shall remain exceptional rather than routine.
+
+#### Content Injection Boundaries
+
+Content injection shall follow explicit architectural boundaries.
+
+Trusted Content
+
+Examples:
+
+Static application UI.
+Framework-generated markup.
+Approved design system components.
+Backend-Controlled Content
+
+Examples:
+
+Profile information.
+Posts.
+Comments.
+Herd descriptions.
+
+The frontend renders this content safely without assuming it is executable.
+
+User-Generated Content
+
+User-generated content shall always be treated as untrusted.
+
+The frontend shall never execute:
+
+User scripts.
+Embedded JavaScript.
+Dynamic event handlers.
+Arbitrary HTML.
+
+#### File Upload Security Awareness
+
+The frontend participates in secure upload workflows but does not perform security enforcement.
+
+Frontend responsibilities include:
+
+File selection.
+Basic client-side validation for usability.
+Upload progress.
+User feedback.
+
+Backend responsibilities include:
+
+File validation.
+MIME verification.
+Malware detection (future evolution).
+Authorization.
+Storage validation.
+Media processing.
+
+Frontend validation improves user experience but never replaces backend validation.
+
+#### Third-Party Dependency Boundaries
+
+Third-party libraries expand the application's trust boundary.
+
+The frontend architecture adopts the following principles.
+
+TPD-01 — Minimize External Dependencies
+
+Prefer platform capabilities and established project dependencies before introducing new libraries.
+
+TPD-02 — Trusted Sources Only
+
+Dependencies shall originate from trusted package ecosystems and established maintainers.
+
+TPD-03 — Least Required Capability
+
+Libraries shall provide only capabilities required by the approved architecture.
+
+TPD-04 — Isolated Responsibility
+
+Each dependency should serve a clearly defined architectural purpose.
+
+TPD-05 — Controlled Evolution
+
+Third-party dependency growth shall remain intentional and reviewable.
+
+#### Browser Storage Rules
+
+Browser storage follows the previously established Client Data Protection philosophy.
+
+Persistent browser storage is appropriate only for:
+
+UI preferences.
+Theme selection.
+Non-sensitive application configuration.
+
+Persistent browser storage shall never contain:
+
+Authentication credentials.
+Session identifiers.
+Security tokens.
+Authorization decisions.
+Governance state intended for enforcement.
+
+Browser storage remains a convenience mechanism rather than a security mechanism.
+
+#### Security Headers Awareness
+
+Security headers are infrastructure and backend responsibilities.
+
+The frontend architecture assumes protection through standard browser security headers such as:
+
+Content Security Policy (CSP)
+X-Content-Type-Options
+Referrer Policy
+Permissions Policy
+Strict-Transport-Security (production)
+
+The frontend shall remain compatible with restrictive security header configurations and shall not depend on behavior that would require weakening them.
+
+#### Clickjacking Awareness
+
+The frontend shall assume protection against framing attacks through backend and infrastructure configuration.
+
+Frontend architecture shall:
+
+Avoid workflows that depend on unrestricted embedding.
+Remain compatible with frame protection policies.
+Avoid introducing UI behavior that weakens clickjacking protections.
+
+Protection mechanisms remain infrastructure-owned.
+
+#### Client Runtime Security Principles
+
+The following become authoritative.
+
+CRS-01 — Browser Is Untrusted
+
+The runtime environment shall always be considered user-controlled.
+
+CRS-02 — Safe Rendering By Default
+
+Rendering defaults to framework-safe rendering behavior.
+
+CRS-03 — External Content Is Untrusted
+
+All externally supplied content is treated as untrusted input.
+
+CRS-04 — Runtime State Is Ephemeral
+
+Sensitive runtime information shall remain temporary whenever practical.
+
+CRS-05 — Browser Storage Is Convenience Only
+
+Persistent storage exists for user experience, not security.
+
+CRS-06 — Third-Party Code Expands Trust Boundaries
+
+Every dependency increases the application's trusted computing base and shall be introduced deliberately.
+
+CRS-07 — Security Layers Are Complementary
+
+Browser protections, frontend architecture, backend validation, and infrastructure controls work together without overlapping authority.
+
+CRS-08 — Security Mechanisms Shall Remain Transparent to Business Logic
+
+Business modules shall not implement browser-specific security behavior.
+
+Browser protection remains part of the shared frontend infrastructure.
+
+#### Browser Security Architectural Rules
+
+The following become authoritative.
+
+BSR-01
+
+The frontend shall rely on framework-safe rendering as the default rendering mechanism.
+
+BSR-02
+
+User-generated content shall never be executed within the browser runtime.
+
+BSR-03
+
+Security-sensitive information shall never be intentionally exposed through browser storage.
+
+BSR-04
+
+Frontend validation shall complement, never replace, backend validation.
+
+BSR-05
+
+Third-party dependencies shall remain minimal, intentional, and reviewable.
+
+BSR-06
+
+The frontend shall remain compatible with restrictive browser security policies and security headers.
+
+BSR-07
+
+Browser runtime protections shall remain independent of business domain logic.
+
+BSR-08
+
+Browser security architecture shall evolve without changing established frontend module boundaries.
+
+### Future Evolution Strategy
+Evolutionary Frontend Security Architecture.
+
+The approved architectural boundaries shall remain stable.
+
+Future capabilities shall be introduced through extension rather than architectural replacement.
+
+Core architectural principles remain unchanged:
+
+Backend Authority
+Security By Default
+Explicit Trust Boundaries
+Secure Cookie Authentication
+Authorization Awareness
+Browser Security
+Domain-Oriented Frontend
+
+#### Security Hardening Evolution
+
+Phase 1 establishes secure architectural foundations.
+
+Future hardening may include:
+
+Stricter Content Security Policies.
+Enhanced browser security policies.
+Improved dependency auditing.
+Stronger runtime integrity protections.
+Enhanced upload validation workflows.
+Expanded client security telemetry.
+
+These improvements strengthen existing layers rather than introducing new architectural responsibilities.
+
+#### Authentication Evolution
+
+The authentication architecture shall support additional authentication mechanisms without changing frontend security boundaries.
+
+Potential future capabilities include:
+
+Multi-factor authentication (MFA).
+Device verification.
+Trusted device recognition.
+Passwordless authentication.
+Federated identity providers.
+Session management improvements.
+
+Authentication awareness, session ownership, and Backend Authority remain unchanged.
+
+#### Authorization Evolution
+
+Authorization awareness may evolve to support richer presentation capabilities.
+
+Examples include:
+
+More granular capability indicators.
+Feature-specific UI adaptation.
+Expanded governance interfaces.
+Context-aware administrative tooling.
+Fine-grained moderation experiences.
+
+The frontend continues to consume backend-confirmed authorization outcomes.
+
+Permission enforcement remains backend-owned.
+
+#### Browser Security Evolution
+
+Browser security may become progressively stronger while preserving the approved runtime architecture.
+
+Potential improvements include:
+
+More restrictive Content Security Policies.
+Trusted Types adoption where supported.
+Stronger isolation of third-party integrations.
+Enhanced dependency verification.
+Improved browser compatibility with emerging security standards.
+
+These enhancements strengthen runtime protection without changing module boundaries.
+
+#### Device Security Considerations
+
+Future releases may become more device-aware.
+
+Examples include:
+
+Device recognition.
+Session activity awareness.
+Device management interfaces.
+Security notifications.
+Active session visibility.
+Session revocation controls.
+
+Device information becomes additional presentation state.
+
+Authentication authority remains server-owned.
+
+#### Future MFA Readiness
+
+The frontend architecture intentionally separates authentication awareness from authentication execution.
+
+This enables future MFA support through additional authentication steps rather than architectural redesign.
+
+Possible future workflow:
+
+User Authentication
+        ↓
+Primary Credential Verification
+        ↓
+Secondary Verification
+        ↓
+Backend Session Creation
+        ↓
+Frontend Authentication Awareness
+
+The frontend remains responsible only for presenting the authentication flow.
+
+Verification logic remains backend-owned.
+
+#### Future WebAuthn Readiness
+
+The approved architecture remains compatible with WebAuthn-based authentication.
+
+Future authentication providers may replace password entry without changing:
+
+Session ownership.
+Authentication awareness.
+Cookie-based session transport.
+Backend Authority.
+Protected application initialization.
+
+Only the authentication mechanism evolves.
+
+The architectural boundaries remain stable.
+
+#### Future Security Monitoring Readiness
+
+Operational security capabilities may expand after MVP.
+
+Potential future additions include:
+
+Client-side security telemetry.
+Suspicious activity reporting.
+Browser compatibility monitoring.
+Runtime integrity reporting.
+Enhanced authentication diagnostics.
+Security event correlation.
+
+These capabilities observe frontend behavior.
+
+They never become security enforcement mechanisms.
+
+#### Evolution Without Structural Redesign
+
+The following architectural boundaries remain intentionally stable.
+
+The frontend continues to own:
+
+Authentication awareness.
+Authorization awareness.
+Secure communication.
+Secure rendering.
+Runtime protection.
+Session synchronization.
+Secure user interaction.
+
+The backend continues to own:
+
+Authentication.
+Authorization.
+Governance.
+Ownership validation.
+Session management.
+Security enforcement.
+Trust decisions.
+
+Future capabilities extend these responsibilities without redistributing authority.
+
+#### Long-Term Maintainability
+
+The approved architecture supports long-term maintainability through the following principles.
+
+LTM-01 — Stable Security Boundaries
+
+Security responsibilities remain consistent as new features are introduced.
+
+LTM-02 — Backend Authority Preservation
+
+Future frontend enhancements shall never reduce backend authority.
+
+LTM-03 — Incremental Adoption
+
+Security improvements should be independently adoptable.
+
+LTM-04 — Shared Infrastructure
+
+Security concerns continue to reside within shared frontend infrastructure rather than business modules.
+
+LTM-05 — Framework Evolution Compatibility
+
+The architecture should remain compatible with future framework improvements without requiring structural redesign.
+
+LTM-06 — Operational Simplicity
+
+Operational complexity should increase only when justified by real platform requirements.
+
+#### Future Evolution Rules
+
+The following become authoritative.
+
+FE-SEC-01
+
+Future security capabilities shall extend existing architectural boundaries rather than replace them.
+
+FE-SEC-02
+
+Authentication evolution shall preserve Backend Authority.
+
+FE-SEC-03
+
+Authorization evolution shall remain presentation-oriented on the frontend.
+
+FE-SEC-04
+
+Browser security improvements shall strengthen runtime protection without altering business architecture.
+
+FE-SEC-05
+
+Future device-aware capabilities shall remain observational unless explicitly backed by backend authority.
+
+FE-SEC-06
+
+Security monitoring capabilities shall remain informational rather than authoritative.
+
+FE-SEC-07
+
+Security evolution shall preserve the approved frontend module structure.
+
+FE-SEC-08
+
+Future enhancements shall continue following the Evolutionary Architecture principle.
+
+--- 
+
+##
