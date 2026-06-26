@@ -2599,3 +2599,97 @@ The reference architecture confirms:
 - Feed remains derived.
 - Future schema evolution remains compatible with the approved architecture.
 
+# Index Strategy
+## Indexing Principles
+
+Indexes exist to support approved API query patterns, ownership workflows, and lifecycle operations.
+
+The following principles are authoritative:
+
+Create indexes only for approved business query patterns.
+Define required indexes as part of schema design.
+Prefer read performance improvements only when justified by expected access frequency.
+Favor the smallest index set that satisfies MVP requirements.
+Do not introduce indexes for speculative features or anticipated future growth.
+Reassess index requirements only when new API capabilities or measurable performance needs emerge.
+## Index Ownership
+
+Index ownership follows collection ownership.
+
+Each owning domain is responsible for defining and maintaining the indexes of its collections.
+
+Indexes must not introduce cross-domain ownership assumptions.
+
+Query optimization across domains shall be achieved through indexes on authoritative collections rather than duplicate or shared indexes.
+
+## Required MVP Indexes
+| Collection               | Required Indexes                                                                                                                   |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| User Accounts            | Unique: Email, Username                                                                                                            |
+| User Profiles            | Lookup: Account ID                                                                                                                 |
+| Follows                  | Unique: (Follower ID, Following ID), Lookup: Follower ID, Lookup: Following ID                                                     |
+| Posts                    | Lookup: Author ID, Lookup: Herd ID, Feed Retrieval: (Author ID + Created Timestamp), Feed Retrieval: (Herd ID + Created Timestamp) |
+| Comments                 | Lookup: Post ID, Lookup: Parent Comment ID, Lookup: Author ID                                                                      |
+| Votes                    | Unique: (User ID + Target Type + Target ID), Lookup: Target Type + Target ID                                                       |
+| Herds                    | Unique: Herd Slug, Lookup: Owner ID                                                                                                |
+| Herd Memberships         | Unique: (Herd ID + Member ID), Lookup: Member ID, Lookup: Herd ID                                                                  |
+| Shepherd Assignments     | Unique: (Herd ID + User ID), Lookup: Herd ID                                                                                       |
+| Images                   | Lookup: Owner ID                                                                                                                   |
+| Reports                  | Lookup: Target Type + Target ID, Lookup: Status, Lookup: Assigned Reviewer                                                         |
+| Moderation Actions       | Lookup: Target Type + Target ID, Lookup: Actor ID, Lookup: Created Timestamp                                                       |
+
+
+Only these indexes are considered architecturally required for the approved MVP.
+
+Additional indexes require new approved query patterns or demonstrated performance needs.
+
+## Compound Index Guidelines
+
+Compound indexes shall be introduced only when they directly support approved query patterns.
+
+The following rules are authoritative:
+
+Design compound indexes around complete query patterns rather than individual fields.
+Prefer one compound index over multiple overlapping indexes when it satisfies the same access pattern.
+Avoid multiple indexes that optimize the same query with minimal benefit.
+Do not create compound indexes for infrequent administrative or future workflows.
+## Uniqueness Strategy
+
+Uniqueness constraints enforce business invariants rather than implementation convenience.
+
+The following resources require uniqueness:
+
+| Business Rule       | Required Uniqueness                            |
+| ------------------- | ---------------------------------------------- |
+| User account        | Email                                          |
+| User account        | Username                                       |
+| Follow relationship | One follower → following relationship          |
+| Vote                | One vote per user for a target                 |
+| Herd                | Herd slug                                      |
+| Herd membership     | One membership per user within a herd          |
+| Shepherd assignment | One shepherd assignment per user within a herd |
+
+No additional uniqueness constraints are introduced unless required by approved business rules.
+
+## Future Evolution
+
+Future indexes shall be introduced only when:
+
+New approved API query patterns require them.
+Production performance measurements justify them.
+Existing ownership boundaries remain unchanged.
+
+Index evolution shall extend the approved indexing strategy rather than replace it.
+
+## Validation
+
+The Index Strategy is consistent with:
+
+PROJECT_CONTEXT.md
+ADR-001
+Backend Architecture
+API_CONTRACTS.md
+Database Design Principles
+
+The strategy preserves domain ownership, supports approved API access patterns, and remains consistent with the project's Simplicity First and Evolutionary Architecture principles.
+
