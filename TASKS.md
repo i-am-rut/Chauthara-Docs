@@ -30,8 +30,7 @@
 # Ongoing
 - MVP Architecture Design
     - Phase 1
-        - Define Frontend Architecture
-            -  Define Frontend Architecture Validation & Evolution Strategy
+        -  Database Design
 
 
 
@@ -197,3 +196,4 @@ Define Frontend Forms & User Interaction Architecture
 Define Frontend Security Architecture
 Define Frontend Performance Architecture
 Define Frontend Error Handling Architecture
+Define Frontend Architecture Validation & Evolution Strategy

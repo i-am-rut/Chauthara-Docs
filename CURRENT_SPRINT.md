@@ -4,10 +4,10 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Frontend Architecture Validation & Evolution Strategy
+Database Design
 
 Next Task:
-Database Design
+TBD
 
 Blocked By:
 Nothing
