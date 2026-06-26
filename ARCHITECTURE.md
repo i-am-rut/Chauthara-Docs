@@ -30511,4 +30511,1925 @@ Structural redesign shall occur only when existing architectural boundaries demo
 
 ---
 
-##
+## Frontend Forms & User Interaction Architecture
+### Forms Architecture Philosophy
+Workflow-Oriented Form Architecture
+
+Forms shall be treated as frontend workflow boundaries, not as business logic owners.
+
+A form represents the collection of user input required to execute a single application workflow.
+
+Examples include:
+
+Registration
+Login
+Create Post
+Edit Profile
+Create Herd
+Join Herd
+Submit Report
+
+The form is responsible for gathering input and presenting interaction state.
+
+The business workflow begins only when the form submits through the approved frontend application layer.
+
+Architectural Rules
+
+FF-01
+
+Forms never own business rules.
+
+FF-02
+
+Forms never own business state.
+
+FF-03
+
+Forms communicate only through approved API contracts.
+
+FF-04
+
+Forms never bypass frontend domain modules.
+
+FF-05
+
+Backend remains the authoritative validator of every business operation.
+
+This architecture directly supports:
+
+Backend Authority
+API-First Design
+Domain-Oriented Frontend
+Evolutionary Architecture
+
+#### Form Ownership Model
+Decision
+
+Ownership of a form is determined by the frontend domain responsible for the workflow it initiates.
+| Frontend Domain | Example Forms                   |
+| --------------- | ------------------------------- |
+| Identity        | Login, Register, Edit Profile   |
+| Content         | Create Post, Edit Post, Comment |
+| Community       | Create Herd, Join Herd          |
+| Governance      | Report Content                  |
+| Media           | Image Upload dialogs            |
+
+
+Shared infrastructure may provide reusable form primitives, but workflow ownership remains with the consuming domain.
+
+Architectural Rules
+
+FF-06
+
+Each form belongs to exactly one frontend domain.
+
+FF-07
+
+Shared UI components never own workflow logic.
+
+FF-08
+
+Cross-domain forms coordinate through approved frontend application services rather than directly coupling domain logic.
+
+This preserves the previously approved module ownership boundaries.
+
+#### Form Composition Principles
+Decision
+
+Forms shall be composed from reusable UI primitives while keeping workflow behavior localized.
+
+Composition layers become:
+
+Page
+    ↓
+Workflow Form
+        ↓
+Reusable Form Sections
+            ↓
+Reusable Form Fields
+                ↓
+UI Components
+
+Responsibilities remain clearly separated.
+
+Form Layers
+Workflow Form
+
+Owns:
+
+workflow orchestration
+submission trigger
+interaction state binding
+
+Does not own:
+
+business validation
+API implementation details
+backend rules
+Form Sections
+
+Own:
+
+logical grouping of related fields
+
+Examples:
+
+Account Information
+Profile Details
+Herd Information
+Form Fields
+
+Own:
+
+user input
+accessibility bindings
+field presentation
+UI Components
+
+Own:
+
+rendering
+styling
+interaction primitives
+Architectural Rules
+
+FF-09
+
+Forms compose reusable building blocks instead of duplicating field implementations.
+
+FF-10
+
+Composition hierarchy must remain presentation-oriented.
+
+FF-11
+
+Reusable components remain domain-agnostic.
+
+This aligns with the previously approved UI System Architecture.
+
+#### Separation of Presentation and Business Logic
+Decision
+
+Presentation and business execution remain separate architectural concerns.
+
+Presentation Layer Responsibilities
+
+Owns:
+
+layout
+field rendering
+accessibility
+input interaction
+visual validation display
+loading presentation
+
+Never owns:
+
+authorization
+governance
+business validation
+API rules
+persistence logic
+Workflow Layer Responsibilities
+
+Owns:
+
+submission orchestration
+API invocation
+lifecycle coordination
+success/failure transitions
+Backend Responsibilities
+
+Owns:
+
+business validation
+ownership validation
+authorization
+governance
+lifecycle enforcement
+Architectural Rules
+
+FF-12
+
+Business rules never execute inside UI components.
+
+FF-13
+
+Presentation remains replaceable without affecting workflow execution.
+
+FF-14
+
+Backend validation always remains authoritative.
+
+This preserves the Backend Authority principle established throughout the architecture.
+
+#### Controlled vs Uncontrolled Form Strategy
+Possible Approaches
+Fully Controlled Forms
+
+Every field value is synchronized with React state.
+
+Advantages:
+
+predictable behavior
+easy integration with validation
+consistent interaction model
+
+Disadvantages:
+
+additional renders
+unnecessary state updates for large forms
+Primarily Uncontrolled Forms with Controlled Integration
+
+Leverage native form behavior while synchronizing only the state required by application workflows.
+
+Advantages:
+
+improved performance
+reduced state complexity
+aligns with Local-First state philosophy
+simpler implementation for typical forms
+
+Disadvantages:
+
+requires disciplined integration with validation and submission logic
+Recommended Decision
+
+Adopt a primarily uncontrolled form architecture with controlled integration where application state requires it.
+
+Examples of controlled state include:
+
+dynamically derived fields
+conditional UI
+interactive previews
+rich input components
+
+Most standard text inputs should avoid unnecessary synchronization with shared application state.
+
+Why it fits Chauthara
+Supports the approved Local-First state architecture.
+Reduces unnecessary React state management.
+Preserves simplicity for MVP workflows.
+Provides a clear evolution path for richer interactions.
+Architectural Rules
+
+FF-15
+
+Local form input remains local unless application behavior requires synchronization.
+
+FF-16
+
+Shared application state must not be used as a general-purpose form store.
+
+FF-17
+
+Controlled inputs are introduced only when interaction requirements justify them.
+
+#### Reusable Form Philosophy
+Decision
+
+Reusable form infrastructure should prioritize consistency over abstraction.
+
+Reusable elements include:
+
+field layouts
+labels
+helper text
+validation presentation
+submit actions
+accessibility behavior
+
+Workflow-specific behavior remains within the owning domain.
+
+The architecture intentionally avoids creating a generic "universal form engine" for Phase 1.
+
+Why it fits Chauthara
+Matches the project's Simplicity First principle.
+Avoids premature abstraction for a solo developer.
+Encourages consistent UX without introducing unnecessary complexity.
+Leaves room for future reusable infrastructure as workflows grow.
+Future Evolution Path
+
+As the platform expands, reusable infrastructure may evolve to include:
+
+shared form composition utilities
+standardized validation adapters
+common submission lifecycle helpers
+
+This evolution can occur without redesigning existing domain workflows because ownership boundaries remain stable.
+
+### Validation Architecture
+Layered Validation Architecture
+
+Validation responsibilities shall be divided according to architectural ownership rather than implementation convenience.
+
+The frontend validates only information it can determine independently.
+
+The backend validates everything requiring business knowledge.
+
+This directly aligns with the previously approved Backend Validation Architecture.
+
+#### Client-Side Validation
+Decision
+
+Client validation exists exclusively to improve interaction quality before API submission.
+
+Approved client validation includes:
+
+required fields
+input length
+input format
+basic type validation
+allowed character validation
+simple value ranges
+file selection constraints that are already known by the client
+
+Examples
+
+✓ Empty title
+
+✓ Invalid email format
+
+✓ Password confirmation mismatch
+
+✓ Maximum character count
+
+✓ Unsupported image type
+
+The frontend must never attempt to validate:
+
+ownership
+authorization
+governance restrictions
+business invariants
+resource existence
+lifecycle transitions
+
+These remain backend responsibilities.
+
+Architectural Rules
+
+FV-01
+
+Client validation is presentation-oriented.
+
+FV-02
+
+Client validation must never become a business rule engine.
+
+FV-03
+
+Client validation must not replace backend validation.
+
+This preserves Backend Authority while providing responsive user interaction.
+
+#### Server-Side Validation
+
+Decision
+
+The backend remains the authoritative validator for every workflow.
+
+The frontend shall always treat backend validation as final.
+
+Server validation includes:
+
+business rules
+authorization
+ownership
+governance
+lifecycle validation
+aggregate consistency
+cross-resource validation
+duplicate detection
+state transition validation
+
+Regardless of client validation success, every submission proceeds through backend validation.
+
+Architectural Rules
+
+FV-04
+
+Backend validation is authoritative.
+
+FV-05
+
+Frontend success never implies backend success.
+
+FV-06
+
+Frontend must consume backend validation outcomes without reinterpretation.
+
+This remains fully consistent with the approved Backend Validation Architecture.
+
+#### Validation Ownership
+Decision
+
+Validation ownership follows existing architectural ownership boundaries.
+| Validation Category        | Owner    |
+| -------------------------- | -------- |
+| Input completeness         | Frontend |
+| Input formatting           | Frontend |
+| Accessibility requirements | Frontend |
+| Business rules             | Backend  |
+| Authorization              | Backend  |
+| Ownership validation       | Backend  |
+| Governance validation      | Backend  |
+| Resource lifecycle         | Backend  |
+| Aggregate consistency      | Backend  |
+
+The frontend may assist the user but never becomes the authority.
+
+Why it fits Chauthara
+Reinforces Backend Authority.
+Prevents duplicated business logic.
+Aligns with approved backend execution flow.
+Simplifies frontend maintenance.
+Architectural Rules
+
+FV-07
+
+Every validation rule has exactly one architectural owner.
+
+FV-08
+
+Ownership boundaries mirror the approved backend ownership model.
+
+#### Validation Lifecycle
+Decision
+
+Validation follows a predictable lifecycle across every form.
+
+User Input
+      ↓
+Local Input Validation
+      ↓
+Field Feedback
+      ↓
+Form Submission
+      ↓
+Backend Validation
+      ↓
+API Response
+      ↓
+UI Update
+
+Validation should occur progressively.
+
+Stage 1 — Input Validation
+
+Executed during user interaction.
+
+Purpose:
+
+immediate guidance
+prevent obvious mistakes
+Stage 2 — Submission Validation
+
+Executed immediately before submission.
+
+Purpose:
+
+ensure complete client-side validation
+prevent unnecessary API requests
+Stage 3 — Backend Validation
+
+Executed after API request.
+
+Purpose:
+
+evaluate authoritative business rules
+Stage 4 — UI Synchronization
+
+Frontend updates:
+
+field errors
+form errors
+success state
+
+using the backend response.
+
+Architectural Rules
+
+FV-09
+
+Validation progresses from local feedback to authoritative backend evaluation.
+
+FV-10
+
+Backend validation always concludes the validation lifecycle.
+
+
+#### Error Message Architecture
+Decision
+
+Validation messages shall distinguish between presentation errors and business errors.
+
+Presentation Errors
+
+Generated locally.
+
+Examples:
+
+Required field
+Invalid email format
+Maximum length exceeded
+
+Displayed immediately beside the relevant field.
+
+Business Errors
+
+Generated by the backend.
+
+Examples:
+
+Username already exists
+Herd membership required
+Restricted account
+Governance restriction
+
+Displayed using the backend response without attempting to recreate the rule locally.
+
+Form-Level Errors
+
+Errors affecting the overall workflow.
+
+Examples:
+
+Submission failed
+Validation failed across multiple fields
+Unexpected server rejection
+
+Presented separately from individual field errors.
+
+Architectural Rules
+
+FV-11
+
+Presentation errors originate only from frontend validation.
+
+FV-12
+
+Business errors originate only from backend validation.
+
+FV-13
+
+Frontend must preserve backend error meaning.
+
+This maintains consistency with the approved API Error Contract.
+
+#### Validation Consistency
+Decision
+
+All forms shall follow the same validation model regardless of domain.
+
+Consistency applies to:
+
+validation timing
+error presentation
+submission behavior
+success handling
+failure handling
+
+No workflow should introduce domain-specific validation patterns unless required by approved product behavior.
+
+Shared validation utilities may be reused where they remain presentation-focused.
+
+Why it fits Chauthara
+Predictable user experience.
+Reduced maintenance.
+Easier onboarding for future contributors.
+Aligns with the reusable UI philosophy established previously.
+Architectural Rules
+
+FV-14
+
+Validation behavior shall remain consistent across frontend domains.
+
+FV-15
+
+Shared validation utilities must remain domain-agnostic.
+
+#### Validation Boundaries
+Decision
+
+Validation boundaries follow architectural ownership rather than convenience.
+
+Frontend Boundary
+
+Responsible for:
+
+user guidance
+interaction quality
+accessibility
+presentation correctness
+
+Not responsible for:
+
+business correctness
+authorization
+ownership
+governance
+persistence rules
+Backend Boundary
+
+Responsible for:
+
+business correctness
+security
+lifecycle enforcement
+resource integrity
+governance enforcement
+API Boundary
+
+Acts as the transition point between presentation validation and business validation.
+
+All validation crossing this boundary must use the approved API contracts.
+
+Future Evolution Path
+
+Future schema-based validation may allow shared validation definitions for presentation constraints.
+
+Business rules shall continue to remain backend-owned.
+
+This enables richer tooling without violating Backend Authority.
+
+Architectural Rules
+
+FV-16
+
+Frontend validation ends at the API boundary.
+
+FV-17
+
+Business validation never crosses into frontend architecture.
+
+FV-18
+
+Validation boundaries must remain consistent with domain ownership boundaries.
+
+### Form State & Submission Architecture
+#### Form State Architecture
+Hybrid Form State Architecture
+
+Form interaction state shall remain local to the form.
+
+Authoritative business state shall continue to follow the previously approved server-state architecture.
+
+This preserves the separation established in the Frontend State Management Architecture:
+
+Local UI State
+Shared Client State
+Server State
+
+Forms participate only in the first category.
+
+#### Form State Ownership
+Decision
+
+Each form owns only its interaction state.
+
+Examples include:
+
+current input values
+dirty status
+touched fields
+validation messages
+submission status
+temporary previews
+
+The form never owns:
+
+user profile
+post data
+herd data
+feed data
+membership state
+
+Those remain server-owned.
+
+Architectural Rules
+
+FS-01
+
+Form state is local interaction state.
+
+FS-02
+
+Business entities remain server state.
+
+FS-03
+
+Shared client state must not become a general-purpose form store.
+
+This remains fully consistent with the approved Local-First state architecture.
+
+#### Integration with Frontend State Architecture
+Decision
+
+Forms integrate with the existing state model without introducing a separate state category.
+
+User Interaction
+        ↓
+Local Form State
+        ↓
+Validation
+        ↓
+Submission
+        ↓
+Application Service
+        ↓
+API
+        ↓
+Server State Update
+        ↓
+UI Synchronization
+
+Responsibilities remain separated.
+
+Local Form State
+
+Owns:
+
+input values
+field interaction
+validation display
+submission lifecycle
+Shared Client State
+
+May provide:
+
+authenticated user
+theme
+global preferences
+
+Never stores active form data.
+
+Server State
+
+Owns:
+
+authoritative resources
+API responses
+cached business entities
+Architectural Rules
+
+FS-04
+
+Forms consume server state but never own it.
+
+FS-05
+
+Server updates synchronize back into the UI through the approved rendering and state architecture.
+
+#### Submission Lifecycle
+Decision
+
+Every form submission follows the same architectural lifecycle.
+
+Idle
+   ↓
+Local Validation
+   ↓
+Submitting
+   ↓
+Backend Processing
+   ↓
+Success
+or
+Failure
+
+The lifecycle remains identical across frontend domains.
+
+Idle
+
+Waiting for user interaction.
+
+Validation
+
+Presentation validation executes.
+
+Submission proceeds only if presentation validation succeeds.
+
+Submitting
+
+API request initiated.
+
+Duplicate submissions are prevented.
+
+Backend Processing
+
+Backend performs:
+
+business validation
+authorization
+governance
+lifecycle validation
+Completion
+
+Results synchronize back into the frontend.
+
+Architectural Rules
+
+FS-06
+
+Submission lifecycle shall remain consistent across all workflows.
+
+FS-07
+
+Submission state represents workflow progress, not business state.
+
+#### Async Submission Architecture
+Decision
+
+All network-based submissions are treated as asynchronous workflows.
+
+The frontend shall explicitly model asynchronous execution.
+
+Submission flow:
+
+Submit
+   ↓
+Pending
+   ↓
+Response
+   ↓
+Success / Failure
+
+The UI remains responsive throughout submission.
+
+Why it fits Chauthara
+Consistent with API-First Design.
+Matches server-authoritative architecture.
+Supports image uploads and future asynchronous workflows without redesign.
+Architectural Rules
+
+FS-08
+
+Network requests always execute asynchronously.
+
+FS-09
+
+Async execution state remains local to the initiating workflow.
+
+#### Pending State Model
+Decision
+
+Pending state represents an active workflow awaiting backend completion.
+
+During pending state the UI may:
+
+disable repeated submission
+indicate progress
+prevent conflicting actions
+
+Pending state does not imply successful execution.
+
+Pending concludes only after receiving the backend response.
+
+Architectural Rules
+
+FS-10
+
+Pending state represents request execution only.
+
+FS-11
+
+Pending state must never modify authoritative business state.
+
+#### Success State Model
+Decision
+
+Success is determined exclusively by successful backend completion.
+
+Frontend success actions may include:
+
+clearing temporary interaction state
+updating server-state caches through approved mechanisms
+navigation when appropriate
+displaying success feedback
+
+The frontend must never assume success before receiving backend confirmation.
+
+Architectural Rules
+
+FS-12
+
+Backend response determines success.
+
+FS-13
+
+Local interaction state may reset after successful completion.
+
+#### Failure State Model
+Decision
+
+Failure state represents unsuccessful workflow completion.
+
+Failures include:
+
+validation failures
+authorization failures
+governance restrictions
+network failures
+infrastructure failures
+
+The UI shall preserve sufficient interaction state to allow user correction without unnecessary re-entry.
+
+Why it fits Chauthara
+Improves user experience.
+Prevents unnecessary data loss.
+Preserves Backend Authority by displaying backend outcomes directly.
+Architectural Rules
+
+FS-14
+
+Failed submissions retain recoverable interaction state whenever practical.
+
+FS-15
+
+Failure presentation follows the Validation Architecture established in Part 2.
+
+#### Retry Strategy
+Possible Approaches
+Automatic Retry
+
+Automatically repeat failed submissions.
+
+Advantages
+
+Reduced effort for transient failures.
+
+Disadvantages
+
+Risk of duplicate mutations.
+Difficult to reason about write operations.
+Manual Retry
+
+User explicitly retries after reviewing the failure.
+
+Advantages
+
+Predictable.
+Safe.
+Simple.
+
+Disadvantages
+
+Requires one additional interaction.
+Recommended Decision
+
+Adopt manual retry for Phase 1.
+
+Write operations should never be automatically repeated.
+
+The user remains responsible for initiating another submission after correcting the problem.
+
+Why it fits Chauthara
+Prevents accidental duplicate operations.
+Keeps write workflows deterministic.
+Aligns with operational simplicity.
+Matches common web application behavior.
+Future Evolution Path
+
+Automatic retry may be introduced later for safe, idempotent operations if justified by future requirements.
+
+Architectural Rules
+
+FS-16
+
+Write workflows require explicit user retry after failure.
+
+FS-17
+
+Automatic retry is not part of the MVP submission architecture.
+
+#### Optimistic vs Pessimistic Update Strategy
+Possible Approaches
+Optimistic Updates
+
+UI updates immediately before backend confirmation.
+
+Advantages
+
+Fast perceived performance.
+
+Disadvantages
+
+Rollback complexity.
+Temporary inconsistency.
+Increased implementation complexity.
+Pessimistic Updates
+
+UI updates only after backend confirmation.
+
+Advantages
+
+Backend remains authoritative.
+Simple synchronization.
+Predictable behavior.
+
+Disadvantages
+
+Slightly slower perceived response.
+Recommended Decision
+
+Adopt pessimistic updates as the default architectural strategy.
+
+Because Chauthara follows Backend Authority, UI state should synchronize only after confirmed backend success.
+
+This aligns with:
+
+Backend Authority
+API-First Design
+Server State ownership
+Simplicity First
+
+Future selective optimistic interactions may be introduced for isolated, reversible actions without redesigning the overall architecture.
+
+Architectural Rules
+
+FS-18
+
+Pessimistic synchronization is the default submission model.
+
+FS-19
+
+Optimistic updates require explicit architectural justification.
+
+FS-20
+
+Authoritative server responses always reconcile final UI state.
+
+### User Interaction Architecture
+Centralized User Interaction Architecture
+
+User interaction patterns shall be standardized across the application.
+
+Interaction behavior should communicate workflow state without exposing implementation details.
+
+The architecture prioritizes:
+
+consistency
+predictability
+accessibility
+backend-driven outcomes
+
+This aligns with the previously approved UI System Architecture.
+
+#### User Interaction Philosophy
+Decision
+
+Every interaction exists to communicate workflow state rather than application implementation.
+
+Interaction architecture shall:
+
+acknowledge user actions
+communicate progress
+communicate results
+assist recovery
+remain visually consistent
+
+Interaction components never determine business outcomes.
+
+Business outcomes originate exclusively from backend responses.
+
+Architectural Rules
+
+UI-01
+
+User interactions communicate workflow state.
+
+UI-02
+
+Interaction components never own business decisions.
+
+UI-03
+
+Interaction feedback must remain consistent across frontend domains.
+
+#### Feedback Pattern Architecture
+Decision
+
+Feedback shall be proportional to the significance of the interaction.
+
+Interaction categories become:
+| Category        | Purpose                               |
+| --------------- | ------------------------------------- |
+| Inline Feedback | Immediate field or component guidance |
+| Toast Feedback  | Short-lived workflow notifications    |
+| Page Feedback   | Page-level workflow communication     |
+| Dialog Feedback | High-impact user confirmation         |
+Each category has a distinct responsibility.
+
+Why it fits Chauthara
+Predictable interaction hierarchy.
+Prevents duplicated interaction patterns.
+Supports future platform growth without redesign.
+Architectural Rules
+
+UI-04
+
+Every feedback mechanism has a single architectural purpose.
+
+UI-05
+
+Feedback mechanisms must not overlap unnecessarily.
+
+#### Loading Indicator Architecture
+Decision
+
+Loading indicators communicate asynchronous workflow progress.
+
+Loading indicators should exist at the smallest practical scope.
+
+Preferred hierarchy:
+
+Component loading
+Section loading
+Page loading
+
+Application-wide loading should remain uncommon.
+
+Loading indicators reflect pending execution only.
+
+They never imply successful completion.
+
+Architectural Rules
+
+UI-06
+
+Loading indicators represent pending workflows only.
+
+UI-07
+
+Loading scope should remain as localized as possible.
+
+UI-08
+
+Global loading indicators are reserved for application-wide transitions.
+
+#### Confirmation Dialog Architecture
+Decision
+
+Confirmation dialogs shall be reserved for actions that are:
+
+destructive
+irreversible
+security-sensitive
+governance-sensitive
+
+Examples include:
+
+Delete Post
+Delete Herd
+Remove Membership
+Remove Image
+Governance actions
+
+Routine interactions should not require confirmation.
+
+Why it fits Chauthara
+Prevents unnecessary interaction friction.
+Reserves confirmations for meaningful decisions.
+Aligns with common platform UX expectations.
+Architectural Rules
+
+UI-09
+
+Confirmation dialogs require meaningful user impact.
+
+UI-10
+
+Routine interactions should execute without unnecessary confirmation.
+
+#### Notification Architecture
+Decision
+
+Notifications communicate significant application events beyond the immediate interaction.
+
+Examples:
+
+profile updated
+herd created
+report submitted
+image uploaded
+
+Notifications supplement workflows rather than replace workflow feedback.
+
+Notifications remain informational.
+
+They never become required for workflow completion.
+
+Architectural Rules
+
+UI-11
+
+Notifications communicate completed application events.
+
+UI-12
+
+Notifications remain non-blocking.
+
+#### Toast Architecture
+Decision
+
+Toasts provide lightweight, transient workflow feedback.
+
+Appropriate examples include:
+
+Saved successfully
+Copied to clipboard
+Upload completed
+Submission failed
+Connection restored
+
+Toasts should:
+
+appear briefly
+avoid interrupting interaction
+disappear automatically where appropriate
+
+They should not contain complex workflow decisions.
+
+Architectural Rules
+
+UI-13
+
+Toasts communicate transient workflow outcomes.
+
+UI-14
+
+Toasts must remain concise and non-blocking.
+
+UI-15
+
+Toasts must not replace detailed validation or error feedback.
+
+#### Inline Feedback Architecture
+Decision
+
+Inline feedback provides contextual guidance close to the affected interaction.
+
+Examples include:
+
+validation errors
+helper text
+upload status
+field requirements
+character counts
+
+Inline feedback should always remain associated with the relevant UI element.
+
+Why it fits Chauthara
+Immediate user guidance.
+Reduced cognitive load.
+Consistent with Validation Architecture.
+Architectural Rules
+
+UI-16
+
+Inline feedback remains contextual.
+
+UI-17
+
+Validation feedback should appear nearest the affected field.
+
+#### Disabled State Architecture
+Decision
+
+Disabled states indicate temporarily unavailable interactions.
+
+Common reasons include:
+
+pending submission
+insufficient input
+unavailable workflow
+temporary system state
+
+Disabled state communicates current availability.
+
+It must never become the primary authorization mechanism.
+
+Authorization remains backend enforced.
+
+Architectural Rules
+
+UI-18
+
+Disabled controls improve interaction quality.
+
+UI-19
+
+Disabled controls do not replace backend authorization.
+
+UI-20
+
+Disabled state reasons should remain predictable.
+
+#### Empty State Architecture
+Decision
+
+Empty states communicate the absence of expected content.
+
+Examples:
+
+no posts
+no followers
+no herd members
+no search results
+no notifications
+
+Empty states should:
+
+explain the situation
+encourage the next logical action
+avoid implying application failure
+
+Empty state presentation should remain visually consistent throughout the application.
+
+Architectural Rules
+
+UI-21
+
+Empty states communicate absence rather than failure.
+
+UI-22
+
+Empty states should guide users toward the next meaningful action.
+
+#### Error Recovery Architecture
+Decision
+
+Interaction architecture should help users recover from recoverable failures.
+
+Recovery mechanisms include:
+
+correcting invalid input
+retrying failed submissions
+returning to previous workflow steps
+preserving recoverable user input
+
+Recoverable failures should avoid unnecessary loss of user-entered information.
+
+Catastrophic failures remain outside normal interaction recovery.
+
+Why it fits Chauthara
+Complements the Form Submission Architecture.
+Reduces user frustration.
+Supports predictable workflow recovery.
+Architectural Rules
+
+UI-23
+
+Recoverable workflows should preserve interaction context whenever practical.
+
+UI-24
+
+Error recovery should guide users toward successful completion.
+
+UI-25
+
+Interaction recovery must remain consistent with backend workflow outcomes.
+
+### File Upload & Rich Interaction Architecture
+Shared File Upload & Rich Interaction Architecture
+
+Upload interactions shall follow a common architectural model regardless of the owning frontend domain.
+
+Workflow ownership remains within the owning domain, while interaction behavior remains standardized.
+
+This aligns with:
+
+Domain-Oriented Frontend
+Backend Authority
+Reusable UI System
+Evolutionary Architecture
+
+#### Image Upload Interaction Architecture
+Decision
+
+Image uploads shall be treated as asynchronous form workflows.
+
+Standard upload lifecycle:
+
+Select Image
+      ↓
+Local Validation
+      ↓
+Preview Generation
+      ↓
+Upload Request
+      ↓
+Backend Processing
+      ↓
+Success / Failure
+
+The upload workflow follows the same submission lifecycle established in Part 3.
+
+Image uploads remain temporary until accepted by the backend.
+
+Architectural Rules
+
+FU-01
+
+Image uploads follow the standard submission lifecycle.
+
+FU-02
+
+Media ownership remains with the backend Media domain.
+
+FU-03
+
+Frontend previews never imply successful upload.
+
+#### Drag and Drop Architecture
+Decision
+
+Drag-and-drop is an alternative interaction mechanism rather than a separate upload workflow.
+
+Whether a file is:
+
+selected through the file picker, or
+dropped into a drop zone,
+
+the subsequent workflow remains identical.
+
+Drag-and-drop affects only input acquisition.
+
+It does not alter:
+
+validation
+upload lifecycle
+backend communication
+Why it fits Chauthara
+Maintains a single upload architecture.
+Prevents duplicated workflows.
+Simplifies maintenance.
+Architectural Rules
+
+FU-04
+
+Drag-and-drop and file picker interactions converge into the same upload workflow.
+
+FU-05
+
+Upload behavior remains independent of the input method.
+
+#### Progress Indicator Architecture
+Decision
+
+Progress indicators communicate upload execution state.
+
+Progress indicators should:
+
+begin after upload starts
+reflect upload progress when available
+transition into normal submission completion
+disappear after completion
+
+Progress indication reflects workflow execution only.
+
+It must never imply backend persistence until confirmation is received.
+
+Architectural Rules
+
+FU-06
+
+Progress indicators communicate upload execution.
+
+FU-07
+
+Upload progress is presentation state only.
+
+FU-08
+
+Backend confirmation determines upload completion.
+
+#### Preview Architecture
+Decision
+
+Local previews improve user confidence before upload completion.
+
+Preview generation occurs from locally available media.
+
+The preview represents:
+
+selected media
+temporary interaction state
+
+The preview never becomes authoritative application data.
+
+Backend-provided media replaces the preview after successful upload.
+
+Why it fits Chauthara
+Improves usability.
+Preserves Backend Authority.
+Aligns with Local-First interaction state.
+Architectural Rules
+
+FU-09
+
+Local previews remain temporary interaction artifacts.
+
+FU-10
+
+Server media replaces local previews after successful upload.
+
+FU-11
+
+Preview generation must not modify application state.
+
+#### Cancellation Architecture
+Decision
+
+Users should be able to cancel uploads that are still in progress.
+
+Cancellation affects only the current upload workflow.
+
+Cancellation does not modify:
+
+previously uploaded media
+existing application resources
+backend-owned data
+
+If cancellation occurs before upload completion, temporary interaction state may be discarded.
+
+Architectural Rules
+
+FU-12
+
+Cancellation terminates only the active upload workflow.
+
+FU-13
+
+Cancellation never affects confirmed backend resources.
+
+#### Retry Strategy for Upload Workflows
+Possible Approaches
+Automatic Retry
+
+Retry failed uploads automatically.
+
+Advantages
+
+Better resilience to temporary failures.
+
+Disadvantages
+
+Duplicate uploads.
+Less predictable behavior.
+Additional complexity.
+Manual Retry
+
+Users explicitly retry after failure.
+
+Advantages
+
+Predictable.
+Consistent with Form Submission Architecture.
+Simpler implementation.
+
+Disadvantages
+
+Additional user action.
+Recommended Decision
+
+Adopt manual retry for Phase 1.
+
+Retry behavior shall remain consistent with the standard submission architecture defined in Part 3.
+
+Users decide when to retry after reviewing failure feedback.
+
+Architectural Rules
+
+FU-14
+
+Failed uploads require explicit user retry.
+
+FU-15
+
+Upload retry follows the standard submission lifecycle.
+
+#### Media Interaction Consistency
+Decision
+
+Every media interaction shall follow the same interaction principles regardless of the owning workflow.
+
+Consistency applies to:
+
+image selection
+upload
+preview
+replacement
+removal
+validation
+progress
+cancellation
+retry
+
+Workflow-specific business rules remain owned by the corresponding frontend domain.
+
+Interaction behavior remains shared.
+
+Why it fits Chauthara
+Predictable UX.
+Simplifies future maintenance.
+Supports additional media-enabled workflows without redesign.
+Future Evolution Path
+
+Without changing the architecture, future versions may introduce:
+
+multiple image uploads
+image reordering
+image cropping
+image compression
+additional media types
+richer editors
+
+These become extensions of the existing upload interaction architecture rather than architectural replacements.
+
+Architectural Rules
+
+FU-16
+
+Media interaction patterns remain consistent across frontend domains.
+
+FU-17
+
+Interaction behavior remains reusable while workflow ownership remains domain-specific.
+
+FU-18
+
+Future media capabilities extend the existing architecture without changing ownership boundaries.
+
+#### Rich Interaction Boundaries
+Decision
+
+Rich interactions enhance user experience but never become sources of business truth.
+
+Examples include:
+
+drag-and-drop
+previews
+upload progress
+animated transitions
+temporary interaction states
+
+These remain presentation-layer concerns.
+
+Business ownership, validation, authorization, and persistence remain backend responsibilities.
+
+Architectural Rules
+
+FU-19
+
+Rich interactions remain presentation enhancements.
+
+FU-20
+
+Backend authority remains unchanged regardless of interaction sophistication.
+
+### Future Evolution Strategy
+#### Future Reusable Form Infrastructure
+Incremental reusable form infrastructure.
+
+Future reusable capabilities may include:
+
+form containers
+field composition helpers
+validation adapters
+submission lifecycle utilities
+standardized error presentation
+accessibility helpers
+
+Reusable infrastructure should emerge from repeated architectural patterns rather than anticipated needs.
+
+Architectural Rules
+
+FE-01
+
+Shared form infrastructure evolves from validated reuse.
+
+FE-02
+
+Reusable infrastructure must remain workflow-independent.
+
+FE-03
+
+Workflow ownership remains with frontend domains.
+
+#### Future Schema Validation Evolution
+Requirement
+
+Presentation validation may become more sophisticated as workflows expand.
+
+The architecture should allow stronger validation consistency without moving business rules into the frontend.
+
+Recommended Decision
+
+Future schema-based validation may be introduced for presentation constraints only.
+
+Suitable future use cases include:
+
+field definitions
+input formatting
+reusable validation messages
+shared validation composition
+
+Business validation shall remain exclusively backend-owned.
+
+Why it fits Chauthara
+Preserves Backend Authority.
+Improves consistency.
+Avoids duplicated business logic.
+Future Evolution Path
+
+Schema validation can be introduced without changing:
+
+submission architecture
+API contracts
+backend validation ownership
+Architectural Rules
+
+FE-04
+
+Schema validation remains presentation-oriented.
+
+FE-05
+
+Backend continues to own all business validation.
+
+#### Future Multi-Step Forms
+Requirement
+
+Future workflows may require multiple coordinated interaction steps.
+
+Examples may include:
+
+onboarding
+advanced profile configuration
+longer community workflows
+
+Phase 1 does not require these capabilities.
+
+Recommended Decision
+
+The existing submission architecture shall become the foundation for future multi-step workflows.
+
+Each step should remain:
+
+independently validated
+locally managed
+part of a larger workflow
+
+Final submission continues to follow the approved submission lifecycle.
+
+Why it fits Chauthara
+Reuses existing architecture.
+Avoids introducing a separate workflow model.
+Supports future complexity without redesign.
+Architectural Rules
+
+FE-06
+
+Multi-step workflows extend the existing submission lifecycle.
+
+FE-07
+
+Each step remains an independent interaction boundary.
+
+#### Future Rich Editor Evolution
+Requirement
+
+Future releases may introduce richer content creation experiences.
+
+Examples include:
+
+advanced text editing
+richer media support
+embedded content
+formatting tools
+
+These capabilities remain outside Phase 1.
+
+Recommended Decision
+
+Rich editors should be treated as specialized interaction components.
+
+They remain consumers of the existing:
+
+Forms Architecture
+Validation Architecture
+Submission Architecture
+Media Architecture
+
+Rich editors must not introduce a separate workflow architecture.
+
+Future Evolution Path
+
+Future editors may support:
+
+draft interaction state
+richer formatting
+enhanced media insertion
+additional interaction tools
+
+without changing backend ownership or submission flow.
+
+Architectural Rules
+
+FE-08
+
+Rich editors remain specialized presentation components.
+
+FE-09
+
+Submission architecture remains unchanged.
+
+#### Future Advanced Interaction Patterns
+Requirement
+
+Future platform capabilities may require more sophisticated interaction behaviors.
+
+Possible examples include:
+
+progressive disclosure
+richer animations
+advanced previews
+contextual assistance
+enhanced media interactions
+
+These remain outside MVP scope.
+
+Recommended Decision
+
+Future interaction enhancements shall extend the existing interaction architecture rather than replacing it.
+
+Every new interaction should continue to follow the established principles:
+
+backend authority
+predictable workflow states
+reusable interaction patterns
+domain ownership preservation
+Why it fits Chauthara
+Preserves architectural consistency.
+Prevents fragmented interaction models.
+Supports gradual platform evolution.
+Architectural Rules
+
+FE-10
+
+Advanced interactions extend existing interaction patterns.
+
+FE-11
+
+Interaction enhancements never alter ownership boundaries.
+
+#### Evolution Without Redesign
+Decision
+
+The approved Forms & User Interaction Architecture has been intentionally designed around stable architectural boundaries rather than implementation details.
+
+The following boundaries remain stable:
+
+Architectural Boundary	Evolution Strategy
+Forms	Add reusable infrastructure incrementally
+Validation	Extend presentation validation only
+Form State	Continue Local-First interaction state
+Submission	Reuse existing lifecycle
+User Interactions	Extend shared interaction patterns
+Media	Expand supported capabilities without changing ownership
+
+This architecture allows future capabilities to be introduced through extension rather than replacement.
+
+Architectural Evolution Principles
+
+Future evolution shall preserve:
+
+Backend Authority
+Domain-Oriented Frontend
+API-First Design
+Server Component First philosophy
+Local-First interaction state
+Reusable UI primitives
+Shared submission lifecycle
+
+No future enhancement should require redesigning the architectural foundations established in Parts 1–5.
+
+Architectural Rules
+
+FE-12
+
+Future capabilities extend existing architectural boundaries.
+
+FE-13
+
+Evolution shall favor incremental refinement over architectural replacement.
+
+FE-14
+
+New interaction capabilities must remain consistent with approved frontend architectural principles.
+
+---
+
+## 
