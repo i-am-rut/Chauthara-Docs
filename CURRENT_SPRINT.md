@@ -4,10 +4,10 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Database Design
+Define Collection Inventory
 
 Next Task:
-TBD
+Define Document Structures
 
 Blocked By:
 Nothing
