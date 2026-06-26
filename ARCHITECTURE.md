@@ -34118,4 +34118,1261 @@ Future enhancements shall continue following the Evolutionary Architecture princ
 
 --- 
 
+## Frontend Performance Architecture
+#### Performance Philosophy
+Performance by Default as the frontend performance philosophy.
+
+Why it fits Chauthara
+
+This approach aligns with established architectural principles:
+
+Simplicity First
+Evolutionary Architecture
+Server Component First
+Hybrid Rendering
+Domain-Oriented Frontend
+
+Performance becomes a built-in architectural concern instead of an implementation cleanup activity.
+
+Optimization is introduced only where architectural decisions indicate measurable value.
+
+#### Frontend Performance Goals
+
+The frontend architecture shall prioritize:
+
+Fast initial page rendering.
+Responsive user interactions.
+Efficient resource utilization.
+Predictable rendering behavior.
+Minimal unnecessary JavaScript execution.
+Stable runtime performance.
+Consistent loading experience.
+Efficient network utilization.
+
+Performance improvements shall never compromise:
+
+Security
+Maintainability
+Architectural consistency
+Backend authority
+Domain ownership
+
+#### Performance Architecture Principles
+
+The frontend adopts the following principles.
+
+FP-01 — User-Perceived Performance First
+
+Architectural decisions prioritize perceived responsiveness over benchmark optimization.
+
+Users should experience:
+
+Fast page availability.
+Immediate interaction feedback.
+Predictable loading behavior.
+FP-02 — Minimize Client Work
+
+Computation should execute on the server whenever practical.
+
+Client-side execution should exist only where browser interactivity requires it.
+
+This reinforces the approved Server Component First philosophy.
+
+FP-03 — Avoid Unnecessary Rendering
+
+Rendering should occur only when application state or user interaction requires visual updates.
+
+Rendering work shall not be duplicated across architectural layers.
+
+FP-04 — Efficient Resource Delivery
+
+Only resources required for the current user experience should be delivered.
+
+Unused assets shall not become part of the initial application load.
+
+FP-05 — Backend Authority Preserved
+
+Performance optimization shall never duplicate or relocate authoritative business logic to the frontend.
+
+The backend remains the authoritative source for:
+
+Business state
+Authorization
+Governance
+Validation
+Resource ownership
+
+Performance optimizations consume backend results rather than replacing backend decisions.
+
+FP-06 — Predictable Performance
+
+Performance behavior should remain deterministic.
+
+Architectural performance should not depend on hidden optimizations or unpredictable runtime behavior.
+
+FP-07 — Measure Before Optimizing
+
+Architectural complexity shall not be introduced solely to improve hypothetical performance.
+
+Optimization should follow measurable requirements.
+
+This remains consistent with Evolutionary Architecture.
+
+#### Performance Ownership Model
+
+Performance ownership follows existing architectural boundaries.
+
+| Layer                    | Primary Responsibility                                 |
+| ------------------------ | ------------------------------------------------------ |
+| Backend                  | Business execution efficiency, API response efficiency |
+| Frontend Rendering       | Efficient rendering composition                        |
+| UI System                | Efficient component composition                        |
+| State Architecture       | Prevent unnecessary state propagation                  |
+| Navigation               | Efficient route transitions                            |
+| Data Fetching            | Efficient data retrieval and synchronization           |
+| Performance Architecture | Cross-cutting optimization principles                  |
+
+
+No single module owns all frontend performance.
+
+Each architectural layer owns performance within its responsibilities.
+
+#### Performance Budget Philosophy
+
+Performance budgets serve as architectural guidance rather than strict implementation metrics during Phase 1.
+
+The architecture favors:
+
+Small initial JavaScript payloads.
+Minimal hydration.
+Incremental resource loading.
+Controlled asset growth.
+Predictable rendering costs.
+
+Formal performance budgets may be introduced after real usage data becomes available.
+
+#### Performance-by-Default Principles
+
+Performance should emerge naturally from approved architecture rather than from isolated optimization efforts.
+
+Approved architectural decisions already contribute to performance:
+
+Server Components reduce client JavaScript.
+Local-first state minimizes unnecessary updates.
+Domain-oriented organization limits cross-feature coupling.
+Backend authority prevents duplicated computation.
+Hybrid rendering reduces unnecessary client rendering.
+
+Performance Architecture standardizes these benefits rather than introducing new architectural patterns.
+
+#### User-Perceived Performance Philosophy
+
+The architecture optimizes what users experience.
+
+Priority order:
+
+Content visibility.
+Navigation responsiveness.
+Interaction feedback.
+Progressive enhancement.
+Secondary visual refinement.
+
+Minor background work should never delay visible user interaction.
+
+#### Runtime Efficiency Principles
+
+Runtime efficiency shall prioritize:
+
+Minimal JavaScript execution.
+Stable rendering cycles.
+Controlled memory usage.
+Limited component recomposition.
+Efficient browser resource utilization.
+
+The frontend should avoid maintaining runtime state that duplicates backend-owned information.
+
+#### Scalability vs Simplicity Considerations
+
+For Phase 1:
+
+Prefer:
+
+Native framework optimizations.
+Simple architectural rules.
+Predictable rendering behavior.
+Incremental optimization.
+
+Avoid:
+
+Custom rendering pipelines.
+Aggressive runtime optimization frameworks.
+Complex client-side scheduling.
+Specialized performance infrastructure.
+
+Future optimization remains possible without structural redesign.
+
+#### Frontend Performance Architectural Rules
+
+The following become authoritative architectural rules.
+
+FPA-01
+
+Performance optimization shall preserve Backend Authority.
+
+FPA-02
+
+Performance optimization shall preserve Server Component First philosophy.
+
+FPA-03
+
+Client-side execution shall remain minimal.
+
+FPA-04
+
+Performance optimizations shall never duplicate business logic.
+
+FPA-05
+
+Performance improvements shall favor architectural simplicity over implementation complexity.
+
+FPA-06
+
+Performance decisions shall be measurable before introducing additional architectural abstractions.
+
+FPA-07
+
+Rendering efficiency shall take precedence over micro-optimizing isolated components.
+
+FPA-08
+
+Performance architecture shall remain compatible with future evolution without requiring structural redesign.
+
+### Rendering & Asset Performance Architecture
+Server-Oriented Rendering Optimization architecture.
+
+Rendering performance should primarily result from:
+
+Server Component rendering.
+Reduced client-side execution.
+Route-based resource delivery.
+Native framework optimizations.
+Incremental asset loading.
+
+The architecture should avoid introducing specialized optimization techniques unless future profiling demonstrates a measurable need.
+
+#### Rendering Performance Philosophy
+
+Rendering performance shall be achieved through architectural decisions rather than component-level micro-optimizations.
+
+Priority order:
+
+Reduce client rendering.
+Reduce JavaScript delivery.
+Reduce hydration.
+Deliver only required assets.
+Optimize runtime rendering.
+
+Rendering efficiency is considered an outcome of good architecture rather than isolated optimization.
+
+#### Server Component Performance Advantages
+
+The approved Server Component First philosophy remains the primary rendering optimization strategy.
+
+Server Components provide:
+
+Reduced client-side JavaScript.
+Minimal hydration requirements.
+Server-side data composition.
+Faster initial rendering.
+Improved browser resource utilization.
+
+Architectural Rule:
+
+Server Components remain the default rendering model.
+
+Client Components are introduced only when browser interactivity requires them.
+
+#### Client Component Minimization
+
+Client Components represent the primary source of runtime JavaScript.
+
+Their use shall remain intentionally limited.
+
+Client Components should exist only for:
+
+Interactive forms.
+Browser event handling.
+Local UI state.
+Browser APIs.
+Rich client interactions.
+
+Client Components shall not be introduced solely for organizational convenience.
+
+Rendering boundaries remain driven by functionality rather than implementation preference.
+
+#### Route-Level Code Splitting
+
+The architecture adopts route-level code splitting as the default resource loading strategy.
+
+Each route should load only:
+
+Required layouts.
+Required Server Components.
+Required Client Components.
+Required styles.
+Required assets.
+
+Unrelated feature modules shall not become part of another route's initial bundle.
+
+This aligns with the approved Domain-Oriented Frontend organization.
+
+#### Lazy Loading Architecture
+
+Lazy loading shall be used for resources that are not required during initial page rendering.
+
+Appropriate candidates include:
+
+Feature-specific interactive components.
+Heavy client-only modules.
+Secondary interface elements.
+Optional dialogs and overlays.
+Deferred media content.
+
+Lazy loading should improve initial responsiveness without altering application behavior.
+
+Critical application functionality shall not depend on deferred loading.
+
+#### Asset Loading Strategy
+
+Asset delivery shall follow a critical-first philosophy.
+
+Loading priority:
+
+Critical UI assets.
+Route-specific assets.
+User-requested assets.
+Deferred supporting assets.
+
+Asset loading should remain predictable and deterministic.
+
+The architecture discourages loading global assets that are unused by the active route.
+
+#### Image Optimization Philosophy
+
+Images represent one of the largest frontend resource costs.
+
+The architecture adopts the following principles:
+
+Deliver appropriately sized images.
+Avoid unnecessary image downloads.
+Prefer responsive image delivery.
+Load images according to visibility and user need.
+Preserve visual quality while minimizing transfer size.
+
+Image optimization remains an infrastructure-supported concern consumed by the frontend architecture.
+
+Frontend responsibilities include:
+
+Appropriate image usage.
+Efficient rendering.
+Deferred loading where appropriate.
+
+Media ownership and lifecycle remain within the approved Media domain.
+
+#### Font Loading Strategy
+
+Typography should not significantly delay content rendering.
+
+The architecture favors:
+
+Limited font families.
+Limited font weights.
+Efficient font loading.
+Early rendering with fallback fonts.
+Predictable typography behavior.
+
+Fonts should support visual consistency without becoming a rendering bottleneck.
+
+#### CSS Optimization Boundaries
+
+Styling should remain modular and route-aware.
+
+The architecture favors:
+
+Component-scoped styling.
+Shared design tokens.
+Reusable UI primitives.
+Elimination of unused styling dependencies.
+
+Styling architecture should support incremental growth without introducing unnecessary global CSS complexity.
+
+#### JavaScript Optimization Boundaries
+
+JavaScript delivery should remain proportional to user interaction requirements.
+
+Priority order:
+
+Server-render where possible.
+Minimize client execution.
+Defer non-critical scripts.
+Eliminate unused client logic.
+Prevent duplicate functionality.
+
+The frontend should avoid delivering business logic already executed by the backend.
+
+#### Rendering Performance Consistency Rules
+
+The following become authoritative architectural rules.
+
+RPA-01
+
+Server Components remain the preferred rendering model.
+
+RPA-02
+
+Client Components shall be introduced only for browser-specific interactivity.
+
+RPA-03
+
+Route-level code splitting shall remain the default resource loading strategy.
+
+RPA-04
+
+Lazy loading shall target non-critical functionality.
+
+RPA-05
+
+Only assets required for the active route shall be loaded during initial rendering.
+
+RPA-06
+
+Images shall be delivered efficiently while preserving visual quality.
+
+RPA-07
+
+Fonts shall prioritize rendering stability over typography complexity.
+
+RPA-08
+
+CSS shall remain modular and aligned with the approved UI architecture.
+
+RPA-09
+
+JavaScript delivery shall remain proportional to actual interaction requirements.
+
+RPA-10
+
+Rendering optimizations shall preserve Backend Authority, Server Component First philosophy, and approved rendering boundaries.
+
+### Data & Network Performance Architecture
+Framework-Oriented Data Performance architecture.
+
+Network performance should primarily result from:
+
+Efficient rendering boundaries.
+Framework-native caching.
+Controlled revalidation.
+Stable API contracts.
+Predictable request behavior.
+Minimal payload transfer.
+
+The architecture avoids introducing custom client-side networking abstractions until justified by measurable requirements.
+
+#### Network Efficiency Philosophy
+
+Network efficiency shall prioritize reducing unnecessary communication rather than accelerating excessive communication.
+
+The architecture favors:
+
+Fewer requests.
+Smaller payloads.
+Reusable responses.
+Predictable synchronization.
+Stable request patterns.
+
+The frontend should request only the information required for the current user experience.
+
+#### API Request Optimization
+
+API requests should remain intentional and predictable.
+
+The frontend should:
+
+Request only required resources.
+Avoid duplicate requests.
+Reuse previously retrieved data when appropriate.
+Minimize sequential request chains.
+Prefer consolidated backend endpoints already defined by API_CONTRACTS.md.
+
+The frontend shall not compose business data by making excessive API requests when the backend already exposes an appropriate resource.
+
+#### Request Deduplication Philosophy
+
+Multiple consumers requesting identical server data should share the same request lifecycle.
+
+Architectural objectives:
+
+Prevent duplicate concurrent requests.
+Share retrieved results.
+Prevent redundant network utilization.
+Maintain consistent server state across consuming components.
+
+Request deduplication is considered part of the shared data-fetching infrastructure rather than individual feature implementations.
+
+#### Caching Utilization
+
+Caching remains an optimization of data retrieval—not an alternative source of truth.
+
+The frontend cache serves to:
+
+Reduce repeated network requests.
+Improve perceived responsiveness.
+Support rendering efficiency.
+Reuse server-provided data.
+
+Cached data shall always remain subordinate to Backend Authority.
+
+The frontend shall never treat cached data as authoritative business state.
+
+#### Revalidation Efficiency
+
+Revalidation should occur according to data volatility rather than arbitrary intervals.
+
+General architectural guidance:
+
+Frequently changing resources should revalidate more often.
+Stable resources should maximize cache reuse.
+User-triggered mutations should synchronize affected data efficiently.
+Background revalidation should not create unnecessary network activity.
+
+Revalidation behavior should remain predictable and aligned with the approved rendering architecture.
+
+#### Pagination Performance
+
+Large collections shall be retrieved incrementally.
+
+The architecture favors pagination for:
+
+Feed retrieval.
+Comment threads.
+Member lists.
+Follower/following lists.
+Herd listings.
+Search results.
+Governance listings.
+
+Pagination behavior remains governed by the approved API contracts.
+
+The frontend should not attempt to retrieve complete collections when incremental retrieval satisfies the user experience.
+
+#### Infinite Scrolling Considerations
+
+Infinite scrolling remains a presentation strategy rather than a data ownership strategy.
+
+Where appropriate, it should:
+
+Build upon paginated APIs.
+Load additional data incrementally.
+Preserve previously loaded content.
+Avoid repeated retrieval of existing pages.
+Maintain stable navigation state.
+
+The architecture remains compatible with future infinite scrolling implementation without requiring API redesign.
+
+#### Payload Minimization
+
+Transferred data should remain proportional to rendering requirements.
+
+The frontend architecture favors:
+
+Minimal response payloads.
+Elimination of duplicate information.
+Route-specific data retrieval.
+Incremental loading of secondary information.
+
+Payload optimization should primarily be achieved through:
+
+Existing API contracts.
+Backend response composition.
+Efficient frontend rendering.
+
+The frontend shall not compensate for oversized API responses through client-side filtering.
+
+#### Backend vs Frontend Performance Responsibilities
+
+Performance ownership remains explicitly divided.
+
+Backend Responsibilities
+Efficient query execution.
+Response composition.
+Pagination implementation.
+Authorization.
+Governance filtering.
+Business rule execution.
+Data consistency.
+Frontend Responsibilities
+Efficient request timing.
+Cache utilization.
+Rendering efficiency.
+Incremental loading.
+User interaction responsiveness.
+Elimination of unnecessary requests.
+
+This separation preserves the approved Backend Authority principle.
+
+#### Data Performance Consistency Rules
+
+The following become authoritative architectural rules.
+
+DPA-01
+
+Backend remains the authoritative owner of all business data.
+
+DPA-02
+
+Frontend caching shall improve retrieval efficiency without becoming a source of truth.
+
+DPA-03
+
+Duplicate network requests shall be minimized through shared request management.
+
+DPA-04
+
+API requests shall retrieve only the data required for the current user experience.
+
+DPA-05
+
+Large collections shall use the approved pagination model.
+
+DPA-06
+
+Infinite scrolling shall remain an incremental presentation strategy built upon paginated APIs.
+
+DPA-07
+
+Payload optimization shall primarily be achieved through API design rather than client-side filtering.
+
+DPA-08
+
+Revalidation behavior shall reflect resource volatility while preserving rendering consistency.
+
+DPA-09
+
+Frontend performance optimizations shall never bypass Backend Authority or approved API contracts.
+
+DPA-10
+
+Network optimization shall favor architectural simplicity over specialized client-side networking infrastructure.
+
+### Component & Runtime Performance Architecture
+Architecture-Driven Runtime Efficiency model.
+
+Runtime performance should primarily result from:
+
+Well-defined component boundaries.
+Localized state ownership.
+Predictable rendering behavior.
+Efficient event processing.
+Minimal unnecessary browser work.
+
+Micro-optimizations should remain secondary to architectural correctness.
+
+#### Component Rendering Philosophy
+
+Component rendering should remain predictable and proportional to state changes.
+
+Rendering should occur only when:
+
+Component inputs change.
+Local state changes.
+Required context changes.
+Server-provided data changes.
+
+Component rendering should never become a side effect of unrelated application activity.
+
+Rendering isolation is preferred over rendering optimization.
+
+#### Component Composition for Performance
+
+Component composition should naturally reduce rendering scope.
+
+The architecture favors:
+
+Small focused components.
+Clear ownership boundaries.
+Localized rendering trees.
+Limited prop propagation.
+Stable component interfaces.
+
+Performance should emerge from modular composition rather than complex rendering optimizations.
+
+Component composition remains aligned with the approved UI System Architecture.
+
+#### Memoization Boundaries
+
+Memoization is considered a targeted optimization—not a default architectural pattern.
+
+Memoization should be introduced only when:
+
+Rendering cost is measurable.
+Component inputs remain stable.
+Profiling identifies repeated unnecessary work.
+
+The architecture discourages indiscriminate memoization because it:
+
+Increases complexity.
+Makes component behavior harder to understand.
+May provide negligible performance improvements.
+
+Memoization should remain an implementation optimization rather than a required architectural rule.
+
+#### Event Handling Efficiency
+
+Event handling should minimize unnecessary runtime work.
+
+Architectural principles:
+
+Events should remain localized.
+Event handlers should perform only required work.
+Expensive operations should not execute synchronously unless required for user interaction.
+Browser interactions should remain responsive.
+
+Event processing should avoid triggering unrelated component updates.
+
+#### State Update Optimization
+
+Runtime efficiency depends heavily on state ownership.
+
+The approved Local-First State Management Architecture already provides the primary optimization mechanism.
+
+State updates should:
+
+Remain as local as possible.
+Propagate only where required.
+Avoid global state updates for local interactions.
+Prevent cascading re-renders across unrelated features.
+
+Component performance should primarily be achieved through correct state placement rather than rendering optimizations.
+
+#### List Rendering Strategy
+
+Lists represent one of the most common rendering scenarios.
+
+The architecture favors:
+
+Stable item identity.
+Incremental rendering.
+Predictable update behavior.
+Efficient pagination integration.
+
+List rendering should support:
+
+Feed rendering.
+Comment threads.
+Herd listings.
+User lists.
+Governance tables.
+
+Large collections should integrate naturally with the approved pagination architecture.
+
+#### Virtualization Readiness
+
+Virtualization is not required for Phase 1.
+
+However, the architecture should remain compatible with future virtualization by ensuring:
+
+Stable list composition.
+Independent item rendering.
+Incremental data loading.
+Predictable scrolling behavior.
+
+Future virtualization should be implementable without redesigning component architecture.
+
+#### Expensive Computation Boundaries
+
+Computationally expensive work should execute in the most appropriate architectural layer.
+
+Preferred execution order:
+
+Backend.
+Server Components.
+Build-time processing.
+Client runtime.
+
+Client-side expensive computation should exist only when browser execution is required.
+
+Business calculations remain the responsibility of the backend.
+
+The frontend should avoid duplicating backend computation for performance reasons.
+
+#### Runtime Performance Principles
+
+The runtime architecture prioritizes:
+
+Minimal browser work.
+Stable rendering cycles.
+Efficient memory utilization.
+Controlled state propagation.
+Predictable component updates.
+
+Runtime behavior should remain understandable and deterministic.
+
+The architecture favors reducing runtime work rather than optimizing excessive runtime work.
+
+#### Runtime Performance Consistency Rules
+
+The following become authoritative architectural rules.
+
+CRP-01
+
+Component rendering shall remain proportional to state and input changes.
+
+CRP-02
+
+Component composition shall prioritize rendering isolation over rendering optimization.
+
+CRP-03
+
+State ownership shall remain the primary mechanism for controlling re-render propagation.
+
+CRP-04
+
+Memoization shall be introduced only when supported by measurable performance needs.
+
+CRP-05
+
+Event handlers shall perform only the work required for the associated user interaction.
+
+CRP-06
+
+Large collections shall support efficient incremental rendering and future virtualization.
+
+CRP-07
+
+Expensive computations shall execute in the highest appropriate architectural layer, favoring Backend and Server Components over client runtime.
+
+CRP-08
+
+Runtime performance optimizations shall preserve Server Component First philosophy and Backend Authority.
+
+CRP-09
+
+Component performance shall favor architectural simplicity over aggressive runtime optimization.
+
+CRP-10
+
+Runtime optimization shall never compromise readability, maintainability, or approved architectural boundaries.
+
+### Loading Experience & User Perceived Performance
+Progressive User Experience architecture.
+
+The frontend should prioritize:
+
+Early visual feedback.
+Incremental content availability.
+Predictable loading transitions.
+Continuous interaction whenever possible.
+
+Perceived responsiveness should improve through architectural design rather than artificial loading indicators.
+
+#### Loading State Philosophy
+
+Loading states are considered part of the interface—not exceptional conditions.
+
+The architecture favors:
+
+Immediate visual feedback.
+Predictable loading behavior.
+Context-aware loading indicators.
+Stable layouts during data retrieval.
+
+Loading states should communicate application progress without interrupting user workflows.
+
+#### Progressive Rendering Strategy
+
+Rendering should occur incrementally whenever architectural boundaries permit.
+
+The frontend should progressively reveal:
+
+Route shell.
+Layout structure.
+Primary content.
+Secondary content.
+Deferred interactive elements.
+
+Users should receive meaningful visual progress rather than waiting for complete page construction.
+
+This aligns with the approved Hybrid Rendering Strategy.
+
+#### Skeleton UI Philosophy
+
+Skeleton interfaces become the preferred loading representation for content that occupies stable layout regions.
+
+Skeletons should:
+
+Preserve page structure.
+Reduce layout shifts.
+Communicate expected content placement.
+Improve perceived responsiveness.
+
+Skeleton interfaces should resemble the eventual layout without attempting to replicate actual content.
+
+Generic loading spinners should be reserved for operations where structural placeholders are inappropriate.
+
+#### Optimistic vs Pessimistic UI Considerations
+
+The architecture distinguishes between user interactions based on backend authority requirements.
+
+Optimistic Interactions
+
+Appropriate when:
+
+Temporary frontend feedback improves responsiveness.
+Backend confirmation is highly predictable.
+Recovery from failure is straightforward.
+
+Examples include:
+
+Non-critical engagement feedback.
+Minor interface state changes.
+Pessimistic Interactions
+
+Required when backend confirmation determines authoritative application state.
+
+Examples include:
+
+Authentication.
+Authorization-sensitive actions.
+Governance workflows.
+Resource creation requiring backend validation.
+Operations with significant business consequences.
+
+The frontend shall never display authoritative business outcomes before backend validation when correctness is critical.
+
+This preserves the approved Backend Authority principle.
+
+#### Suspense Boundary Strategy
+
+Suspense boundaries should align with meaningful interface sections rather than individual components.
+
+Appropriate boundary placement includes:
+
+Route content.
+Feed regions.
+Comment sections.
+Sidebar content.
+Independent data regions.
+
+Suspense boundaries should:
+
+Enable progressive rendering.
+Isolate loading behavior.
+Prevent unrelated interface blocking.
+
+Excessively granular Suspense boundaries should be avoided because they increase architectural complexity without proportional user benefit.
+
+#### Error Fallback Interaction
+
+Loading failures should degrade gracefully.
+
+Error fallbacks should:
+
+Preserve navigation.
+Preserve surrounding interface.
+Clearly communicate recoverable failures.
+Support retry where appropriate.
+
+Error presentation should remain localized whenever possible.
+
+Complete application interruption should occur only for application-wide failures.
+
+This remains consistent with the approved Error Handling Architecture.
+
+#### Navigation Performance Perception
+
+Navigation should appear immediate even when data retrieval continues after route transitions.
+
+Architectural objectives:
+
+Immediate route transitions.
+Stable layout persistence.
+Progressive content loading.
+Consistent navigation feedback.
+
+Navigation should minimize perceived interruption between user actions.
+
+This complements the approved Navigation & User Flow Architecture.
+
+#### Smooth Interaction Principles
+
+The frontend should maintain continuous interaction whenever possible.
+
+Architectural priorities:
+
+Immediate input responsiveness.
+Stable visual updates.
+Predictable transition behavior.
+Minimized layout movement.
+Consistent interaction feedback.
+
+User interactions should remain responsive regardless of background rendering or network activity.
+
+#### User Experience Performance Rules
+
+The following become authoritative architectural rules.
+
+UXP-01
+
+Loading states shall be treated as part of the normal user experience.
+
+UXP-02
+
+Progressive rendering shall be preferred over blocking interface presentation.
+
+UXP-03
+
+Skeleton interfaces shall be preferred for stable content layouts.
+
+UXP-04
+
+Optimistic interactions shall only be used where backend authority and data consistency are not compromised.
+
+UXP-05
+
+Authoritative business state shall always be confirmed by the backend before final UI commitment.
+
+UXP-06
+
+Suspense boundaries shall align with meaningful rendering regions rather than individual components.
+
+UXP-07
+
+Loading failures shall remain localized whenever possible through appropriate fallback interfaces.
+
+UXP-08
+
+Navigation shall prioritize immediate visual continuity while supporting incremental data loading.
+
+UXP-09
+
+User interactions shall remain responsive during background rendering and network activity.
+
+UXP-10
+
+Perceived performance improvements shall preserve Server Component First philosophy, Backend Authority, and approved rendering architecture.
+
+### Future Evolution Strategy
+Evolutionary Performance Architecture.
+
+Future performance improvements shall extend the existing architecture rather than replacing it.
+
+The approved frontend architecture should remain stable while implementation techniques evolve as requirements mature.
+
+#### Future Caching Evolution
+
+Phase 1 relies on framework-native caching and the approved data-fetching architecture.
+
+Future evolution may introduce:
+
+More granular cache strategies.
+Improved cache invalidation.
+Additional cache layers.
+Resource-specific caching policies.
+
+These enhancements should remain transparent to feature modules.
+
+Caching evolution shall preserve:
+
+Backend Authority.
+Existing data ownership.
+Approved API contracts.
+
+#### Rendering Optimization Evolution
+
+The approved rendering architecture remains structurally stable.
+
+Future enhancements may include:
+
+Improved streaming strategies.
+Finer rendering boundaries.
+More selective client hydration.
+Improved partial rendering.
+
+Rendering evolution shall preserve:
+
+Server Component First philosophy.
+Hybrid Rendering Strategy.
+Existing rendering boundaries.
+
+No rendering model replacement is anticipated.
+
+#### Asset Optimization Evolution
+
+Future asset delivery may evolve through:
+
+Improved image optimization.
+More efficient font delivery.
+Better static asset compression.
+Enhanced route-level asset management.
+
+These improvements should occur within the existing asset architecture.
+
+Feature modules should remain unaffected by asset delivery enhancements.
+
+#### Edge Rendering Readiness
+
+The current architecture remains compatible with future edge rendering capabilities.
+
+Potential future adoption may improve:
+
+Initial response latency.
+Geographic responsiveness.
+Content delivery efficiency.
+
+Edge rendering should remain an infrastructure enhancement rather than a frontend architectural redesign.
+
+Business logic ownership remains exclusively with the backend.
+
+#### CDN Evolution Readiness
+
+The architecture remains compatible with future CDN expansion.
+
+Potential future improvements include:
+
+Static asset delivery.
+Image distribution.
+Font distribution.
+Cached public resources.
+
+Frontend modules should remain unaware of CDN implementation details.
+
+Infrastructure evolution should remain transparent to application architecture.
+
+#### Bundle Optimization Evolution
+
+As the platform grows, bundle optimization may evolve through:
+
+Improved dependency analysis.
+More granular code splitting.
+Better shared bundle organization.
+Removal of unused client dependencies.
+
+Bundle optimization should continue following the approved Domain-Oriented Frontend organization.
+
+Feature boundaries should not change solely for bundle optimization.
+
+#### Runtime Optimization Evolution
+
+Runtime optimization should remain incremental.
+
+Future enhancements may include:
+
+Targeted memoization.
+Selective virtualization.
+Improved scheduling.
+More efficient rendering patterns.
+Browser performance tuning.
+
+Runtime evolution should always be driven by measured performance rather than anticipated scale.
+
+Architectural correctness remains the primary optimization strategy.
+
+#### Performance Monitoring Readiness
+
+Phase 1 does not require dedicated frontend performance monitoring infrastructure.
+
+The architecture should, however, remain compatible with future introduction of:
+
+Rendering performance metrics.
+Bundle analysis.
+Runtime profiling.
+User experience metrics.
+Navigation performance measurement.
+Network performance analysis.
+
+Performance monitoring should guide future optimization decisions rather than justify premature optimization.
+
+#### Evolution Without Structural Redesign
+
+The approved Frontend Performance Architecture is intentionally designed so that future improvements extend existing capabilities instead of replacing them.
+
+Future evolution should occur through:
+
+Better framework capabilities.
+Infrastructure improvements.
+Incremental optimization.
+Improved implementation techniques.
+
+The following architectural elements remain stable:
+
+Domain boundaries.
+Rendering philosophy.
+Component architecture.
+State ownership.
+Navigation architecture.
+Backend Authority.
+API contracts.
+
+This preserves long-term architectural consistency.
+
+#### Long-Term Maintainability
+
+Long-term maintainability shall remain the primary architectural objective.
+
+Future performance improvements should:
+
+Preserve architectural clarity.
+Minimize feature-level impact.
+Avoid duplicate optimization mechanisms.
+Maintain predictable behavior.
+Continue favoring simplicity over specialization.
+
+Performance architecture should evolve through refinement rather than replacement.
+
+#### Future Evolution Rules
+
+The following become authoritative architectural rules.
+
+FES-01
+
+Future performance optimizations shall extend the existing architecture rather than replace it.
+
+FES-02
+
+Caching evolution shall preserve Backend Authority and approved API contracts.
+
+FES-03
+
+Rendering evolution shall preserve Server Component First philosophy and Hybrid Rendering Strategy.
+
+FES-04
+
+Infrastructure enhancements shall remain transparent to feature modules whenever practical.
+
+FES-05
+
+Bundle optimization shall preserve Domain-Oriented Frontend organization.
+
+FES-06
+
+Runtime optimizations shall remain guided by measurable performance data.
+
+FES-07
+
+Performance monitoring shall inform optimization decisions rather than drive speculative architectural complexity.
+
+FES-08
+
+Future edge rendering and CDN adoption shall remain infrastructure concerns rather than frontend architectural changes.
+
+FES-09
+
+Long-term maintainability shall take precedence over aggressive optimization techniques.
+
+FES-10
+
+Future evolution shall remain consistent with Simplicity First and Evolutionary Architecture.
+
+---
+
 ##
