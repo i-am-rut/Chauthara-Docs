@@ -93,3 +93,67 @@ Infrastructure shall evolve incrementally following the Evolutionary Architectur
 - Environment behavior shall remain consistent.
 - Infrastructure shall preserve approved security boundaries.
 - Infrastructure evolution shall not require application redesign.
+
+---
+
+# Deployment Topology
+
+## Deployment Topology Principles
+
+Phase 1 consists of three primary deployment units:
+
+- Frontend Application
+- Backend Application
+- Database
+
+The backend remains a single deployable modular monolith.
+
+Deployment boundaries shall preserve approved architectural ownership boundaries.
+
+---
+
+## Deployment Communication
+
+Allowed communication:
+
+Frontend
+↓
+Backend
+↓
+Database
+
+Backend
+↓
+External Services
+
+Prohibited communication:
+
+- Frontend → Database
+- Frontend → External Services for business operations
+- Database → Frontend
+- Database → External Services
+
+---
+
+## Trust Boundaries
+
+Trust boundaries exist between:
+
+- Client and Backend
+- Backend and Database
+- Backend and External Services
+
+The backend remains the only trusted entry point to authoritative business state.
+
+---
+
+## Deployment Evolution
+
+Future infrastructure may introduce additional runtime components or deployment units when justified by operational requirements.
+
+Deployment evolution shall preserve:
+
+- Backend authority
+- Domain ownership
+- Approved module boundaries
+- Single authoritative database

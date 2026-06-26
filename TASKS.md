@@ -31,7 +31,7 @@
 - MVP Architecture Design
     - Phase 1
         -  Infrastructure Definition
-            - Deployment Topology
+            - Runtime Infrastructure
 
 
 
@@ -39,7 +39,6 @@
 ## Phase 1 — Core Platform
 
 ### Architecture
-- Runtime Infrastructure
 - Environment Architecture
 - Deployment Strategy (Philosophy)
 - Infrastructure Validation
@@ -209,3 +208,4 @@ Define Integrity Strategy
 Define Evolution Strategy
 Database Validation
 Infrastructure Principles
+Deployment Topology
