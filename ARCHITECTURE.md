@@ -35375,4 +35375,1476 @@ Future evolution shall remain consistent with Simplicity First and Evolutionary 
 
 ---
 
-##
+## Frontend Error Handling Architecture
+#### Error Handling Philosophy
+Layered Frontend Error Handling Architecture.
+
+Architectural Philosophy
+
+Frontend error handling exists to:
+
+Maintain application stability.
+Preserve user workflows where possible.
+Present meaningful feedback.
+Protect application integrity.
+Assist development and diagnostics.
+Never replace backend authority.
+
+The frontend treats errors as part of normal application execution rather than exceptional application design.
+
+Errors are expected.
+
+Architecture determines where they are handled.
+
+#### Frontend Error Handling Goals
+
+The frontend shall provide:
+
+Predictable failure behavior.
+Consistent user feedback.
+Clear separation between recoverable and unrecoverable failures.
+Stable rendering after failures.
+Explicit recovery opportunities.
+Minimal disruption to unaffected UI.
+Consistent diagnostics for development.
+
+The frontend shall not:
+
+Infer backend business state.
+Invent recovery outcomes.
+Hide backend validation failures.
+Continue workflows using invalid assumptions.
+
+#### Error Handling Architecture Principles
+
+The following become authoritative.
+
+FEH-01 — Backend Remains the Source of Truth
+
+Business failures originate from backend authority.
+
+Frontend presents them.
+
+Frontend does not reinterpret business rules.
+
+FEH-02 — Errors Are Architectural Concerns
+
+Error handling is distributed across architectural layers.
+
+It is not owned by individual components.
+
+FEH-03 — Handle Errors at the Lowest Responsible Boundary
+
+Errors should be handled by the architectural boundary capable of resolving them.
+
+Examples:
+
+Form validation → Form
+API request failure → Feature workflow
+Component rendering failure → Error Boundary
+Route rendering failure → Route boundary
+Application crash → Global boundary
+
+Errors should not automatically propagate higher when local recovery is possible.
+
+FEH-04 — Preserve User Progress
+
+Recoverable failures should preserve user context whenever possible.
+
+Examples:
+
+Form values remain after submission failure.
+Navigation state remains intact.
+Scroll position remains unaffected where appropriate.
+FEH-05 — Fail Safely
+
+Unexpected failures should:
+
+prevent inconsistent UI,
+prevent invalid interactions,
+avoid exposing internal details,
+isolate failure scope.
+FEH-06 — Consistent User Communication
+
+Equivalent failures should produce equivalent user experiences.
+
+Users should not receive different presentation for identical architectural failures.
+
+FEH-07 — Error Handling Must Remain Predictable
+
+Every error category should have:
+
+known ownership,
+known propagation,
+known presentation,
+known recovery strategy.
+
+#### Error Ownership Model
+
+Ownership aligns with the existing frontend architecture.
+
+| Error Category                 | Primary Owner        |
+| ------------------------------ | -------------------- |
+| Rendering failures             | UI layer             |
+| Component interaction failures | Feature components   |
+| Form validation                | Form architecture    |
+| API communication              | Feature workflow     |
+| Route rendering failures       | Route architecture   |
+| Application runtime failures   | Application boundary |
+| Business validation            | Backend              |
+
+This preserves Backend Authority while keeping presentation responsibilities within the frontend.
+
+#### Error Classification Philosophy
+
+The frontend classifies errors by architectural responsibility rather than technical implementation.
+
+Primary classifications:
+
+User input errors
+Interaction errors
+Network/API errors
+Rendering errors
+Runtime failures
+Business rule failures
+Unexpected failures
+
+Detailed taxonomy is defined in Part 2.
+
+#### Fail-Safe & Graceful Degradation Principles
+
+When failures occur:
+
+Recover Locally First
+
+Attempt recovery without affecting unrelated UI.
+
+Degrade Gracefully
+
+Unavailable functionality should not unnecessarily disable unrelated application capabilities.
+
+Example:
+
+Image upload failure must not crash the entire post creation workflow.
+
+Preserve Stable UI
+
+Rendering failures should produce stable fallback interfaces rather than blank screens whenever possible.
+
+Avoid Cascading Failures
+
+One component failure should not invalidate unrelated features.
+
+#### User-Facing Error Philosophy
+
+User-facing errors should be:
+
+actionable,
+concise,
+non-technical,
+workflow-oriented.
+
+Messages communicate:
+
+what happened,
+whether retry is possible,
+what action the user can take next.
+
+Messages should never expose:
+
+stack traces,
+implementation details,
+internal identifiers,
+security information,
+backend implementation.
+
+This remains consistent with the approved backend security and error architecture.
+
+#### Developer-Facing Error Philosophy
+
+Developer diagnostics prioritize:
+
+reproducibility,
+architectural ownership,
+debugging efficiency,
+consistency.
+
+Development environments should provide sufficient diagnostic information to identify the failing architectural boundary.
+
+Production environments prioritize stability and user safety over debugging detail.
+
+#### Error Boundaries & Responsibility Separation
+
+The frontend architecture separates responsibilities as follows:
+| Architectural Boundary | Responsibility                                       |
+| ---------------------- | ---------------------------------------------------- |
+| UI Components          | Local rendering and interaction errors               |
+| Forms                  | Validation and submission failures                   |
+| Feature Modules        | Workflow and API coordination failures               |
+| Routes                 | Page-level failures                                  |
+| Layouts                | Shared UI failures                                   |
+| Application            | Global runtime failures                              |
+| Backend                | Business rule validation and authoritative decisions |
+
+Each boundary owns only its designated error responsibilities.
+
+Cross-boundary ownership is prohibited.
+
+#### Frontend Error Handling Architectural Rules
+
+The following become authoritative.
+
+FEHA-01
+
+Backend remains the authoritative source of business errors.
+
+FEHA-02
+
+Frontend owns presentation, not business error generation.
+
+FEHA-03
+
+Errors shall be handled at the lowest responsible architectural boundary.
+
+FEHA-04
+
+Unexpected runtime failures shall be isolated whenever possible.
+
+FEHA-05
+
+User-facing messages shall remain implementation-independent.
+
+FEHA-06
+
+Internal diagnostic information shall never be exposed to users.
+
+FEHA-07
+
+Recoverable failures should preserve user workflow state whenever practical.
+
+FEHA-08
+
+Equivalent failures shall produce consistent user experiences across modules.
+
+FEHA-09
+
+Error handling patterns shall remain consistent with approved frontend architectural boundaries.
+
+FEHA-10
+
+Future monitoring and reporting capabilities shall extend this architecture without requiring structural redesign.
+
+### Error Classification & Propagation Architecture
+Architectural Error Taxonomy with Layered Error Propagation.
+
+Error classification is based on architectural responsibility, not implementation technology.
+
+Propagation follows frontend ownership boundaries until the appropriate handling boundary is reached.
+
+#### Error Taxonomy
+
+The frontend recognizes the following authoritative error categories.
+
+| Category                 | Primary Owner                    |
+| ------------------------ | -------------------------------- |
+| Input Validation Errors  | Forms / Interaction Layer        |
+| Interaction Errors       | Feature Components               |
+| API Communication Errors | Feature Workflows                |
+| Authentication Errors    | Backend + Authentication Layer   |
+| Authorization Errors     | Backend                          |
+| Governance Errors        | Backend                          |
+| Business Rule Errors     | Backend                          |
+| Rendering Errors         | UI Layer                         |
+| Runtime Errors           | Application Runtime              |
+| Infrastructure Failures  | Infrastructure Integration Layer |
+| Unexpected Errors        | Global Application Boundary      |
+
+Every error belongs to exactly one primary category.
+
+#### Client vs Server Error Distinction
+Client Errors
+
+Origin:
+
+Frontend execution.
+
+Examples:
+
+invalid local input,
+rendering failure,
+interaction failure,
+client-side runtime exception.
+
+Characteristics:
+
+frontend owned,
+locally recoverable where possible,
+never authoritative for business state.
+Server Errors
+
+Origin:
+
+Backend execution.
+
+Examples:
+
+validation failures,
+authorization failures,
+ownership violations,
+governance restrictions,
+business rule failures,
+infrastructure failures.
+
+Characteristics:
+
+backend authoritative,
+frontend presents without reinterpretation,
+frontend recovery depends on workflow context.
+Architectural Rule
+
+Business meaning always originates from the backend.
+
+Frontend presentation never changes backend semantics.
+
+#### Expected vs Unexpected Errors
+
+Expected Errors
+
+Failures anticipated by workflow design.
+
+Examples:
+
+invalid form input,
+duplicate username,
+unauthorized action,
+network timeout,
+expired session,
+upload failure.
+
+Expected errors should:
+
+remain localized,
+produce predictable UI,
+support explicit recovery.
+Unexpected Errors
+
+Failures outside normal workflow expectations.
+
+Examples:
+
+runtime exceptions,
+rendering crashes,
+corrupted application state,
+uncaught promise failures,
+unexpected component failures.
+
+Unexpected errors should:
+
+terminate the affected execution boundary,
+activate architectural fallback mechanisms,
+preserve unaffected application areas.
+
+#### UI Errors vs Business Errors
+
+UI Errors
+
+Owned by the frontend.
+
+Examples:
+
+invalid interaction state,
+rendering failures,
+local validation,
+missing component data,
+animation failures.
+
+Recovery is determined by frontend architecture.
+
+Business Errors
+
+Owned by the backend.
+
+Examples:
+
+username unavailable,
+insufficient permissions,
+herd restrictions,
+governance enforcement,
+ownership violations.
+
+Frontend responsibilities:
+
+display,
+guide recovery,
+preserve workflow,
+
+without redefining business rules.
+
+#### API Error Handling Architecture
+
+API communication acts as the boundary between frontend and backend error models.
+
+Responsibilities:
+
+Frontend:
+
+receive API failures,
+normalize responses,
+route errors to the appropriate architectural owner.
+
+Backend:
+
+classify business failures,
+enforce authority,
+expose standardized API Error Contract.
+
+The frontend does not infer missing error information.
+
+#### Error Propagation Model
+
+Errors propagate upward until reaching the architectural boundary responsible for handling them.
+
+Authoritative propagation model:
+
+Origin
+      ↓
+Immediate Owner
+      ↓
+Feature Boundary
+      ↓
+Route Boundary
+      ↓
+Application Boundary
+
+Propagation stops once:
+
+recovery succeeds,
+fallback UI is presented,
+workflow terminates.
+
+Errors should never propagate beyond the necessary handling boundary.
+
+Propagation by Category
+Form Validation
+
+Propagation:
+
+Form
+↓
+Form UI
+
+Never reaches global boundaries.
+
+API Workflow Errors
+
+Propagation:
+
+API Request
+↓
+Feature Workflow
+↓
+Feature UI
+
+Route propagation occurs only if the feature cannot recover.
+
+Rendering Failures
+
+Propagation:
+
+Component
+↓
+Nearest Error Boundary
+
+No further propagation if the boundary successfully isolates the failure.
+
+Runtime Failures
+
+Propagation:
+
+Application Runtime
+↓
+Global Error Boundary
+
+Represents the final application recovery boundary.
+
+#### Error Translation Boundaries
+
+Translation occurs only when crossing architectural layers.
+
+Translation boundaries include:
+
+| Boundary              | Responsibility                                    |
+| --------------------- | ------------------------------------------------- |
+| API → Frontend        | Normalize backend responses                       |
+| Workflow → UI         | Convert workflow failures into presentation state |
+| Runtime → Application | Activate fallback UI                              |
+| Form → User Interface | Convert validation results into inline feedback   |
+
+Translation must preserve:
+
+error meaning,
+recovery intent,
+backend authority.
+
+Translation must never:
+
+invent new business semantics,
+suppress authoritative backend decisions.
+
+#### Error Normalization Strategy
+
+Frontend components should consume a consistent internal error representation regardless of origin.
+
+Normalization objectives:
+
+predictable rendering,
+reusable presentation,
+consistent recovery,
+simplified feature development.
+
+Normalization occurs immediately after error reception.
+
+Examples:
+
+Backend authorization failure
+
+↓
+
+Standard frontend authorization error
+
+Network timeout
+
+↓
+
+Standard communication error
+
+Rendering exception
+
+↓
+
+Standard runtime failure
+
+This creates a consistent architectural interface between infrastructure and presentation.
+
+#### Error Propagation Consistency Rules
+
+The following become authoritative.
+
+FEHP-01
+
+Every error category shall have exactly one primary architectural owner.
+
+FEHP-02
+
+Business errors shall remain authoritative backend outcomes.
+
+FEHP-03
+
+Frontend shall normalize external errors before presentation.
+
+FEHP-04
+
+Propagation shall terminate at the lowest boundary capable of recovery.
+
+FEHP-05
+
+Unexpected runtime failures shall continue propagating until reaching an appropriate error boundary.
+
+FEHP-06
+
+Error translation shall preserve business meaning.
+
+FEHP-07
+
+Architectural boundaries shall not reinterpret backend authority decisions.
+
+FEHP-08
+
+Equivalent backend errors shall produce equivalent frontend error categories.
+
+FEHP-09
+
+Normalized errors shall be presentation-independent.
+
+FEHP-10
+
+Future monitoring and reporting capabilities shall integrate with normalized errors without changing propagation architecture.
+
+### User Experience & Recovery Architecture
+Layered User Experience & Recovery Architecture.
+
+User-facing recovery follows architectural boundaries rather than individual implementation decisions.
+
+Recovery is considered part of the user workflow instead of an isolated error-handling concern.
+
+#### User-Facing Error Presentation Philosophy
+
+Error presentation should be:
+
+contextual,
+actionable,
+consistent,
+non-technical,
+minimally disruptive.
+
+The objective is to help users continue or safely terminate a workflow.
+
+Error presentation should communicate:
+
+what failed,
+what remains available,
+what action can be taken next.
+
+Presentation should never reveal:
+
+stack traces,
+implementation details,
+backend internals,
+security information,
+infrastructure details.
+
+#### Inline Error Handling
+
+Inline presentation is the default mechanism for localized recoverable failures.
+
+Typical examples include:
+
+field validation,
+upload failures,
+failed interactions,
+editable content validation,
+workflow-specific business responses.
+
+Architectural principles:
+
+remain close to the affected interaction,
+avoid unnecessary page-wide disruption,
+preserve surrounding UI,
+preserve user input whenever practical.
+
+Inline errors should not interrupt unrelated functionality.
+
+#### Form Validation Error Presentation
+
+Presentation remains fully aligned with the approved Forms & User Interaction Architecture.
+
+Validation feedback should be presented at the most specific applicable level.
+
+Hierarchy:
+
+Field-level validation.
+Form-level validation.
+Submission-level validation.
+
+Presentation priorities:
+
+identify affected inputs,
+preserve entered values,
+provide actionable correction guidance,
+avoid resetting workflow state after validation failures.
+
+Backend validation errors should map into the same presentation model as local validation while preserving backend authority.
+
+#### Page-Level Error Handling
+
+Page-level errors represent failures that prevent successful rendering or execution of the current page but do not compromise the remainder of the application.
+
+Examples:
+
+required page data unavailable,
+unrecoverable feature initialization,
+page-specific rendering failure.
+
+Responsibilities:
+
+isolate page failure,
+present page-specific fallback UI,
+provide recovery options,
+preserve surrounding application layout where possible.
+
+Page failures should not automatically invalidate navigation or shared layouts.
+
+#### Route-Level Error Handling
+
+Route-level failures represent failures affecting an entire route hierarchy.
+
+Examples:
+
+inaccessible resources,
+unrecoverable route initialization,
+route-level rendering failure.
+
+Recovery options may include:
+
+retry,
+navigate back,
+navigate elsewhere,
+refresh current route.
+
+Route-level handling remains separate from global application failures.
+
+#### Global Error Presentation
+
+Global presentation is reserved for failures that prevent normal application execution.
+
+Examples:
+
+unrecoverable runtime failures,
+application initialization failures,
+catastrophic rendering failures.
+
+Responsibilities:
+
+stabilize the application,
+prevent undefined behavior,
+communicate that recovery requires broader application action.
+
+Global error presentation should remain rare.
+
+Normal workflow errors should never escalate to the global layer.
+
+#### Retry Strategy
+
+Retry behavior must be intentional rather than automatic.
+
+Phase 1 adopts a manual retry-first philosophy.
+
+Retry is appropriate when:
+
+network interruptions occur,
+transient backend failures occur,
+resource loading fails,
+user-initiated actions fail due to temporary conditions.
+
+Retry is not appropriate for:
+
+validation failures,
+authorization failures,
+governance restrictions,
+ownership violations,
+permanent business rule failures.
+
+Automatic retry is deferred to future architectural evolution.
+
+#### Recovery Workflows
+
+Recovery should preserve workflow continuity whenever practical.
+
+Recovery actions may include:
+
+correcting invalid input,
+retrying requests,
+refreshing page data,
+returning to a previous navigation state,
+navigating to an alternative workflow.
+
+Recovery must never fabricate successful business outcomes.
+
+Only backend-confirmed success may advance workflow state.
+
+#### Empty States vs Error States
+
+The architecture distinguishes clearly between absence of content and failure.
+
+Empty State
+
+Represents successful execution with no available data.
+
+Examples:
+
+no posts,
+no followers,
+no search results,
+empty herd.
+
+Empty states should encourage continued interaction.
+
+Error State
+
+Represents unsuccessful execution.
+
+Examples:
+
+failed API request,
+authorization failure,
+rendering failure,
+unavailable resource.
+
+Error states should prioritize recovery rather than discovery.
+
+These states must never be visually interchangeable.
+
+#### User Experience Consistency Rules
+
+The following become authoritative.
+
+FEUX-01
+
+Equivalent failures shall produce equivalent user experiences across all frontend modules.
+
+FEUX-02
+
+Recoverable errors shall remain localized whenever practical.
+
+FEUX-03
+
+Validation failures shall preserve user-entered data.
+
+FEUX-04
+
+Global error presentation shall be reserved for unrecoverable application failures.
+
+FEUX-05
+
+Business failures shall preserve backend semantics during presentation.
+
+FEUX-06
+
+User-facing messages shall remain implementation-independent.
+
+FEUX-07
+
+Recovery workflows shall never bypass backend authority.
+
+FEUX-08
+
+Retry shall remain user-initiated during Phase 1 unless explicitly defined otherwise.
+
+FEUX-09
+
+Empty states and error states shall remain architecturally distinct.
+
+FEUX-10
+
+Error presentation shall reuse the standardized interaction patterns established by the Frontend UI System Architecture.
+
+### Error Isolation & Runtime Architecture
+Hierarchical Runtime Error Isolation Architecture.
+
+Runtime failures are isolated according to architectural composition rather than arbitrary component granularity.
+
+Every isolation boundary corresponds to an existing architectural boundary.
+
+#### React Error Boundary Architecture
+
+React Error Boundaries are responsible for containing rendering failures within the nearest recoverable UI boundary.
+
+Responsibilities include:
+
+isolating rendering failures,
+preventing cascading UI crashes,
+activating fallback interfaces,
+preserving unaffected application areas.
+
+Error Boundaries are runtime protection mechanisms, not business error handlers.
+
+They should not handle:
+
+API validation failures,
+business rule failures,
+authentication failures,
+authorization failures,
+expected workflow errors.
+
+These remain within the propagation architecture defined in Part 2.
+
+#### Component Isolation Strategy
+
+Individual reusable UI components are not automatically assigned dedicated Error Boundaries.
+
+Isolation is introduced only where a component represents an independent architectural unit whose failure should not affect surrounding functionality.
+
+Typical candidates include:
+
+complex feature widgets,
+independently rendered panels,
+media viewers,
+rich interactive interfaces.
+
+Simple presentational components rely on their parent boundary.
+
+This keeps the architecture simple while providing meaningful isolation.
+
+#### Route-Level Isolation
+
+Routes represent one of the primary runtime isolation boundaries.
+
+A route failure should:
+
+isolate the current route,
+preserve application shell and navigation,
+prevent failure propagation into unrelated routes.
+
+Users should be able to continue navigating elsewhere whenever possible.
+
+This aligns with the previously approved Navigation Architecture.
+
+#### Layout-Level Isolation
+
+Layouts provide shared structure across related routes.
+
+Layout boundaries protect shared UI while preventing failures from affecting unrelated layout hierarchies.
+
+Responsibilities include protecting:
+
+shared navigation,
+shared sidebars,
+common page structure,
+persistent layout elements.
+
+A failure within one layout should not invalidate unrelated layout trees.
+
+#### Async Error Handling
+
+Asynchronous failures differ from rendering failures and follow the propagation architecture defined in Part 2.
+
+Examples include:
+
+API requests,
+image loading,
+uploads,
+deferred interactions,
+background user actions.
+
+Async failures should:
+
+be captured within workflow boundaries,
+update presentation state,
+avoid triggering runtime Error Boundaries.
+
+Runtime boundaries are reserved for unexpected rendering failures.
+
+#### Rendering Failure Strategy
+
+Rendering failures are handled using the nearest available architectural boundary.
+
+Priority order:
+
+Component Boundary (when explicitly defined)
+Feature Boundary
+Route Boundary
+Layout Boundary
+Global Application Boundary
+
+Recovery should stop at the first boundary capable of presenting a stable fallback.
+
+Rendering failures should never continue propagating after successful isolation.
+
+#### State Consistency After Failures
+
+State integrity takes precedence over preserving partially corrupted UI.
+
+Following a rendering failure:
+
+unaffected state should remain intact,
+unaffected feature modules continue operating,
+corrupted rendering trees should be discarded,
+inconsistent UI should never remain interactive.
+
+Frontend state should never imply successful backend operations that have not been confirmed.
+
+This remains consistent with Backend Authority and the approved State Management Architecture.
+
+#### Runtime Resilience Principles
+
+The frontend adopts the following resilience principles.
+
+Localize Failure
+
+Confine runtime failures to the smallest meaningful architectural boundary.
+
+Preserve Stability
+
+Maintain a stable application shell whenever practical.
+
+Prevent Cascading Failure
+
+One runtime exception should not invalidate unrelated application features.
+
+Recover Predictably
+
+Recovery behavior should remain consistent across equivalent runtime failures.
+
+Preserve Backend Authority
+
+Runtime recovery never overrides backend-confirmed business state.
+
+Prefer Graceful Degradation
+
+Fallback interfaces are preferred over application termination whenever architectural boundaries permit.
+
+#### Error Isolation Consistency Rules
+
+The following become authoritative.
+
+FEIR-01
+
+Runtime isolation boundaries shall align with existing architectural boundaries.
+
+FEIR-02
+
+Error Boundaries shall isolate rendering failures only.
+
+FEIR-03
+
+Business errors shall not activate runtime Error Boundaries.
+
+FEIR-04
+
+Async workflow failures shall remain within workflow error propagation.
+
+FEIR-05
+
+Rendering failures shall terminate at the nearest recoverable runtime boundary.
+
+FEIR-06
+
+Application state shall remain internally consistent after runtime failures.
+
+FEIR-07
+
+Fallback interfaces shall preserve unaffected application functionality whenever practical.
+
+FEIR-08
+
+Runtime recovery shall never fabricate successful business outcomes.
+
+FEIR-09
+
+Isolation strategy shall remain compatible with Server Component First and Hybrid Rendering.
+
+FEIR-10
+
+Future resilience improvements shall extend this isolation hierarchy without requiring structural redesign.
+
+### Logging, Monitoring & Backend Integration
+Structured Frontend Diagnostics Architecture.
+
+The frontend distinguishes between:
+
+user-facing feedback,
+developer diagnostics,
+backend-generated business errors,
+future operational monitoring.
+
+Diagnostics exist to assist developers and operations—not to redefine application behavior.
+
+#### Frontend Logging Philosophy
+
+Logging supports architectural diagnostics rather than business logic.
+
+The frontend logs:
+
+unexpected runtime failures,
+rendering failures,
+application initialization failures,
+development diagnostics,
+recoverable infrastructure failures when appropriate.
+
+The frontend does not log:
+
+successful workflows,
+business events,
+authorization decisions,
+governance actions,
+audit information.
+
+These remain backend responsibilities.
+
+#### Development vs Production Logging
+
+Development
+
+Development environments prioritize diagnostic visibility.
+
+Logging may include:
+
+stack traces,
+component names,
+rendering failures,
+normalized error information,
+debugging metadata.
+
+The objective is rapid issue identification.
+
+Production
+
+Production prioritizes:
+
+application stability,
+user privacy,
+security,
+minimal information exposure.
+
+Production logging should remain intentionally limited.
+
+Only operationally meaningful failures should be eligible for future reporting.
+
+Implementation details must not be exposed through browser diagnostics.
+
+#### Browser Console Usage Boundaries
+
+The browser console is a development diagnostic tool, not an application communication channel.
+
+Approved usage includes:
+
+development debugging,
+unexpected runtime diagnostics,
+local development validation.
+
+The browser console should not be relied upon for:
+
+user feedback,
+operational monitoring,
+business workflow visibility,
+audit trails,
+security event tracking.
+
+Console output is non-authoritative.
+
+#### Error Reporting Responsibilities
+
+The frontend owns reporting of frontend-originated runtime failures.
+
+Examples:
+
+rendering failures,
+uncaught runtime exceptions,
+application initialization failures,
+client-side infrastructure failures.
+
+The backend owns reporting of:
+
+business validation,
+authorization,
+governance,
+persistence,
+infrastructure,
+audit events.
+
+Frontend reporting complements backend diagnostics rather than replacing them.
+
+#### Correlation with Backend Error Responses
+
+Frontend diagnostics should preserve the relationship between frontend failures and backend responses.
+
+When backend responses include diagnostic identifiers (such as correlation or request identifiers), the frontend should preserve those identifiers throughout the diagnostic lifecycle.
+
+The frontend must not generate alternative identifiers intended to replace backend-generated correlation information.
+
+This maintains a single authoritative diagnostic chain across the request lifecycle.
+
+#### API Error Contract Integration
+
+Frontend diagnostics integrate with the existing API Error Contract.
+
+Architectural responsibilities include:
+
+receiving standardized backend error responses,
+normalizing error information,
+presenting user-facing feedback,
+preserving diagnostic metadata when appropriate.
+
+The frontend must never modify:
+
+business error codes,
+authorization outcomes,
+governance decisions,
+backend classifications.
+
+The API Error Contract remains the authoritative backend-to-frontend diagnostic interface.
+
+#### Security Considerations for Error Reporting
+
+Security takes precedence over diagnostic completeness.
+
+Frontend diagnostics must never expose:
+
+authentication tokens,
+cookies,
+session identifiers,
+personally identifiable information,
+internal backend implementation,
+infrastructure details,
+database information,
+stack traces in production.
+
+Diagnostic information should be limited to what is necessary for the intended architectural audience.
+
+This remains consistent with the approved Frontend Security Architecture.
+
+#### Future Monitoring Readiness
+
+Phase 1 intentionally avoids introducing dedicated monitoring infrastructure.
+
+However, the architecture prepares standardized integration points for future capabilities such as:
+
+centralized error reporting,
+runtime monitoring,
+client-side performance monitoring,
+session replay,
+operational dashboards,
+frontend observability.
+
+These capabilities should integrate through the established diagnostic boundaries without requiring changes to error ownership or propagation.
+
+#### Logging & Diagnostics Architectural Rules
+
+The following become authoritative.
+
+FELD-01
+
+Frontend diagnostics shall remain separate from user-facing error presentation.
+
+FELD-02
+
+Business diagnostics remain backend-owned.
+
+FELD-03
+
+Frontend shall preserve backend diagnostic identifiers without redefining them.
+
+FELD-04
+
+Development and production diagnostics shall follow different visibility policies.
+
+FELD-05
+
+Sensitive information shall never be exposed through frontend diagnostics.
+
+FELD-06
+
+Browser console output shall remain a development-only diagnostic mechanism.
+
+FELD-07
+
+Frontend diagnostics shall not become an audit system.
+
+FELD-08
+
+Logging shall never alter application behavior or business outcomes.
+
+FELD-09
+
+Monitoring capabilities shall integrate through standardized diagnostic boundaries.
+
+FELD-10
+
+Future observability capabilities shall extend the architecture without requiring structural redesign.
+
+### Future Evolution Strategy
+Evolutionary Frontend Error Handling Architecture.
+
+Phase 1 establishes stable architectural contracts.
+
+Future capabilities extend these contracts without modifying:
+
+error ownership,
+propagation,
+presentation,
+recovery,
+runtime isolation.
+
+Architectural evolution occurs by adding capabilities rather than redesigning the foundation.
+
+#### Error Reporting Evolution
+
+Future reporting capabilities may include:
+
+centralized client-side error reporting,
+release-aware diagnostics,
+source map integration,
+client-side crash aggregation,
+automated issue grouping.
+
+These systems integrate after the frontend's diagnostic boundaries.
+
+Error ownership remains unchanged.
+
+#### Monitoring Evolution
+
+Future monitoring may introduce:
+
+real-time runtime monitoring,
+production health dashboards,
+deployment health visibility,
+client-side operational metrics,
+frontend service health indicators.
+
+Monitoring consumes architectural events rather than influencing application behavior.
+
+Monitoring remains observational.
+
+It never becomes authoritative.
+
+#### Observability Readiness
+
+Future observability should extend diagnostics through standardized instrumentation.
+
+Potential capabilities include:
+
+distributed request tracing,
+frontend performance metrics,
+feature-level diagnostics,
+interaction timing,
+rendering performance metrics,
+runtime exception aggregation.
+
+Observability should consume normalized errors established in Part 2.
+
+No changes to error classification or propagation should be required.
+
+#### User Feedback Evolution
+
+Future versions may provide richer recovery experiences including:
+
+contextual troubleshooting,
+guided recovery workflows,
+contextual help links,
+recovery recommendations,
+user feedback collection after failures.
+
+These improvements extend presentation only.
+
+They must not reinterpret backend business outcomes.
+
+#### Retry Strategy Evolution
+
+Phase 1 adopts manual retry.
+
+Future versions may introduce:
+
+intelligent retry,
+exponential backoff,
+automatic retry for transient infrastructure failures,
+network-aware retry,
+background synchronization retry,
+optimistic recovery where architecturally appropriate.
+
+Retry policies must continue distinguishing between:
+
+Recoverable infrastructure failures
+
+and
+
+Authoritative business failures.
+
+Business validation failures remain non-retryable unless user input changes.
+
+#### Offline & Resilience Evolution
+
+Future resilience capabilities may include:
+
+offline awareness,
+request queueing,
+background synchronization,
+temporary local drafts,
+reconnect workflows,
+degraded offline experiences.
+
+These capabilities should integrate through existing workflow boundaries.
+
+Offline functionality must never create conflicting business authority.
+
+Backend confirmation remains required before business state changes become authoritative.
+
+#### Error Analytics Readiness
+
+Future analytics may collect aggregated information such as:
+
+error frequency,
+feature reliability,
+recovery success rates,
+retry effectiveness,
+workflow interruption rates,
+rendering stability.
+
+Analytics remain anonymous where appropriate and must follow the project's security and privacy principles.
+
+Analytics inform architecture.
+
+They do not influence runtime decision making.
+
+#### Evolution Without Structural Redesign
+
+The architecture explicitly preserves the following stable boundaries:
+
+Error ownership
+Error taxonomy
+Propagation model
+Translation boundaries
+Presentation architecture
+Recovery architecture
+Runtime isolation
+Backend authority
+API Error Contract integration
+
+Future capabilities extend these boundaries rather than replacing them.
+
+This minimizes long-term migration effort.
+
+#### Long-Term Maintainability
+
+Long-term maintainability depends upon preserving architectural separation between:
+
+presentation,
+diagnostics,
+runtime resilience,
+monitoring,
+business authority.
+
+Each concern evolves independently.
+
+New operational capabilities should integrate through existing extension points.
+
+Avoid coupling monitoring infrastructure to feature implementation.
+
+Avoid coupling diagnostics to business workflows.
+
+#### Future Evolution Rules
+
+The following become authoritative.
+
+FEEV-01
+
+Future capabilities shall extend existing architectural boundaries rather than replace them.
+
+FEEV-02
+
+Backend Authority shall remain unchanged throughout architectural evolution.
+
+FEEV-03
+
+Error ownership shall remain independent of monitoring infrastructure.
+
+FEEV-04
+
+Observability shall consume normalized errors without modifying propagation behavior.
+
+FEEV-05
+
+Retry mechanisms shall distinguish between transient infrastructure failures and authoritative business failures.
+
+FEEV-06
+
+Offline capabilities shall never establish authoritative business state.
+
+FEEV-07
+
+Monitoring and analytics shall remain observational rather than authoritative.
+
+FEEV-08
+
+Future recovery improvements shall extend presentation without redefining backend semantics.
+
+FEEV-09
+
+Operational capabilities shall integrate without requiring frontend architectural restructuring.
+
+FEEV-10
+
+The Error Handling Architecture shall remain compatible with future service extraction and distributed operational tooling.
+
+---
+
+## 
