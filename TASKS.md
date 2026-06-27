@@ -30,53 +30,53 @@
 # Ongoing
 - MVP Architecture Design
     - Phase 1
-        -  Infrastructure Definition
-            - Infrastructure Validation
-
+        -  Define Backend API Layer Architecture
+            - Request Execution Architecture 
 
 
 # Pending
 ## Phase 1 — Core Platform
-
-### Architecture
-- Architecture Validation
-
 ### Development Planning
-- Define Backend API Layer Architecture
-- Backend Development Planning
-- Frontend Development Planning
-- Development Sprint Planning
+Controller Architecture 
+Request Mapping Architecture 
+Response Mapping Architecture 
+Middleware Architecture 
+API Error Flow 
+API Layer Validation
+Backend Development Planning
+Frontend Development Planning
+Development Sprint Planning
 
 ### Implementation
-- Backend Development
-- Frontend Development
+Backend Development
+Frontend Development
 
 ### Validation & Release
-- Integration Testing
-- Phase 1 — Core Platform Release
+Integration Testing
+Phase 1 — Core Platform Release
 
 ### Learning & Feedback
-- Real Usage Review
+Real Usage Review
 
 ## Phase 2 — Governance & Operations
 
 ### Architecture
-- Define Governance Architecture Refinements
+Define Governance Architecture Refinements
 
 ### Implementation
-- Governance Implementation
-- Reporting System
-- Shepherd Moderation
-- Platform Moderation
+Governance Implementation
+Reporting System
+Shepherd Moderation
+Platform Moderation
 
 ### Backend Expansion
-- Define Backend Background Processing Strategy
-- Define Backend Observability Architecture
-- Define Backend Operations Strategy
+Define Backend Background Processing Strategy
+Define Backend Observability Architecture
+Define Backend Operations Strategy
 
 ### Validation & Release
-- Phase 2 Validation
-- Phase 2 Release
+Phase 2 Validation
+Phase 2 Release
 
 
 <!-- Define Backend Background Processing Strategy
@@ -209,3 +209,4 @@ Deployment Topology
 Runtime Infrastructure
 Environment Architecture
 Deployment Strategy (Philosophy)
+API Layer Principles 

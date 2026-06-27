@@ -4125,6 +4125,426 @@ All eventually become standardized API responses.
 
 ---
 
+## Backend API Layer Architecture
+### API Layer Purpose
+
+The API Layer is the external entry point into the backend application.
+
+Its purpose is to:
+
+Expose approved API contracts through HTTP.
+Translate transport requests into application use cases.
+Translate application results into contract-compliant responses.
+Isolate HTTP concerns from business execution.
+
+The API Layer exists to protect the application architecture from transport concerns.
+
+It serves as the boundary between:
+
+External Clients
+↓
+Backend Application
+
+The API Layer is not a business layer.
+
+The API Layer is not a workflow layer.
+
+The API Layer is not an ownership authority.
+
+The API Layer is a transport adaptation layer.
+
+### API Layer Position Within Backend Architecture
+
+Authoritative Layer Position:
+
+HTTP Client
+↓
+Middleware
+↓
+API Layer
+↓
+Application Layer
+↓
+Domain Layer
+↓
+Repository Layer
+↓
+Infrastructure Layer
+
+The API Layer executes after middleware and before application services.
+
+The API Layer owns no business state.
+
+The API Layer owns no persistence state.
+
+The API Layer owns no domain authority.
+
+### API Layer Responsibility Model
+
+The API Layer owns transport responsibilities only.
+
+Approved Responsibilities:
+
+Request Reception
+
+Receive HTTP requests.
+
+Request Parsing
+
+Extract:
+
+Path parameters
+Query parameters
+Request body
+Authenticated principal
+Request Mapping
+
+Transform HTTP requests into application input models.
+
+Example:
+
+POST /posts
+
+↓
+
+CreatePostCommand
+
+Route Handling
+
+Map endpoints to application use cases.
+
+API Contract Enforcement
+
+Ensure requests satisfy approved API contracts.
+
+Includes:
+
+Required fields
+Data types
+Pagination constraints
+Query parameter constraints
+Response Mapping
+
+Transform application results into API contract responses.
+
+HTTP Status Generation
+
+Return contract-compliant status codes.
+
+Error Delegation
+
+Forward failures to centralized error middleware.
+
+The API Layer shall not implement custom error translation.
+
+### API Layer Non-Responsibilities
+
+The API Layer must never own:
+
+Business Workflows
+
+Forbidden:
+
+Create Post workflow
+Join Herd workflow
+Report workflow
+Business Rules
+
+Forbidden:
+
+Membership validation
+Voting rules
+Lifecycle rules
+Authorization Decisions
+
+Forbidden:
+
+Role evaluation
+Ownership evaluation
+Governance evaluation
+Governance Decisions
+
+Forbidden:
+
+Restriction decisions
+Escalation decisions
+Enforcement decisions
+Persistence
+
+Forbidden:
+
+Repository access
+Database queries
+Transaction ownership
+Feed Composition
+
+Forbidden:
+
+Feed generation logic
+Feed visibility logic
+Domain Ownership
+
+Forbidden:
+
+Resource ownership decisions
+Lifecycle ownership decisions
+
+The API Layer remains non-authoritative.
+
+### API Layer and Domain Boundaries
+
+The API Layer sits above all domain modules.
+
+The API Layer may invoke:
+
+Application Services
+
+The API Layer may not invoke:
+
+Domain objects directly
+Repositories directly
+Database infrastructure directly
+
+The API Layer shall remain domain-neutral.
+
+Domain ownership remains entirely within approved modules.
+
+This preserves:
+
+One Domain = One Module
+Capability-Based Dependencies
+Acyclic Dependency Architecture
+
+Consistent with ADR-001.
+
+### API Layer and Application Services
+
+Controllers communicate exclusively with Application Services.
+
+Authoritative Pattern:
+
+Controller
+↓
+Application Service
+
+Controllers may not access:
+
+Repositories
+Domain entities
+Infrastructure services
+
+Controllers may not:
+
+Coordinate workflows
+Coordinate multiple domains
+Coordinate transactions
+
+Application Services remain the sole workflow execution boundary.
+
+### API Layer and API Contracts
+
+API Contracts remain authoritative.
+
+The API Layer implements contracts.
+
+The API Layer does not redefine contracts.
+
+Responsibilities:
+
+Request Contract Enforcement
+
+Validate:
+
+Structure
+Types
+Required inputs
+Response Contract Compliance
+
+Return approved response shapes.
+
+Error Contract Compliance
+
+Return standardized error responses.
+
+The API Layer acts as the enforcement boundary for transport-level contract compliance.
+
+### API Layer and Security Architecture
+
+The API Layer participates in security but does not own security decisions.
+
+Middleware Responsibilities
+
+Own:
+
+Authentication
+JWT validation
+Session validation
+Principal extraction
+API Layer Responsibilities
+
+Consume authenticated identity.
+
+Forward identity into application execution.
+
+Application Service Responsibilities
+
+Own:
+
+Authorization invocation
+Governance validation invocation
+Domain Responsibilities
+
+Own:
+
+Business rule enforcement
+
+The API Layer never evaluates permissions.
+
+The API Layer never evaluates governance authority.
+
+This remains consistent with the approved Security and Authorization Architecture.
+
+### API Layer and Infrastructure Architecture
+
+The API Layer remains compatible with approved infrastructure principles.
+
+Stateless Application Principle
+
+Controllers retain no request state after execution.
+
+Business state remains outside runtime memory.
+
+Deployment Compatibility
+
+The API Layer executes entirely inside the Backend Runtime.
+
+Runtime Compatibility
+
+The API Layer remains part of the Backend Runtime and does not create new runtime components.
+
+Environment Compatibility
+
+The API Layer behaves identically across environments.
+
+No infrastructure conflicts exist.
+
+### API Layer Constraints
+
+The following become authoritative.
+
+API-01
+
+Controllers are transport adapters.
+
+API-02
+
+Controllers own no business workflows.
+
+API-03
+
+Controllers own no business rules.
+
+API-04
+
+Controllers own no authorization decisions.
+
+API-05
+
+Controllers own no governance decisions.
+
+API-06
+
+Controllers own no transactions.
+
+API-07
+
+Controllers may not access repositories.
+
+API-08
+
+Controllers may not access persistence infrastructure.
+
+API-09
+
+Controllers communicate only with Application Services.
+
+API-10
+
+API Contracts remain authoritative.
+
+API-11
+
+API Layer remains stateless.
+
+API-12
+
+API Layer owns no business state.
+
+API-13
+
+API Layer owns no domain authority.
+
+API-14
+
+API Layer owns no resource ownership decisions.
+
+API-15
+
+All HTTP concerns terminate at the API Layer boundary.
+
+### API Layer Evolution Strategy
+
+The API Layer may evolve through:
+
+Additional endpoints
+API versioning strategies
+Additional transport protocols
+Improved validation mechanisms
+
+The API Layer may not evolve by:
+
+Acquiring business logic
+Acquiring workflow ownership
+Acquiring domain ownership
+Bypassing Application Services
+
+Future evolution must preserve:
+
+ADR-001
+Domain Ownership Boundaries
+Governance Authority Boundaries
+Application Service Ownership
+
+The API Layer remains an adapter regardless of transport technology.
+
+### API Layer Validation
+
+Validated Against:
+
+PROJECT_CONTEXT.md
+ADR-001
+ARCHITECTURE.md
+DATABASE.md
+INFRASTRUCTURE.md
+API_CONTRACTS.md
+
+Validation Results:
+
+No ownership violations detected.
+No authority violations detected.
+No dependency violations detected.
+No governance conflicts detected.
+No infrastructure conflicts detected.
+No API contract conflicts detected.
+
+Status:
+
+API Layer Principles validated and approved as authoritative architecture.
+
+--- 
+
+## 
+
 ## Backend Authorization Architecture
 
 ### Authorization Principles
