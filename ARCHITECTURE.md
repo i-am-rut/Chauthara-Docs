@@ -7310,6 +7310,500 @@ Status
 
 Request Mapping Architecture validated and approved as authoritative architecture.
 
+## Response Mapping Architecture
+### Response Mapping Purpose
+
+Response Mapping exists to transform application-layer results into API contract-compliant responses.
+
+It solves the architectural problem of separating:
+
+Business execution models
+Transport response models
+
+Response Mapping protects:
+
+Application Services from transport concerns.
+Controllers from response construction complexity.
+API Contracts from internal implementation changes.
+
+Response Mapping is an API Layer concern.
+
+It exists entirely above the Application Layer.
+
+### Response Mapping Position Within Architecture
+
+Authoritative execution ordering:
+
+Request
+    ↓
+Controller
+    ↓
+Request Mapping
+    ↓
+Application Service
+    ↓
+Result Model
+    ↓
+Response Mapping
+    ↓
+HTTP Response
+
+Authoritative ownership model:
+
+Component	Responsibility
+Controller	Workflow invocation
+Application Service	Workflow execution
+Response Mapper	API response construction
+HTTP Response	Transport delivery
+
+Response Mapping executes after Application Service completion and before response generation.
+
+### Response Mapping Responsibility Model
+
+Response Mapping owns:
+
+Application Result Transformation
+
+Transform application results into transport response models.
+
+Response DTO Construction
+
+Construct API response DTOs.
+
+API Contract Shaping
+
+Produce contract-compliant response structures.
+
+Response Normalization
+
+Normalize response formatting.
+
+Pagination Response Construction
+
+Construct pagination envelopes.
+
+Examples:
+
+{
+  "items": [],
+  "page": 1,
+  "limit": 20,
+  "hasNext": true
+}
+Metadata Construction
+
+Construct transport metadata.
+
+Examples:
+
+pagination metadata
+counts
+cursor information
+Derived Presentation Formatting
+
+Examples:
+
+ISO date formatting
+response field shaping
+contract-specific field composition
+### Response Mapping Non-Responsibilities
+
+Response Mapping must never own:
+
+Business Rules
+
+Forbidden.
+
+Authorization
+
+Forbidden.
+
+Governance Evaluation
+
+Forbidden.
+
+Ownership Evaluation
+
+Forbidden.
+
+Workflow Orchestration
+
+Forbidden.
+
+Validation
+
+Forbidden.
+
+Transactions
+
+Forbidden.
+
+Persistence
+
+Forbidden.
+
+Aggregate Mutation
+
+Forbidden.
+
+Repository Access
+
+Forbidden.
+
+Cross-Module Coordination
+
+Forbidden.
+
+Response Mapping remains transport-focused only.
+
+### Response Mapping Lifecycle
+
+Authoritative lifecycle:
+
+Application Result
+    ↓
+Response Mapping Entry
+    ↓
+Response DTO Construction
+    ↓
+Response Normalization
+    ↓
+Contract Validation
+    ↓
+HTTP Response Model
+    ↓
+Response
+
+Entry Point:
+
+Application Service result.
+
+Exit Point:
+
+API contract response model.
+
+### Response Mapping and Controllers
+
+Controllers remain transport adapters.
+
+Controllers may:
+
+Invoke Application Services.
+Invoke Response Mappers.
+Return mapped responses.
+
+Controllers must not:
+
+Construct complex response DTOs.
+Shape API contracts manually.
+Duplicate response formatting logic.
+
+Authoritative pattern:
+
+Controller
+    ↓
+Application Service
+    ↓
+Response Mapper
+    ↓
+Response
+
+Response Mapping is not a Controller responsibility.
+
+Controllers coordinate Response Mapping.
+
+They do not own it.
+
+### Response Mapping and Application Services
+
+Application Services return:
+
+Application Result Models.
+
+Application Services do not return:
+
+HTTP responses
+Express responses
+API response DTOs
+transport-specific structures
+
+Application Services remain transport-independent.
+
+Authoritative pattern:
+
+Application Service
+    ↓
+Application Result Model
+
+Response Mapping occurs only after workflow execution completes.
+
+Result Model Strategy
+
+Authoritative decision:
+
+Use-Case Result Models
+
+Application Services return dedicated result models.
+
+Examples:
+
+CreatePostResult
+GetProfileResult
+JoinHerdResult
+RestrictProfileResult
+
+Application result models:
+
+belong to Application Layer
+represent workflow outcomes
+remain transport-independent
+
+Result models are not API contracts.
+
+Result models may diverge from API contracts.
+
+### Response Mapping and API Contracts
+
+API Contracts remain authoritative.
+
+Response Mappers implement API Contracts.
+
+Response Mappers own:
+
+Result Model
+    ↓
+API Contract Response
+
+Result models may evolve independently.
+
+API contracts may evolve independently.
+
+Response Mappers absorb translation responsibility.
+
+This prevents contract changes from propagating into Application Services.
+
+### Response Mapping and Error Handling
+
+Response Mapping does not own error handling.
+
+Response Mapping does not translate errors.
+
+Response Mapping does not intercept errors.
+
+Authoritative error flow:
+
+Error
+    ↓
+Application Service
+    ↓
+Global Error Middleware
+    ↓
+API Error Contract
+    ↓
+Response
+
+Ownership remains unchanged.
+
+Compatibility confirmed with:
+
+Input Validation Errors
+Authorization Errors
+Ownership Errors
+Governance Errors
+Domain Errors
+Infrastructure Errors
+
+Response Mapping participates only in successful execution paths.
+
+### Response Mapping and Domain Boundaries
+
+Response Mappers may:
+
+consume Application Result Models
+
+Response Mappers may not:
+
+access repositories
+access persistence models
+invoke Application Services
+invoke Domain Services
+load aggregates
+invoke foreign modules
+
+This preserves:
+
+One Domain = One Module
+Capability-Based Dependencies
+Acyclic Dependency Graph
+
+Response Mapping remains outside domain ownership boundaries.
+
+### Response Mapper Organization Strategy
+
+Authoritative decision:
+
+Module-Level Response Mappers
+
+Organization:
+
+Identity
+ └─ response-mappers
+
+Content
+ └─ response-mappers
+
+Community
+ └─ response-mappers
+
+Media
+ └─ response-mappers
+
+Governance
+ └─ response-mappers
+
+Feed
+ └─ response-mappers
+
+Naming convention:
+
+ProfileResponseMapper
+PostResponseMapper
+CommentResponseMapper
+HerdResponseMapper
+FeedResponseMapper
+
+Ownership follows module ownership.
+
+Shared transport utilities are allowed.
+
+Shared business mapping logic is prohibited.
+
+### Response Mapping Constraints
+
+RM-01
+
+Response Mapping remains transport-focused.
+
+RM-02
+
+Response Mapping creates API response models only.
+
+RM-03
+
+Response Mapping never executes business rules.
+
+RM-04
+
+Response Mapping never executes authorization.
+
+RM-05
+
+Response Mapping never executes governance evaluation.
+
+RM-06
+
+Response Mapping never executes ownership evaluation.
+
+RM-07
+
+Response Mapping never invokes repositories.
+
+RM-08
+
+Response Mapping never loads aggregates.
+
+RM-09
+
+Response Mapping never invokes domain services.
+
+RM-10
+
+Response Mapping never invokes application services.
+
+RM-11
+
+Response Mapping never coordinates workflows.
+
+RM-12
+
+Response Mapping never owns transactions.
+
+RM-13
+
+Response Mapping never mutates state.
+
+RM-14
+
+Response Mapping remains stateless.
+
+RM-15
+
+API Contracts remain authoritative.
+
+### Response Mapping Evolution Strategy
+
+Response Mapping may evolve through:
+
+additional response DTOs
+API version support
+transport-specific formatting
+response normalization improvements
+
+Response Mapping may not evolve by:
+
+acquiring business logic
+acquiring workflow ownership
+acquiring authorization responsibilities
+acquiring governance responsibilities
+bypassing Application Services
+
+Future evolution must preserve:
+
+ADR-001
+API Layer Principles
+Controller Architecture
+Request Execution Architecture
+Request Mapping Architecture
+Domain Ownership Boundaries
+Governance Authority Boundaries
+### Response Mapping Validation
+
+Validated against:
+
+PROJECT_CONTEXT.md
+ADR-001
+ARCHITECTURE.md
+DATABASE.md
+INFRASTRUCTURE.md
+API_CONTRACTS.md
+API Layer Principles
+Request Execution Architecture
+Controller Architecture
+Request Mapping Architecture
+Error Handling Architecture
+
+Validation Results:
+
+No ownership violations detected.
+No authority violations detected.
+No dependency violations detected.
+No workflow ownership violations detected.
+No transaction ownership violations detected.
+No governance authority conflicts detected.
+No API contract conflicts detected.
+
+Compatibility Confirmation:
+
+Application Services remain workflow owners.
+Controllers remain transport adapters.
+API Contracts remain authoritative.
+Governance authority remains unchanged.
+Domain ownership remains unchanged.
+Capability-based dependency model remains preserved.
+Status
+
+Response Mapping Architecture validated and approved as authoritative architecture.
+
 
 
 ## Backend Authorization Architecture
