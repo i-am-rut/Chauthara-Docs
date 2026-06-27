@@ -31,13 +31,12 @@
 - MVP Architecture Design
     - Phase 1
         -  Define Backend API Layer Architecture
-            -  Request Mapping Architecture 
+            -  Response Mapping Architecture
 
 
 # Pending
 ## Phase 1 — Core Platform
-### Development Planning
-Response Mapping Architecture 
+### Development Planning 
 Middleware Architecture 
 API Error Flow 
 API Layer Validation
@@ -210,3 +209,4 @@ Deployment Strategy (Philosophy)
 API Layer Principles 
 Request Execution Architecture
 Controller Architecture
+Request Mapping Architecture 

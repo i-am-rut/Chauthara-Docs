@@ -6807,6 +6807,509 @@ Status:
 
 Controller Architecture validated and approved as authoritative architecture.
 
+## Request Mapping Architecture
+### Request Mapping Purpose
+
+Request Mapping exists to transform transport-layer input into application-layer input.
+
+Its purpose is to:
+
+Isolate HTTP concerns from application execution.
+Decouple Application Services from API contracts.
+Normalize transport input into application request models.
+Provide a consistent application entry model.
+Prevent transport concerns from crossing the API boundary.
+
+Request Mapping exists within the API Layer.
+
+Request Mapping is not business execution.
+
+Request Mapping is not validation.
+
+Request Mapping is not authorization.
+
+Request Mapping is not workflow orchestration.
+
+Request Mapping is a transport adaptation responsibility.
+
+### Request Mapping Position Within Architecture
+
+Authoritative Position:
+
+Request
+↓
+Authentication
+↓
+Controller
+↓
+Request Mapping
+↓
+Input Validation
+↓
+Application Service
+↓
+Authorization
+↓
+Ownership Validation
+↓
+Governance Validation
+↓
+Domain Rules
+↓
+Persistence
+↓
+Response Mapping
+↓
+Response
+### Ordering Rationale
+
+Request Mapping executes before Input Validation.
+
+Input Validation validates the application request model.
+
+Validation should evaluate the normalized structure rather than raw transport structures.
+
+This produces:
+
+Consistent validation targets
+Transport independence
+Stable validation behavior
+### Request Mapping Responsibility Model
+
+Request Mapping owns:
+
+Path parameter extraction
+Query parameter extraction
+Request body extraction
+Authenticated actor extraction
+Transport value normalization
+Input shape normalization
+Application request model construction
+Transport-to-application transformation
+
+Examples:
+
+POST /posts
+↓
+CreatePostRequest
+PATCH /profiles/:profileId
+↓
+UpdateProfileRequest
+
+Request Mapping creates application input models.
+
+Nothing more.
+
+### Request Mapping Non-Responsibilities
+
+Request Mapping must never own:
+
+Input validation decisions
+Authorization
+Ownership evaluation
+Governance evaluation
+Business rules
+Domain rules
+Workflow execution
+Transaction ownership
+Persistence
+Repository access
+Domain entity creation
+Aggregate creation
+Cross-module coordination
+
+Request Mapping remains non-authoritative.
+
+### Request Mapping Lifecycle
+
+Authoritative Lifecycle:
+
+HTTP Request
+↓
+Extraction
+↓
+Normalization
+↓
+Application Request Construction
+↓
+Application Service Input
+Stage 1 — Extraction
+
+Extract:
+
+Path parameters
+Query parameters
+Request body
+Authenticated actor
+Stage 2 — Normalization
+
+Normalize:
+
+Optional values
+Default values
+Pagination values
+Sorting values
+Filter values
+
+Normalization remains transport-focused.
+
+Stage 3 — Application Request Construction
+
+Construct application request model.
+
+Example:
+
+CreatePostRequest
+UpdateProfileRequest
+JoinHerdRequest
+CreateReportRequest
+Stage 4 — Application Service Input
+
+Mapped request becomes the application input.
+
+Application Services receive only application request models.
+
+### Request Mapping and Controllers
+
+Controllers remain transport coordinators.
+
+Controllers own:
+
+Request reception
+Mapper invocation
+Validation invocation
+Application Service invocation
+
+Controllers do not perform mapping logic directly.
+
+Authoritative Pattern:
+
+Controller
+↓
+Request Mapper
+↓
+Application Service
+
+Controllers coordinate.
+
+Request Mappers transform.
+
+### Request Mapping and Validation Architecture
+
+Request Mapping and Validation are separate concerns.
+
+Request Mapping
+
+Answers:
+
+What is the application request shape?
+Validation
+
+Answers:
+
+Is the request valid?
+Validation Ordering
+
+Authoritative Order:
+
+Request Mapping
+↓
+Input Validation
+Validation Categories
+
+Input Validation:
+
+Allowed after mapping.
+
+Examples:
+
+Required fields
+Type validation
+Length validation
+Pagination validation
+
+Authorization Validation:
+
+Not allowed inside Request Mapping.
+
+Ownership Validation:
+
+Not allowed inside Request Mapping.
+
+Governance Validation:
+
+Not allowed inside Request Mapping.
+
+Domain Validation:
+
+Not allowed inside Request Mapping.
+
+### Request Mapping and Application Services
+
+Application Services receive:
+
+Application Request Models
+
+Application Services never receive:
+
+Express Request
+Express Response
+HTTP Headers
+Query Objects
+Route Parameters
+Transport DTOs
+
+Application Services may not perform Request Mapping.
+
+Application Services remain transport-independent.
+
+### Request Mapping and API Contracts
+
+API Contracts remain authoritative external contracts.
+
+Request Mapping implements those contracts.
+
+Relationship:
+
+API Contract
+↓
+Request Mapper
+↓
+Application Request Model
+### Contract Evolution
+
+API contracts may evolve.
+
+Application request models may evolve independently.
+
+Request models are not required to mirror API contracts exactly.
+
+Examples:
+
+API Contract:
+
+{
+  "title": "...",
+  "body": "..."
+}
+
+Application Request:
+
+CreatePostRequest
+
+The mapper owns the translation boundary.
+
+### Request Mapping and Domain Boundaries
+
+Request Mapping sits above all domain modules.
+
+Request Mapping may not:
+
+Create domain entities
+Create aggregates
+Invoke repositories
+Invoke domain services
+Invoke foreign modules
+Execute capability contracts
+
+Reason:
+
+Request Mapping is transport infrastructure.
+
+Domain ownership begins below the Application Service boundary.
+
+This preserves:
+
+ADR-001
+One Domain = One Module
+Capability-Based Dependencies
+Acyclic Dependencies
+### Request Model Strategy
+Authoritative Model
+
+Use-case Request Models.
+
+Examples:
+
+CreatePostRequest
+UpdatePostRequest
+JoinHerdRequest
+AssignShepherdRequest
+CreateReportRequest
+Rejected Models
+Domain Entities as Requests
+Shared Transport Models
+Persistence Models as Requests
+Naming Convention
+<UseCase>Request
+
+Examples:
+
+CreatePostRequest
+UpdateProfileRequest
+JoinHerdRequest
+Ownership Convention
+
+Request models belong to the owning module.
+
+Example:
+
+content/
+ └─ requests/
+      CreatePostRequest
+
+### Request Mapper Organization Strategy
+Authoritative Organization
+
+Module-Level Request Mappers.
+
+Example:
+
+content/
+ ├─ controllers/
+ ├─ mappers/
+ ├─ requests/
+ └─ application/
+Naming Convention
+<UseCase>RequestMapper
+
+Examples:
+
+CreatePostRequestMapper
+UpdateProfileRequestMapper
+JoinHerdRequestMapper
+Ownership Convention
+
+Request Mappers belong to the same module as the owning Application Service.
+
+This preserves module ownership boundaries.
+
+### Request Mapping Constraints
+
+RM-01
+
+Request Mapping remains transport-focused.
+
+RM-02
+
+Request Mapping creates application request models only.
+
+RM-03
+
+Request Mapping never executes validation decisions.
+
+RM-04
+
+Request Mapping never executes authorization.
+
+RM-05
+
+Request Mapping never executes governance evaluation.
+
+RM-06
+
+Request Mapping never executes ownership evaluation.
+
+RM-07
+
+Request Mapping never executes domain rules.
+
+RM-08
+
+Request Mapping never invokes repositories.
+
+RM-09
+
+Request Mapping never invokes capability contracts.
+
+RM-10
+
+Request Mapping never coordinates workflows.
+
+RM-11
+
+Request Mapping never owns transactions.
+
+RM-12
+
+Application Services never receive HTTP structures.
+
+RM-13
+
+Controllers remain coordinators rather than transformers.
+
+RM-14
+
+Request models remain module-owned.
+
+RM-15
+
+Transport concerns terminate at the Request Mapping boundary.
+
+### Request Mapping Evolution Strategy
+
+Future evolution may introduce:
+
+Additional transports
+API versioning
+Alternative request formats
+Mapping utilities
+Mapping automation
+
+Future evolution must preserve:
+
+ADR-001
+API Layer Principles
+Controller Architecture
+Request Execution Architecture
+Application Service ownership
+Domain ownership boundaries
+Governance authority boundaries
+
+Request Mapping may evolve.
+
+Its responsibility may not.
+
+### Request Mapping Validation
+
+Validated Against:
+
+PROJECT_CONTEXT.md
+ADR-001
+ARCHITECTURE.md
+DATABASE.md
+INFRASTRUCTURE.md
+API_CONTRACTS.md
+API Layer Principles
+Request Execution Architecture
+Controller Architecture
+
+Validation Results:
+
+No ownership violations detected.
+No authority violations detected.
+No dependency violations detected.
+No execution responsibility violations detected.
+No governance conflicts detected.
+No API contract conflicts detected.
+No database conflicts detected.
+No infrastructure conflicts detected.
+
+Compatibility Confirmed With:
+
+Domain-Oriented Modular Monolith Architecture
+One Domain = One Module architecture
+Capability-Based Dependencies
+Acyclic Dependency Graph
+Application Service workflow ownership
+Governance authority boundaries
+API Layer transport-adapter model
+Controller architecture
+Request Execution architecture
+Status
+
+Request Mapping Architecture validated and approved as authoritative architecture.
+
 
 
 ## Backend Authorization Architecture
