@@ -5,11 +5,11 @@ Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
 Infrastructure Definition (Phase 1)
-    - Runtime Infrastructure
+    - Environment Architecture
 
 
 Next Task:
-Environment Architecture
+Deployment Strategy (Philosophy)
 
 Blocked By:
 Nothing
