@@ -9514,6 +9514,305 @@ Governance authority
 Security ownership
 Error translation ownership
 
+## API Error Flow Architecture
+### API Error Flow Purpose
+
+API Error Flow defines how failures propagate through the API Layer and become standardized API responses.
+
+Its purpose is to:
+
+Preserve error ownership.
+Preserve workflow ownership.
+Preserve API Error Contract consistency.
+Centralize transport-level error translation.
+Prevent responsibility leakage between architectural layers.
+
+API Error Flow does not redefine:
+
+Error ownership
+Error taxonomy
+API Error Contract
+Error Handling Architecture
+
+API Error Flow defines only:
+
+Error Origin
+    ↓
+Propagation
+    ↓
+Translation
+    ↓
+Response
+### Authoritative Error Flow Model
+Error Origin
+    ↓
+Propagation
+    ↓
+Error Middleware
+    ↓
+API Error Contract Translation
+    ↓
+HTTP Response
+
+Errors remain owned by their originating layer.
+
+Translation occurs exactly once.
+
+Error Middleware is the sole translation boundary.
+
+### Error Origination Model
+| Error Category   | Authoritative Owner           |
+| ---------------- | ----------------------------- |
+| Input Validation | Request Validation Middleware |
+| Authentication   | Authentication Middleware     |
+| Authorization    | Application Layer             |
+| Ownership        | Domain Layer                  |
+| Governance       | Governance Module             |
+| Domain Rule      | Domain Layer                  |
+| Not Found        | Owning Module                 |
+| Persistence      | Repository Layer              |
+| Infrastructure   | Infrastructure Layer          |
+| Unexpected       | Originating Layer             |
+
+Foreign layers shall not create foreign error categories.
+
+### Error Propagation Rules
+
+EPR-01
+
+Errors propagate upward.
+
+EPR-02
+
+Errors are never swallowed.
+
+EPR-03
+
+Error ownership remains unchanged during propagation.
+
+EPR-04
+
+Error category remains unchanged during propagation.
+
+EPR-05
+
+Error context must be preserved.
+
+EPR-06
+
+Error wrapping is permitted only when original error identity is preserved.
+
+EPR-07
+
+Error enrichment may add operational context but may not modify ownership or category.
+
+### Controller Error Participation Rules
+
+Controllers may:
+
+Delegate failures to Error Middleware.
+
+Controllers shall not:
+
+Translate errors
+Generate error responses
+Recover business failures
+Reclassify errors
+Log errors
+Swallow errors
+
+Authoritative controller behavior:
+
+Controller
+    ↓
+next(error)
+
+Controllers remain transport adapters.
+
+### Request Mapping Error Flow
+
+Request Mapping owns:
+
+Invalid path parameter errors
+Invalid query parameter errors
+Invalid request body errors
+Mapping failures
+
+Request Mapping errors propagate directly to Error Middleware.
+
+Controllers do not participate in translation.
+
+### Response Mapping Error Flow
+
+Response Mapping owns:
+
+Response construction failures
+Missing required response fields
+Contract incompatibilities
+Response mapper failures
+
+Response Mapping failures propagate directly to Error Middleware.
+
+These failures indicate implementation defects and shall produce standardized internal error responses.
+
+### Middleware Error Flow
+
+Authentication Middleware may originate authentication failures.
+
+Request Processing Middleware may originate input validation failures.
+
+Operational Middleware may enrich operational context.
+
+Error Middleware owns:
+
+Error translation
+Error logging
+Error response generation
+API Error Contract enforcement
+
+Error Middleware remains the final error boundary.
+
+### Application Service Error Flow
+
+Application Services may:
+
+Create authorization errors
+Coordinate ownership validation
+Coordinate governance validation
+Coordinate domain validation
+
+Application Services shall:
+
+Propagate failures unchanged
+
+Application Services shall not:
+
+Generate HTTP responses
+Translate API errors
+Convert business failures into transport concerns
+### Domain And Module Error Boundaries
+
+Modules own:
+
+Domain rule errors
+Ownership errors
+Lifecycle errors
+Module-specific not-found errors
+
+Modules may propagate foreign errors.
+
+Modules shall not:
+
+Translate foreign errors
+Suppress foreign errors
+Reclassify foreign errors
+
+Error ownership follows domain ownership.
+
+### API Error Translation Architecture
+
+Translation occurs:
+
+Exactly Once
+
+Translation location:
+
+Error Middleware
+
+Translation ownership:
+
+API Layer Infrastructure
+
+All failures must become API Error Contract compliant responses.
+
+### Error Visibility Model
+
+End users may see:
+
+Validation failures
+Authorization failures
+Ownership failures
+Governance restrictions
+Domain rule failures
+
+Clients shall never receive:
+
+Stack traces
+Database diagnostics
+Infrastructure diagnostics
+Internal implementation details
+
+Operational details remain server-side.
+
+### Operational Error Flow
+
+Error Middleware owns operational error logging.
+
+Logged information shall include:
+
+Correlation ID
+Request ID
+Error Category
+Error Code
+Origin Layer
+Module
+
+Governance-related failures shall remain audit-compatible.
+
+### API Error Flow Constraints
+
+EFC-01 Errors propagate upward.
+
+EFC-02 Errors are never swallowed.
+
+EFC-03 Error ownership remains with the origin layer.
+
+EFC-04 Translation occurs exactly once.
+
+EFC-05 Translation occurs only in Error Middleware.
+
+EFC-06 Controllers never translate errors.
+
+EFC-07 Controllers never generate error responses.
+
+EFC-08 Application Services never generate HTTP responses.
+
+EFC-09 Application Services never translate API errors.
+
+EFC-10 Domain modules never generate API responses.
+
+EFC-11 Modules never translate foreign errors.
+
+EFC-12 Modules never suppress foreign errors.
+
+EFC-13 Error Middleware remains the final error boundary.
+
+EFC-14 All API failures must become API Contract compliant responses.
+
+EFC-15 Infrastructure details never leave the backend runtime.
+
+### API Error Flow Evolution Strategy
+
+Future architecture may introduce:
+
+Background processing
+Domain events
+Observability
+Service extraction
+
+Future evolution must preserve:
+
+ADR-001
+Domain ownership boundaries
+Governance authority boundaries
+Error ownership boundaries
+Centralized translation
+API Error Contract compliance
+
+Status:
+
+API Error Flow Architecture validated and approved as authoritative.
+
 ## Backend Authorization Architecture
 
 ### Authorization Principles
