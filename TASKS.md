@@ -30,14 +30,17 @@
 # Ongoing
 - MVP Architecture Design
     - Phase 1
-        -  Define Backend API Layer Architecture
-            -  API Layer Validation
+        -  Backend Development Planning
+            - Foundation Implementation Plan
 
 
 # Pending
 ## Phase 1 — Core Platform
 ### Development Planning 
-Backend Development Planning
+Module Implementation Roadmap
+Standard Module Development Pattern
+Integration & Validation Strategy
+Milestones, Definition of Done & Release Readiness
 Frontend Development Planning
 Development Sprint Planning
 
@@ -210,3 +213,5 @@ Request Mapping Architecture
 Response Mapping Architecture
 Middleware Architecture
 API Error Flow
+Development Planning Principles
+Backend Build Strategy
