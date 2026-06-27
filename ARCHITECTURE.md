@@ -7804,7 +7804,1715 @@ Status
 
 Response Mapping Architecture validated and approved as authoritative architecture.
 
+## Middleware Architecture
+### Middleware Purpose
 
+Middleware exists to execute cross-cutting request concerns before requests enter the API Layer.
+
+Its purpose is to:
+
+Protect backend entry points.
+Establish request execution context.
+Enforce request-level security controls.
+Execute transport-level preprocessing.
+Standardize request handling behavior.
+Reduce duplication across controllers.
+
+Middleware exists to support request execution.
+
+Middleware does not execute business workflows.
+
+Middleware does not own application behavior.
+
+Middleware does not own business decisions.
+
+### Middleware Position Within Backend Architecture
+
+Authoritative Position:
+
+HTTP Client
+        ↓
+Middleware
+        ↓
+API Layer
+        ↓
+Application Layer
+        ↓
+Domain Layer
+        ↓
+Repository Layer
+        ↓
+Infrastructure Layer
+
+Middleware executes before Controllers.
+
+Middleware executes after request arrival.
+
+Middleware executes before Request Mapping.
+
+Middleware executes before Application Service execution.
+
+Middleware is part of the Backend Runtime and remains within the infrastructure execution boundary.
+
+### Middleware Responsibility Model
+
+Middleware owns request-level concerns only.
+
+Approved Responsibilities:
+
+Authentication Processing
+
+Examples:
+
+JWT extraction
+JWT verification
+Session validation
+Principal establishment
+Request Security Enforcement
+
+Examples:
+
+Security header enforcement
+Request hardening
+Security policy enforcement
+Request Context Establishment
+
+Examples:
+
+Correlation identifiers
+Request identifiers
+Request metadata creation
+Request Preprocessing
+
+Examples:
+
+Request normalization
+Request enrichment
+Request parsing support
+Cross-Cutting Operational Concerns
+
+Examples:
+
+Logging initiation
+Request tracing
+Request timing
+
+Middleware responsibilities must remain independent from business domains.
+
+### Middleware Non-Responsibility Model
+
+Middleware must never own:
+
+Business Workflows
+
+Forbidden:
+
+Create Post workflow
+Join Herd workflow
+Follow User workflow
+Report workflow
+Authorization Decisions
+
+Forbidden:
+
+Ownership evaluation
+Role evaluation
+Permission evaluation
+
+Authorization remains an Application Layer concern.
+
+Governance Decisions
+
+Forbidden:
+
+Restriction evaluation
+Enforcement decisions
+Escalation decisions
+
+Governance remains owned by the Governance domain.
+
+Business Validation
+
+Forbidden:
+
+Membership validation
+Voting validation
+Herd participation validation
+Domain Rules
+
+Forbidden:
+
+Aggregate invariants
+Lifecycle rules
+Ownership rules
+Transactions
+
+Forbidden:
+
+Transaction creation
+Transaction coordination
+Transaction ownership
+Persistence
+
+Forbidden:
+
+Repository access
+Database queries
+Aggregate persistence
+
+Middleware remains non-authoritative.
+
+### Middleware Relationship To API Layer
+
+Middleware executes before the API Layer.
+
+Relationship:
+
+Request
+        ↓
+Middleware
+        ↓
+Controller
+
+Middleware prepares requests for controller execution.
+
+Controllers consume middleware outputs.
+
+Examples:
+
+Authenticated principal
+Request context
+Correlation identifiers
+
+Middleware never executes controller responsibilities.
+
+Controllers remain transport adapters.
+
+### Middleware Relationship To Controllers
+
+Controllers depend on middleware outputs.
+
+Controllers may consume:
+
+Authenticated actor information
+Request metadata
+Request context
+
+Controllers must not delegate workflow execution to middleware.
+
+Controllers remain the first API Layer component.
+
+Middleware remains outside the API Layer boundary.
+
+### Middleware Relationship To Application Services
+
+Middleware never communicates directly with Application Services.
+
+Authoritative Pattern:
+
+Middleware
+        ↓
+Controller
+        ↓
+Application Service
+
+Middleware may establish execution context.
+
+Application Services remain workflow owners.
+
+Middleware never:
+
+Executes use cases
+Coordinates workflows
+Invokes module capabilities
+
+### Middleware Relationship To Domain Modules
+
+Middleware remains domain-neutral.
+
+Middleware may not:
+
+Invoke domain logic
+Evaluate domain rules
+Modify domain state
+
+Middleware has no ownership relationship with:
+
+Identity
+Social Graph
+Content
+Community
+Media
+Governance
+Feed
+
+ADR-001 ownership boundaries remain preserved.
+
+### Middleware Categories
+
+Middleware is classified into four categories.
+
+Security Middleware
+
+Purpose:
+
+Protect backend entry points.
+
+Examples:
+
+Authentication
+JWT verification
+Session validation
+Request Context Middleware
+
+Purpose:
+
+Establish execution context.
+
+Examples:
+
+Correlation IDs
+Request IDs
+Request metadata
+Request Processing Middleware
+
+Purpose:
+
+Prepare requests for API Layer execution.
+
+Examples:
+
+Request normalization
+Parsing support
+Operational Middleware
+
+Purpose:
+
+Support operational visibility.
+
+Examples:
+
+Request logging
+Request timing
+Request tracing
+
+Middleware categories remain infrastructure concerns.
+
+### Middleware Execution Ordering Philosophy
+
+Middleware shall execute from the most foundational concern to the most contextual concern.
+
+Authoritative Ordering:
+
+Request
+        ↓
+Security Middleware
+        ↓
+Request Context Middleware
+        ↓
+Request Processing Middleware
+        ↓
+Operational Middleware
+        ↓
+Controller
+
+Ordering Principles:
+
+MW-01
+
+Security executes first.
+
+MW-02
+
+Execution context is established before request processing.
+
+MW-03
+
+Request preprocessing executes before controller execution.
+
+MW-04
+
+Operational instrumentation executes before workflow execution begins.
+
+MW-05
+
+Middleware ordering must remain deterministic.
+
+### Middleware Constraints
+
+The following constraints are authoritative.
+
+MWC-01
+
+Middleware owns no business workflows.
+
+MWC-02
+
+Middleware owns no authorization decisions.
+
+MWC-03
+
+Middleware owns no governance decisions.
+
+MWC-04
+
+Middleware owns no business validation.
+
+MWC-05
+
+Middleware owns no transactions.
+
+MWC-06
+
+Middleware owns no persistence operations.
+
+MWC-07
+
+Middleware owns no domain state.
+
+MWC-08
+
+Middleware remains domain-neutral.
+
+MWC-09
+
+Middleware executes before Controllers.
+
+MWC-10
+
+Middleware must remain reusable across domains.
+
+MWC-11
+
+Middleware must remain compatible with stateless backend runtime principles.
+
+MWC-12
+
+Middleware may establish context.
+
+Middleware may not execute workflows.
+
+### Middleware Evolution Strategy
+
+Future middleware may introduce:
+
+Enhanced security controls
+Additional request instrumentation
+Additional operational tracing
+Additional request context capabilities
+
+Middleware may not evolve by acquiring:
+
+Business workflow ownership
+Domain ownership
+Governance ownership
+Authorization ownership
+Transaction ownership
+
+Future evolution must preserve:
+
+Application Service workflow ownership
+Domain ownership boundaries
+Governance authority boundaries
+API Layer responsibilities
+Request Execution Architecture
+
+Middleware remains a request preprocessing layer regardless of future infrastructure evolution.
+
+### Middleware Validation
+
+Validated Against:
+
+PROJECT_CONTEXT.md
+ADR-001
+ARCHITECTURE.md
+DATABASE.md
+INFRASTRUCTURE.md
+API_CONTRACTS.md
+Security Architecture
+API Layer Principles
+Request Execution Architecture
+Controller Architecture
+Request Mapping Architecture
+Response Mapping Architecture
+
+Validation Results:
+
+No ownership violations detected.
+No governance authority conflicts detected.
+No transaction ownership conflicts detected.
+No dependency violations detected.
+No API Layer responsibility conflicts detected.
+No Request Execution Architecture conflicts detected.
+No Infrastructure Architecture conflicts detected.
+
+Compatibility Confirmation:
+
+Middleware remains infrastructure-oriented.
+Controllers remain transport adapters.
+Application Services remain workflow owners.
+Domain ownership remains unchanged.
+Governance remains an authority domain.
+Feed remains derived and read-only.
+Request Mapping remains API-owned.
+Response Mapping remains API-owned.
+Status
+
+Middleware Architecture Part 1 is approved and can be considered authoritative.
+
+## Security & Authentication Middleware Architecture
+### Security Middleware Purpose
+
+Security Middleware exists to establish authenticated identity before requests enter the API execution pipeline.
+
+Its responsibilities are to:
+
+Extract authentication credentials.
+Validate authentication credentials.
+Resolve authenticated identity.
+Establish authenticated principals.
+Create request security context.
+Protect secured endpoints.
+
+Security Middleware exists to establish identity.
+
+Security Middleware does not determine permissions.
+
+Security Middleware does not execute business workflows.
+
+Security Middleware does not execute governance workflows.
+
+Authentication is an identity concern.
+
+Authorization remains a separate architectural concern.
+
+### Security Middleware Position Within Request Lifecycle
+
+Authoritative execution position:
+
+Request
+    ↓
+Security Middleware
+    ↓
+API Layer
+    ↓
+Application Layer
+    ↓
+Domain Layer
+
+Security Middleware executes before:
+
+Controllers
+Request Mapping
+Request Validation
+Authorization
+Governance Validation
+Workflow Execution
+
+Identity establishment must complete before business execution begins.
+
+### Authentication Middleware Responsibilities
+
+Security Middleware owns:
+
+Credential Extraction
+
+Extract credentials from approved authentication mechanisms.
+
+Examples:
+
+Session cookies
+Authentication tokens
+Credential Validation
+
+Validate:
+
+Credential existence
+Credential integrity
+Credential authenticity
+Credential expiration
+Identity Resolution
+
+Resolve the authenticated actor.
+
+Identity resolution establishes:
+
+Who is making the request
+
+Identity resolution does not determine:
+
+What the actor may do
+Security Context Creation
+
+Create request-level security context.
+
+Security context represents authenticated identity information available to downstream layers.
+
+Authenticated Principal Creation
+
+Create the authoritative authenticated principal attached to the request lifecycle.
+
+Endpoint Protection
+
+Determine whether authentication is required before execution continues.
+
+### Authentication Middleware Non-Responsibilities
+
+Security Middleware must never own:
+
+Authorization Decisions
+
+Forbidden:
+
+Permission evaluation
+Role evaluation
+Ownership evaluation
+
+Authorization remains owned by Authorization Architecture.
+
+Governance Decisions
+
+Forbidden:
+
+Restriction decisions
+Moderation decisions
+Escalation decisions
+Enforcement decisions
+
+Governance remains owned by Governance.
+
+Business Workflow Execution
+
+Forbidden:
+
+Create Post
+Join Herd
+Vote
+Follow User
+
+Application Services remain workflow owners.
+
+Lifecycle Execution
+
+Forbidden:
+
+Account lifecycle transitions
+Post lifecycle transitions
+Herd lifecycle transitions
+
+Lifecycle ownership remains with owning domains.
+
+Persistence Ownership
+
+Forbidden:
+
+Repository operations
+Database mutations
+
+Security Middleware is not a persistence layer.
+
+### Identity Extraction Model
+
+Authentication credentials are extracted before API execution.
+
+Authoritative model:
+
+Request
+    ↓
+Credential Extraction
+    ↓
+Credential Validation
+    ↓
+Identity Resolution
+    ↓
+Authenticated Principal
+
+Identity resolution consumes Identity-owned authentication capabilities.
+
+Identity remains the authoritative identity owner.
+
+Security Middleware consumes identity capabilities.
+
+Security Middleware does not own identity state.
+
+### Authenticated Principal Model
+
+The authenticated principal represents the authenticated actor.
+
+Approved principal information:
+
+Principal
+├── userId
+├── authenticationState
+└── authenticationMetadata
+
+Purpose:
+
+Identify the actor.
+Provide stable identity context.
+Support downstream authorization.
+Intentionally Excluded
+
+The principal must not contain:
+
+Permissions
+Authorization decisions
+Governance decisions
+Domain entities
+Database models
+Workflow state
+
+These belong to downstream layers.
+
+### Security Context Model
+
+Security context is attached to the request.
+
+Purpose:
+
+Carry authenticated identity.
+Support downstream workflow execution.
+
+Security context remains request-scoped.
+
+Security context must not become an application-wide state container.
+
+### Public Endpoint Handling
+
+Public endpoints allow anonymous access.
+
+Examples:
+
+Registration
+Login
+Public profile retrieval
+Public content retrieval
+
+Authoritative flow:
+
+Request
+    ↓
+Security Middleware
+    ↓
+Anonymous Context
+    ↓
+Controller
+
+Authentication is optional.
+
+Execution continues without authenticated identity.
+
+### Protected Endpoint Handling
+
+Protected endpoints require authenticated identity.
+
+Examples:
+
+Create Post
+Vote
+Follow User
+Join Herd
+Governance Actions
+
+Authoritative flow:
+
+Request
+    ↓
+Security Middleware
+    ↓
+Authenticated Principal
+    ↓
+Controller
+
+Execution does not continue without successful authentication.
+
+### Authentication Failure Architecture
+
+Authentication failures terminate execution before API Layer execution.
+
+Failure Categories
+Missing Credentials
+
+Credentials required but not supplied.
+
+Invalid Credentials
+
+Credentials fail authenticity validation.
+
+Expired Credentials
+
+Credentials no longer valid.
+
+Malformed Credentials
+
+Credential format invalid.
+
+Failure Flow
+Request
+    ↓
+Security Middleware
+    ↓
+Authentication Failure
+    ↓
+Error Middleware
+    ↓
+Standard Error Response
+
+Controllers are never executed.
+
+Application Services are never executed.
+
+No workflow execution occurs.
+
+### Relationship To Authorization Architecture
+
+Authentication establishes identity.
+
+Authorization evaluates permissions.
+
+Authoritative separation:
+
+Authentication
+    ↓
+Identity Established
+    ↓
+Authorization
+    ↓
+Permission Decision
+
+Authentication answers:
+
+Who is the actor?
+
+Authorization answers:
+
+May the actor perform this action?
+
+These concerns remain separate.
+
+### Relationship To Governance Architecture
+
+Authentication establishes identity.
+
+Governance evaluates restrictions and authority.
+
+Authoritative separation:
+
+Authentication
+    ↓
+Authorization
+    ↓
+Governance Validation
+
+Security Middleware never evaluates:
+
+Restrictions
+Enforcement state
+Moderation authority
+
+Governance remains authoritative.
+
+### Relationship To Controllers
+
+Controllers consume authenticated principals.
+
+Controllers do not:
+
+Authenticate requests
+Validate credentials
+Resolve identities
+
+Controllers remain transport adapters.
+
+### Relationship To Application Services
+
+Application Services consume authenticated principals.
+
+Application Services remain responsible for:
+
+Workflow execution
+Authorization invocation
+Governance invocation
+
+Authentication execution remains external to Application Services.
+
+### Security Middleware Ordering
+
+Authoritative ordering:
+
+Request
+    ↓
+Security Middleware
+    ↓
+Request Mapping
+    ↓
+Request Validation
+    ↓
+Application Service
+
+Security Middleware executes before all business execution components.
+
+Future middleware categories must not bypass Security Middleware.
+
+Identity establishment remains the earliest security checkpoint.
+
+### Security Middleware Constraints
+
+SM-01
+
+Security Middleware owns authentication only.
+
+SM-02
+
+Security Middleware owns identity establishment only.
+
+SM-03
+
+Security Middleware never executes authorization.
+
+SM-04
+
+Security Middleware never executes governance.
+
+SM-05
+
+Security Middleware never executes workflows.
+
+SM-06
+
+Security Middleware never owns transactions.
+
+SM-07
+
+Security Middleware never owns persistence.
+
+SM-08
+
+Authenticated principals remain identity-focused.
+
+SM-09
+
+Identity remains the authoritative authentication owner.
+
+SM-10
+
+Application Services remain workflow owners.
+
+SM-11
+
+Authentication failures terminate execution immediately.
+
+SM-12
+
+Security Middleware executes before API Layer execution.
+
+### Security Middleware Evolution Strategy
+
+Authentication mechanisms may evolve.
+
+Examples:
+
+Session-based authentication
+JWT-based authentication
+Additional credential mechanisms
+
+Future evolution must preserve:
+
+Identity authority
+Authentication ownership boundaries
+Authorization separation
+Governance separation
+Application Service ownership
+
+Authentication technology may change.
+
+Authentication architecture remains unchanged.
+
+### Security Middleware Validation
+
+Validated Against:
+
+PROJECT_CONTEXT.md
+ADR-001
+ARCHITECTURE.md
+DATABASE.md
+INFRASTRUCTURE.md
+API_CONTRACTS.md
+Security Architecture
+API Layer Principles
+Request Execution Architecture
+Controller Architecture
+Request Mapping Architecture
+Response Mapping Architecture
+Middleware Architecture Part 1
+
+Validation Results:
+
+Identity authority preserved.
+Authorization boundaries preserved.
+Governance boundaries preserved.
+Application Service ownership preserved.
+Module ownership preserved.
+API contracts preserved.
+Infrastructure trust boundaries preserved.
+Backend Runtime authority preserved.
+
+No ownership conflicts detected.
+
+No authority conflicts detected.
+
+No dependency violations detected.
+
+No API contract conflicts detected.
+
+Status
+
+Middleware Architecture Part 2 — Security & Authentication Middleware Architecture is approved.
+
+## Request Processing Middleware Architecture
+
+### Request Processing Middleware Purpose
+
+Request Processing Middleware prepares requests for execution after security processing and before API Layer execution.
+
+Responsibilities:
+
+- Request context creation
+- Correlation creation
+- Metadata creation
+- Request logging
+- Request tracing
+- Request normalization
+
+Request Processing Middleware owns infrastructure-oriented request preparation only.
+
+It does not participate in business execution.
+
+### Request Processing Middleware Position Within Request Lifecycle
+
+Authoritative ordering:
+
+Request
+↓
+Authentication Middleware
+↓
+Security Context Middleware
+↓
+Request Processing Middleware
+↓
+Controller
+↓
+Application Service
+
+Request Processing Middleware executes after identity establishment and before API Layer execution.
+
+### Request Processing Middleware Responsibilities
+
+Owns:
+
+- Request context creation
+- Correlation creation
+- Metadata creation
+- Request logging
+- Request tracing
+- Request normalization
+- Failure context creation
+
+### Request Processing Middleware Non-Responsibilities
+
+Must not own:
+
+- Authentication
+- Authorization
+- Governance evaluation
+- Workflow execution
+- Validation
+- Transactions
+- Request mapping
+- Response mapping
+- Business rules
+
+### Request Context Architecture
+
+Request Context contains:
+
+- Correlation ID
+- Request ID
+- Request timestamp
+- Trace ID
+- Authenticated principal
+- Request metadata
+
+Request Context must never contain:
+
+- Business state
+- Authorization decisions
+- Governance decisions
+- Domain objects
+- Persistence objects
+
+Request Context remains request-scoped and non-persistent.
+
+### Correlation ID Architecture
+
+Request Processing Middleware owns:
+
+- Correlation ID creation
+- Request ID creation
+- Correlation propagation
+
+Correlation identifiers are immutable after creation.
+
+Propagation path:
+
+Middleware
+↓
+Controller
+↓
+Application Service
+↓
+Repository
+↓
+Infrastructure
+
+### Request Metadata Architecture
+
+Approved metadata:
+
+- Request ID
+- Correlation ID
+- Timestamp
+- Trace ID
+- Method
+- Route
+- Principal ID
+
+Metadata is created by Request Processing Middleware.
+
+Consumers may read but may not modify metadata.
+
+### Request Logging Architecture
+
+Request Logging owns:
+
+- Request start logging
+- Request completion logging
+- Failure logging
+
+Must never log:
+
+- Passwords
+- Tokens
+- Cookies
+- Secrets
+
+Logging exists for operational diagnostics and not business auditing.
+
+### Request Tracing Architecture
+
+Request Processing Middleware owns:
+
+- Trace creation
+- Trace propagation
+
+Tracing supports:
+
+- Request lifecycle tracking
+- Correlation tracking
+- Future observability compatibility
+
+Request Processing Middleware does not trace business workflows.
+
+### Request Normalization Architecture
+
+Approved normalization:
+
+- Header normalization
+- Correlation header handling
+- Query normalization
+- Metadata standardization
+
+Request Processing Middleware must not perform:
+
+- Contract validation
+- Business validation
+
+### Request Context Propagation Model
+
+Propagation path:
+
+Middleware
+↓
+Controller
+↓
+Application Service
+↓
+Repository
+↓
+Infrastructure
+
+Propagation exists solely for:
+
+- Correlation access
+- Logging access
+- Trace access
+
+### Request Processing Failure Architecture
+
+Failures include:
+
+- Context initialization failures
+- Correlation failures
+- Logging failures
+- Tracing failures
+
+Failures propagate into the approved Error Handling Architecture.
+
+### Relationship To Security Middleware
+
+Security Middleware owns authentication.
+
+Request Processing Middleware consumes authenticated context.
+
+Request Processing Middleware never authenticates requests.
+
+### Relationship To Controllers
+
+Controllers consume request context.
+
+Controllers remain transport adapters.
+
+### Relationship To Application Services
+
+Application Services consume execution metadata.
+
+Application Services remain workflow owners.
+
+### Relationship To Error Handling Architecture
+
+Request Processing Middleware creates failure context.
+
+Error Middleware owns error translation.
+
+### Request Processing Middleware Ordering
+
+Authoritative ordering:
+
+Authentication Middleware
+↓
+Security Context Middleware
+↓
+Correlation Middleware
+↓
+Request Context Middleware
+↓
+Request Normalization Middleware
+↓
+Request Logging Middleware
+↓
+Controller
+
+### Request Processing Middleware Constraints
+
+RPM-01 Request Processing Middleware owns request preparation only.
+
+RPM-02 Request Processing Middleware owns no workflows.
+
+RPM-03 Request Processing Middleware owns no authorization decisions.
+
+RPM-04 Request Processing Middleware owns no governance decisions.
+
+RPM-05 Request Processing Middleware owns no domain rules.
+
+RPM-06 Request Processing Middleware owns no transactions.
+
+RPM-07 Request Processing Middleware owns no business state.
+
+RPM-08 Request Context remains request-scoped only.
+
+RPM-09 Correlation identifiers are immutable.
+
+RPM-10 Sensitive authentication data must never be logged.
+
+### Request Processing Middleware Evolution Strategy
+
+Future evolution may introduce:
+
+- Structured logging
+- Metrics
+- Distributed tracing
+- Telemetry exporters
+
+Future evolution must preserve:
+
+- Application Service ownership
+- Controller ownership
+- Governance ownership
+- Authorization ownership
+- Stateless runtime principles
+
+## Error Middleware Architecture
+### Error Middleware Purpose
+
+Error Middleware provides the single architectural boundary where application failures become API error responses.
+
+Purpose:
+
+Preserve consistent error handling
+Preserve API Error Contract compliance
+Prevent duplicate error translation
+Centralize operational logging
+
+Error Middleware is the final middleware executed during failure handling.
+
+### Error Middleware Placement
+
+Authoritative Placement:
+
+Request
+↓
+Middleware Chain
+↓
+API Layer
+↓
+Application Layer
+↓
+Error Propagation
+↓
+Error Middleware
+↓
+API Error Contract
+↓
+Response
+
+Error Middleware executes after all normal request processing.
+
+### Error Middleware Responsibilities
+
+Owns:
+
+Error classification
+Error translation
+API error contract generation
+Error logging
+Correlation ID attachment
+Failure response generation
+### Error Middleware Non-Responsibilities
+
+Must not:
+
+Execute business rules
+Execute authorization
+Execute governance decisions
+Execute persistence
+Recover failed workflows
+Retry failed operations
+### Error Classification Handling
+
+Supported categories:
+
+Input Validation Error
+Authentication Error
+Authorization Error
+Ownership Error
+Governance Error
+Domain Rule Error
+Not Found Error
+Persistence Error
+Infrastructure Error
+Unexpected Error
+
+Classification remains compatible with the approved Error Handling Architecture.
+
+### Error Translation Architecture
+
+Authoritative Error Flow:
+
+Origin Layer
+↓
+Application Service
+↓
+Global Error Middleware
+↓
+API Error Contract
+↓
+Response
+
+Translation ownership belongs exclusively to Error Middleware.
+
+Controllers
+
+May not translate errors.
+
+Must delegate failures.
+
+Application Services
+
+May not translate errors.
+
+Must propagate failures.
+
+Repositories
+
+May not translate errors.
+
+Must propagate failures.
+
+Infrastructure Services
+
+May not translate errors.
+
+Must propagate failures.
+
+Error Middleware is the sole translation boundary.
+
+### Error Logging Architecture
+
+Error logging occurs exclusively within Error Middleware.
+
+Logged Information:
+
+Correlation ID
+Error category
+Error code
+Request path
+Request method
+Timestamp
+
+May log:
+
+Stack traces
+Internal diagnostics
+
+Server-side only.
+
+Never exposed externally.
+
+### Error Response Architecture
+
+Error responses shall conform to the approved API Error Contract.
+
+Error Middleware owns:
+
+HTTP status generation
+Error code mapping
+Response structure generation
+
+All failures must return standardized responses.
+
+### Error Propagation Architecture
+
+Authoritative Rule:
+
+Errors propagate upward unchanged.
+
+Rules:
+
+ERR-MW-01
+
+Errors are never swallowed.
+
+ERR-MW-02
+
+Errors are translated exactly once.
+
+ERR-MW-03
+
+Context must be preserved.
+
+ERR-MW-04
+
+Translation occurs only within Error Middleware.
+
+### Error Middleware Constraints
+Single global error handler.
+No business logic.
+No workflow execution.
+No authorization execution.
+No governance execution.
+No persistence execution.
+No retry orchestration.
+
+## Operational Middleware Architecture
+### Operational Middleware Purpose
+
+Operational Middleware provides request-level operational visibility while preserving architectural simplicity.
+
+Purpose:
+
+Request diagnostics
+Request tracing
+Correlation support
+Operational troubleshooting
+
+Operational Middleware owns no business behavior.
+
+### Operational Middleware Responsibilities
+
+Owns:
+
+Correlation IDs
+Request logging
+Request timing
+Operational metadata
+### Operational Middleware Non-Responsibilities
+
+Must not:
+
+Execute workflows
+Execute authorization
+Execute governance
+Execute persistence
+Perform business analytics
+Perform distributed tracing
+### Correlation Middleware
+Purpose
+
+Assign request-scoped correlation identifiers.
+
+Responsibilities
+
+Generate:
+
+correlationId
+
+Attach to:
+
+Request context
+Logs
+Error logs
+Execution
+
+Runs first.
+
+Covers the entire request lifecycle.
+
+### Request Logging Middleware
+Purpose
+
+Provide request-level operational visibility.
+
+Request Start Logging
+
+Log:
+
+Correlation ID
+HTTP method
+Route
+Timestamp
+Request Completion Logging
+
+Log:
+
+Correlation ID
+Status code
+Duration
+Timestamp
+Failure Logging
+
+Log:
+
+Correlation ID
+Error category
+Status code
+Logging Security Rules
+May Log
+Correlation ID
+Endpoint
+Status code
+Timing data
+Error category
+Must Never Log
+Passwords
+JWT tokens
+Session tokens
+Refresh tokens
+Authentication secrets
+Sensitive user credentials
+
+Security Architecture remains authoritative.
+
+### Request Timing Middleware
+Purpose
+
+Measure request duration.
+
+Provides:
+
+requestStartTime
+requestDuration
+
+Operational use only.
+
+No business ownership.
+
+### Operational Metadata Middleware
+Purpose
+
+Attach operational metadata to request context.
+
+Examples:
+
+Correlation ID
+Request start timestamp
+
+No business metadata allowed.
+
+### Operational Middleware Constraints
+No business logic.
+No authorization.
+No governance.
+No persistence.
+No distributed tracing.
+No observability platform integration.
+
+## Middleware Lifecycle Completion
+### Final Middleware Inventory
+Operational
+Correlation Middleware
+Request Logging Middleware
+Request Timing Middleware
+Operational Metadata Middleware
+Security
+Security Headers Middleware
+CORS Middleware
+Authentication
+Authentication Middleware
+Request Processing
+Request Validation Middleware
+Error
+Global Error Middleware
+
+### Complete Middleware Ordering
+
+Authoritative Ordering:
+
+Request
+↓
+Correlation Middleware
+↓
+Request Logging Middleware
+↓
+Request Timing Middleware
+↓
+Operational Metadata Middleware
+↓
+Security Headers Middleware
+↓
+CORS Middleware
+↓
+Authentication Middleware
+↓
+Request Validation Middleware
+↓
+Controller
+↓
+Request Mapping
+↓
+Application Service
+↓
+Response Mapping
+↓
+Response
+
+Failure Path:
+
+Request
+↓
+Middleware / Controller / Application Service
+↓
+Error
+↓
+Global Error Middleware
+↓
+API Error Contract
+↓
+Response
+
+### End-To-End Request Lifecycle
+Request Arrival
+↓
+Correlation Established
+↓
+Request Logging Started
+↓
+Operational Context Established
+↓
+Security Middleware
+↓
+Authentication Middleware
+↓
+Request Validation Middleware
+↓
+Controller
+↓
+Request Mapping
+↓
+Application Service
+↓
+Authorization
+↓
+Ownership Validation
+↓
+Governance Validation
+↓
+Domain Rules
+↓
+Persistence
+↓
+Result Composition
+↓
+Response Mapping
+↓
+Response
+↓
+Completion Logging
+
+### End-To-End Failure Lifecycle
+Request Arrival
+↓
+Middleware Chain
+↓
+Controller
+↓
+Application Service
+↓
+Error Generated
+↓
+Error Propagation
+↓
+Global Error Middleware
+↓
+Error Logging
+↓
+API Error Contract
+↓
+Failure Response
+
+### Middleware Evolution Strategy
+Future Compatibility Strategy
+
+Future architecture may introduce:
+
+Observability Architecture
+Background Processing Strategy
+Operations Strategy
+
+Operational middleware provides future attachment points for:
+
+Metrics
+Tracing
+Observability exporters
+
+without redesigning the middleware chain.
+
+No future architecture may violate:
+
+Application Service ownership
+Domain ownership
+Governance authority
+Security ownership
+Error translation ownership
 
 ## Backend Authorization Architecture
 

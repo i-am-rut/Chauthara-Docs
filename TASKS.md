@@ -31,13 +31,12 @@
 - MVP Architecture Design
     - Phase 1
         -  Define Backend API Layer Architecture
-            -  Middleware Architecture 
+            -  API Error Flow
 
 
 # Pending
 ## Phase 1 — Core Platform
 ### Development Planning 
-API Error Flow 
 API Layer Validation
 Backend Development Planning
 Frontend Development Planning
@@ -210,3 +209,4 @@ Request Execution Architecture
 Controller Architecture
 Request Mapping Architecture 
 Response Mapping Architecture
+Middleware Architecture

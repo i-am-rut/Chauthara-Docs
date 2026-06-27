@@ -4,11 +4,11 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Middleware Architecture
+API Error Flow
 
 
 Next Task:
-API Error Flow
+API Layer Validation
 
 Blocked By:
 Nothing
