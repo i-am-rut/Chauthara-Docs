@@ -6343,6 +6343,472 @@ Controller Architecture
 
 --- 
 
+## Controller Architecture
+### Controller Purpose
+
+Controllers are transport adapters.
+
+Their purpose is to:
+
+Receive HTTP requests.
+Extract transport-level inputs.
+Map transport inputs into application requests.
+Invoke Application Services.
+Map application results into API responses.
+Delegate failures to centralized error handling.
+
+Controllers exist to isolate HTTP concerns from application execution.
+
+Controllers are not workflow owners.
+
+Controllers are not business execution components.
+
+### Controller Position Within Backend Architecture
+
+Authoritative Position:
+
+HTTP Client
+↓
+Middleware
+↓
+Controller
+↓
+Application Service
+↓
+Domain Rules
+↓
+Repository
+↓
+Infrastructure
+
+Controllers execute after middleware and before Application Services.
+
+Controllers represent the final transport-specific boundary before workflow execution begins.
+
+### Controller Responsibility Model
+
+Controllers own only transport responsibilities.
+
+Approved responsibilities:
+
+Request Reception
+
+Receive incoming HTTP requests.
+
+Request Extraction
+
+Extract:
+
+Path parameters
+Query parameters
+Request body
+Authenticated principal
+Request Mapping
+
+Transform HTTP input into application request models.
+
+Example:
+
+POST /posts
+
+↓
+
+CreatePostCommand
+
+Application Service Invocation
+
+Invoke the appropriate Application Service.
+
+Response Mapping
+
+Transform application results into API contract responses.
+
+HTTP Status Generation
+
+Return contract-compliant HTTP status codes.
+
+Error Delegation
+
+Forward failures to centralized error handling.
+
+Controllers shall not perform error translation.
+
+### Controller Non-Responsibilities
+
+Controllers must never own:
+
+Business Workflows
+
+Examples:
+
+Create Post workflow
+Join Herd workflow
+Review Report workflow
+Business Rules
+
+Examples:
+
+Membership validation
+Voting rules
+Lifecycle rules
+Authorization Decisions
+
+Examples:
+
+Role evaluation
+Permission evaluation
+Governance Decisions
+
+Examples:
+
+Restriction evaluation
+Enforcement evaluation
+Escalation evaluation
+Ownership Decisions
+
+Examples:
+
+Post ownership checks
+Herd ownership checks
+Transaction Ownership
+
+Controllers never create, commit, or rollback transactions.
+
+Persistence
+
+Controllers may not:
+
+Access repositories
+Execute database queries
+Access collections
+Feed Composition
+
+Controllers may not generate feeds.
+
+Cross-Module Coordination
+
+Controllers may not coordinate workflows across modules.
+
+Application Services remain the sole workflow coordinators.
+
+### Controller Lifecycle
+
+Authoritative Controller Lifecycle:
+
+Request
+↓
+Middleware
+↓
+Controller Entry
+↓
+Request Extraction
+↓
+Request Mapping
+↓
+Application Service Invocation
+↓
+Application Result
+↓
+Response Mapping
+↓
+Response
+
+Controller execution begins at request reception and ends when a response model is returned.
+
+Controllers retain no execution state after completion.
+
+### Controller and Application Services
+
+Relationship Principle:
+
+Controllers invoke Application Services.
+
+Application Services execute workflows.
+
+Authoritative Pattern:
+
+Controller
+↓
+Application Service
+
+Controllers may invoke only the Application Service required to satisfy the requested use case.
+
+Controllers shall not orchestrate multiple workflows.
+
+Controllers shall not coordinate multiple modules.
+
+Workflow ownership belongs exclusively to Application Services.
+
+### Controller and Validation Architecture
+
+Validation Ownership:
+
+Before Controller Execution
+
+Middleware may perform:
+
+Authentication validation
+Security validation
+During Controller Execution
+
+Controllers may participate only in transport-level validation.
+
+Examples:
+
+Request structure validation
+Required field validation
+Type validation
+Query parameter validation
+Forbidden Inside Controllers
+
+Controllers shall not perform:
+
+Authorization validation
+Ownership validation
+Governance validation
+Domain validation
+
+These validations remain owned by their approved architectural layers.
+
+### Controller and Security Architecture
+
+Middleware owns:
+
+Authentication
+Session validation
+JWT validation
+Principal establishment
+
+Controllers consume authenticated identity.
+
+Controllers do not evaluate permissions.
+
+Controllers do not evaluate governance authority.
+
+Application Services remain responsible for invoking authorization and governance evaluation.
+
+### Controller and Error Handling Architecture
+
+Controllers do not own error translation.
+
+Authoritative Error Flow:
+
+Error Origin
+↓
+Application Service
+↓
+Controller
+↓
+Global Error Handler
+↓
+API Error Contract
+↓
+Response
+
+Controllers propagate errors.
+
+Controllers do not classify errors.
+
+Controllers do not generate business error responses.
+
+Centralized error handling remains authoritative.
+
+### Controller and Domain Boundaries
+
+Controllers communicate only with Application Services.
+
+Controllers may not access:
+
+Repositories
+Domain entities
+Domain services
+Infrastructure services
+Foreign modules
+
+Allowed:
+
+Controller
+↓
+Application Service
+
+Forbidden:
+
+Controller
+↓
+Repository
+
+Controller
+↓
+Foreign Module
+
+Controller
+↓
+Database
+
+Controller
+↓
+Infrastructure Service
+
+This preserves:
+
+One Domain = One Module
+Capability-Based Dependencies
+Acyclic Dependency Architecture
+### Controller Organization Strategy
+
+Controllers shall be organized by owning backend module.
+
+Example:
+
+Identity Controllers
+
+RegisterController
+LoginController
+UpdateProfileController
+
+Content Controllers
+
+CreatePostController
+UpdatePostController
+CreateCommentController
+
+Community Controllers
+
+CreateHerdController
+JoinHerdController
+
+Governance Controllers
+
+CreateReportController
+ReviewReportController
+
+Organization follows approved domain ownership boundaries.
+
+Controller ownership aligns with module ownership.
+
+### Controller Constraints
+
+The following rules are authoritative.
+
+CTRL-01
+
+Controllers are transport adapters.
+
+CTRL-02
+
+Controllers remain stateless.
+
+CTRL-03
+
+Controllers own no business workflows.
+
+CTRL-04
+
+Controllers own no business rules.
+
+CTRL-05
+
+Controllers own no authorization decisions.
+
+CTRL-06
+
+Controllers own no governance decisions.
+
+CTRL-07
+
+Controllers own no ownership decisions.
+
+CTRL-08
+
+Controllers own no transactions.
+
+CTRL-09
+
+Controllers may not access repositories.
+
+CTRL-10
+
+Controllers may not access persistence infrastructure.
+
+CTRL-11
+
+Controllers may not coordinate modules.
+
+CTRL-12
+
+Controllers communicate only with Application Services.
+
+CTRL-13
+
+Controllers own no business state.
+
+CTRL-14
+
+All HTTP concerns terminate at the Controller boundary.
+
+### Controller Evolution Strategy
+
+Controllers may evolve through:
+
+Additional endpoints
+Additional API versions
+Additional transport protocols
+Improved request mapping mechanisms
+
+Controllers may not evolve by:
+
+Acquiring workflow ownership
+Acquiring business logic
+Acquiring authorization logic
+Acquiring governance logic
+Bypassing Application Services
+
+Future evolution must preserve:
+
+ADR-001
+API Layer Principles
+Request Execution Architecture
+Domain Ownership Boundaries
+Governance Authority Boundaries
+
+Controllers remain transport adapters regardless of transport technology.
+
+### Controller Validation
+
+Validated Against:
+
+PROJECT_CONTEXT.md
+ADR-001
+ARCHITECTURE.md
+DATABASE.md
+INFRASTRUCTURE.md
+API_CONTRACTS.md
+API Layer Principles
+Request Execution Architecture
+
+Validation Results:
+
+No ownership violations detected.
+No authority violations detected.
+No dependency violations detected.
+No transaction ownership violations detected.
+No execution responsibility violations detected.
+No architectural conflicts detected.
+
+Compatibility Confirmation:
+
+Application Services remain workflow owners.
+Domain ownership remains preserved.
+Governance authority remains preserved.
+Feed remains derived and read-only.
+Capability contracts remain the exclusive cross-module boundary.
+
+Status:
+
+Controller Architecture validated and approved as authoritative architecture.
+
+
+
 ## Backend Authorization Architecture
 
 ### Authorization Principles
