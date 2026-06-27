@@ -4,11 +4,11 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Request Execution Architecture 
+Controller Architecture
 
 
 Next Task:
-Controller Architecture
+Request Mapping Architecture 
 
 Blocked By:
 Nothing

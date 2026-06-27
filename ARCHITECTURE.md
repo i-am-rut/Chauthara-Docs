@@ -4543,7 +4543,1805 @@ API Layer Principles validated and approved as authoritative architecture.
 
 --- 
 
-## 
+## Request Execution Philosophy
+
+Request Execution Architecture defines how backend workflows execute after crossing the API Layer boundary.
+
+Its purpose is to:
+
+Establish authoritative workflow ownership.
+Establish authoritative transaction ownership.
+Define execution responsibilities for every architectural layer.
+Preserve approved domain ownership boundaries.
+Preserve governance authority boundaries.
+Preserve capability-based dependency rules.
+
+Execution architecture exists to ensure that business workflows execute consistently regardless of endpoint, domain, or feature.
+
+The architecture follows the principle that workflow ownership, business rule ownership, persistence ownership, and infrastructure ownership are distinct responsibilities and must remain separated.
+
+Application Services become the primary execution boundary.
+
+### Execution Ownership Model
+
+Execution ownership is distributed according to architectural responsibility.
+
+| Layer                | Execution Ownership                      |
+| -------------------- | ---------------------------------------- |
+| Middleware           | Authentication and request preprocessing |
+| API Layer            | Transport adaptation                     |
+| Application Layer    | Workflow execution and coordination      |
+| Domain Layer         | Business rule execution                  |
+| Repository Layer     | Persistence execution                    |
+| Infrastructure Layer | External system execution                |
+
+Application Services are the authoritative workflow owners.
+
+No other layer may assume workflow ownership.
+
+### Layer Execution Responsibilities
+#### Middleware
+
+Owns:
+
+Authentication
+Request security enforcement
+Principal establishment
+
+Must not own:
+
+Business workflows
+Transactions
+Authorization decisions
+Governance decisions
+#### API Layer
+
+Owns:
+
+Request mapping
+Response mapping
+Transport adaptation
+
+Must not own:
+
+Business workflows
+Authorization decisions
+Governance decisions
+Persistence
+Transactions
+#### Application Layer
+
+Owns:
+
+Workflow execution
+Use-case orchestration
+Cross-module coordination
+Authorization invocation
+Governance invocation
+Transaction ownership
+
+Acts as the authoritative execution boundary.
+
+#### Domain Layer
+
+Owns:
+
+Business rules
+Aggregate invariants
+Ownership rules
+Lifecycle rules
+
+Must not own:
+
+Workflow orchestration
+Persistence
+Transactions
+#### Repository Layer
+
+Owns:
+
+Aggregate retrieval
+Aggregate persistence
+Query execution
+
+Must not own:
+
+Business workflows
+Authorization
+Governance
+Transaction ownership
+#### Infrastructure Layer
+
+Owns:
+
+Database integration
+External service integration
+Operational integrations
+
+Must not own:
+
+Business execution
+Governance execution
+Authorization execution
+### Workflow Ownership Model
+
+Workflow ownership belongs exclusively to Application Services.
+
+Controllers remain transport adapters.
+
+Repositories remain persistence components.
+
+Domain layers remain business rule owners.
+
+Cross-module workflows are permitted through approved capability contracts.
+
+Cross-module workflow participation does not transfer:
+
+Resource ownership
+Lifecycle ownership
+Governance authority
+
+Workflow ownership and resource ownership remain independent concerns.
+
+### Application Service Execution Authority
+
+Application Services are the authoritative execution boundary.
+
+Application Services own:
+
+Workflow execution
+Execution sequencing
+Authorization invocation
+Governance invocation
+Ownership enforcement coordination
+Lifecycle coordination
+Transaction ownership
+
+Application Services are selected as the execution boundary because they possess complete workflow context.
+
+Controllers understand transport concerns only.
+
+Repositories understand persistence concerns only.
+
+Domain objects understand business validity only.
+
+Only Application Services possess sufficient context to coordinate complete use cases.
+
+### Execution Constraints
+
+The following rules are authoritative.
+
+Controllers remain transport adapters.
+Application Services own workflow execution.
+Application Services own transaction boundaries.
+Repositories never coordinate workflows.
+Repositories never own transactions.
+Domain rules remain inside owning domains.
+Cross-module execution occurs only through capability contracts.
+Workflow ownership never transfers resource ownership.
+Governance authority never transfers workflow ownership.
+Feed remains read-only.
+Infrastructure services never become workflow coordinators.
+Execution responsibilities must remain explicit.
+### Execution Evolution Strategy
+
+Future architecture may introduce:
+
+Background processing
+Event-driven workflows
+Service extraction
+Asynchronous execution
+
+Future evolution must preserve:
+
+Application Service workflow ownership
+Domain ownership boundaries
+Governance authority boundaries
+Capability-based dependencies
+Transaction ownership principles
+
+Transport mechanisms may evolve.
+
+Deployment topology may evolve.
+
+Execution ownership remains unchanged.
+
+### Part 1 Validation
+
+Validated against:
+
+PROJECT_CONTEXT.md
+ADR-001
+ARCHITECTURE.md
+DATABASE.md
+INFRASTRUCTURE.md
+API_CONTRACTS.md
+API Layer Principles
+
+Validation Results:
+
+No ownership violations detected.
+No authority violations detected.
+No dependency violations detected.
+No execution responsibility conflicts detected.
+
+Status:
+
+Request Execution Architecture Part 1 validated and approved as authoritative.
+
+## Request Lifecycle Architecture
+### Execution Lifecycle Philosophy
+
+Every backend request follows a standardized execution lifecycle.
+
+The lifecycle exists to:
+
+Preserve workflow ownership.
+Preserve authorization consistency.
+Preserve governance consistency.
+Preserve transaction ownership.
+Preserve domain ownership boundaries.
+Preserve capability-based dependency rules.
+
+Application Services remain the authoritative workflow owners.
+
+Execution stages may vary by workflow category, but lifecycle ordering remains consistent.
+
+Authoritative Lifecycle Model
+
+Execution progresses through ordered stages.
+
+Approved lifecycle:
+
+Request Reception
+↓
+Authentication
+↓
+Request Mapping
+↓
+Input Validation
+↓
+Application Service Entry
+↓
+Authorization Evaluation
+↓
+Ownership Evaluation (when applicable)
+↓
+Governance Evaluation (when applicable)
+↓
+Domain Rule Evaluation (when applicable)
+↓
+Transaction Execution (when applicable)
+↓
+Persistence (when applicable)
+↓
+Result Composition
+↓
+Response Mapping
+↓
+Response
+
+Execution stages may be skipped when not applicable.
+
+Stage ordering remains authoritative.
+
+### Execution Stage Inventory
+Stage 1 — Authentication
+
+Purpose:
+
+Establish authenticated actor identity.
+
+Owner:
+
+Middleware
+
+Outputs:
+
+Actor Identity
+Session Context
+Authentication Claims
+
+Mandatory:
+
+Protected endpoints only.
+
+Stage 2 — Request Mapping
+
+Purpose:
+
+Translate transport input into application input.
+
+Owner:
+
+API Layer
+
+Mandatory:
+
+Always.
+
+Stage 3 — Input Validation
+
+Purpose:
+
+Validate API contract compliance.
+
+Examples:
+
+Required fields
+Type validation
+Query constraints
+Pagination constraints
+
+Owner:
+
+API Layer
+
+Mandatory:
+
+Always.
+
+Stage 4 — Application Service Entry
+
+Purpose:
+
+Transfer execution ownership to workflow owner.
+
+Owner:
+
+Application Layer
+
+Mandatory:
+
+Always.
+
+Stage 5 — Authorization Evaluation
+
+Purpose:
+
+Determine whether the actor may perform the requested operation.
+
+Owner:
+
+Application Layer
+
+Mandatory:
+
+Protected operations.
+
+Stage 6 — Ownership Evaluation
+
+Purpose:
+
+Evaluate ownership authority.
+
+Examples:
+
+Edit Post
+Edit Profile
+Delete Image
+
+Owner:
+
+Domain Rules
+Invoked By Application Layer
+
+Conditional.
+
+Stage 7 — Governance Evaluation
+
+Purpose:
+
+Evaluate governance restrictions.
+
+Examples:
+
+Restricted User
+Restricted Herd
+Restricted Content
+
+Owner:
+
+Governance Module
+
+Conditional.
+
+Stage 8 — Domain Rule Evaluation
+
+Purpose:
+
+Protect aggregate invariants and business rules.
+
+Examples:
+
+Membership required
+One vote per user
+Closed report cannot escalate
+
+Owner:
+
+Domain Layer
+
+Conditional.
+
+Stage 9 — Transaction Execution
+
+Purpose:
+
+Protect consistency during state mutation.
+
+Owner:
+
+Application Service
+
+Write workflows only.
+
+Stage 10 — Persistence
+
+Purpose:
+
+Persist authoritative state changes.
+
+Owner:
+
+Repositories
+
+Write workflows only.
+
+Stage 11 — Result Composition
+
+Purpose:
+
+Construct workflow outcome.
+
+Owner:
+
+Application Service
+
+Always.
+
+Stage 12 — Response Mapping
+
+Purpose:
+
+Transform workflow result into API contract response.
+
+Owner:
+
+API Layer
+
+Always.
+
+### Write Workflow Lifecycle
+Workflow Classification
+
+Examples:
+
+Create Post
+Edit Post
+Join Herd
+Follow User
+Create Report
+Assign Shepherd
+Authoritative Write Lifecycle
+
+Authentication
+↓
+Request Mapping
+↓
+Input Validation
+↓
+Application Service
+↓
+Authorization
+↓
+Ownership Validation (if required)
+↓
+Governance Validation
+↓
+Domain Rule Validation
+↓
+Transaction Start
+↓
+Persistence
+↓
+Transaction Commit
+↓
+Result Composition
+↓
+Response Mapping
+↓
+Response
+
+Ordering Rationale
+
+Authorization before mutation
+
+Prevents unauthorized workflow execution.
+
+Ownership before mutation
+
+Prevents unauthorized resource modification.
+
+Governance before mutation
+
+Prevents restricted actors or resources from participating.
+
+Domain rules before transaction
+
+Prevents unnecessary transaction creation.
+
+Transaction before persistence
+
+Protects consistency.
+
+Persistence before response
+
+Guarantees response reflects committed state.
+
+### Read Workflow Lifecycle
+Workflow Classification
+
+Examples:
+
+Get Profile
+Get Herd
+Following Feed Retrieval
+Herd Feed Retrieval
+Report Retrieval
+Authoritative Read Lifecycle
+
+Authentication (if required)
+↓
+Request Mapping
+↓
+Input Validation
+↓
+Application Service
+↓
+Authorization
+↓
+Visibility Evaluation
+↓
+Query Execution
+↓
+Result Composition
+↓
+Response Mapping
+↓
+Response
+
+Read Workflow Characteristics
+
+Read workflows:
+
+Do not own transactions.
+Do not persist state.
+Do not execute mutation workflows.
+
+Ownership validation executes only when ownership controls visibility.
+
+### Governance Workflow Lifecycle
+Workflow Classification
+
+Examples:
+
+Remove Membership
+Restrict Profile
+Restrict Herd
+Review Report
+Escalate Report
+Governance Lifecycle Philosophy
+
+Governance workflows evaluate authority before execution.
+
+Governance authority is separate from ownership authority.
+
+Authoritative Governance Lifecycle
+
+Authentication
+↓
+Request Mapping
+↓
+Input Validation
+↓
+Governance Application Service
+↓
+Role Validation
+↓
+Scope Validation
+↓
+Authority Validation
+↓
+Hierarchy Validation
+↓
+Target Validation
+↓
+Governance Rule Evaluation
+↓
+Transaction Start
+↓
+Governance Record Creation
+↓
+Target Module Invocation
+↓
+Audit Record Creation
+↓
+Transaction Commit
+↓
+Result Composition
+↓
+Response Mapping
+↓
+Response
+
+Governance Ordering Rules
+
+Role before scope
+
+Unknown role cannot have scope.
+
+Scope before authority
+
+Authority exists only within approved scope.
+
+Authority before hierarchy
+
+Hierarchy evaluation requires valid authority.
+
+Hierarchy before execution
+
+Lower authority may not override higher authority.
+
+Audit generation before commit
+
+Ensures governance accountability.
+
+### Feed Workflow Lifecycle
+Workflow Classification
+
+Examples:
+
+Following Feed
+Herd Feed
+Feed Lifecycle Philosophy
+
+Feed is a derived domain.
+
+Feed owns:
+
+Composition
+Ordering
+Retrieval
+
+Feed owns:
+
+No authoritative resources
+No transactions
+No persistence
+No governance decisions
+
+Feed remains read-only.
+
+Authoritative Feed Lifecycle
+
+Authentication (if required)
+↓
+Request Mapping
+↓
+Input Validation
+↓
+Feed Application Service
+↓
+Visibility Evaluation
+↓
+Cross-Domain Queries
+↓
+Governance Visibility Filtering
+↓
+Feed Composition
+↓
+Feed Ordering
+↓
+Response Mapping
+↓
+Response
+
+Feed Ownership Rules
+
+Feed owns:
+
+Feed composition
+Feed retrieval
+
+Feed does not own:
+
+Business validation
+Governance authority
+Persistence
+Transactions
+
+Feed consumes governance outcomes.
+
+Feed never creates governance outcomes.
+
+### Cross-Module Workflow Lifecycle
+Cross-Module Workflow Philosophy
+
+Cross-module participation does not transfer ownership.
+
+Workflow ownership remains with the initiating Application Service.
+
+Authoritative Pattern
+
+Application Service
+↓
+Authorization
+↓
+Module Capability Invocation
+↓
+Capability Result
+↓
+Continue Workflow
+
+Example — Create Herd Post
+
+Content Application Service
+↓
+Community Capability
+(Validate Membership)
+↓
+Governance Capability
+(Restriction Evaluation)
+↓
+Content Domain Rules
+↓
+Content Transaction
+↓
+Post Persistence
+
+Content remains workflow owner.
+
+Community ownership remains unchanged.
+
+Governance authority remains unchanged.
+
+Example — Assign Shepherd
+
+Community Application Service
+↓
+Authorization
+↓
+Identity Validation
+↓
+Community Authority Validation
+↓
+Community Transaction
+↓
+Persistence
+
+Community remains workflow owner.
+
+Cross-Module Rules
+
+Cross-module communication:
+
+Application Service
+↓
+Module Contract
+↓
+Target Application Service
+
+Direct repository access across modules is prohibited.
+
+Direct aggregate modification across modules is prohibited.
+
+Workflow ownership never transfers.
+
+### Execution Sequence Rules
+ESR-01
+
+Input validation executes before workflow execution.
+
+ESR-02
+
+Authorization executes before mutation.
+
+ESR-03
+
+Ownership validation executes before mutation.
+
+ESR-04
+
+Governance validation executes before mutation.
+
+ESR-05
+
+Domain rules execute before transaction creation.
+
+ESR-06
+
+Transactions begin as late as possible.
+
+ESR-07
+
+Persistence occurs only inside active transactions.
+
+ESR-08
+
+Persistence occurs before response generation.
+
+ESR-09
+
+Application Services own execution sequencing.
+
+ESR-10
+
+Repositories never coordinate workflows.
+
+ESR-11
+
+Controllers never coordinate workflows.
+
+ESR-12
+
+Feed workflows never create transactions.
+
+ESR-13
+
+Governance workflows always generate audit records.
+
+ESR-14
+
+Cross-module communication occurs only through capability contracts.
+
+### Workflow Classification Model
+Classification Categories
+
+The architecture formally recognizes four workflow categories.
+
+Read Workflows
+
+Characteristics:
+
+Read-only
+No transactions
+No persistence
+
+Examples:
+
+Get Profile
+Get Herd
+Write Workflows
+
+Characteristics:
+
+State mutation
+Transaction ownership
+Aggregate lifecycle participation
+
+Examples:
+
+Create Post
+Join Herd
+Governance Workflows
+
+Characteristics:
+
+Authority evaluation
+Scope evaluation
+Audit generation
+Enforcement execution
+
+Examples:
+
+Restrict Profile
+Review Report
+Feed Workflows
+
+Characteristics:
+
+Derived
+Read-only
+Cross-domain composition
+
+Examples:
+
+Following Feed
+Herd Feed
+
+### Evolution Strategy
+
+Future architecture may introduce:
+
+Background execution
+Event-driven workflows
+Asynchronous processing
+Service extraction
+
+Future evolution must preserve:
+
+Application Service workflow ownership
+Domain ownership boundaries
+Governance authority boundaries
+Feed read-only status
+Capability-based dependencies
+Transaction ownership model
+
+Execution mechanisms may evolve.
+
+Execution ownership may not.
+
+### Part 2 Validation
+
+Validated against:
+
+PROJECT_CONTEXT.md
+ADR-001
+ARCHITECTURE.md
+DATABASE.md
+INFRASTRUCTURE.md
+API_CONTRACTS.md
+API Layer Principles
+Request Execution Architecture Part 1
+
+Validation Results:
+
+No ownership violations detected.
+No authority violations detected.
+No dependency violations detected.
+No transaction ownership conflicts detected.
+No governance hierarchy conflicts detected.
+No execution ordering conflicts detected.
+Compatibility Confirmation
+
+Feed remains derived and non-authoritative.
+
+Application Services remain workflow owners.
+
+Database ownership boundaries remain unchanged.
+
+Infrastructure authority boundaries remain unchanged.
+
+Status
+
+Request Execution Architecture Part 2 validated and approved as authoritative.
+
+## Transaction Architecture
+### Transaction Ownership Model
+Transaction Ownership Principle
+
+Transactions belong to workflow execution.
+
+Because Application Services are the authoritative workflow owners, Application Services are also the authoritative transaction owners.
+
+Authoritative Model:
+
+Application Service
+↓
+Transaction Start
+↓
+Persistence Operations
+↓
+Commit / Rollback
+
+Transactions shall not be owned by:
+
+Controllers
+Domain Objects
+Repositories
+Infrastructure Services
+Transaction Responsibility Rules
+
+TX-01
+
+Application Services own transaction lifecycle.
+
+TX-02
+
+Repositories participate in transactions but never create them.
+
+TX-03
+
+Controllers never create transactions.
+
+TX-04
+
+Domain objects never create transactions.
+
+TX-05
+
+Transaction ownership follows workflow ownership.
+
+### Transaction Scope Model
+Aggregate Transactions
+
+Allowed.
+
+Examples:
+
+Create Post
+Create Comment
+Follow User
+Join Herd
+
+Preferred transaction scope.
+
+Single Domain Transactions
+
+Allowed.
+
+A transaction may modify multiple aggregates owned by the same domain when required by the workflow.
+
+Ownership remains singular.
+
+Multi-Domain Transactions
+
+Prohibited.
+
+A transaction shall not span multiple owning domains.
+
+Examples:
+
+Content + Community mutation in one transaction
+
+Prohibited.
+
+Governance + Content mutation in one transaction
+
+Prohibited.
+
+Reason:
+
+Preserves:
+
+Domain ownership
+Aggregate ownership
+Future extraction readiness
+Modular boundaries
+### Transaction Lifecycle
+
+Authoritative Ordering
+
+Input Validation
+↓
+Authentication Validation
+↓
+Authorization Validation
+↓
+Ownership Validation
+↓
+Governance Validation
+↓
+Business Rule Validation
+↓
+Transaction Start
+↓
+Mutation
+↓
+Persistence
+↓
+Commit
+↓
+Result Composition
+↓
+Response
+
+Transactions begin only after workflow validity has been established.
+
+### Cross-Domain Transaction Philosophy
+Principle
+
+Cross-domain workflows are allowed.
+
+Cross-domain transactions are not.
+
+Example:
+
+Create Herd Post
+
+Content Workflow Owner
+↓
+Community Capability Validation
+↓
+Governance Capability Validation
+↓
+Content Transaction
+↓
+Post Persistence
+
+Only Content mutates Content state.
+
+Only Content owns transaction.
+
+Governance Example
+
+Restrict Profile
+
+Governance Workflow
+↓
+Governance Record Transaction
+↓
+Identity Capability Invocation
+↓
+Identity Restriction Application
+
+Each domain owns its own mutation.
+
+Ownership remains preserved.
+
+### Rollback Philosophy
+Rollback Principle
+
+Rollback restores consistency inside the transaction owner boundary.
+
+Rollback never transfers ownership.
+
+Rollback Triggers
+
+Rollback occurs when:
+
+Persistence failure
+Aggregate consistency failure
+Domain validation failure discovered during mutation
+Repository failure
+Transaction infrastructure failure
+Non-Rollback Failures
+
+No transaction exists yet for:
+
+Input validation failures
+Authorization failures
+Ownership failures
+Governance failures
+
+Therefore rollback is unnecessary.
+
+MVP Rollback Model
+
+Authoritative Decision:
+
+Full rollback of the owning transaction.
+
+Not supported:
+
+Partial rollback
+Distributed rollback
+Compensation workflows
+Saga orchestration
+
+These introduce complexity beyond MVP requirements.
+
+### Validation Architecture
+Validation Classification Model
+
+Validation is classified into seven categories.
+
+| Validation Category       | Purpose                 |
+| ------------------------- | ----------------------- |
+| Input Validation          | API contract compliance |
+| Authentication Validation | Identity establishment  |
+| Authorization Validation  | Permission evaluation   |
+| Ownership Validation      | Ownership authority     |
+| Governance Validation     | Restriction enforcement |
+| Business Rule Validation  | Aggregate invariants    |
+| Persistence Validation    | Storage integrity       |
+
+Validation Ownership Model
+Input Validation
+
+Owner:
+
+API Layer
+
+Examples:
+
+Required fields
+Types
+Pagination constraints
+Authentication Validation
+
+Owner:
+
+Middleware
+
+Examples:
+
+JWT validation
+Session validation
+Authorization Validation
+
+Owner:
+
+Application Layer
+
+Executed through Authorization Services.
+
+Ownership Validation
+
+Owner:
+
+Domain Layer
+
+Invoked by Application Services.
+
+Governance Validation
+
+Owner:
+
+Governance Module
+
+Invoked through Governance capabilities.
+
+Business Rule Validation
+
+Owner:
+
+Domain Layer
+
+Examples:
+
+Membership required
+One vote per user
+Cannot escalate closed report
+Persistence Validation
+
+Owner:
+
+Repository Layer
+
+Examples:
+
+Unique constraint violations
+Missing referenced persistence records
+Transaction commit failures
+
+Persistence validation never becomes business validation.
+
+Validation Execution Order
+
+Authoritative Ordering
+
+Input Validation
+↓
+Authentication Validation
+↓
+Authorization Validation
+↓
+Ownership Validation
+↓
+Governance Validation
+↓
+Business Rule Validation
+↓
+Persistence Validation
+↓
+Mutation
+
+Rationale:
+
+Cheap validation executes first.
+
+Expensive validation executes later.
+
+Mutation executes only after validity is confirmed.
+
+### Cross-Domain Validation Model
+Principle
+
+Each module validates its own rules.
+
+Modules do not reimplement foreign rules.
+
+Example
+
+Publish Herd Post
+
+Content
+↓
+Community Capability
+(CanUserPostInHerd)
+↓
+Governance Capability
+(IsUserRestricted)
+↓
+Content Business Rules
+
+Community validates Community rules.
+
+Governance validates Governance rules.
+
+Content validates Content rules.
+
+Cross-Domain Validation Rule
+
+VAL-01
+
+A module may request validation.
+
+VAL-02
+
+A module may not implement foreign business rules.
+
+VAL-03
+
+Capability providers remain authoritative validators.
+
+### Validation Failure Handling
+
+Validation failure immediately terminates execution.
+
+Execution does not continue.
+
+The owning validation layer generates the error.
+
+No mutation occurs.
+
+No transaction is created.
+
+### Error Propagation Architecture
+Error Classification Model
+
+Authoritative Error Inventory
+
+| Error Category         | Examples             |
+| ---------------------- | -------------------- |
+| Input Validation Error | Invalid request      |
+| Authentication Error   | Invalid session      |
+| Authorization Error    | Permission denied    |
+| Ownership Error        | Not owner            |
+| Governance Error       | Restricted actor     |
+| Business Rule Error    | Already voted        |
+| Not Found Error        | Missing resource     |
+| Persistence Error      | Constraint violation |
+| Infrastructure Error   | Database unavailable |
+| Unexpected Error       | Unhandled failure    |
+
+Error Ownership Model
+| Layer                | Responsibility              |
+| -------------------- | --------------------------- |
+| Middleware           | Authentication Errors       |
+| API Layer            | Input Errors                |
+| Application Layer    | Authorization Errors        |
+| Domain Layer         | Ownership + Business Errors |
+| Governance Module    | Governance Errors           |
+| Repository Layer     | Persistence Errors          |
+| Infrastructure Layer | Infrastructure Errors       |
+
+
+### Error Propagation Flow
+
+Authoritative Pattern
+
+Origin Layer
+↓
+Application Service
+↓
+Global Error Handler
+↓
+API Error Contract
+↓
+Response
+
+Propagation Rules
+
+ERR-01
+
+Errors propagate upward.
+
+ERR-02
+
+Errors are not swallowed.
+
+ERR-03
+
+Context must be preserved.
+
+ERR-04
+
+Translation occurs only once.
+
+ERR-05
+
+API Layer owns final HTTP mapping.
+
+### Error Visibility Model
+End Users
+
+May see:
+
+Validation failures
+Authorization failures
+Governance restrictions
+Business rule failures
+Not found responses
+
+Must not see:
+
+Stack traces
+Database details
+Infrastructure details
+Moderators
+
+May see:
+
+Governance-specific failures
+Scope failures
+Authority failures
+
+Only when relevant to workflow execution.
+
+Administrators
+
+May see:
+
+Operational failure identifiers
+Governance diagnostics
+
+Still must not receive infrastructure internals.
+
+### Infrastructure Failure Handling
+Examples
+Database unavailable
+Media provider unavailable
+Timeout
+External dependency unavailable
+Handling Model
+
+Infrastructure Failure
+↓
+Infrastructure Error
+↓
+Application Service
+↓
+Global Error Handler
+↓
+Standard Error Response
+
+Infrastructure details remain internal.
+
+Operational diagnostics remain server-side.
+
+### Module Interaction Architecture
+Capability Contract Model
+Capability Principles
+
+Capabilities expose business operations.
+
+Capabilities do not expose implementation.
+
+Capabilities are the only approved cross-module entry point.
+
+Capability Structure
+
+Capability Input
+↓
+Capability Evaluation
+↓
+Capability Result
+
+Capabilities return:
+
+Validation result
+Business decision
+Required reference data
+
+They do not expose:
+
+Repositories
+Collections
+Persistence models
+
+### Capability Ownership Rules
+
+CAP-01
+
+Only the owning module exposes capabilities.
+
+CAP-02
+
+Only Application Services consume capabilities.
+
+CAP-03
+
+Capabilities may evaluate business rules.
+
+CAP-04
+
+Capabilities may perform read operations.
+
+CAP-05
+
+Capabilities must not expose internal persistence structures.
+
+### Cross-Module Invocation Rules
+
+Allowed:
+
+Application Service
+↓
+Module Contract
+↓
+Target Application Service
+
+Allowed:
+
+Content → Community
+Content → Media
+Governance → Content
+Governance → Community
+Feed → All approved providers
+
+Forbidden:
+
+Repository → Repository
+
+Controller → Foreign Module
+
+Domain → Foreign Aggregate Mutation
+
+Cross-domain persistence access
+
+Circular invocation chains
+
+### Data Exchange Philosophy
+Exchange Principle
+
+Modules exchange business information.
+
+Modules do not exchange ownership.
+
+Exchange Rules
+
+DTO-style contract responses are required.
+
+Entities do not cross module boundaries.
+
+Persistence models do not cross module boundaries.
+
+Aggregate internals do not cross module boundaries.
+
+Capabilities expose only the information required to satisfy the business request.
+
+### Module Failure Handling
+Capability Failure
+
+Capability Failure
+↓
+Application Service
+↓
+Workflow Failure
+
+Default behavior:
+
+Failure propagates.
+
+Recovery
+
+MVP recovery behavior:
+
+Fail fast.
+
+No fallback execution.
+
+No alternate providers.
+
+No compensating workflows.
+
+Reason:
+
+Simplicity First.
+
+### Consistency & Safety Model
+Consistency Principles
+
+The architecture preserves consistency through:
+
+Ownership Consistency
+
+Only owners mutate owned resources.
+
+Governance Consistency
+
+Governance owns decisions.
+
+Domains own resources.
+
+Transaction Consistency
+
+Transactions remain local to transaction owners.
+
+Validation Consistency
+
+Validation executes in deterministic order.
+
+Error Consistency
+
+Errors follow a standardized propagation model.
+
+Dependency Consistency
+
+Cross-module interaction occurs only through capabilities.
+
+### Safety Rules
+
+SAFE-01
+
+Workflow ownership remains with Application Services.
+
+SAFE-02
+
+Resource ownership remains with owning domains.
+
+SAFE-03
+
+Governance authority never becomes ownership.
+
+SAFE-04
+
+Feed remains read-only.
+
+SAFE-05
+
+Repositories never coordinate workflows.
+
+SAFE-06
+
+Cross-module mutations are prohibited.
+
+SAFE-07
+
+Capability contracts remain the only cross-module boundary.
+
+### Evolution Strategy
+
+Future architecture may introduce:
+
+Domain Events
+Outbox Pattern
+Background Processing
+Asynchronous Workflows
+Service Extraction
+
+Future evolution must preserve:
+
+ADR-001
+Domain ownership
+Governance authority
+Feed derived status
+Capability contracts
+Application Service workflow ownership
+
+Execution mechanisms may evolve.
+
+Ownership boundaries may not.
+
+### Validation
+
+Validated Against:
+
+PROJECT_CONTEXT.md
+ADR-001
+ARCHITECTURE.md
+DATABASE.md
+INFRASTRUCTURE.md
+API_CONTRACTS.md
+Request Execution Architecture Part 1
+Request Execution Architecture Part 2
+
+Validation Results:
+
+No ownership violations detected.
+No transaction ownership conflicts detected.
+No governance authority conflicts detected.
+No dependency violations detected.
+No aggregate consistency violations detected.
+No database ownership conflicts detected.
+No infrastructure authority conflicts detected.
+
+Compatibility Confirmation:
+
+Application Services remain workflow owners.
+Transactions remain workflow-owned.
+Domain ownership remains unchanged.
+Governance remains an authority domain.
+Feed remains derived and read-only.
+Capability-based dependencies remain preserved.
+Aggregate boundaries remain preserved.
+
+Status
+
+Request Execution Architecture Part 3 validated and approved as authoritative.
+
+## Request Execution Architecture Consolidated Validation
+
+Validation completed against:
+
+- PROJECT_CONTEXT.md
+- FEATURES.md
+- DATA_MODEL.md
+- API_CONTRACTS.md
+- ADR-001
+- Backend Architecture
+- Security Architecture
+- Database Architecture
+- Infrastructure Architecture
+- API Layer Principles
+- Request Execution Architecture Parts 1–3
+
+Validation Results:
+
+- Responsibility Validation: PASS
+- Workflow Ownership Validation: PASS
+- Transaction Validation: PASS
+- Validation Architecture Validation: PASS
+- Error Architecture Validation: PASS
+- Module Interaction Validation: PASS
+- Governance Compatibility Validation: PASS
+- Feed Compatibility Validation: PASS
+- Domain Ownership Validation: PASS
+- Dependency Validation: PASS
+- Security Compatibility Validation: PASS
+- Database Compatibility Validation: PASS
+- Infrastructure Compatibility Validation: PASS
+
+No ownership conflicts detected.
+
+No dependency conflicts detected.
+
+No governance conflicts detected.
+
+No transaction conflicts detected.
+
+No validation conflicts detected.
+
+No error propagation conflicts detected.
+
+No database compatibility conflicts detected.
+
+No infrastructure compatibility conflicts detected.
+
+### Implementation Readiness Assessment
+
+Status:
+
+READY FOR DEVELOPMENT PLANNING
+
+Rationale:
+
+- Workflow ownership model validated.
+- Execution lifecycle validated.
+- Transaction architecture validated.
+- Validation architecture validated.
+- Error architecture validated.
+- Governance compatibility validated.
+- Feed compatibility validated.
+- Dependency model validated.
+- Security compatibility validated.
+- Database compatibility validated.
+- Infrastructure compatibility validated.
+
+No blocking architectural issues remain.
+
+Request Execution Architecture is approved as authoritative.
+
+### Final Approval Status
+
+Decision:
+
+REQUEST EXECUTION ARCHITECTURE APPROVED
+
+All validation areas passed.
+
+No architectural corrections required.
+
+Request Execution Architecture is formally closed.
+
+Next Architecture Task:
+
+Controller Architecture
+
+--- 
 
 ## Backend Authorization Architecture
 
