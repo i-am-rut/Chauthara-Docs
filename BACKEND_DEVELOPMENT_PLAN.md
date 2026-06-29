@@ -1170,790 +1170,591 @@ No architectural redesign introduced.
 
 Foundation Implementation Plan is compatible with approved architecture and approved development planning strategy.
 
-# Module Implementation Roadmap — Part 4A
+# Module Implementation Roadmap
+## Implementation Sequencing Principles
+ISP-01 — Dependency-First Delivery
 
-## Dependency-Based Module Sequence
+Modules shall be implemented only after all required upstream dependencies are complete.
 
-### Context
+Why It Exists
 
-The foundation implementation phase establishes the application structure required before domain implementation begins.
+The approved module architecture follows an explicit dependency graph. Implementing a dependent module before its providers increases temporary workarounds, mock implementations, and future rework.
 
-Module implementation begins only after completion of:
+Influence On Sequence
 
-* Foundation Implementation Plan
-* Application Bootstrap
-* Database Bootstrap
-* Configuration Foundation
-* Error Framework
-* Middleware Foundation
+Foundational providers appear before consumers.
 
-The implementation sequence must respect the approved module dependency graph.
+Example:
 
-Implementation sequencing exists to reduce integration risk, enable early validation, and minimize rework.
+Identity → Social Graph → Feed
 
----
+Identity must exist before Social Graph can validate users.
 
-## Module Dependency Principles
+ISP-02 — Foundational Domain Prioritization
 
-### MRP-01 — Foundational Dependencies First
+Foundational domains shall be implemented before business domains that consume their capabilities.
 
-Modules with no upstream dependencies should be implemented before dependent modules.
+Why It Exists
 
-### MRP-02 — Dependency Order Preserved
+Identity establishes participation eligibility, actor resolution, authentication, and ownership references used throughout the platform.
 
-Implementation order must follow approved module dependency relationships.
+Influence On Sequence
 
-Planning does not modify dependency direction.
+Identity is always implemented first.
 
-### MRP-03 — End-to-End Vertical Slices
+All remaining modules depend directly or indirectly on Identity.
 
-Each module should be implemented through complete vertical slices.
+ISP-03 — Dependency Graph Preservation
 
-Partial layer implementation across multiple modules is prohibited.
+Implementation order shall preserve the approved acyclic dependency graph.
 
-### MRP-04 — Verification Before Expansion
+Why It Exists
 
-A module should reach implementation stability before dependent modules begin development.
+The approved architecture explicitly prohibits dependency cycles and reverse dependencies.
 
-### MRP-05 — Derived Domains Last
+Implementation sequencing must reinforce architectural direction.
 
-Derived domains should be implemented after authoritative domains they consume.
+Influence On Sequence
 
-### MRP-06 — Governance Deferred
+Modules are delivered from dependency roots toward dependency leaves.
 
-Governance implementation remains deferred according to the approved roadmap.
+No module may be implemented by temporarily introducing forbidden dependencies.
 
-Governance architecture remains approved.
+ISP-04 — Ownership-Boundary Preservation
 
-Governance implementation remains Phase 2 work.
+Implementation sequencing shall preserve authoritative ownership boundaries from the beginning of development.
 
----
+Why It Exists
 
-## Approved Module Dependency Graph
+Ownership is a core architectural constraint.
 
-Identity
-↓
-Social Graph
-↓
-Content
-↓
-Feed
+Temporary ownership shortcuts frequently become permanent implementation debt.
 
-Identity
-↓
-Community
-↓
-Content
-↓
-Feed
+Influence On Sequence
 
-Identity
-↓
-Media
-↓
-Content
-↓
-Feed
+Modules are implemented with their own repositories, workflows, and lifecycle ownership before dependent modules consume them.
 
-Governance remains deferred.
+ISP-05 — Validation Before Expansion
 
-Feed remains dependent upon all authoritative content providers.
+Each completed module should unlock meaningful validation before additional dependent modules are introduced.
 
----
+Why It Exists
 
-## Stage 1 — Foundational Domain
+Early validation reduces implementation uncertainty and exposes architectural violations before they propagate.
 
-### Module 1 — Identity
+Influence On Sequence
 
-Purpose
+Modules are implemented in an order that enables immediate testing of ownership, workflows, authorization, persistence, and capability contracts.
 
-Establish platform identity and participation eligibility.
+ISP-06 — Rework Minimization
 
-Capabilities
+Modules with the highest downstream impact shall be stabilized before dependent modules begin implementation.
 
-* Registration
-* Authentication
-* Session Management
-* Profile Retrieval
-* Profile Updates
+Why It Exists
 
-Dependency Status
+Changes to foundational capabilities propagate across consumers.
 
-No upstream dependencies.
+Stabilizing providers first reduces cascading rework.
 
-Implementation Priority
+Influence On Sequence
 
-Highest.
+Identity, Community, and Media precede Content because Content consumes their capabilities.
 
-Completion Requirement
+ISP-07 — Vertical Slice Alignment
 
-Identity must be operational before dependent modules begin implementation.
+Module sequencing shall support complete end-to-end slice validation.
 
----
+Why It Exists
 
-## Stage 2 — Relationship Domain
+The approved Backend Build Strategy selected module-first vertical slice development.
 
-### Module 2 — Social Graph
+Influence On Sequence
 
-Purpose
+Each module becomes independently usable and testable before introducing additional dependent modules.
 
-Establish user-to-user relationships.
+ISP-08 — Architectural Preservation
 
-Capabilities
+Implementation sequencing shall reinforce approved architecture rather than optimize for short-term implementation convenience.
 
-* Follow User
-* Unfollow User
-* Followers Retrieval
-* Following Retrieval
+Why It Exists
+
+Development planning serves architecture.
+
+Architecture does not adapt to implementation shortcuts.
+
+Influence On Sequence
+
+Feed remains last.
+
+Governance remains downstream.
+
+Capability-based dependency rules remain preserved throughout implementation.
+
+## Module Dependency Roadmap
+Position 1 — Identity
+Module Position
+
+Identity is the dependency root of the backend architecture.
+
+No other module may function without identity capabilities.
 
 Dependencies
 
-* Identity
-
-Rationale
-
-Social Graph depends only on Identity and provides required relationships for Following Feed.
-
-Completion Requirement
-
-Relationship workflows operate end-to-end.
-
----
-
-## Stage 3 — Community Foundation
-
-### Module 3 — Community
-
-Purpose
-
-Establish community participation structure.
-
-Capabilities
-
-* Create Herd
-* Update Herd
-* Join Herd
-* Leave Herd
-* Membership Management
-
-Dependencies
-
-* Identity
-
-Rationale
-
-Community provides participation structures required by Herd content workflows.
-
-Completion Requirement
-
-Community lifecycle and membership workflows operate end-to-end.
-
----
-
-## Stage 4 — Media Foundation
-
-### Module 4 — Media
-
-Purpose
-
-Provide reusable image management.
-
-Capabilities
-
-* Upload Image
-* Retrieve Image
-* Remove Image
-
-Dependencies
-
-* Identity
-
-Rationale
-
-Media is an independent supporting domain consumed by multiple downstream modules.
-
-Completion Requirement
-
-Media lifecycle operates end-to-end.
-
----
-
-## Stage 5 — Content Domain
-
-### Module 5 — Content
-
-Purpose
-
-Establish platform discussion and participation capabilities.
-
-Capabilities
-
-* Personal Posts
-* Herd Posts
-* Comments
-* Replies
-* Voting
-
-Dependencies
-
-* Identity
-* Community
-* Media
-
-Rationale
-
-Content is the largest business domain and depends on participation, identity, and media capabilities.
-
-Completion Requirement
-
-Discussion workflows operate end-to-end.
-
----
-
-## Stage 6 — Feed Domain
-
-### Module 6 — Feed
-
-Purpose
-
-Provide content consumption experiences.
-
-Capabilities
-
-* Following Feed
-* Herd Feed
-
-Dependencies
-
-* Identity
-* Social Graph
-* Community
-* Content
-* Media
-
-Rationale
-
-Feed consumes authoritative state from all previously implemented domains.
-
-Feed implementation before dependency completion would create artificial stubs and increase rework.
-
-Completion Requirement
-
-Feed retrieval and composition operate end-to-end using authoritative domain data.
-
----
-
-## Deferred Domain
-
-### Governance
-
-Status
-
-Deferred to Phase 2 — Governance & Operations.
-
-Reason
-
-Governance implementation depends on operational moderation workflows that are intentionally excluded from Phase 1 implementation.
-
-Approved governance architecture remains authoritative and unchanged.
-
----
-
-## Implementation Sequence Summary
-
-| Order    | Module                    | Dependency Status                                            |
-| -------- | ------------------------- | ------------------------------------------------------------ |
-| 0        | Foundation Implementation | Required Precondition                                        |
-| 1        | Identity                  | No Dependencies                                              |
-| 2        | Social Graph              | Depends on Identity                                          |
-| 3        | Community                 | Depends on Identity                                          |
-| 4        | Media                     | Depends on Identity                                          |
-| 5        | Content                   | Depends on Identity, Community, Media                        |
-| 6        | Feed                      | Depends on Identity, Social Graph, Community, Content, Media |
-| Deferred | Governance                | Phase 2                                                      |
-
----
-
-## Module Roadmap Validation
-
-The implementation sequence confirms:
-
-* Approved dependency graph is preserved.
-* ADR-001 remains unchanged.
-* Domain ownership boundaries remain unchanged.
-* Governance boundaries remain unchanged.
-* Feed remains a derived domain.
-* Module-first development remains preserved.
-* Vertical slice implementation remains preserved.
-* Dependency-aware planning remains preserved.
-* Implementation risk is minimized through progressive dependency realization.
-
----
-
-## Planning Validation
-
-Validated Against:
-
-* PROJECT_CONTEXT.md
-* ADR-001
-* ARCHITECTURE.md
-* DATABASE.md
-* API_CONTRACTS.md
-* Development Planning Principles
-* Backend Build Strategy
-
-Validation Results:
-
-* No dependency conflicts detected.
-* No ownership conflicts detected.
-* No governance conflicts detected.
-* No architectural redesign introduced.
-
-Status:
-
-Module Implementation Roadmap Part 4A approved as authoritative implementation planning guidance.
-
-# Standard Module Development Pattern
-## Purpose
-
-The Standard Module Development Pattern defines the repeatable implementation approach that shall be used for all backend modules during development.
-
-Its objectives are to:
-
-Preserve approved architecture during implementation.
-Standardize implementation across modules.
-Reduce implementation uncertainty.
-Support consistent validation.
-Minimize architectural drift.
-Reduce rework.
-Improve implementation predictability.
-
-The pattern applies to:
-
-Identity
-Social Graph
-Community
-Media
-Content
-Feed
-
-Governance implementation remains deferred according to the approved roadmap.
-
-Implementation planning serves the approved architecture.
-
-Implementation patterns do not redefine architecture, ownership boundaries, authority boundaries, module boundaries, or API contracts.
-
-## Module Development Principles
-SMP-01 Architecture Preservation
-
-Implementation shall preserve all approved architectural decisions.
-
-Approved architecture remains authoritative throughout module development.
-
-SMP-02 Vertical Slice Implementation
-
-Capabilities shall be implemented end-to-end through the approved execution stack.
-
-Implementation shall favor complete workflows over partial technical-layer completion.
-
-SMP-03 Dependency Awareness
-
-Module implementation shall respect the approved dependency graph.
-
-Dependencies influence implementation sequencing.
-
-Dependencies do not change during implementation.
-
-SMP-04 Validation Before Expansion
-
-New capabilities shall be validated before additional capabilities are introduced.
-
-Validation reduces integration risk and implementation uncertainty.
-
-SMP-05 Incremental Completion
-
-Modules shall be completed through independently verifiable capabilities.
-
-Implementation progresses through validated increments rather than large unverified batches.
-
-SMP-06 Rework Minimization
-
-Implementation shall prioritize stable foundations before dependent capabilities.
-
-Dependent functionality should not be built on unverified implementation.
-
-SMP-07 Ownership Preservation
-
-Only the owning module may implement authoritative mutations for resources it owns.
-
-Cross-module implementation must continue to use approved capability contracts.
-
-SMP-08 Verification-Driven Development
-
-Implementation completion is determined by successful execution and validation rather than file creation.
-
-Working software is the primary measure of completion.
-
-## Module Completion Philosophy
-
-A module is not considered implemented because:
-
-Directories exist.
-Controllers exist.
-Repositories exist.
-Endpoints exist.
-Database collections exist.
-
-A module is complete only when:
-
-Approved workflows execute successfully end-to-end.
-Validation architecture executes correctly.
-Persistence behavior functions correctly.
-API contracts are satisfied.
-Error handling behaves correctly.
-Dependency interactions function correctly.
-Required tests pass.
-Module verification is completed.
-
-Implementation completion is workflow-oriented rather than file-oriented.
-
-The objective of module implementation is operational capability, not structural completeness.
-
-## Standard Module Implementation Sequence
-
-The following sequence is authoritative for all module implementation work.
-
-Step 1 — Module Structure Creation
-
-Establish the approved module structure.
-
-Create:
-
-Module boundaries
-Folder structure
-Public module contract
-Internal organization
-
-No business behavior is implemented at this stage.
-
-Step 2 — Domain Models
-
-Implement domain-owned models and aggregate structures.
-
-Preserve:
-
-Ownership boundaries
-Aggregate boundaries
-Lifecycle boundaries
-Step 3 — Repository Contracts
-
-Implement repository interfaces and persistence contracts.
-
-Repositories remain owned by the module.
-
-Repository responsibilities remain consistent with approved architecture.
-
-Step 4 — Application Services
-
-Implement application services for approved workflows.
-
-Application Services remain:
-
-Workflow owners
-Transaction owners
-Cross-module coordination owners
-Step 5 — Module Contracts
-
-Implement public capability contracts exposed to other modules.
-
-Contracts expose capabilities rather than persistence details.
-
-Cross-module communication shall remain capability-based.
-
-Step 6 — API Layer Integration
-
-Implement:
-
-Routes
-Controllers
-Request mapping
-Response mapping
-
-API behavior shall remain compliant with approved API contracts.
-
-Step 7 — Validation Integration
-
-Implement:
-
-Input validation
-Authorization validation
-Ownership validation
-Governance validation
-Domain validation
-
-Validation ownership remains unchanged.
-
-Step 8 — Error Handling Integration
-
-Implement module-specific error behavior.
-
-Ensure compatibility with:
-
-Error architecture
-Error propagation architecture
-API error contracts
-Step 9 — Testing
-
-Validate:
-
-Workflow execution
-Domain behavior
-Persistence behavior
-Contract compliance
-Error behavior
-Step 10 — Module Verification
-
-Perform final verification against:
-
-Architecture
-API contracts
-Ownership boundaries
-Dependency rules
-Module exit criteria
-
-Only verified modules may be considered complete.
-
-## Vertical Slice Pattern
-
-Capabilities shall be implemented using the approved vertical slice approach.
-
-Authoritative Pattern:
-
-Capability Selection
-↓
-Contract Review
-↓
-Workflow Implementation
-↓
-Validation Integration
-↓
-Testing
-↓
-Verification
-↓
-Completion
-
-Capability Selection
-
-Select a single approved capability.
-
-Examples:
-
-Register User
-Login User
-Follow User
-Create Herd
-Create Post
-Contract Review
-
-Review:
-
-API contracts
-Ownership rules
-Authorization requirements
-Governance requirements
-Dependency requirements
-Workflow Implementation
-
-Implement the complete workflow through the approved execution architecture.
-
-Validation Integration
-
-Implement all required validation categories.
-
-Testing
-
-Verify workflow behavior.
-
-Verification
-
-Confirm architecture compliance before moving to the next capability.
-
-## Validation Expectations
-
-A capability shall not be considered complete until all required validation passes.
-
-API Contract Validation
-
-Verify compliance with approved request and response contracts.
-
+None.
+
+Capabilities Unlocked
+Authentication
+User Accounts
+User Profiles
+Identity Resolution
+Participation Eligibility
 Ownership Validation
 
-Verify ownership boundaries remain preserved.
+Unlocks:
+
+Social Graph
+Community
+Media
+Content
+Governance
+Feed
+Validation Opportunities
+Registration
+Login
+Profile Management
+Authentication Middleware
+Authorization Foundations
+Risks If Delayed
+Blocks all downstream implementation.
+Prevents capability contract validation.
+Prevents ownership validation implementation.
+Prevents authentication integration.
+Position 2 — Social Graph
+Module Position
+
+Social Graph depends only on Identity.
+
+It introduces the first relationship capability required by Following Feed.
+
+Dependencies
+Identity
+Capabilities Unlocked
+Follow
+Unfollow
+Follower Relationships
+
+Unlocks:
+
+Following Feed composition
+Validation Opportunities
+Follow lifecycle
+Relationship ownership
+User relationship queries
+Risks If Delayed
+Following Feed development blocked.
+Social relationship validation deferred.
+Feed dependency chain incomplete.
+Position 3 — Community
+Module Position
+
+Community depends only on Identity and provides capabilities required by Content.
+
+Community ownership rules must exist before herd-based content workflows.
+
+Dependencies
+Identity
+Capabilities Unlocked
+Herd Creation
+Membership Management
+Shepherd Assignment
+Community Authority Validation
+
+Unlocks:
+
+Herd Posting
+Herd Feed
+Community Governance
+Validation Opportunities
+Herd lifecycle
+Membership lifecycle
+Shepherd authority workflows
+Risks If Delayed
+Blocks herd content implementation.
+Prevents membership validation capabilities.
+Delays governance target availability.
+Position 4 — Media
+Module Position
+
+Media depends only on Identity and provides attachment capabilities required by Content and Community.
+
+Dependencies
+Identity
+Capabilities Unlocked
+Image Upload
+Image Ownership
+Image Retrieval
+Attachment Eligibility
+
+Unlocks:
+
+Profile Images
+Herd Images
+Post Images
+Validation Opportunities
+Upload workflows
+Media ownership
+External storage integration
+Risks If Delayed
+Content attachment workflows blocked.
+Community image support delayed.
+Media governance targets unavailable.
+Position 5 — Content
+Module Position
+
+Content consumes Identity, Community, and Media capabilities.
+
+It cannot be implemented earlier without violating the approved dependency graph.
+
+Dependencies
+Identity
+Community
+Media
+Capabilities Unlocked
+Posts
+Comments
+Replies
+Voting
+Herd Posting
+
+Unlocks:
+
+Governance targeting
+Feed composition
+Validation Opportunities
+Personal posting
+Herd posting
+Discussion workflows
+Voting workflows
+Membership-gated posting
+Risks If Delayed
+Major MVP functionality unavailable.
+Governance implementation blocked.
+Feed implementation blocked.
+Why Content Cannot Be Implemented Before Community And Media
 
-Only owning modules may mutate owned resources.
-
-Authorization Validation
-
-Verify authorization behavior aligns with approved authority rules.
-
-Governance Validation
-
-Verify governance restrictions and governance outcomes behave correctly where applicable.
-
-Persistence Validation
-
-Verify:
-
-Resource creation
-Resource updates
-Resource retrieval
-Resource lifecycle transitions
-
-Persistence behavior must remain consistent with approved ownership rules.
-
-Error Validation
-
-Verify:
-
-Expected failures
-Validation failures
-Authorization failures
-Ownership failures
-Governance failures
-Persistence failures
-Dependency Validation
-
-Verify approved capability-contract interactions.
-
-No dependency rule violations may be introduced.
-
-## Module Exit Criteria
-
-A module shall not be considered complete until all criteria are satisfied.
-
-MEC-01
-
-All approved module capabilities have been implemented.
-
-MEC-02
-
-All workflows execute end-to-end.
-
-MEC-03
-
-All API contracts are satisfied.
-
-MEC-04
-
-All required validation categories pass.
-
-MEC-05
-
-Persistence behavior is verified.
-
-MEC-06
-
-Error behavior is verified.
-
-MEC-07
-
-Approved dependency rules remain preserved.
-
-MEC-08
-
-Ownership boundaries remain preserved.
-
-MEC-09
-
-Layer responsibility boundaries remain preserved.
-
-MEC-10
-
-Cross-module interactions use approved capability contracts only.
-
-MEC-11
-
-Required tests pass.
-
-MEC-12
-
-Module verification completes without unresolved architectural conflicts.
-
-Only after all exit criteria are satisfied may a module be marked complete.
-
-## Implementation Constraints
-
-The following constraints are authoritative.
-
-IMC-01
-
-Approved ownership boundaries remain unchanged.
-
-IMC-02
-
-Approved dependency graph remains unchanged.
-
-IMC-03
-
-Approved capability contracts remain the exclusive cross-module communication mechanism.
-
-IMC-04
-
-Governance authority boundaries remain unchanged.
-
-IMC-05
-
-Feed remains a derived read-only module.
-
-Feed shall not acquire authoritative state ownership.
-
-IMC-06
-
-Layer responsibilities remain unchanged.
-
-Preserve:
-
-Controllers as transport adapters
-Application Services as workflow owners
-Domain Layer as business rule owner
-Repositories as persistence owners
-IMC-07
-
-Database ownership rules remain authoritative.
-
-IMC-08
-
-Infrastructure simplicity principles remain unchanged.
-
-IMC-09
-
-Implementation planning may refine implementation details but may not redesign approved architecture.
-
-## Planning Validation
-
-Validated against:
-
-PROJECT_CONTEXT.md
-ADR-001
-ARCHITECTURE.md
-DATABASE.md
-API_CONTRACTS.md
-Development Planning Principles
-Backend Build Strategy
-Module Implementation Roadmap
-
-Validation Results:
-
-No ownership conflicts detected.
-No dependency conflicts detected.
-No governance conflicts detected.
-No API contract conflicts detected.
-No database ownership conflicts detected.
-No infrastructure conflicts detected.
-No architectural redesign introduced.
-
-Status:
-
-Standard Module Development Pattern approved as authoritative implementation planning guidance.
-
+Content requires:
+
+Membership validation from Community
+Herd validation from Community
+Image attachment eligibility from Media
+Image references from Media
+
+Implementing Content first would require temporary dependency violations or duplicate logic.
+
+Both outcomes conflict with approved architecture.
+
+Position 6 — Governance
+Module Position
+
+Governance consumes authoritative capabilities from Identity, Community, Content, and Media.
+
+Governance must appear after governable resources exist.
+
+Dependencies
+Identity
+Community
+Content
+Media
+Capabilities Unlocked
+Reporting
+Moderation
+Enforcement
+Escalation
+Oversight
+
+Unlocks:
+
+Governance-aware Feed visibility
+Validation Opportunities
+Report workflows
+Moderation workflows
+Restriction workflows
+Governance hierarchy validation
+Risks If Delayed
+Governance visibility rules unavailable.
+Enforcement workflows postponed.
+Feed visibility filtering incomplete.
+Why Governance Appears Here
+
+Governance owns moderation workflows but does not own business resources.
+
+Governance requires moderation targets before meaningful implementation can occur.
+
+Those targets originate from Identity, Community, Content, and Media.
+
+Implementing Governance earlier would result in incomplete workflow validation.
+
+Position 7 — Feed
+Module Position
+
+Feed is the terminal consumer in the dependency graph.
+
+Feed depends on every major authoritative domain.
+
+Dependencies
+Identity
+Social Graph
+Community
+Content
+Media
+Governance
+Capabilities Unlocked
+Following Feed
+Herd Feed
+Validation Opportunities
+Feed composition
+Feed ordering
+Feed visibility filtering
+Governance-aware retrieval
+Risks If Delayed
+
+Minimal.
+
+Feed owns no authoritative business state.
+
+Why Feed Appears Last
+
+Feed is a derived domain.
+
+Feed consumes:
+
+Identity
+Social Graph
+Community
+Content
+Media
+Governance Outcomes
+
+Feed owns no authoritative resources and creates no foundational capabilities.
+
+Implementing Feed before authoritative domains would require extensive mocking and rework.
+
+This would violate Verification-Driven Development and Rework Minimization principles.
+
+Final Authoritative Sequence
+Identity
+Social Graph
+Community
+Media
+Content
+Governance
+Feed
+
+## Module Delivery Stages
+Stage 1 — Platform Identity Foundation
+Stage Objective
+
+Establish participation, authentication, and ownership foundations.
+
+Included Modules
+Identity
+New Capabilities Introduced
+Registration
+Authentication
+Profiles
+Validation Scope
+Authentication workflows
+Profile lifecycle
+Authorization foundation
+Completion Criteria
+Identity APIs operational
+Authentication middleware operational
+Profile workflows validated
+Stage 2 — Relationship & Community Foundation
+Stage Objective
+
+Establish social participation and community participation structures.
+
+Included Modules
+Social Graph
+Community
+New Capabilities Introduced
+Follow system
+Herd creation
+Membership management
+Shepherd assignment
+Validation Scope
+Follow lifecycle
+Herd lifecycle
+Membership lifecycle
+Completion Criteria
+Social Graph validated
+Community validated
+Capability contracts operational
+Stage 3 — Media Foundation
+Stage Objective
+
+Establish reusable media capabilities.
+
+Included Modules
+Media
+New Capabilities Introduced
+Image upload
+Image retrieval
+Image ownership
+Validation Scope
+Upload workflows
+Ownership validation
+Storage integration
+Completion Criteria
+Media workflows operational
+Attachment capabilities available
+Stage 4 — Core Content Platform
+Stage Objective
+
+Deliver the primary discussion capabilities.
+
+Included Modules
+Content
+New Capabilities Introduced
+Posts
+Comments
+Replies
+Voting
+Herd posting
+Validation Scope
+Personal posting
+Community posting
+Discussion workflows
+Voting workflows
+Completion Criteria
+Content workflows validated end-to-end
+Community integration validated
+Media integration validated
+Stage 5 — Governance Foundation
+Stage Objective
+
+Deliver moderation and enforcement workflows.
+
+Included Modules
+Governance
+New Capabilities Introduced
+Reporting
+Moderation
+Enforcement
+Escalation
+Validation Scope
+Governance hierarchy
+Enforcement workflows
+Audit generation
+Completion Criteria
+Governance workflows operational
+Governance audit trail validated
+Stage 6 — Feed Composition
+Stage Objective
+
+Deliver platform consumption experiences.
+
+Included Modules
+Feed
+New Capabilities Introduced
+Following Feed
+Herd Feed
+Validation Scope
+Feed composition
+Feed ordering
+Governance filtering
+Completion Criteria
+Feed retrieval operational
+Visibility filtering validated
+End-to-end consumption workflows validated
+
+## Sequence Risks
+SR-01 — Dependency Direction Violation
+Description
+
+Implementing downstream modules before required providers.
+
+Impact
+Architectural drift
+Temporary workarounds
+Increased rework
+Mitigation Strategy
+
+Strict adherence to approved dependency sequence.
+
+SR-02 — Circular Dependency Introduction
+Description
+
+Cross-module shortcuts create reverse dependencies.
+
+Impact
+ADR-001 violation
+Future extraction difficulty
+Increased coupling
+Mitigation Strategy
+
+Allow communication only through approved capability contracts.
+
+SR-03 — Premature Feed Implementation
+Description
+
+Feed implemented before authoritative domains.
+
+Impact
+Extensive mocking
+Invalid feed validation
+Significant rework
+Mitigation Strategy
+
+Feed remains final implementation stage.
+
+SR-04 — Governance Ownership Leakage
+Description
+
+Governance directly mutates foreign aggregates.
+
+Impact
+Ownership boundary violation
+Governance architecture violation
+Mitigation Strategy
+
+Governance owns decisions.
+Target modules own state mutation.
+
+SR-05 — Duplicate Capability Implementations
+Description
+
+Modules temporarily implement capabilities owned elsewhere.
+
+Impact
+Rework
+Divergent business rules
+Ownership confusion
+Mitigation Strategy
+
+Wait for authoritative provider implementation.
+
+SR-06 — Incomplete Validation Chains
+Description
+
+Dependent modules implemented before upstream validation.
+
+Impact
+Hidden defects
+Delayed discovery
+Mitigation Strategy
+
+Require module completion and validation before dependency expansion.
+
+SR-07 — Foundation Instability
+Description
+
+Identity changes after dependent modules exist.
+
+Impact
+Cascading rework
+Contract instability
+Mitigation Strategy
+
+Fully stabilize Identity before beginning dependent modules.
