@@ -31,11 +31,17 @@
 - MVP Architecture Design
     - Phase 1
         -  Frontend Development Planning
+            - Frontend Build Strategy
 
 
 # Pending
 ## Phase 1 — Core Platform
 ### Development Planning 
+Frontend Foundation Implementation Plan
+Frontend Module Implementation Roadmap
+Standard Frontend Module Development Pattern
+Frontend Integration & Validation Strategy
+Milestones, Definition of Done & Release Readiness
 Development Sprint Planning
 
 ### Implementation
@@ -214,3 +220,4 @@ Module Implementation Roadmap
 Standard Module Development Pattern
 Integration & Validation Strategy
 Milestones, Definition of Done & Release Readiness
+Frontend Development Planning Principles
