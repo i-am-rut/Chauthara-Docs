@@ -1758,3 +1758,716 @@ Contract instability
 Mitigation Strategy
 
 Fully stabilize Identity before beginning dependent modules.
+
+# Standard Module Development Pattern
+## Module Development Philosophy
+Module-First Development
+
+Backend modules shall be implemented as complete business units aligned with approved domain boundaries.
+
+Implementation shall follow the approved module inventory:
+
+Identity
+Social Graph
+Community
+Media
+Content
+Governance
+Feed
+
+A module is developed as a complete capability owner rather than as a collection of technical layers.
+
+Module-first development preserves:
+
+Domain ownership
+Lifecycle ownership
+Authority boundaries
+Capability contracts
+Future extraction readiness
+
+Implementation work shall remain aligned with the approved module dependency graph.
+
+Vertical Slice Completion
+
+Implementation shall progress through complete vertical slices.
+
+Each slice must traverse:
+
+API Layer
+↓
+Application Layer
+↓
+Domain Rules
+↓
+Repository Layer
+↓
+Persistence
+↓
+Response Mapping
+
+Partial layer completion is prohibited.
+
+A capability is not considered implemented until the complete workflow executes end-to-end.
+
+Vertical slice completion provides:
+
+Early workflow validation
+Early architecture validation
+Reduced integration risk
+Faster defect discovery
+Reduced rework
+Architecture Preservation
+
+Implementation shall preserve all approved architectural boundaries.
+
+Protected boundaries include:
+
+Domain boundaries
+Module boundaries
+Ownership boundaries
+Governance boundaries
+Feed boundaries
+Layer responsibilities
+
+Cross-module interactions shall occur only through approved capability contracts.
+
+Direct repository access across modules is prohibited.
+
+Governance remains an authority domain.
+
+Feed remains a derived read-only domain.
+
+Implementation convenience shall not override approved architectural rules.
+
+Verification-Driven Development
+
+Verification shall occur continuously throughout implementation.
+
+Validation occurs before additional complexity is introduced.
+
+Every completed implementation stage must be verified before progressing to the next stage.
+
+Verification focuses on:
+
+Architecture compliance
+Ownership compliance
+Dependency compliance
+Workflow correctness
+Contract correctness
+
+Verification failures shall be resolved before continuing implementation.
+
+Incremental Progress
+
+Modules shall progress through small verifiable increments.
+
+Recommended progression:
+
+Capability
+↓
+Workflow
+↓
+Validation
+↓
+Testing
+↓
+Verification
+↓
+Next Capability
+
+Large unverified implementation batches are prohibited.
+
+Incremental progress improves:
+
+Defect isolation
+Learning value
+Predictability
+Rework prevention
+Solo developer operability
+
+## Internal Module Build Order
+Stage 1 — Module Structure
+Purpose
+
+Establish approved module structure and implementation boundaries.
+
+Deliverables
+Module directory structure
+Internal layer structure
+Public contract location
+Repository location
+Service location
+Route registration
+Why It Appears At This Position
+
+All implementation depends upon a stable module boundary.
+
+Structure validation occurs before business implementation begins.
+
+Stage 2 — Domain Models
+Purpose
+
+Implement owned resources and domain rules.
+
+Deliverables
+Domain entities
+Domain value objects
+Lifecycle rules
+Ownership rules
+Aggregate rules
+Why It Appears At This Position
+
+Domain rules define business validity before workflows are implemented.
+
+Business behavior must exist before workflow orchestration.
+
+Stage 3 — Repository Layer
+Purpose
+
+Implement authoritative persistence access.
+
+Deliverables
+Schemas
+Models
+Repositories
+Persistence mappings
+Why It Appears At This Position
+
+Application workflows require persistence capabilities.
+
+Repository ownership remains aligned with collection ownership.
+
+Stage 4 — Module Contracts
+Purpose
+
+Expose approved capabilities to dependent modules.
+
+Deliverables
+Public capability interfaces
+Capability request models
+Capability response models
+Why It Appears At This Position
+
+Cross-module communication should be established before workflow implementation.
+
+This prevents dependency violations during service development.
+
+Stage 5 — Application Services
+Purpose
+
+Implement use-case execution and workflow orchestration.
+
+Deliverables
+Application services
+Workflow orchestration
+Transaction ownership
+Capability consumption
+Why It Appears At This Position
+
+Application Services require:
+
+Domain rules
+Repositories
+Contracts
+
+to already exist.
+
+Stage 6 — Validation Rules
+Purpose
+
+Implement workflow validation.
+
+Deliverables
+Ownership validation
+Lifecycle validation
+Domain validation
+Business invariant enforcement
+Why It Appears At This Position
+
+Validation must exist before external access is exposed.
+
+Stage 7 — Authorization Integration
+Purpose
+
+Integrate approved authorization architecture.
+
+Deliverables
+Authorization invocation
+Permission evaluation integration
+Access enforcement
+Why It Appears At This Position
+
+Authorization protects completed workflows.
+
+Implementing it earlier creates unnecessary rework.
+
+Stage 8 — Governance Integration
+Purpose
+
+Integrate governance restrictions and governance-aware execution.
+
+Deliverables
+Governance capability consumption
+Restriction evaluation
+Governance-aware workflow execution
+Why It Appears At This Position
+
+Governance is applied to existing workflows.
+
+Governance does not create workflows.
+
+Not applicable to foundational modules implemented before Governance.
+
+Stage 9 — API Layer
+Purpose
+
+Expose workflows through approved API contracts.
+
+Deliverables
+Routes
+Controllers
+Request validation
+Request mapping
+Response mapping
+Why It Appears At This Position
+
+The API Layer should expose already-functional workflows rather than drive implementation.
+
+Stage 10 — Testing
+Purpose
+
+Validate correctness.
+
+Deliverables
+Domain tests
+Service tests
+Repository tests
+API tests
+Why It Appears At This Position
+
+Testing validates the completed implementation stack.
+
+Stage 11 — Verification
+Purpose
+
+Determine module readiness.
+
+Deliverables
+Architecture verification
+Dependency verification
+Ownership verification
+Completion checklist review
+Why It Appears At This Position
+
+Verification is the final readiness gate before module completion.
+
+Rework Minimization Rationale
+
+This sequence minimizes rework because:
+
+Boundaries are established before workflows.
+Domain rules exist before orchestration.
+Contracts exist before dependencies form.
+Validation exists before exposure.
+APIs expose completed workflows.
+Verification occurs before completion.
+
+The sequence remains fully compatible with vertical slice development.
+
+## Standard Module Checklist
+Structural Readiness
+Module structure implemented
+Internal layers created
+Public contract defined
+Approved dependency graph preserved
+No forbidden dependencies introduced
+Ownership boundaries preserved
+Domain Readiness
+Domain entities implemented
+Aggregate rules implemented
+Ownership rules implemented
+Lifecycle rules implemented
+Domain invariants enforced
+Persistence Readiness
+Collections implemented
+Schemas implemented
+Repositories implemented
+Collection ownership preserved
+Persistence boundaries preserved
+Application Layer Readiness
+Use cases implemented
+Application Services implemented
+Transactions implemented
+Capability contracts exposed
+Cross-module communication uses approved contracts
+API Readiness
+Endpoints implemented
+Request validation implemented
+Request mapping implemented
+Response mapping implemented
+Error handling integrated
+API contracts satisfied
+Governance Readiness
+
+Where applicable:
+
+Governance restrictions honored
+Governance workflows integrated
+Governance authority preserved
+Governance ownership boundaries preserved
+Feed Readiness
+
+Where applicable:
+
+Feed remains read-only
+Feed composes authoritative data
+Feed owns no persistence
+Feed consumes governance outcomes
+Testing Readiness
+Domain tests completed
+Service tests completed
+Repository tests completed
+API tests completed
+Critical workflows verified
+Documentation Readiness
+Module implementation documented
+Changelog updated
+Learnings captured
+Tasks updated
+
+## Verification Checkpoints
+Checkpoint 1 — Structure Validation
+What Is Being Verified
+Module structure
+Layer structure
+Contract placement
+When Verification Occurs
+
+After Stage 1
+
+Expected Outcome
+
+Module boundaries are implementation-ready.
+
+Why It Exists
+
+Prevents structural drift.
+
+Checkpoint 2 — Ownership Boundary Validation
+What Is Being Verified
+Resource ownership
+Aggregate ownership
+Collection ownership
+When Verification Occurs
+
+After Domain + Repository implementation
+
+Expected Outcome
+
+Ownership remains aligned with approved architecture.
+
+Why It Exists
+
+Prevents authority leakage.
+
+Checkpoint 3 — Dependency Validation
+What Is Being Verified
+Approved dependency graph
+Contract-only communication
+No dependency cycles
+When Verification Occurs
+
+After Module Contract implementation
+
+Expected Outcome
+
+Dependency model remains compliant.
+
+Why It Exists
+
+Prevents architectural erosion.
+
+Checkpoint 4 — Workflow Validation
+What Is Being Verified
+Application Service execution
+Request execution sequence
+Transaction ownership
+When Verification Occurs
+
+After Application Services are implemented
+
+Expected Outcome
+
+Workflows execute according to approved execution architecture.
+
+Why It Exists
+
+Protects execution architecture integrity.
+
+Checkpoint 5 — API Contract Validation
+What Is Being Verified
+Endpoint behavior
+Request contracts
+Response contracts
+Error contracts
+When Verification Occurs
+
+After API implementation
+
+Expected Outcome
+
+API behavior matches approved contracts.
+
+Why It Exists
+
+Prevents contract drift.
+
+Checkpoint 6 — Testing Validation
+What Is Being Verified
+Required test coverage
+Workflow correctness
+Failure handling
+When Verification Occurs
+
+After testing
+
+Expected Outcome
+
+Critical module behavior verified.
+
+Why It Exists
+
+Reduces regression risk.
+
+Checkpoint 7 — Module Readiness Validation
+What Is Being Verified
+Completion checklist
+Architecture compliance
+Operational readiness
+When Verification Occurs
+
+Before module completion
+
+Expected Outcome
+
+Module qualifies for roadmap completion.
+
+Why It Exists
+
+Provides a formal completion gate.
+
+## Testing Expectations
+Domain Rule Testing
+Purpose
+
+Verify business invariants.
+
+Scope
+Ownership rules
+Lifecycle rules
+Aggregate rules
+Minimum Requirement
+
+All critical domain rules tested.
+
+Application Service Testing
+Purpose
+
+Verify workflow execution.
+
+Scope
+Use cases
+Workflow sequencing
+Capability consumption
+Minimum Requirement
+
+All public workflows tested.
+
+Repository Testing
+Purpose
+
+Verify persistence correctness.
+
+Scope
+Reads
+Writes
+Query behavior
+Minimum Requirement
+
+All repositories validated against expected persistence behavior.
+
+API Testing
+Purpose
+
+Verify contract compliance.
+
+Scope
+Request handling
+Response handling
+Error handling
+Minimum Requirement
+
+All public endpoints validated.
+
+Governance Testing
+Purpose
+
+Verify governance enforcement.
+
+Scope
+Restriction checks
+Authority checks
+Enforcement behavior
+Minimum Requirement
+
+All governance-exposed workflows verified.
+
+Feed Testing
+Purpose
+
+Verify feed composition.
+
+Scope
+Visibility filtering
+Feed ordering
+Feed retrieval
+Minimum Requirement
+
+Following Feed and Herd Feed workflows verified.
+
+Sufficient Testing Definition
+
+A module is sufficiently tested when:
+
+Critical domain rules pass
+Public workflows pass
+Persistence behavior passes
+API behavior passes
+Governance behavior passes where applicable
+Feed behavior passes where applicable
+
+## Module Completion Criteria
+Architecture Compliance
+Requirement
+
+Module complies with approved architecture.
+
+Validation Method
+
+Architecture review.
+
+Completion Evidence
+
+No architecture violations detected.
+
+Ownership Compliance
+Requirement
+
+Ownership boundaries preserved.
+
+Validation Method
+
+Ownership verification.
+
+Completion Evidence
+
+No ownership violations detected.
+
+Dependency Compliance
+Requirement
+
+Approved dependency graph preserved.
+
+Validation Method
+
+Dependency review.
+
+Completion Evidence
+
+No forbidden dependencies detected.
+
+Workflow Completion
+Requirement
+
+Approved workflows execute successfully.
+
+Validation Method
+
+Workflow validation.
+
+Completion Evidence
+
+End-to-end execution verified.
+
+API Completion
+Requirement
+
+Approved API contracts implemented.
+
+Validation Method
+
+Contract validation.
+
+Completion Evidence
+
+Contract compliance confirmed.
+
+Testing Completion
+Requirement
+
+Required tests pass.
+
+Validation Method
+
+Test execution.
+
+Completion Evidence
+
+All mandatory tests passing.
+
+Documentation Completion
+Requirement
+
+Implementation documentation updated.
+
+Validation Method
+
+Documentation review.
+
+Completion Evidence
+
+Required documents updated.
+
+Operational Readiness
+Requirement
+
+Module can operate within approved runtime architecture.
+
+Validation Method
+
+Runtime verification.
+
+Completion Evidence
+
+Module functions correctly within the backend runtime model.
+
+Definition of Module Completion
+
+A module may transition from:
+
+In Development
+↓
+Completed
+
+only when:
+
+All checklist items pass
+All verification checkpoints pass
+All required tests pass
+No ownership violations exist
+No dependency violations exist
+No governance violations exist
+No API contract violations exist
+Documentation updates are complete
+
+Module completion is determined by verified readiness rather than code volume.
