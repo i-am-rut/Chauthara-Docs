@@ -2471,3 +2471,1014 @@ No API contract violations exist
 Documentation updates are complete
 
 Module completion is determined by verified readiness rather than code volume.
+
+# Part 6 — Integration & Validation Strategy
+
+## 6.1 Validation Philosophy
+
+### Purpose
+
+The Integration & Validation Strategy defines how implementation correctness is verified throughout backend development.
+
+Validation exists to preserve approved architecture during implementation and to ensure that completed work remains compatible with:
+
+- ADR-001
+- Approved backend architecture
+- Approved dependency graph
+- Approved ownership model
+- Approved governance model
+- Approved feed model
+- Approved execution architecture
+- Approved validation architecture
+- Approved API contracts
+
+Validation is a continuous implementation activity.
+
+Validation is not deferred until milestone completion.
+
+---
+
+### Architecture Preservation
+
+Implementation shall realize approved architecture.
+
+Implementation shall not redefine:
+
+- Domain boundaries
+- Module boundaries
+- Ownership boundaries
+- Governance boundaries
+- Feed boundaries
+- Layer responsibilities
+- Dependency relationships
+
+Validation exists to detect architectural drift before it becomes implementation debt.
+
+---
+
+### Verification-Driven Development
+
+Implementation progresses through verification.
+
+Development activities shall produce verifiable outcomes before additional implementation proceeds.
+
+Verification is considered part of implementation rather than a post-implementation activity.
+
+---
+
+### Early Defect Detection
+
+Validation shall occur as close as possible to the implementation that introduces change.
+
+The objective is to detect:
+
+- Contract violations
+- Dependency violations
+- Ownership violations
+- Governance violations
+- Feed violations
+- Architecture violations
+
+before dependent implementation begins.
+
+---
+
+### Incremental Validation
+
+Validation shall occur at implementation increments.
+
+Validation checkpoints exist at:
+
+- Foundation completion
+- Module readiness
+- Module completion
+- Integration readiness
+- Milestone readiness
+
+Large-scale end-of-phase validation is insufficient.
+
+---
+
+### Progression Through Validation
+
+Implementation progression is controlled through validation gates.
+
+A development stage is not considered complete because implementation exists.
+
+A development stage is complete only after validation requirements are satisfied.
+
+---
+
+### Risk Reduction
+
+Validation exists to reduce:
+
+- Integration risk
+- Architectural drift
+- Rework risk
+- Dependency risk
+- Milestone risk
+- Delivery risk
+
+The preferred strategy is preventing defects rather than correcting them later.
+
+---
+
+### Chauthara Validation Principle
+
+The primary objective of validation is preserving architectural integrity while enabling incremental module delivery.
+
+Validation success is measured by:
+
+- Architecture preservation
+- Predictable integration
+- Stable module boundaries
+- Stable ownership boundaries
+- Stable governance boundaries
+- Stable feed boundaries
+- Reduced implementation rework
+
+---
+
+## 6.2 Contract Validation
+
+### Contract Validation Purpose
+
+Contract validation ensures implementation remains compatible with approved contracts.
+
+Contracts are authoritative.
+
+Implementation must conform to contracts.
+
+---
+
+### API Contract Validation
+
+#### Purpose
+
+Validate compliance with approved API contracts.
+
+#### Validation Scope
+
+- Endpoint inventory
+- Route behavior
+- Request contracts
+- Response contracts
+- Query contracts
+- Pagination contracts
+- Error contracts
+- Status code behavior
+
+#### Validation Timing
+
+- During endpoint implementation
+- During module completion
+- Before milestone completion
+
+#### Expected Outcome
+
+- Endpoint behavior matches approved API contracts
+- Responses remain contract compliant
+- Error behavior remains standardized
+- API compatibility preserved
+
+---
+
+### Module Contract Validation
+
+#### Purpose
+
+Validate capability contract compliance between modules.
+
+#### Validation Scope
+
+- Capability invocation behavior
+- Capability outputs
+- Capability constraints
+- Capability ownership boundaries
+- Cross-module interaction behavior
+
+#### Validation Timing
+
+- During capability implementation
+- During module completion
+- During integration validation
+
+#### Expected Outcome
+
+- Capability contracts behave as approved
+- Consumers use contracts correctly
+- Ownership remains preserved
+- Cross-module interactions remain compliant
+
+---
+
+### Execution Contract Validation
+
+#### Purpose
+
+Validate compliance with approved execution architecture.
+
+#### Validation Scope
+
+- Request lifecycle ordering
+- Validation ordering
+- Authorization invocation
+- Governance invocation
+- Transaction ownership
+- Workflow ownership
+
+#### Validation Timing
+
+- During workflow implementation
+- During module completion
+- During architecture compliance review
+
+#### Expected Outcome
+
+- Request execution follows approved lifecycle
+- Application Services remain workflow owners
+- Transaction ownership remains preserved
+- Execution architecture remains unchanged
+
+---
+
+### Contract Preservation Rule
+
+Contract validation is mandatory because contracts are implementation boundaries.
+
+Contract violations frequently indicate:
+
+- Architectural drift
+- Ownership violations
+- Dependency violations
+- Workflow redesign
+
+Contract validation therefore acts as an architecture preservation mechanism.
+
+---
+
+## 6.3 Module Integration Validation
+
+### Integration Validation Philosophy
+
+Integration validation confirms that modules collaborate through approved capability contracts while preserving ownership and authority boundaries.
+
+Integration validation never validates implementation convenience.
+
+It validates architectural compliance.
+
+---
+
+### Identity Integrations
+
+#### What Is Being Validated
+
+- User existence capabilities
+- Profile retrieval capabilities
+- Participation eligibility capabilities
+- Identity references
+
+#### Validation Timing
+
+- Social Graph integration
+- Community integration
+- Media integration
+- Content integration
+- Governance integration
+- Feed integration
+
+#### Success Criteria
+
+- Identity remains authoritative identity source
+- Consumers use Identity contracts only
+- No direct Identity persistence access exists
+
+---
+
+### Social Graph Integrations
+
+#### What Is Being Validated
+
+- Follow relationship capabilities
+- Follower retrieval capabilities
+- Following retrieval capabilities
+
+#### Validation Timing
+
+- Feed implementation
+- Feed completion
+
+#### Success Criteria
+
+- Feed consumes Social Graph capabilities
+- Social Graph ownership remains preserved
+- No cross-module mutations exist
+
+---
+
+### Community Integrations
+
+#### What Is Being Validated
+
+- Herd validation capabilities
+- Membership validation capabilities
+- Shepherd authority capabilities
+
+#### Validation Timing
+
+- Content implementation
+- Governance implementation
+- Feed implementation
+
+#### Success Criteria
+
+- Community remains membership authority
+- Consumers do not mutate Community resources
+- Membership validation remains Community-owned
+
+---
+
+### Media Integrations
+
+#### What Is Being Validated
+
+- Media ownership capabilities
+- Media attachment capabilities
+- Media visibility capabilities
+
+#### Validation Timing
+
+- Identity implementation
+- Community implementation
+- Content implementation
+- Governance implementation
+
+#### Success Criteria
+
+- Media lifecycle remains Media-owned
+- Consumers reference media through contracts
+- No direct media persistence access exists
+
+---
+
+### Content Integrations
+
+#### What Is Being Validated
+
+- Content retrieval capabilities
+- Content visibility capabilities
+- Content governance integration
+
+#### Validation Timing
+
+- Governance implementation
+- Feed implementation
+
+#### Success Criteria
+
+- Content remains content authority
+- Governance does not own content
+- Feed remains read-only
+
+---
+
+### Governance Integrations
+
+#### What Is Being Validated
+
+- Restriction evaluation capabilities
+- Enforcement workflows
+- Audit generation
+- Governance hierarchy enforcement
+
+#### Validation Timing
+
+- Governance implementation
+- Feed implementation
+
+#### Success Criteria
+
+- Governance owns governance workflows
+- Governance does not own governed resources
+- Governance hierarchy preserved
+
+---
+
+### Feed Integrations
+
+#### What Is Being Validated
+
+- Cross-domain composition
+- Visibility filtering
+- Feed ordering
+- Feed retrieval
+
+#### Validation Timing
+
+- Feed implementation
+- Feed completion
+
+#### Success Criteria
+
+- Feed remains derived
+- Feed owns no authoritative state
+- Feed performs no mutations
+- Governance outcomes are consumed rather than generated
+
+---
+
+## 6.4 Architecture Compliance Validation
+
+### Domain Boundary Compliance
+
+#### Validation Objective
+
+Detect domain boundary violations.
+
+#### Validation Method
+
+Review implementation ownership against approved domain inventory.
+
+#### Success Criteria
+
+Resources remain implemented within owning domains only.
+
+---
+
+### Module Boundary Compliance
+
+#### Validation Objective
+
+Detect module boundary violations.
+
+#### Validation Method
+
+Review module interactions and dependency usage.
+
+#### Success Criteria
+
+Cross-module access occurs only through capability contracts.
+
+---
+
+### Ownership Boundary Compliance
+
+#### Validation Objective
+
+Detect ownership violations.
+
+#### Validation Method
+
+Review mutation ownership and lifecycle ownership.
+
+#### Success Criteria
+
+Only owning modules mutate owned resources.
+
+---
+
+### Governance Boundary Compliance
+
+#### Validation Objective
+
+Detect governance ownership violations.
+
+#### Validation Method
+
+Review governance workflows and enforcement behavior.
+
+#### Success Criteria
+
+Governance owns governance state only.
+
+---
+
+### Feed Boundary Compliance
+
+#### Validation Objective
+
+Detect feed authority violations.
+
+#### Validation Method
+
+Review feed workflows and dependencies.
+
+#### Success Criteria
+
+Feed remains read-only and derived.
+
+---
+
+### Layer Responsibility Compliance
+
+#### Validation Objective
+
+Detect layer responsibility violations.
+
+#### Validation Method
+
+Review implementation against approved execution architecture.
+
+#### Success Criteria
+
+- Controllers remain transport adapters
+- Application Services remain workflow owners
+- Repositories remain persistence owners
+- Domain Layer remains business-rule owner
+
+---
+
+### Execution Architecture Compliance
+
+#### Validation Objective
+
+Detect request lifecycle violations.
+
+#### Validation Method
+
+Review workflow execution ordering.
+
+#### Success Criteria
+
+Approved execution lifecycle remains preserved.
+
+---
+
+### Transaction Architecture Compliance
+
+#### Validation Objective
+
+Detect transaction ownership violations.
+
+#### Validation Method
+
+Review transaction creation and transaction scope.
+
+#### Success Criteria
+
+Application Services remain transaction owners.
+
+Cross-domain transactions do not exist.
+
+---
+
+### Architectural Drift Detection
+
+Architectural drift indicators include:
+
+- New dependencies outside approved graph
+- Direct repository access across modules
+- Shared ownership behavior
+- Governance ownership expansion
+- Feed state ownership
+- Layer responsibility leakage
+
+Any detected drift must be corrected before implementation progression continues.
+
+---
+
+## 6.5 Dependency Compliance Validation
+
+### Dependency Graph Compliance
+
+#### Validation Objective
+
+Validate compliance with approved dependency graph.
+
+#### Validation Method
+
+Review module dependencies against approved dependency matrix.
+
+#### Success Criteria
+
+No unauthorized dependencies exist.
+
+---
+
+### Acyclic Dependency Compliance
+
+#### Validation Objective
+
+Prevent dependency cycles.
+
+#### Validation Method
+
+Review dependency chains during implementation and integration reviews.
+
+#### Success Criteria
+
+Dependency graph remains acyclic.
+
+---
+
+### Capability Contract Compliance
+
+#### Validation Objective
+
+Validate approved communication model.
+
+#### Validation Method
+
+Review all cross-module invocations.
+
+#### Success Criteria
+
+Contracts remain the exclusive cross-module entry point.
+
+---
+
+### Cross-Module Access Compliance
+
+#### Validation Objective
+
+Prevent implementation bypasses.
+
+#### Validation Method
+
+Review access patterns.
+
+#### Success Criteria
+
+No module accesses foreign repositories, collections, models, or persistence structures.
+
+---
+
+### Repository Isolation Compliance
+
+#### Validation Objective
+
+Preserve persistence ownership.
+
+#### Validation Method
+
+Review repository usage.
+
+#### Success Criteria
+
+Repositories remain module-local.
+
+Repository sharing does not exist.
+
+---
+
+### Future Extraction Readiness
+
+#### Validation Objective
+
+Preserve ADR-001 extraction readiness.
+
+#### Validation Method
+
+Review coupling and dependency behavior.
+
+#### Success Criteria
+
+Modules remain independently extractable without redesign.
+
+---
+
+## 6.6 Pre-Milestone Validation
+
+### Module Completion Validation
+
+#### Purpose
+
+Verify implementation completeness.
+
+#### Required Evidence
+
+- Module checklist completed
+- Module validation completed
+- Tests passing
+
+#### Validation Outcome
+
+Module approved.
+
+---
+
+### Integration Validation
+
+#### Purpose
+
+Verify dependent interactions.
+
+#### Required Evidence
+
+- Capability validation completed
+- Integration scenarios validated
+
+#### Validation Outcome
+
+Integration approved.
+
+---
+
+### Contract Validation
+
+#### Purpose
+
+Verify contract compliance.
+
+#### Required Evidence
+
+- API validation results
+- Capability validation results
+
+#### Validation Outcome
+
+Contracts approved.
+
+---
+
+### Architecture Validation
+
+#### Purpose
+
+Verify architecture preservation.
+
+#### Required Evidence
+
+- Boundary review
+- Compliance review
+
+#### Validation Outcome
+
+Architecture approved.
+
+---
+
+### Dependency Validation
+
+#### Purpose
+
+Verify dependency compliance.
+
+#### Required Evidence
+
+- Dependency review
+- Dependency graph review
+
+#### Validation Outcome
+
+Dependencies approved.
+
+---
+
+### Testing Validation
+
+#### Purpose
+
+Verify implementation correctness.
+
+#### Required Evidence
+
+- Unit tests passing
+- Integration tests passing
+- Workflow validation passing
+
+#### Validation Outcome
+
+Testing approved.
+
+---
+
+### Documentation Validation
+
+#### Purpose
+
+Verify implementation traceability.
+
+#### Required Evidence
+
+- CHANGELOG updated
+- LEARNINGS updated
+- TASKS updated
+
+#### Validation Outcome
+
+Documentation approved.
+
+---
+
+### Operational Validation
+
+#### Purpose
+
+Verify deployability.
+
+#### Required Evidence
+
+- Application startup validated
+- Environment validation completed
+- Configuration validation completed
+
+#### Validation Outcome
+
+Operational readiness approved.
+
+---
+
+## 6.7 Validation Gates
+
+### Gate 1 — Foundation Readiness
+
+#### Purpose
+
+Authorize module development.
+
+#### Entry Criteria
+
+Foundation implementation complete.
+
+#### Validation Activities
+
+- Foundation validation
+- Structure validation
+- Runtime validation
+
+#### Exit Criteria
+
+Foundation approved.
+
+#### Failure Outcome
+
+Module implementation blocked.
+
+---
+
+### Gate 2 — Module Readiness
+
+#### Purpose
+
+Authorize module implementation.
+
+#### Entry Criteria
+
+Dependencies complete.
+
+#### Validation Activities
+
+- Dependency validation
+- Contract availability validation
+
+#### Exit Criteria
+
+Module approved for development.
+
+#### Failure Outcome
+
+Module development deferred.
+
+---
+
+### Gate 3 — Module Completion
+
+#### Purpose
+
+Verify module correctness.
+
+#### Entry Criteria
+
+Module implementation complete.
+
+#### Validation Activities
+
+- Module validation
+- Contract validation
+- Architecture validation
+- Testing validation
+
+#### Exit Criteria
+
+Module approved.
+
+#### Failure Outcome
+
+Module remains incomplete.
+
+---
+
+### Gate 4 — Integration Readiness
+
+#### Purpose
+
+Authorize dependent module progression.
+
+#### Entry Criteria
+
+Provider module completed.
+
+#### Validation Activities
+
+- Capability validation
+- Integration validation
+- Dependency validation
+
+#### Exit Criteria
+
+Dependent implementation may proceed.
+
+#### Failure Outcome
+
+Dependent implementation blocked.
+
+---
+
+### Gate 5 — Milestone Readiness
+
+#### Purpose
+
+Verify milestone completion.
+
+#### Entry Criteria
+
+Milestone scope complete.
+
+#### Validation Activities
+
+- Architecture validation
+- Integration validation
+- Contract validation
+- Testing validation
+- Documentation validation
+
+#### Exit Criteria
+
+Milestone approved.
+
+#### Failure Outcome
+
+Milestone remains open.
+
+---
+
+### Gate 6 — Backend Development Readiness
+
+#### Purpose
+
+Verify completion of Backend Development Planning.
+
+#### Entry Criteria
+
+All planning sections complete.
+
+#### Validation Activities
+
+- Planning validation
+- Sequencing validation
+- Dependency validation
+- Readiness review
+
+#### Exit Criteria
+
+Backend Development Planning approved.
+
+#### Failure Outcome
+
+Backend Development Planning remains incomplete.
+
+---
+
+### Validation Gate Philosophy
+
+Validation gates control implementation progression.
+
+Progression occurs through verified readiness rather than implementation activity.
+
+This ensures:
+
+- Architecture preservation
+- Reduced integration risk
+- Reduced milestone risk
+- Reduced rework
+- Predictable delivery progression
+
+The authoritative implementation progression model becomes:
+
+Foundation
+↓
+Gate 1
+↓
+Module Readiness
+↓
+Gate 2
+↓
+Module Development
+↓
+Gate 3
+↓
+Integration Readiness
+↓
+Gate 4
+↓
+Milestone Completion
+↓
+Gate 5
+↓
+Backend Development Readiness
+↓
+Gate 6
+↓
+Backend Development
