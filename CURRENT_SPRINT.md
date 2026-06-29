@@ -4,10 +4,10 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Milestones, Definition of Done & Release Readiness
+Frontend Development Planning
 
 Next Task:
-Frontend Development Planning
+TBD
 
 Blocked By:
 Nothing

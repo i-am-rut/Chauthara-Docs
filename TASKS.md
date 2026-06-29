@@ -30,14 +30,12 @@
 # Ongoing
 - MVP Architecture Design
     - Phase 1
-        -  Backend Development Planning
-            - Milestones, Definition of Done & Release Readiness
+        -  Frontend Development Planning
 
 
 # Pending
 ## Phase 1 — Core Platform
 ### Development Planning 
-Frontend Development Planning
 Development Sprint Planning
 
 ### Implementation
@@ -215,3 +213,4 @@ Foundation Implementation Plan
 Module Implementation Roadmap
 Standard Module Development Pattern
 Integration & Validation Strategy
+Milestones, Definition of Done & Release Readiness
