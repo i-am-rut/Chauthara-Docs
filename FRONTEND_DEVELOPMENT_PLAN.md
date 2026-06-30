@@ -1653,3 +1653,787 @@ Completed when:
 Foundation decisions documented
 Folder structure documented
 Validation results documented
+
+# Part 4 — Frontend Module Implementation Roadmap
+
+## 4.1 Module Sequencing Philosophy
+
+### Purpose of Module Sequencing
+
+The Frontend Module Implementation Roadmap defines the authoritative implementation order for frontend modules following completion of the Frontend Foundation Implementation Plan.
+
+The roadmap exists to:
+
+- Preserve approved frontend architecture.
+- Preserve approved backend dependency relationships.
+- Enable incremental implementation.
+- Support early validation.
+- Reduce integration risk.
+- Reduce implementation rework.
+- Provide predictable development progression.
+
+Implementation sequencing is an implementation concern.
+
+Approved architecture remains authoritative.
+
+---
+
+### Why Module Sequencing Exists
+
+Implementation order directly influences:
+
+- Integration complexity
+- Validation capability
+- Rework probability
+- Development predictability
+
+Incorrect sequencing increases:
+
+- Dependency violations
+- API integration rework
+- State ownership redesign
+- Navigation redesign
+- Rendering redesign
+
+Sequencing exists to ensure implementation progresses through stable dependency foundations.
+
+---
+
+### Dependency-Aware Delivery
+
+Frontend modules consume capabilities provided by other modules.
+
+Implementation sequencing shall follow approved dependency relationships.
+
+Modules providing foundational capabilities shall be implemented before modules consuming those capabilities.
+
+Dependency order is authoritative.
+
+Implementation convenience does not justify dependency inversion.
+
+---
+
+### Incremental Validation
+
+Sequencing shall maximize independent validation opportunities.
+
+Each completed module should provide:
+
+- Executable functionality
+- API integration validation
+- Rendering validation
+- Navigation validation
+- State ownership validation
+
+Validation should occur before introducing additional dependent modules.
+
+---
+
+### Rework Minimization
+
+Sequencing reduces:
+
+- API integration rework
+- Rendering boundary rework
+- State ownership rework
+- Navigation rework
+- Security integration rework
+
+Stable foundations shall exist before dependent implementation begins.
+
+---
+
+### Architecture Preservation
+
+Sequencing shall preserve:
+
+#### Module Boundaries
+
+Approved frontend modules remain authoritative.
+
+#### Rendering Boundaries
+
+Approved Server Component and Client Component responsibilities remain unchanged.
+
+#### State Ownership Boundaries
+
+Approved ownership of:
+
+- Server State
+- Client State
+- UI State
+- Form State
+- Navigation State
+
+remains unchanged.
+
+#### Navigation Boundaries
+
+Approved route ownership and navigation architecture remain authoritative.
+
+#### Security Boundaries
+
+Authentication, authorization assumptions, and session handling responsibilities remain unchanged.
+
+---
+
+### Sequencing Constraints
+
+The following constraints are authoritative:
+
+- Approved frontend architecture remains authoritative.
+- Approved backend architecture remains authoritative.
+- Approved module dependencies remain authoritative.
+- Approved API contracts remain authoritative.
+- Approved rendering boundaries remain authoritative.
+- Approved state ownership boundaries remain authoritative.
+- Approved navigation architecture remains authoritative.
+- Implementation convenience does not override dependency order.
+- Dependency inversion is prohibited.
+- Architectural redesign is prohibited.
+
+---
+
+## 4.2 Dependency Analysis
+
+### Frontend Module Inventory
+
+Approved frontend module inventory:
+
+- Identity
+- Social Graph
+- Community
+- Media
+- Content
+- Feed
+- Governance UI
+
+---
+
+### Dependency Evaluation Criteria
+
+Dependency analysis evaluates:
+
+- Authentication dependencies
+- Navigation dependencies
+- Rendering dependencies
+- State dependencies
+- API dependencies
+- UI dependencies
+
+---
+
+### Module Dependency Matrix
+
+#### Identity
+
+Depends On
+
+- Shared Foundation
+
+Provides
+
+- Authentication experience
+- Session awareness
+- Profile experience
+- Protected navigation capability
+- User identity state
+
+Consumed By
+
+- Social Graph
+- Community
+- Media
+- Content
+- Feed
+- Governance UI
+
+Validation Impact
+
+Identity validates:
+
+- Authentication architecture
+- Session architecture
+- Route protection architecture
+- API integration foundation
+
+---
+
+#### Social Graph
+
+Depends On
+
+- Identity
+
+Provides
+
+- Follow experience
+- Relationship state
+- Following capability
+
+Consumed By
+
+- Feed
+
+Validation Impact
+
+Validates relationship workflows and authenticated user interaction.
+
+---
+
+#### Community
+
+Depends On
+
+- Identity
+
+Provides
+
+- Herd experience
+- Membership experience
+- Community participation capability
+
+Consumed By
+
+- Content
+- Feed
+- Governance UI
+
+Validation Impact
+
+Validates community lifecycle workflows and membership-based participation.
+
+---
+
+#### Media
+
+Depends On
+
+- Identity
+
+Provides
+
+- Image upload experience
+- Media attachment capability
+- Media retrieval capability
+
+Consumed By
+
+- Content
+- Community
+- Governance UI
+
+Validation Impact
+
+Validates upload architecture, file handling, and media integration.
+
+---
+
+#### Content
+
+Depends On
+
+- Identity
+- Community
+- Media
+
+Provides
+
+- Posting experience
+- Commenting experience
+- Voting experience
+- Discussion experience
+
+Consumed By
+
+- Feed
+- Governance UI
+
+Validation Impact
+
+Validates core content workflows and participation architecture.
+
+---
+
+#### Feed
+
+Depends On
+
+- Identity
+- Social Graph
+- Community
+- Media
+- Content
+
+Provides
+
+- Following Feed
+- Herd Feed
+
+Consumed By
+
+- None
+
+Validation Impact
+
+Validates feed retrieval, feed rendering, feed composition, and content consumption experiences.
+
+---
+
+#### Governance UI
+
+Depends On
+
+- Identity
+- Community
+- Media
+- Content
+
+Provides
+
+- Reporting experience
+- Moderation interfaces
+- Governance workflows
+
+Consumed By
+
+- None
+
+Validation Impact
+
+Validates governance workflows and moderation execution paths.
+
+---
+
+### Frontend Dependency Graph
+
+Authoritative frontend dependency graph:
+
+                     Identity
+                   /    |     \
+                  /     |      \
+                 /      |       \
+        Social Graph  Community  Media
+                \        |        /
+                 \       |       /
+                  \      |      /
+                     Content
+                    /      \
+                   /        \
+          Governance UI     Feed
+
+### Dependency Validation
+
+Validation Results:
+
+No dependency cycles detected.
+No module boundary conflicts detected.
+No rendering boundary conflicts detected.
+No state ownership conflicts detected.
+No navigation ownership conflicts detected.
+Dependency graph remains compatible with approved frontend architecture.
+Dependency graph remains compatible with approved backend dependency model.
+
+Dependency analysis validated.
+
+## 4.3 Module Delivery Sequence
+Approach Evaluation
+Approach A — User Experience Order
+
+Sequence modules according to visible user experiences.
+
+Examples:
+
+Authentication
+Profile
+Posting
+Feed
+Community
+
+Advantages:
+
+Early visible progress
+
+Disadvantages:
+
+Dependency violations likely
+Increased integration complexity
+Increased rework probability
+Approach B — Dependency Order
+
+Sequence modules according to approved dependency relationships.
+
+Advantages:
+
+Architecture preservation
+Dependency correctness
+Reduced integration risk
+Reduced rework
+Predictable validation
+
+Disadvantages:
+
+Some user-facing experiences arrive later
+Rejected Approach
+
+User Experience Order
+
+Reason:
+
+Dependency correctness is more important than visible progression.
+
+Implementation order shall preserve approved architecture before optimizing for visible functionality.
+
+Recommended Approach
+
+Dependency-First Module Delivery
+
+Reason:
+
+Aligns with FDP-02 Dependency-Aware Planning.
+Aligns with FDP-06 Verification-Driven Development.
+Aligns with FDP-10 Rework Minimization.
+Preserves approved dependency graph.
+Maximizes incremental validation.
+Delivery Sequence Evaluation
+Identity
+
+First because all authenticated participation depends upon identity establishment.
+
+Creates:
+
+Authentication experience
+Session awareness
+Protected navigation capability
+Social Graph
+
+Second because it depends only on Identity and enables follow relationships used by Feed.
+
+Community
+
+Third because it depends only on Identity and provides participation structures required by Content.
+
+Media
+
+Fourth because it depends only on Identity and provides attachment capability consumed by Content and Community.
+
+Content
+
+Fifth because it depends upon:
+
+Identity
+Community
+Media
+
+Content becomes the primary participation layer.
+
+Feed
+
+Sixth because feed consumption depends upon:
+
+Identity
+Social Graph
+Community
+Content
+Media
+
+Feed cannot be validated meaningfully before content exists.
+
+Governance UI
+
+Seventh because governance interfaces require governed resources to exist.
+
+Governance UI depends on:
+
+Identity
+Community
+Media
+Content
+
+Governance workflows are validated most effectively after governed experiences exist.
+
+Authoritative Frontend Delivery Sequence
+
+Following completion of the Frontend Foundation Implementation Plan:
+
+Identity
+Social Graph
+Community
+Media
+Content
+Feed
+Governance UI
+
+This sequence becomes authoritative.
+
+Sequence Readiness Rules
+
+Advancement to the next module requires:
+
+Current module implementation complete.
+Module validation complete.
+API integration validated.
+Rendering boundaries validated.
+State ownership validated.
+Navigation integration validated.
+Error handling validated.
+Security assumptions validated.
+Documentation updated.
+
+No module should begin before prerequisite module validation is complete.
+
+## 4.4 Module Delivery Stages
+Stage 1 — Foundation
+
+Purpose
+
+Establish frontend implementation infrastructure.
+
+Included Modules
+
+Shared Foundation
+
+Validation Outcome
+
+Frontend implementation environment validated.
+
+Risks Reduced
+
+Architectural drift
+Foundation rework
+
+Enables
+
+All subsequent module implementation.
+
+Stage 2 — Participation Foundation
+
+Purpose
+
+Establish user identity and relationship participation.
+
+Included Modules
+
+Identity
+Social Graph
+
+Validation Outcome
+
+Users can authenticate and establish follow relationships.
+
+Risks Reduced
+
+Authentication rework
+Session rework
+Relationship workflow rework
+
+Enables
+
+Community participation and content participation.
+
+Stage 3 — Community Foundation
+
+Purpose
+
+Establish community participation capabilities.
+
+Included Modules
+
+Community
+
+Validation Outcome
+
+Users can create, discover, join, and participate in Herds.
+
+Risks Reduced
+
+Membership workflow rework
+Community navigation rework
+
+Enables
+
+Community-scoped content creation.
+
+Stage 4 — Content Foundation
+
+Purpose
+
+Establish content creation capability.
+
+Included Modules
+
+Media
+Content
+
+Validation Outcome
+
+Users can create content, discussions, and attach images.
+
+Risks Reduced
+
+Content workflow rework
+Upload workflow rework
+Interaction workflow rework
+
+Enables
+
+Content consumption experiences.
+
+Stage 5 — Content Consumption Foundation
+
+Purpose
+
+Establish feed consumption capability.
+
+Included Modules
+
+Feed
+
+Validation Outcome
+
+Following Feed and Herd Feed validated.
+
+Risks Reduced
+
+Feed integration rework
+Feed rendering rework
+
+Enables
+
+Complete content consumption workflows.
+
+Stage 6 — Governance Foundation
+
+Purpose
+
+Establish reporting and moderation interfaces.
+
+Included Modules
+
+Governance UI
+
+Validation Outcome
+
+Governance workflows validated.
+
+Risks Reduced
+
+Moderation workflow rework
+Governance interface rework
+
+Enables
+
+Complete MVP governance participation.
+
+## 4.5 Sequencing Risk Analysis
+Risk Category 1 — Dependency Violations
+
+Risk
+
+Implementing dependent modules before prerequisite capabilities exist.
+
+Impact
+
+Architectural drift and unstable integrations.
+
+Mitigation
+
+Dependency-first sequencing.
+
+Risk Category 2 — Integration Rework
+
+Risk
+
+Repeated API integration redesign.
+
+Impact
+
+Increased implementation effort.
+
+Mitigation
+
+Foundational modules validated before dependent modules begin.
+
+Risk Category 3 — Rendering Rework
+
+Risk
+
+Rendering ownership changes after implementation.
+
+Impact
+
+Server/Client boundary redesign.
+
+Mitigation
+
+Dependency-aware progression preserves approved rendering architecture.
+
+Risk Category 4 — State Ownership Rework
+
+Risk
+
+State relocation after implementation.
+
+Impact
+
+State management redesign.
+
+Mitigation
+
+State ownership validated at module completion.
+
+Risk Category 5 — Navigation Rework
+
+Risk
+
+Premature navigation implementation before required routes exist.
+
+Impact
+
+Navigation redesign and route restructuring.
+
+Mitigation
+
+Navigation grows according to module readiness.
+
+Risk Category 6 — Authentication & Security Rework
+
+Risk
+
+Retrofitting authentication into completed functionality.
+
+Impact
+
+Security redesign and integration rework.
+
+Mitigation
+
+Identity implemented first.
+
+Risk Category 7 — Governance UI Rework
+
+Risk
+
+Building moderation interfaces before governed resources exist.
+
+Impact
+
+Governance redesign and workflow rework.
+
+Mitigation
+
+Governance UI delivered after content and community resources exist.
+
+Sequencing Risk Mitigation
+
+The proposed roadmap reduces risk through:
+
+Dependency-first progression
+Identity-first implementation
+Community-before-content progression
+Media-before-content progression
+Feed-after-content progression
+Governance-after-governed-resource progression
+Continuous validation between modules
+
+The roadmap minimizes architectural drift and implementation rework.
