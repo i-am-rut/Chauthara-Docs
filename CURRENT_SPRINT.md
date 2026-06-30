@@ -4,10 +4,10 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Standard Frontend Module Development Pattern
+Frontend Integration & Validation Strategy
 
 Next Task:
-Frontend Integration & Validation Strategy
+Milestones, Definition of Done & Release Readiness
 
 Blocked By:
 Nothing

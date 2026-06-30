@@ -2437,3 +2437,767 @@ Governance-after-governed-resource progression
 Continuous validation between modules
 
 The roadmap minimizes architectural drift and implementation rework.
+
+# Standard Frontend Module Development Pattern
+## 5.1 Frontend Module Development Philosophy
+Purpose
+
+The Standard Frontend Module Development Pattern establishes the authoritative implementation model used by every frontend module.
+
+The pattern exists to:
+
+Preserve approved frontend architecture during implementation.
+Provide a repeatable implementation workflow.
+Reduce implementation uncertainty.
+Support incremental validation.
+Reduce implementation rework.
+Maintain consistency across all frontend modules.
+
+The pattern applies to:
+
+Identity
+Social Graph
+Community
+Media
+Content
+Feed
+Governance UI
+Architecture Preservation
+
+Frontend module implementation shall preserve:
+
+Module Boundaries
+
+Implementation shall remain aligned with approved frontend module ownership.
+
+Cross-module coupling introduced for implementation convenience is prohibited.
+
+Rendering Boundaries
+
+Implementation shall preserve approved:
+
+Server Component responsibilities
+Client Component responsibilities
+Data-fetching responsibilities
+Rendering ownership responsibilities
+State Ownership Boundaries
+
+Implementation shall preserve approved ownership of:
+
+Server State
+Client State
+UI State
+Form State
+Navigation State
+
+State ownership shall not be relocated for implementation convenience.
+
+Navigation Boundaries
+
+Implementation shall preserve:
+
+Route ownership
+Navigation flow ownership
+Access control responsibilities
+URL ownership responsibilities
+Security Boundaries
+
+Implementation shall preserve:
+
+Authentication assumptions
+Session handling responsibilities
+Authorization assumptions
+Security execution boundaries
+Module-First Development
+
+Frontend implementation shall follow Module-First Development.
+
+Implementation begins with module capabilities rather than complete pages.
+
+Module capabilities become the reusable implementation foundation for page composition.
+
+Benefits:
+
+Preserves module boundaries.
+Preserves state ownership.
+Preserves rendering ownership.
+Reduces duplication.
+Reduces integration risk.
+Supports incremental validation.
+
+Pages are assembled from validated capabilities rather than serving as the primary implementation unit.
+
+Incremental Validation
+
+Implementation shall be validated continuously throughout development.
+
+Validation occurs after:
+
+Capability implementation
+State integration
+API integration
+Page assembly
+Error handling integration
+
+Validation before progression reduces implementation uncertainty and integration risk.
+
+Rework Minimization
+
+The standard module pattern reduces:
+
+UI Rework
+
+Reusable capabilities are validated before page composition.
+
+State Rework
+
+State ownership is validated before broad integration.
+
+API Integration Rework
+
+Contract alignment is validated before page completion.
+
+Navigation Rework
+
+Route ownership and navigation behavior are validated before workflow completion.
+
+Development Constraints
+
+The following constraints are authoritative:
+
+Approved Frontend Architecture remains authoritative.
+Approved Backend Architecture remains authoritative.
+Approved API Contracts remain authoritative.
+Approved frontend module boundaries remain authoritative.
+Approved rendering boundaries remain authoritative.
+Approved state ownership boundaries remain authoritative.
+Approved navigation architecture remains authoritative.
+Implementation convenience shall not override approved architecture.
+
+## 5.2 Module Implementation Workflow
+Workflow Philosophy
+
+Every frontend module shall follow a standardized implementation workflow.
+
+The workflow supports:
+
+Module-first development
+Vertical UI slice delivery
+Dependency-aware implementation
+Verification-driven development
+Step 1 — Module Review
+
+Review:
+
+Module responsibilities
+Module dependencies
+User journeys
+User flows
+API contracts
+State ownership requirements
+Rendering responsibilities
+Navigation responsibilities
+
+Implementation begins only after module responsibilities are understood.
+
+Step 2 — Route & Navigation Preparation
+
+Establish:
+
+Route ownership
+Navigation entry points
+Protected route requirements
+Public route requirements
+URL requirements
+Access control requirements
+
+Navigation responsibilities must be established before capability implementation begins.
+
+Step 3 — UI Capability Implementation
+
+Implement:
+
+Shared UI capabilities
+Module-level components
+Interaction primitives
+Form capabilities
+Display capabilities
+
+Capabilities must be reusable and aligned with approved UI architecture.
+
+Step 4 — State Integration
+
+Implement:
+
+Server state ownership
+Client state ownership
+UI state ownership
+Form state ownership
+
+State integration shall remain aligned with approved ownership boundaries.
+
+Step 5 — API Integration
+
+Integrate approved APIs.
+
+Validate:
+
+Contract compliance
+Query behavior
+Mutation behavior
+Error responses
+Authorization assumptions
+
+Approved API contracts remain authoritative.
+
+Step 6 — Page Assembly
+
+Assemble pages using validated capabilities.
+
+Pages shall be composed from:
+
+Approved routes
+Validated components
+Approved state integration
+Approved API integration
+
+Page assembly shall not introduce new ownership responsibilities.
+
+Step 7 — Error Handling Integration
+
+Validate:
+
+Loading states
+Empty states
+Error states
+Recovery paths
+Access-denied states
+
+Error handling shall align with approved error handling architecture.
+
+Step 8 — Validation & Testing
+
+Validate:
+
+Rendering behavior
+State ownership
+Navigation behavior
+API integration
+Error handling
+Accessibility
+Architecture compliance
+Step 9 — Documentation Review
+
+Evaluate impact on:
+
+FRONTEND_DEVELOPMENT_PLAN.md
+CHANGELOG.md
+LEARNINGS.md
+TASKS.md
+
+Architecture documentation changes are permitted only when architecture changes.
+
+Workflow Validation
+
+The workflow preserves:
+
+Approved frontend architecture
+Rendering boundaries
+State ownership boundaries
+Navigation boundaries
+Security boundaries
+API contract boundaries
+
+## 5.3 Component Development Pattern
+Purpose
+
+Components are implemented before pages because components represent reusable module capabilities.
+
+Pages consume capabilities.
+
+Components define capabilities.
+
+Component Categories
+Shared Components
+
+Reusable across multiple modules.
+
+Module Components
+
+Owned by a single module.
+
+Page Composition Components
+
+Used to assemble route-level experiences.
+
+Standard Component Workflow
+Responsibility Definition
+
+Define component responsibility.
+
+Rendering Responsibility Validation
+
+Validate:
+
+Server Component suitability
+Client Component suitability
+State Responsibility Validation
+
+Validate:
+
+Server state usage
+Client state usage
+UI state usage
+Form state usage
+Interaction Validation
+
+Validate:
+
+User interactions
+Event handling
+Expected workflows
+Accessibility Validation
+
+Validate:
+
+Keyboard support
+Focus management
+Semantic structure
+Accessibility compliance
+Error State Validation
+
+Validate:
+
+Loading state behavior
+Empty state behavior
+Error state behavior
+Completion Validation
+
+Validate:
+
+Rendering correctness
+State correctness
+Interaction correctness
+Accessibility correctness
+Component Readiness Rules
+
+A component is ready for page composition only when:
+
+Responsibility is clearly defined.
+Rendering ownership is validated.
+State ownership is validated.
+Interaction behavior is validated.
+Accessibility requirements are satisfied.
+Error states are implemented.
+Architecture compliance is confirmed.
+Component Validation
+
+Validate:
+
+Rendering alignment
+State ownership alignment
+Accessibility alignment
+Architecture alignment
+
+## 5.4 Page Development Pattern
+Purpose
+
+Pages are assembled from validated capabilities.
+
+Pages do not become the location of business capability implementation.
+
+Page Construction Principles
+
+Page implementation shall preserve:
+
+Rendering boundaries
+Navigation boundaries
+State ownership boundaries
+Component ownership boundaries
+Standard Page Workflow
+Route Review
+
+Validate route ownership.
+
+Data Requirements Review
+
+Validate page data requirements.
+
+Component Composition
+
+Compose validated components.
+
+State Integration
+
+Integrate approved state ownership.
+
+API Integration
+
+Integrate approved API capabilities.
+
+Error Handling Integration
+
+Integrate approved error handling.
+
+Navigation Validation
+
+Validate route behavior.
+
+Rendering Validation
+
+Validate rendering ownership.
+
+Completion Validation
+
+Validate complete page behavior.
+
+Page Readiness Rules
+
+A page is ready only when:
+
+Route ownership is validated.
+Required capabilities are integrated.
+State ownership is validated.
+API integration is validated.
+Navigation behavior is validated.
+Error handling is validated.
+Accessibility is validated.
+Rendering behavior is validated.
+Page Validation
+
+Page implementation shall remain aligned with approved architecture.
+
+## 5.5 State Integration Pattern
+State Integration Philosophy
+
+State integration shall implement approved state ownership.
+
+Implementation shall not redefine state architecture.
+
+Server State Integration
+
+Integrate:
+
+Query ownership
+Mutation ownership
+Cache ownership
+Synchronization responsibilities
+
+Server state remains aligned with approved server-state architecture.
+
+Client State Integration
+
+Integrate:
+
+Session state
+Shared application state
+Cross-page state
+
+Client state ownership shall remain explicit.
+
+UI State Integration
+
+Integrate:
+
+Local interaction state
+Temporary display state
+Presentation state
+
+UI state remains local whenever appropriate.
+
+Form State Integration
+
+Integrate:
+
+Form inputs
+Validation state
+Submission state
+Form feedback state
+
+Form state ownership remains aligned with approved forms architecture.
+
+State Ownership Validation
+
+Validate:
+
+State stored in correct ownership location.
+State synchronization responsibilities preserved.
+State boundaries preserved.
+Rendering responsibilities preserved.
+State Integration Readiness Rules
+
+State integration is complete only when:
+
+Ownership is validated.
+Synchronization is validated.
+Rendering compatibility is validated.
+Architecture compliance is validated.
+State Validation
+
+State integration remains fully compatible with approved state architecture.
+
+## 5.6 API Integration Pattern
+API Integration Philosophy
+
+Frontend implementation consumes approved APIs.
+
+Frontend implementation does not redesign APIs.
+
+Approved API contracts remain authoritative.
+
+Contract-First Integration
+
+All API integration shall begin with approved API contracts.
+
+Frontend behavior shall align with:
+
+Request contracts
+Response contracts
+Pagination standards
+Error contracts
+Authorization expectations
+Query Integration Workflow
+
+Validate:
+
+Query ownership
+Query parameters
+Query responses
+Loading behavior
+Empty state behavior
+Error behavior
+Mutation Integration Workflow
+
+Validate:
+
+Mutation inputs
+Mutation outputs
+Success handling
+Failure handling
+State synchronization
+Loading State Integration
+
+Every API integration shall define:
+
+Initial loading state
+Refresh loading state
+Background loading state
+Error State Integration
+
+Every API integration shall define:
+
+Request failure handling
+Validation failure handling
+Authorization failure handling
+Recovery behavior
+Authorization State Handling
+
+Validate:
+
+Authenticated behavior
+Unauthenticated behavior
+Protected route behavior
+Permission-sensitive behavior
+API Integration Validation
+
+Validate:
+
+Contract compliance
+Error handling compliance
+State ownership compliance
+Security compliance
+API Integration Readiness Rules
+
+API integration is complete only when:
+
+Contract compliance validated.
+Query behavior validated.
+Mutation behavior validated.
+Loading behavior validated.
+Error behavior validated.
+Authorization behavior validated.
+API Validation
+
+API integration remains fully compatible with approved API contracts.
+
+## 5.7 Standard Module Checklist
+Architecture Compliance
+Module boundaries preserved.
+Rendering boundaries preserved.
+State ownership preserved.
+Navigation boundaries preserved.
+Rendering Compliance
+Server Component responsibilities validated.
+Client Component responsibilities validated.
+State Compliance
+Server state ownership validated.
+Client state ownership validated.
+UI state ownership validated.
+Form state ownership validated.
+Navigation Compliance
+Route ownership validated.
+Access control validated.
+Navigation behavior validated.
+API Compliance
+Contract compliance validated.
+Query behavior validated.
+Mutation behavior validated.
+Security Compliance
+Authentication assumptions validated.
+Authorization assumptions validated.
+Session handling assumptions validated.
+Error Handling Compliance
+Loading states validated.
+Empty states validated.
+Error states validated.
+Recovery paths validated.
+Accessibility Compliance
+Accessibility requirements validated.
+Testing Completion
+Component validation completed.
+Page validation completed.
+Integration validation completed.
+Documentation Review
+Documentation impact reviewed.
+Module Readiness Confirmation
+Module completion criteria satisfied.
+
+## 5.8 Testing Expectations
+Testing Philosophy
+
+Testing exists to validate implementation correctness and architectural compliance.
+
+Testing supports verification-driven development.
+
+Component Validation Expectations
+
+Validate:
+
+Rendering behavior
+State behavior
+Interaction behavior
+Accessibility behavior
+Page Validation Expectations
+
+Validate:
+
+Route behavior
+Page composition
+Navigation behavior
+Error handling behavior
+State Validation Expectations
+
+Validate:
+
+Ownership correctness
+Synchronization correctness
+State boundary compliance
+API Integration Validation Expectations
+
+Validate:
+
+Query execution
+Mutation execution
+Contract compliance
+Error handling
+Navigation Validation Expectations
+
+Validate:
+
+Route ownership
+Navigation flows
+Access control behavior
+URL behavior
+Error Handling Validation Expectations
+
+Validate:
+
+Loading states
+Empty states
+Error states
+Recovery behavior
+Accessibility Validation Expectations
+
+Validate:
+
+Keyboard accessibility
+Focus management
+Semantic structure
+Module Completion Validation Expectations
+
+Validate:
+
+Architecture compliance
+Rendering compliance
+State compliance
+Navigation compliance
+API compliance
+Security compliance
+Testing Readiness Rules
+
+Testing is complete only when:
+
+Component validation completed.
+Page validation completed.
+State validation completed.
+API validation completed.
+Navigation validation completed.
+Accessibility validation completed.
+Testing Validation
+
+Testing expectations remain fully compatible with approved architecture.
+
+## 5.9 Module Completion Criteria
+Architecture Completion
+Module boundaries preserved.
+Rendering boundaries preserved.
+State ownership preserved.
+Navigation boundaries preserved.
+Rendering Completion
+Rendering responsibilities implemented and validated.
+State Completion
+Approved state ownership fully integrated.
+Navigation Completion
+Route ownership and navigation behavior validated.
+API Completion
+Approved API contracts fully integrated and validated.
+Error Handling Completion
+Loading, empty, error, and recovery states validated.
+Accessibility Completion
+Accessibility requirements validated.
+Testing Completion
+Required validation activities completed.
+Documentation Completion
+
+Documentation impact reviewed and updated where required.
+
+Module Sign-Off Criteria
+
+A module may be considered complete only when:
+
+Implementation workflow completed.
+Validation workflow completed.
+Testing expectations satisfied.
+Architecture compliance confirmed.
+Documentation review completed.
+Completion Validation
+
+Validated against:
+
+Frontend Development Planning Principles
+Frontend Build Strategy
+Frontend Foundation Implementation Plan
+Frontend Module Implementation Roadmap
+Approved Frontend Architecture
+Approved Backend Architecture
+API Contracts
+Security Architecture
+Performance Architecture
+Error Handling Architecture
+Infrastructure Definition
+
+No conflicts identified.
+
+Status:
+
+Standard Frontend Module Development Pattern validated and approved as authoritative.
