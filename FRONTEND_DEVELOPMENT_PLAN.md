@@ -933,3 +933,723 @@ Documentation shall be updated after slice completion.
 FBS-15
 
 Incomplete slices shall not be considered complete implementation progress.
+
+---
+
+# Part 3 — Frontend Foundation Implementation Plan
+
+## 3.1 Foundation Implementation Philosophy
+
+### Purpose
+
+The Frontend Foundation Implementation Plan defines the shared frontend infrastructure required before implementation of any frontend module or vertical UI slice.
+
+The foundation exists to provide:
+
+- Stable frontend project structure
+- Stable application composition
+- Stable routing infrastructure
+- Stable layout infrastructure
+- Stable design system infrastructure
+- Stable API integration infrastructure
+- Stable state management infrastructure
+- Stable authentication infrastructure
+- Stable shared component infrastructure
+
+Business functionality begins only after foundation validation is complete.
+
+---
+
+### Why Frontend Foundation Exists
+
+The frontend foundation establishes the implementation infrastructure required to realize the approved frontend architecture.
+
+The foundation provides:
+
+- Predictable implementation progression
+- Consistent implementation patterns
+- Early architectural validation
+- Reduced implementation uncertainty
+- Reduced rework risk
+
+The foundation ensures that future module implementation occurs within approved architectural boundaries.
+
+---
+
+### Architecture Preservation
+
+The foundation protects approved architectural boundaries before feature implementation begins.
+
+#### Module Boundary Preservation
+
+The foundation establishes the approved frontend module structure before module implementation begins.
+
+Module ownership remains visible and enforceable throughout implementation.
+
+#### Rendering Boundary Preservation
+
+The foundation establishes approved Server Component and Client Component composition patterns.
+
+Rendering responsibilities remain aligned with approved rendering architecture.
+
+#### State Ownership Preservation
+
+The foundation establishes approved state infrastructure before business state is introduced.
+
+State ownership remains aligned with approved state architecture.
+
+#### Navigation Boundary Preservation
+
+The foundation establishes routing and layout composition boundaries before user journeys are implemented.
+
+Navigation ownership remains aligned with approved navigation architecture.
+
+#### UI Boundary Preservation
+
+The foundation establishes design system ownership, shared component ownership, and UI composition rules before feature implementation begins.
+
+---
+
+### Rework Minimization
+
+Foundation-first implementation reduces:
+
+- Structural reorganization
+- Routing redesign
+- Layout redesign
+- State ownership drift
+- API integration inconsistency
+- Design system inconsistency
+
+Shared implementation infrastructure is validated once and reused across all frontend modules.
+
+---
+
+### Frontend Readiness
+
+The foundation prepares the frontend for implementation of:
+
+- Authentication Experience
+- Profile Experience
+- Follow Experience
+- Posting Experience
+- Herd Experience
+- Feed Experience
+- Governance Experience
+
+All future implementation builds upon validated foundation infrastructure.
+
+---
+
+### Foundation Constraints
+
+The foundation:
+
+- Does not implement business features.
+- Does not implement completed user experiences.
+- Does not implement approved vertical UI slices.
+- Does not implement business workflows.
+- Does not implement domain-specific functionality.
+
+The foundation provides implementation infrastructure only.
+
+Business implementation begins after foundation validation.
+
+---
+
+## 3.2 Project Structure Foundation
+
+### Foundation Responsibility
+
+Provide a stable frontend implementation structure aligned with:
+
+- Approved Frontend Architectural Style
+- Approved Frontend Module Structure
+- Approved Rendering Architecture
+- Approved State Architecture
+- Approved Navigation Architecture
+
+---
+
+### Possible Approaches
+
+#### Approach A — Layer-Oriented Structure
+
+Examples:
+components/
+pages/
+hooks/
+services/
+store/
+
+#### Approach B — Domain-Oriented Frontend Structure
+
+Examples:
+
+identity/
+social-graph/
+content/
+community/
+feed/
+governance/
+
+with shared infrastructure isolated separately.
+
+### Rejected Approach
+
+Layer-Oriented Structure.
+
+Reasons:
+
+Weak module ownership visibility
+Increased coupling risk
+Poor alignment with approved frontend architecture
+Reduced architecture preservation
+
+### Recommended Approach
+
+Domain-Oriented Frontend Structure.
+
+Reasons:
+
+Preserves approved module boundaries
+Aligns with approved frontend architecture
+Supports Module-First Vertical Slice Development
+Improves future maintainability
+Reduces implementation drift
+
+### Foundation Structure
+src/
+
+├── app/
+│
+├── modules/
+│   ├── identity/
+│   ├── social-graph/
+│   ├── content/
+│   ├── community/
+│   ├── feed/
+│   ├── media/
+│   └── governance/
+│
+├── shared/
+│   ├── components/
+│   ├── ui/
+│   ├── hooks/
+│   ├── utils/
+│   ├── constants/
+│   ├── types/
+│   └── validation/
+│
+├── providers/
+│
+├── lib/
+│   ├── api/
+│   ├── auth/
+│   ├── state/
+│   └── query/
+│
+├── styles/
+│
+└── middleware/
+
+### Must Exist Before Module Development
+
+Required:
+
+app/
+modules/
+shared/
+providers/
+lib/
+styles/
+
+### Remains Empty Until Module Development
+
+The following remain structural placeholders only:
+
+modules/identity/
+modules/social-graph/
+modules/content/
+modules/community/
+modules/feed/
+modules/media/
+modules/governance/
+
+Business functionality is prohibited at foundation stage.
+
+## App Router Foundation
+### Foundation Responsibility
+
+Provide stable application routing infrastructure.
+
+### Required Foundations
+Route Group Infrastructure
+
+Establish route grouping strategy.
+
+### Public Route Infrastructure
+
+Establish public route composition boundaries.
+
+### Protected Route Infrastructure
+
+Establish authenticated route composition boundaries.
+
+### Layout Composition Infrastructure
+
+Establish layout ownership boundaries.
+
+### Error Route Infrastructure
+
+Establish route-level error boundaries.
+
+### Loading Route Infrastructure
+
+Establish route-level loading boundaries.
+
+### Route Structure Expectations
+
+Expected structure:
+
+app/
+
+├── (public)/
+├── (authenticated)/
+├── error.tsx
+├── loading.tsx
+├── not-found.tsx
+└── layout.tsx
+
+Route groups may exist without business routes.
+
+### Foundation Validation
+
+Verify:
+
+Route groups compile correctly
+Layout composition functions correctly
+Protected route infrastructure exists
+Error routes render correctly
+Loading routes render correctly
+Navigation architecture remains aligned with approved architecture
+
+## Layout Foundation
+### Foundation Responsibility
+
+Provide shared application composition boundaries.
+
+### Required Foundations
+Root Layout
+
+Application-wide composition boundary.
+
+### Public Layout
+
+Public experience composition boundary.
+
+### Authenticated Layout
+
+Authenticated experience composition boundary.
+
+### Herd Layout Strategy
+
+Community-scoped layout composition boundary.
+
+### Navigation Placement Infrastructure
+
+Shared navigation ownership location.
+
+### Shared Shell Infrastructure
+
+Application shell composition infrastructure.
+
+### Layout Ownership Rules
+
+Root Layout owns:
+
+Global providers
+Global metadata
+Global application composition
+
+Public Layout owns:
+
+Public experience composition
+
+Authenticated Layout owns:
+
+Authenticated application shell
+
+Layouts do not own business workflows.
+
+### Validation Requirements
+
+Verify:
+
+Layout hierarchy composes correctly
+Layout ownership remains clear
+Navigation placement remains stable
+Shared shell renders correctly
+Layout composition remains architecture compliant
+
+## Design System Foundation
+### Foundation Responsibility
+
+Provide reusable UI infrastructure before feature implementation begins.
+
+### Required Foundations
+Design Tokens
+
+Foundation must establish:
+
+Color tokens
+Typography tokens
+Spacing tokens
+Radius tokens
+Elevation tokens
+Breakpoint tokens
+Responsive Foundation
+
+Responsive utilities and breakpoint infrastructure.
+
+### Styling Foundation
+
+Shared styling architecture aligned with approved UI architecture.
+
+### Base Component Inventory
+
+The following reusable primitives must be available:
+
+Button
+Input
+Textarea
+Select
+Checkbox
+Modal
+Dialog
+Avatar
+Card
+Dropdown
+Tabs
+Badge
+Tooltip
+Pagination
+Skeleton
+
+Implementation readiness only.
+
+Business behavior prohibited.
+
+### Design System Validation
+
+Verify:
+
+Tokens function consistently
+Components compile correctly
+Responsive utilities function correctly
+Styling architecture remains consistent
+Design system supports future module implementation
+
+## API Client Foundation
+### Foundation Responsibility
+
+Provide standardized backend communication infrastructure.
+
+### Possible Approaches
+Approach A — Direct Fetch Everywhere
+
+Feature components manage API communication independently.
+
+Approach B — Centralized API Client
+
+Shared API infrastructure owns backend communication concerns.
+
+Rejected Approach
+
+Direct Fetch Everywhere.
+
+Reasons:
+
+Inconsistent request behavior
+Inconsistent error handling
+Poor maintainability
+Increased duplication
+### Recommended Approach
+
+Centralized API Client.
+
+Rationale
+
+Provides:
+
+Consistent API communication
+Consistent authentication integration
+Consistent error translation
+Consistent query handling
+API contract alignment
+### Foundation Components
+
+Required:
+
+API client
+Request wrapper
+Response parser
+Error translator
+Authentication integration
+Query parameter helpers
+Pagination helpers
+
+Must remain compatible with approved API contracts.
+
+### Foundation Validation
+
+Verify:
+
+API client executes requests correctly
+Error translation functions correctly
+Authentication integration functions correctly
+Query parameter generation remains standardized
+API contract compatibility preserved
+
+## State Management Foundation
+### Foundation Responsibility
+
+Provide approved state ownership infrastructure before module implementation begins.
+
+### Required Foundations
+Query Client Configuration
+
+Provide server-state infrastructure.
+
+### Global State Configuration
+
+Provide shared application-state infrastructure.
+
+### State Providers
+
+Provide application-wide state composition.
+
+### Shared State Utilities
+
+Provide reusable state helpers.
+
+### State Debugging Support
+
+Provide development debugging support.
+
+### State Ownership Alignment
+
+Foundation must preserve approved ownership model for:
+
+Server State
+Client State
+UI State
+Form State
+Navigation State
+
+No ownership redistribution permitted.
+
+### Validation Requirements
+
+Verify:
+
+Query client configured correctly
+Global state configured correctly
+Providers compose correctly
+State ownership remains architecture compliant
+State synchronization behaves correctly
+
+## Authentication Foundation
+### Foundation Responsibility
+
+Provide frontend authentication infrastructure before business authentication workflows begin.
+
+### Required Foundations
+Auth Provider
+
+Application-wide authentication infrastructure.
+
+Session Hydration Strategy
+
+Client session initialization infrastructure.
+
+Protected Route Support
+
+Route protection infrastructure.
+
+Authentication State Integration
+
+State ownership integration.
+
+Login State Synchronization
+
+Session synchronization infrastructure.
+
+Logout Handling Foundation
+
+Session cleanup infrastructure.
+
+Security Alignment
+
+Authentication foundation must remain aligned with:
+
+Approved Frontend Security Architecture
+Approved Backend Authentication APIs
+Approved Session Management Strategy
+
+Authentication infrastructure does not implement login workflows.
+
+### Validation Requirements
+
+Verify:
+
+Auth provider functions correctly
+Session hydration functions correctly
+Protected routes function correctly
+Session synchronization functions correctly
+Security architecture remains preserved
+
+## Shared Component Foundation
+### 
+### Foundation Responsibility
+
+Provide reusable non-feature-specific frontend components.
+
+### 
+### Required Foundations
+Loading Components
+
+Examples:
+
+Spinner
+Skeleton
+Page Loading State
+Error Components
+
+Examples:
+
+Error State
+Error Boundary Fallback
+Retry State
+Empty State Components
+
+Examples:
+
+Empty Feed
+Empty List
+Empty Search State
+Confirmation Components
+
+Examples:
+
+Confirmation Dialog
+Destructive Action Dialog
+Form Helpers
+
+Examples:
+
+Field Wrapper
+Validation Message
+Form Error Display
+Shared Interaction Primitives
+
+Examples:
+
+Toast
+Dropdown Trigger
+Tooltip Trigger
+Ownership Rules
+
+Shared components:
+
+Do not own business workflows.
+Do not own domain-specific behavior.
+Do not contain feature-specific logic.
+
+Shared components remain reusable infrastructure.
+
+### 
+### Validation Requirements
+
+Verify:
+
+Components are reusable
+Components remain feature-agnostic
+Components integrate with design system
+Components remain architecture compliant
+
+## Foundation Readiness Criteria
+### Structure Readiness
+
+Completed when:
+
+Approved project structure exists
+Module placeholders exist
+Shared infrastructure exists
+
+### Routing Readiness
+
+Completed when:
+
+Route groups exist
+Layout composition exists
+Error routes exist
+Loading routes exist
+
+### Layout Readiness
+
+Completed when:
+
+Root layout implemented
+Public layout implemented
+Authenticated layout implemented
+Shared shell implemented
+
+### Design System Readiness
+
+Completed when:
+
+Design tokens implemented
+Base UI primitives available
+Responsive utilities available
+
+### API Foundation Readiness
+
+Completed when:
+
+API client implemented
+Error translation implemented
+Authentication integration implemented
+
+### State Foundation Readiness
+
+Completed when:
+
+Query client configured
+Global state configured
+Providers configured
+
+### Authentication Foundation Readiness
+
+Completed when:
+
+Auth provider exists
+Session hydration exists
+Protected route infrastructure exists
+
+### Shared Component Readiness
+
+Completed when:
+
+Loading components exist
+Error components exist
+Empty state components exist
+Shared interaction primitives exist
+
+### Documentation Readiness
+
+Completed when:
+
+Foundation decisions documented
+Folder structure documented
+Validation results documented
