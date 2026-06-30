@@ -374,15 +374,15 @@ Error handling.
 
 Section F-019
 
-Redux Toolkit setup.
+Zustand Setup
 
 Section F-020
 
-Store configuration.
+State Foundation
 
 Section F-021
 
-Provider setup.
+Provider Infrastructure
 
 Section F-022
 
@@ -399,3 +399,65 @@ Session hydration strategy.
 Checkpoint:
 
 Frontend foundation operational.
+
+# Milestone 0 — Foundation
+Goals
+
+Establish the implementation foundation required by all subsequent modules.
+
+No business capabilities are implemented.
+
+The objective is implementation readiness.
+
+Backend Scope
+
+Implement:
+
+Project structure
+Module structure
+Bootstrap architecture
+Configuration architecture
+Database connection
+Shared contracts
+Shared middleware
+Error framework
+Validation framework
+Authentication infrastructure
+Logging infrastructure
+API infrastructure
+Frontend Scope
+
+Implement:
+
+Next.js application structure
+Module structure
+App Router structure
+Layout system
+Design system foundation
+Shared UI components
+API client
+State management foundation
+Authentication foundation
+Error handling foundation
+Navigation foundation
+Validation Requirements
+
+Validate:
+
+Backend startup
+Frontend startup
+Database connectivity
+Configuration validation
+Authentication infrastructure
+Shared state architecture
+API client architecture
+Error architecture
+Exit Criteria
+
+Foundation considered complete when:
+
+Backend foundation validated.
+Frontend foundation validated.
+Development environments operational.
+Architecture compliance validated.
+Documentation updated.
