@@ -4,10 +4,10 @@ Current Goal:
 Phase 1 — Core Platform Architecture Preparation
 
 Active Task:
-Frontend Integration & Validation Strategy
+Milestones, Definition of Done & Release Readiness
 
 Next Task:
-Milestones, Definition of Done & Release Readiness
+Development Sprint Planning
 
 Blocked By:
 Nothing
