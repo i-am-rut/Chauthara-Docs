@@ -140,7 +140,7 @@ Create connection module.
 
 Task B-023
 
-Connect to local MongoDB.
+Connect to MongoDB Atlas.
 
 Task B-024
 

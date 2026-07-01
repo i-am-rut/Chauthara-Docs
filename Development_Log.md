@@ -1,39 +1,40 @@
 # 30-06-2026
 
 ## Sprint 0
-### F-001
+### Frontend
+#### F-001
 status: Completed
 decision: React Compiler disabled
 reason: Sprint 0 prioritizes stability, simplicity, and predictable foundations. React Compiler deferred until post-foundation performance evaluation.
 
-### F-002
+#### F-002
 status: Completed
 
-### F-003
+#### F-003
 status: Completed
 
-### F-004 
+#### F-004 
 status: Completed
 
-### F-005
+#### F-005
 status: Completed
 
-### F-006
+#### F-006
 status: Completed
 
-### F-007
+#### F-007
 status: Completed
 
-### F-008
+#### F-008
 status: Completed
 
-### F-009
+#### F-009
 status: Completed
 
-### F-0010
+#### F-0010
 status: Completed
 
-### F-011
+#### F-011
 
 status: Completed
 
@@ -64,7 +65,7 @@ modules/content/components/PostCard
 modules/community/components/HerdHeader
 modules/identity/components/ProfileHeader
 
-## F-016 – F-018
+#### F-016 – F-018
 
 status: Completed
 
@@ -79,7 +80,7 @@ decisions:
 - UI components should consume AppError instead of raw Axios errors.
 - withCredentials enabled to support cookie-based authentication.
 
-## F-019 – F-021
+#### F-019 – F-021
 
 status: Completed
 
@@ -102,4 +103,34 @@ implemented:
 architecture impact:
 Replaced Redux-specific assumptions with library-agnostic state ownership boundaries.
 
+### Backend
+#### B-001 - B-007
+status: Completed
 
+#### B-008 - B-012
+status: Completed
+
+#### B-013 - B-019
+status: Completed
+
+#### B-020 - B-025
+status: Completed
+
+#### B-026 - B-031
+status: Completed
+
+#### B-032 - B-035
+status: Completed
+
+#### B-036 - B-039
+status: Completed
+
+#### B-040
+status: Completed
+Decision: Choose Validation Library (Zod). 
+Reason: 1. Next.js frontend
+        2. Shared contract
+        3. Validation foundation being built for long-term module development.
+
+#### B-041 - B-043
+status: Completed
