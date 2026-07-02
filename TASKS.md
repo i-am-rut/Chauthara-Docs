@@ -30,8 +30,9 @@
 # Ongoing
 - MVP Architecture Design
     - Phase 1
-        - Backend Development
-        - Frontend Development
+        - Sprint 1
+            - Backend Development
+            - Frontend Development
 
 
 # Pending
@@ -217,3 +218,4 @@ Standard Frontend Module Development Pattern
 Frontend Integration & Validation Strategy
 Milestones, Definition of Done & Release Readiness
 Development Sprint Planning
+Sprint0

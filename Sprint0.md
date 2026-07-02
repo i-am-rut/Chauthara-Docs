@@ -294,7 +294,7 @@ Startup logging.
 
 Checkpoint:
 
-Logging foundation complete.
+Backend foundation complete.
 
 # Sprint 0 Frontend Checklist
 
