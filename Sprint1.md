@@ -35,6 +35,22 @@ B1-006
 
 Create User model schema.
 
+B1-006A
+
+Extend User model with:
+
+emailVerified
+emailVerificationToken
+emailVerificationExpiresAt
+
+B1-006B
+
+Create email verification index strategy.
+
+Checkpoint:
+
+Identity verification persistence ready.
+
 B1-007
 
 Create User repository.
@@ -165,40 +181,127 @@ Checkpoint:
 
 Registration API operational.
 
-## Section E — Login Foundation
+## Section E — Email Verification Foundation
+
+Insert between Registration and Login.
+
 B1-024
 
-Create Login DTO.
+Create Verify Email DTO.
 
 B1-025
 
-Create Login validation schema.
+Create Verify Email validation schema.
 
 B1-026
 
-Create Login application service.
+Create verification token generation service.
 
 B1-027
 
-Validate credentials.
+Create verification email workflow.
 
 B1-028
 
-Generate JWT.
+Create verification application service.
 
 B1-029
 
-Issue authentication cookie.
+Implement email verification workflow.
 
 B1-030
 
-Create Login controller.
+Create Verify Email controller.
 
 B1-031
 
-Create Login route.
+Create Verify Email route.
 
 B1-032
+
+Prevent login for unverified accounts.
+
+B1-033
+Validate verification workflow:
+
+- valid token
+- expired token
+- invalid token
+- already verified account
+- reused token
+
+B1-034
+Create Resend Verification DTO.
+
+B1-035
+Create Resend Verification validation schema.
+
+B1-036
+Create Resend Verification application service.
+
+B1-037
+Validate account is still unverified.
+
+B1-038
+Generate new verification token.
+
+B1-039
+Send replacement verification email.
+
+B1-040
+Create Resend Verification controller.
+
+B1-041
+Create Resend Verification route.
+
+B1-042
+Implement resend rate limiting.
+
+B1-043
+Validate resend verification workflow.
+
+Checkpoint:
+
+Email verification operational.
+
+## Section F — Login Foundation
+B1-044
+
+Create Login DTO.
+
+B1-045
+
+Create Login validation schema.
+
+B1-046
+
+Create Login application service.
+
+B1-047
+
+Validate credentials.
+
+B1-048
+
+Validate account is verified before authentication.
+
+B1-049
+
+Generate JWT.
+
+B1-050
+
+Issue authentication cookie.
+
+B1-051
+
+Create Login controller.
+
+B1-052
+
+Create Login route.
+
+B1-053
 
 Validate Login API.
 
@@ -206,24 +309,24 @@ Checkpoint:
 
 Login API operational.
 
-## Section F — Logout Foundation
-B1-033
+## Section G — Logout Foundation
+B1-054
 
 Create Logout application service.
 
-B1-034
+B1-055
 
 Clear authentication cookie.
 
-B1-035
+B1-056
 
 Create Logout controller.
 
-B1-036
+B1-057
 
 Create Logout route.
 
-B1-037
+B1-058
 
 Validate Logout workflow.
 
@@ -231,30 +334,40 @@ Checkpoint:
 
 Logout API operational.
 
-## Section G — Session Foundation
-B1-038
+## Section H — Session Foundation
+B1-059
 
 Create Session DTO.
 
-B1-039
+B1-060
 
 Create Session application service.
 
-B1-040
+B1-061
 
 Resolve authenticated user.
 
-B1-041
+B1-061A
+Validate participation eligibility.
+
+B1-061B
+Reject unverified accounts during session validation.
+
+B1-062
 
 Create Session controller.
 
-B1-042
+B1-063
 
 Create Session route.
 
-B1-043
+B1-064
+Validate Session API:
 
-Validate Session API.
+- authenticated account
+- unauthenticated account
+- unverified account
+- invalid session
 
 Checkpoint:
 
@@ -290,6 +403,18 @@ F1-016
 
 Create registration success flow.
 
+F1-016A
+
+Create registration success screen.
+
+F1-016B
+
+Create email verification pending screen.
+
+F1-016C
+
+Display verification instructions.
+
 F1-017
 
 Validate registration experience.
@@ -298,61 +423,125 @@ Checkpoint:
 
 Registration UI operational.
 
-## Section D — Login Experience
+## Section D — Email Verification Experience
 F1-018
 
-Create login page.
+Create email verification page.
 
 F1-019
 
-Create login form component.
+Create verification token handling.
 
 F1-020
 
-Create login validation schema.
+Create verification success state.
 
 F1-021
 
-Create login API integration.
+Create verification failure state.
 
 F1-022
 
-Create login loading states.
+Create verification loading state.
 
 F1-023
 
+Validate verification experience.
+
+Checkpoint:
+
+Verification UI operational.
+
+## Section E — Verification Recovery Experience
+F1-024
+Create resend verification action.
+
+F1-025
+Create resend verification API integration.
+
+F1-026
+Create resend loading state.
+
+F1-027
+Create resend success state.
+
+F1-028
+Create resend cooldown state.
+
+F1-029
+Validate resend verification experience.
+
+Checkpoint:
+
+Verification recovery operational.
+
+## Section F — Login Experience
+F1-030
+
+Create login page.
+
+F1-031
+
+Create login form component.
+
+F1-032
+
+Create login validation schema.
+
+F1-033
+
+Create login API integration.
+
+F1-034
+
+Create login loading states.
+
+F1-035
+
 Create login error handling.
 
-F1-024
+F1-036
 
 Create login success flow.
 
-F1-025
+F1-036A
+Create unverified account error state.
+
+F1-036B
+Display verification required messaging.
+
+F1-036C
+Provide resend verification action from login screen.
+
+F1-037
 
 Validate login experience.
+- successful login
+- invalid credentials
+- unverified account
 
 Checkpoint:
 
 Login UI operational.
 
-## Section E — Session Synchronization
-F1-026
+## Section G — Session Synchronization
+F1-038
 
 Implement session API integration.
 
-F1-027
+F1-039
 
 Implement session hydration workflow.
 
-F1-028
+F1-040
 
 Implement authentication synchronization.
 
-F1-029
+F1-041
 
 Implement application startup session check.
 
-F1-030
+F1-042
 
 Validate session restoration.
 
@@ -360,28 +549,28 @@ Checkpoint:
 
 Session synchronization operational.
 
-## Section F — Authentication Experience
-F1-031
+## Section H — Authentication Experience
+F1-043
 
 Implement logout action.
 
-F1-032
+F1-044
 
 Implement logout API integration.
 
-F1-033
+F1-045
 
 Implement logout state cleanup.
 
-F1-034
+F1-046
 
 Implement protected route redirects.
 
-F1-035
+F1-047
 
 Implement authenticated route protection.
 
-F1-036
+F1-048
 
 Validate authentication flow.
 
@@ -394,6 +583,18 @@ Authentication experience operational.
 I1-001
 
 Validate Register API contract.
+
+I1-001A
+
+Validate verification email generation.
+
+I1-001B
+
+Validate verification token workflow.
+
+I1-001C
+
+Validate login restriction for unverified accounts.
 
 I1-002
 
@@ -437,6 +638,22 @@ V1-003
 
 Validate duplicate username protection.
 
+V1-003A
+
+Validate email verification workflow.
+
+V1-003B
+
+Validate expired verification token.
+
+V1-003C
+
+Validate invalid verification token.
+
+V1-003D
+
+Validate unverified login rejection.
+
 V1-004
 
 Validate login workflow.
@@ -468,6 +685,51 @@ Validate architecture compliance.
 Checkpoint:
 
 Sprint 1 complete.
+
+## Section K — Identity Lifecycle Integration Validation
+ILIV-001
+Validate registration workflow.
+
+ILIV-002
+Validate verification email delivery.
+
+ILIV-003
+Validate email verification workflow.
+
+ILIV-004
+Validate account activation workflow.
+
+ILIV-005
+Validate login workflow.
+
+ILIV-006
+Validate session validation workflow.
+
+ILIV-007
+Validate protected route access.
+
+ILIV-008
+Validate unverified account restrictions.
+
+ILIV-009
+Validate resend verification workflow.
+
+ILIV-010
+Validate complete identity lifecycle:
+
+Register
+↓
+Pending Verification
+↓
+Verify Email
+↓
+Activate Account
+↓
+Login
+↓
+Session Validation
+↓
+Protected Route Access
 
 
 # Milestone 1 — Identity
