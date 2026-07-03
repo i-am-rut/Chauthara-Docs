@@ -2016,6 +2016,64 @@ Recover from verification failures
 Request a replacement verification email
 Continue into platform participation after verification
 
+## Shared Authentication Navigation Rules
+
+Authenticated User
+
+May not access:
+
+- Registration Page
+- Login Page
+
+Redirect:
+
+Following Feed
+
+---
+
+Unauthenticated User
+
+May not access:
+
+- Profile Page
+- Edit Profile Page
+- Following Feed
+
+Redirect:
+
+Login Page
+
+or
+
+ID-012 Identity Error Resolution
+
+depending on failure context.
+
+---
+
+Unverified User
+
+May not access:
+
+- Authenticated experiences
+- Following Feed
+- Profile Management
+
+Redirect:
+
+ID-003 Verification Pending
+
+---
+
+Access evaluation occurs only after
+authentication state resolution.
+
+Authoritative states:
+
+- unknown
+- authenticated
+- unauthenticated
+
 ## Shared Layout Strategy
 
 All verification screens use a common status-oriented layout.
@@ -2557,7 +2615,7 @@ Next-step authentication flow
 
 Verification success exists as the completion state of the Email Verification workflow within the Identity module.
 
-# Verification Failure
+# Verification Failure Page
 ## Screen ID
 
 ID-006
@@ -2582,6 +2640,17 @@ The screen does not:
 Attempt verification retries automatically
 Authenticate users
 Activate accounts
+
+Verification Failure is the authoritative recovery screen for:
+
+- Expired verification token
+- Invalid verification token
+- Reused verification token
+
+Verification-specific failures are not routed through:
+
+ID-012 Identity Error Resolution
+
 ## User Types
 Primary
 
@@ -2978,6 +3047,61 @@ Not Allowed:
 - Access authenticated features
 
 Unverified accounts must complete email verification before authentication is allowed.
+
+---
+
+## Authentication State Awareness
+
+Frontend authentication follows the approved
+authentication awareness model.
+
+Authoritative states:
+
+- unknown
+- authenticated
+- unauthenticated
+
+The Login Page may only render for:
+
+unauthenticated
+
+users.
+
+If:
+
+authenticated
+
+Redirect to:
+
+Following Feed
+
+Authentication state must not be evaluated until
+session hydration completes.
+
+---
+
+## Successful Authentication Routing
+
+After successful authentication:
+
+Priority 1
+
+Return user to preserved destination.
+
+Examples:
+
+- /profile/edit
+- /following
+- /herds/my-herd
+
+Priority 2
+
+Following Feed
+
+Default authenticated experience.
+
+The Login Page should not hardcode a single
+destination if a preserved destination exists.
 
 ---
 
@@ -3695,6 +3819,16 @@ The page is not intended for:
 
 These remain inline form errors within the originating screen.
 
+The Identity Error Resolution Page is not used for:
+
+- Expired verification tokens
+- Invalid verification tokens
+- Reused verification tokens
+
+These failures are handled by:
+
+ID-006 Verification Failure
+
 ---
 
 ## User Types
@@ -3726,6 +3860,31 @@ Users should be able to:
 
 ---
 
+## Supported Error Variants
+
+The Identity Error Resolution Page supports:
+
+email-not-verified
+
+session-expired
+
+authentication-required
+
+service-unavailable
+
+network-failure
+
+Each variant should provide:
+
+- Explanation
+- Recovery guidance
+- Appropriate recovery actions
+
+The page layout remains consistent across
+all variants.
+
+---
+
 ## Entry Points
 
 ### Login Page
@@ -3738,15 +3897,12 @@ When login fails due to:
 
 ---
 
-### Email Verification Flow
+Verification-related failures are handled by:
 
-(ID-003)
+ID-006 Verification Failure
 
-When verification fails due to:
-
-- Expired verification token
-- Invalid verification token
-- Reused verification token
+The Identity Error Resolution Page does not handle
+email verification token failures.
 
 ---
 
@@ -4298,6 +4454,29 @@ Status messages must be announced appropriately to assistive technologies.
 
 ---
 
+## Destination Preservation
+
+Protected route failures should preserve
+the originally requested destination.
+
+Example:
+
+/profile/edit
+        ↓
+Authentication Failure
+        ↓
+ID-012
+        ↓
+Login
+        ↓
+Return To:
+/profile/edit
+
+The original destination should be restored
+after successful identity recovery.
+
+---
+
 ## Error Handling Rules
 
 Field-level validation failures shall not navigate to this page.
@@ -4342,3 +4521,73 @@ Not MVP:
 - Localization
 - Context-aware recovery recommendations
 
+
+
+
+# Important section to add to every protected page
+## Session Hydration Behavior
+
+Protected pages must wait for authentication
+state resolution before evaluating access rules.
+
+During:
+
+unknown
+
+state:
+
+Display authentication loading state.
+
+Do not redirect.
+
+Access evaluation occurs only after:
+
+authenticated
+
+or
+
+unauthenticated
+
+is resolved.
+
+
+# Add to Profile page when designed
+## Profile Ownership Model
+
+The Profile Page supports both:
+
+Own Profile
+and
+Public User Profile
+
+Route Pattern
+
+/me
+
+Authenticated user's profile
+
+/:username
+
+Public profile
+
+Ownership-Aware Actions
+
+Own Profile:
+
+Allowed:
+
+- Edit Profile
+- View Followers
+- View Following
+
+Public Profile:
+
+Allowed:
+
+- Follow User
+- View Followers
+- View Following
+
+Not Allowed:
+
+- Edit Profile
