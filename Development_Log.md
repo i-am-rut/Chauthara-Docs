@@ -946,6 +946,142 @@ Milestone 0 Backend Foundation approved.
 
 ---
 
+#### Identity Module Scaffolding
+
+status: Completed
+
+implemented:
+- Identity module structure
+- Identity page structure
+- Identity component structure
+- Identity API layer structure
+- Identity state layer structure
+
+established:
+- Identity ownership boundaries
+- Identity UI ownership boundaries
+- Identity API ownership boundaries
+- Identity state ownership boundaries
+
+created:
+src/modules/identity/
+
+├── api/
+│   ├── auth.api.ts
+│   └── index.ts
+│
+├── components/
+│   ├── auth/
+│   │   ├── AuthFooter/
+│   │   ├── AuthHeader/
+│   │   ├── AuthHero/
+│   │   ├── IdentityErrorCard/
+│   │   ├── LoginForm/
+│   │   └── RegistrationForm/
+│   ├── verification/
+│   │   ├── ResendVerificationSection/
+│   │   ├── VerificationStatusActions/
+│   │   ├── VerificationStatusContent/
+│   │   ├── VerificationStatusIcon/
+│   │   └── VerificationStatusLayout/
+│   └── shared/
+│       └── IdentityValueCard/
+│
+├── hooks/
+├── pages/
+│   ├── registration/
+│   ├── verification-pending/
+│   ├── verification-processing/
+│   ├── verification-success/
+│   ├── verification-failure/
+│   ├── login/
+│   └── identity-error/
+│
+├── schemas/
+├── services/
+├── stores/
+│   ├── auth.store.ts
+│   └── index.ts
+│
+├── hooks/
+├── types/
+│   └── auth
+│       └── auth.types.ts
+└── utils/
+
+architecture compliance:
+- ADR-001 validated
+- Frontend module boundaries preserved
+- Identity ownership preserved
+
+result:
+Identity frontend structure operational.
+
+---
+
+#### Identity Navigation Foundation
+
+status: Completed
+
+implemented:
+- Authentication route group structure
+- Profile route group structure
+- Redirect infrastructure foundation
+- Protected navigation guard foundation
+
+created:
+
+src/app/
+├── (auth)/
+│   ├── register/
+│   ├── login/
+│   ├── verify/
+│   ├── verification-pending/
+│   ├── verification-success/
+│   ├── verification-failure/
+│   ├── identity-error/
+│   └── layout.tsx
+│
+└── (profile)/
+    └── profile/
+        ├── page.tsx
+        └── edit/
+            └── page.tsx
+
+src/modules/identity/
+├── components/
+│   └── auth/
+│       └── ProtectedRoute.tsx
+│
+├── hooks/
+│   └── useAuthGuard.ts
+│
+└── utils/
+    ├── navigation.constants.ts
+    └── navigation.helpers.ts
+
+public interfaces:
+- AUTH_ROUTES (placeholder implementation)
+- navigation helpers (placeholder implementation)
+- ProtectedRoute (foundation implementation)
+- useAuthGuard (foundation implementation)
+
+behavior:
+- Authentication pages grouped under auth boundary
+- Profile pages grouped under profile boundary
+- Redirect ownership centralized
+- Navigation guard ownership established
+- Navigation infrastructure prepared for future session integration
+
+architecture impact:
+- Preserved frontend authentication awareness model
+- Preserved backend authentication authority
+- Preserved navigation ownership boundaries
+- Preserved route grouping architecture
+- Preserved domain-oriented frontend organization
+
+result:
+Identity navigation foundation operational.
 
 
 ### Backend
